@@ -42,7 +42,7 @@ public class ElevatorActionGrouping<T> {
         try {
             return this.conversionFunction.apply(value);
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().warning(String.format(this.conversionErrorMessage, action.getKey(), action.getElevatorType().getTypeName(), this.defaultObject.toString()));
+            Elevators.getElevatorsLogger().warning(String.format(this.conversionErrorMessage, action.getKey(), action.getElevatorType().getTypeKey(), this.defaultObject.toString()));
             return this.defaultObject;
         }
     }

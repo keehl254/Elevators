@@ -3,8 +3,10 @@ package com.lkeehl.elevators.services;
 import com.lkeehl.elevators.services.configs.ConfigEffect;
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigRecipe;
+import com.lkeehl.elevators.services.configs.ConfigRoot;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -38,6 +40,14 @@ public class ConfigService {
         ConfigService.configLoadCallbacks.add(callback);
     }
 
+    public static ConfigRoot getRootConfig() {
+        try {
+            return rootNode.get(ConfigRoot.class);
+        } catch (SerializationException e) {
+            return new ConfigRoot();
+        }
+    }
+
     public static Map<String, ConfigEffect> getEffectConfigs() {
         return getMappedSection(ConfigEffect.class,"effects");
     }
@@ -52,15 +62,6 @@ public class ConfigService {
 
     public static Map<String, String> getElevatorRecipeMaterials(String elevatorKey, String recipeKey) {
         return getMappedSection(String.class, "elevators",elevatorKey,"recipes",recipeKey,"materials");
-    }
-
-    public static List<String> getElevatorActions(String elevatorKey, byte direction) {
-        CommentedConfigurationNode actions = rootNode.node("elevators",elevatorKey,"actions", direction == -1 ? "down" : "up");
-        try {
-            return actions.getList(String.class);
-        } catch (ConfigurateException e){
-            return new ArrayList<>();
-        }
     }
 
     public static <T> Map<String, T> getMappedSection(Class<T> clazz, String... path) {

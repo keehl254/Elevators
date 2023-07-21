@@ -98,11 +98,11 @@ public class ElevatorHelper {
                 continue;
 
             if(elevatorType.canTeleportToObstructedBlock() || ignoreObstructionCheck)
-                return new ElevatorSearchResult(tempShulkerBox, 0.0D);
+                return new ElevatorSearchResult(originLocation,tempShulkerBox, 0.0D);
 
             double addition = player != null ? ObstructionService.getHitBoxAddition(tempBlock.getRelative(BlockFace.UP), player) : 0.0;
             if (addition >= 0)
-                return new ElevatorSearchResult(tempShulkerBox, Math.abs(addition));
+                return new ElevatorSearchResult(originLocation, tempShulkerBox, Math.abs(addition));
         } while(tempLocation.getBlockY() != endPointY);
 
         return null;

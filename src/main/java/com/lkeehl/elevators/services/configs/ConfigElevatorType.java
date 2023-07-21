@@ -58,12 +58,36 @@ public class ConfigElevatorType {
     @Comment("Define actions that can be run on elevator usage.\nDefault actions are:\naction-bar\nboss-bar\ncommand-console\ncommand-player\nmessage-all\nmessage-player\nsound\ntitle\n\nIf you do not wish to use actions on use, you can either delete the actions section\nor set the \"up\" and \"down\" values to an empty array with \"[]\" such as shown with the \"down\" value. PlaceholderAPI is supported.")
     public ConfigActions actions = new ConfigActions();
 
+    @Comment("Define a cost to use the elevator. Requires Vault to be installed on the server to work. Set to 0 or below to disable.")
+    public ConfigCosts cost = new ConfigCosts();
+
+    @Comment("Define effects that should play when an elevator is used. Effects can be created from image files using the #Effects section of this config above, or you can you can use predefined animations such as:\narrow\nhelix\nsparkles\nnone")
+    public ConfigEffects effects = new ConfigEffects();
+
     @ConfigSerializable()
     public static class ConfigActions {
 
         public List<String> up = Collections.singletonList("sound: ENTITY_BLAZE_SHOOT pitch=2.0 volume=1.0");
 
         public List<String> down = Collections.singletonList("sound: ENTITY_BLAZE_SHOOT pitch=2.0 volume=1.0");
+
+    }
+
+    @ConfigSerializable()
+    public static class ConfigCosts {
+
+        public double up = 0.0D;
+
+        public double down = 0.0D;
+
+    }
+
+    @ConfigSerializable()
+    public static class ConfigEffects {
+
+        public String up = "sparkle";
+
+        public String down = "sparkle";
 
     }
 

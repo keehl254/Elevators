@@ -1,12 +1,11 @@
 package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.services.configs.ConfigElevatorType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ElevatorTypeService {
 
@@ -29,8 +28,35 @@ public class ElevatorTypeService {
         elevatorTypes.clear();
         // TODO: Clear elevator recipes
 
+        Map<String, ConfigElevatorType> elevatorTypeConfigs = ConfigService.getElevatorTypeConfigs();
+        elevatorTypes.put("DEFAULT", ElevatorTypeService.createElevatorFromConfig("DEFAULT", new ConfigElevatorType()));
 
-        // TODO: Register the default elevator
+        for(String elevatorTypeKey : elevatorTypeConfigs.keySet())
+            elevatorTypes.put(elevatorTypeKey.toUpperCase(), ElevatorTypeService.createElevatorFromConfig(elevatorTypeKey.toUpperCase(), elevatorTypeConfigs.get(elevatorTypeKey)));
+
+        defaultElevatorType = elevatorTypes.get("DEFAULT");
+    }
+
+    private static ElevatorType createElevatorFromConfig(String elevatorTypeKey, ConfigElevatorType config) {
+        ElevatorType elevatorType = new ElevatorType(elevatorTypeKey);
+
+        elevatorType.setDisplayName(config.displayName);
+        elevatorType.setMaxDistanceAllowedBetweenElevators(config.maxDistance);
+        elevatorType.setMaxSolidBlocksAllowedBetweenElevators(config.maxSolidBlocks);
+        elevatorType.setMaxStackSize(config.maxStackSize);
+        elevatorType.getLore().addAll(config.loreLines);
+        elevatorType.setCanRecipesProduceColor(config.coloredOutput);
+        elevatorType.setCanTeleportToOtherColor(config.checkColor);
+        elevatorType.setCheckDestinationElevatorType(config.classCheck);
+        elevatorType.setBlocksObstruction(config.stopObstruction);
+        elevatorType.setElevatorRequiresPermissions(config.checkPerms);
+        elevatorType.setCanElevatorExplode(config.canExplode);
+
+        elevatorType.getActionsUp().addAll(config.actions.up.stream().map(i->ElevatorActionService.createActionFromString(elevatorType, i)).filter(Objects::nonNull).collect(Collectors.toList()));
+        elevatorType.getActionsDown().addAll(config.actions.down.stream().map(i->ElevatorActionService.createActionFromString(elevatorType, i)).filter(Objects::nonNull).collect(Collectors.toList()));
+
+
+        return elevatorType;
     }
 
     public static ElevatorType getElevatorType(String name) {
@@ -54,11 +80,11 @@ public class ElevatorTypeService {
     }
 
     public static void registerElevatorType(ElevatorType elevatorType) {
-        elevatorTypes.put(elevatorType.getTypeName(), elevatorType);
+        elevatorTypes.put(elevatorType.getTypeKey(), elevatorType);
     }
 
     public static void unregisterElevatorType(ElevatorType elevatorType) {
-        elevatorTypes.remove(elevatorType.getTypeName());
+        elevatorTypes.remove(elevatorType.getTypeKey());
     }
 
 }

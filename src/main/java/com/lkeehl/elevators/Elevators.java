@@ -1,9 +1,6 @@
 package com.lkeehl.elevators;
 
-import com.lkeehl.elevators.services.ElevatorActionService;
-import com.lkeehl.elevators.services.ElevatorTypeService;
-import com.lkeehl.elevators.services.ElevatorVersionService;
-import com.lkeehl.elevators.services.ObstructionService;
+import com.lkeehl.elevators.services.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +13,7 @@ public class Elevators extends JavaPlugin {
     @Override()
     public void onEnable() {
         ElevatorVersionService.init();
+        ElevatorEffectService.init();
         ElevatorTypeService.init();
         ElevatorActionService.init();
         ObstructionService.init();
