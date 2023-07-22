@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.actions;
 
+import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
 import com.lkeehl.elevators.models.ElevatorType;
@@ -35,7 +36,7 @@ public class BossBarAction extends ElevatorAction {
         /*if (elevator instanceof PremiumElevator && ((PremiumElevator) elevator).getSpeed() > 0.0)
             return;*/
         String message = BaseUtil.formatColors(elevator.formatPlaceholders(player, origin, destination, this.getGroupingObject(messageGrouping)));
-        this.displayMessage(player, () -> message, (1.0F / (BaseElevators.getNMS().getFloorCount(destination, elevatorType) - 1)) * (BaseElevators.getNMS().getFloorNumber(destination, elevatorType) - 1), 30);
+        this.displayMessage(player, () -> message, (1.0F / (ElevatorHelper.getFloorNumberOrCount(destination, elevatorType, false) - 1)) * (ElevatorHelper.getFloorNumberOrCount(destination, elevatorType, true) - 1), 30);
     }
 
     @Override

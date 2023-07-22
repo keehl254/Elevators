@@ -1,6 +1,7 @@
 package com.lkeehl.elevators.helpers;
 
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.services.NameSpacedKeyService;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -52,7 +53,7 @@ public class ItemStackHelper {
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(item);
         if (elevatorType == null)
             return;
-        BaseElevators.getTag().updateItem(item, elevatorType);
+        NameSpacedKeyService.updateItemStackFromV2(item, elevatorType);
         elevatorType.updateItemDisplay(item);
 
         while (item.getAmount() > 0) {

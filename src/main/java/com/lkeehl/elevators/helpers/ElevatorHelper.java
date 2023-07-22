@@ -35,7 +35,7 @@ public class ElevatorHelper {
         return ElevatorVersionService.getElevatorType(box);
     }
 
-    static int getFloorNumberOrCount(ShulkerBox box, ElevatorType elevatorType, boolean stopAtProvidedBox) {
+    public static int getFloorNumberOrCount(ShulkerBox box, ElevatorType elevatorType, boolean stopAtProvidedBox) {
         World world = box.getWorld();
         int worldMinHeight = MCVersionHelper.getWorldMinHeight(world);
 

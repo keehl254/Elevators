@@ -55,6 +55,8 @@ public class ElevatorTypeService {
         elevatorType.getActionsUp().addAll(config.actions.up.stream().map(i->ElevatorActionService.createActionFromString(elevatorType, i)).filter(Objects::nonNull).collect(Collectors.toList()));
         elevatorType.getActionsDown().addAll(config.actions.down.stream().map(i->ElevatorActionService.createActionFromString(elevatorType, i)).filter(Objects::nonNull).collect(Collectors.toList()));
 
+        elevatorType.setElevatorUpEffect(ElevatorEffectService.getEffectFromKey(config.effects.up));
+        elevatorType.setElevatorDownEffect(ElevatorEffectService.getEffectFromKey(config.effects.down));
 
         return elevatorType;
     }

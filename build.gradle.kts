@@ -19,8 +19,8 @@ repositories {
 
 dependencies {
     compileOnly("org.spongepowered:configurate-yaml:4.1.2")
-    compileOnly("org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT") // The Spigot API with no shadowing. Requires the OSS repo.
-    compileOnly("org.spigotmc:spigot:1.17-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
+    compileOnly("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") // The Spigot API with no shadowing. Requires the OSS repo.
+    compileOnly("org.spigotmc:spigot:1.19-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
 }
 
 publishing {

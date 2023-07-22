@@ -12,6 +12,7 @@ public class Elevators extends JavaPlugin {
 
     @Override()
     public void onEnable() {
+        NameSpacedKeyService.init(this);
         ElevatorVersionService.init();
         ElevatorEffectService.init();
         ElevatorTypeService.init();

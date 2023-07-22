@@ -1,7 +1,9 @@
 package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.helpers.ItemStackHelper;
+import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.services.configs.ConfigEffect;
 import com.lkeehl.elevators.services.versions.ElevatorsV1;
 import com.lkeehl.elevators.services.versions.ElevatorsV2;
 import com.lkeehl.elevators.services.versions.ElevatorsV3;
@@ -32,8 +34,6 @@ public class ElevatorVersionService {
         ElevatorVersionService.initialized = true;
     }
 
-
-
     private static <T> Map.Entry<ElevatorType, Function<ShulkerBox, ShulkerBox>> executeAll(T arg, Function<ElevatorVersion, Function<T, ElevatorType>> func) {
         for (ElevatorVersion version : versions) {
             ElevatorType obj = func.apply(version).apply(arg);
@@ -54,9 +54,9 @@ public class ElevatorVersionService {
             return null;
 
         ShulkerBox newBox = result.getValue().apply(box);
-        newBox = BaseElevators.getNMS().clearContents(newBox);
-        if (BaseElevators.shouldFaceUp())
-            BaseElevators.getNMS().setFacingUp(newBox);
+        newBox = ShulkerBoxHelper.clearContents(newBox);
+        if (ConfigService.getRootConfig().forceFacingUpwards)
+            ShulkerBoxHelper.setFacingUp(newBox);
         return result.getKey();
     }
 
@@ -79,10 +79,10 @@ public class ElevatorVersionService {
         protected ElevatorType getClassFromBoxName(String name) {
             if (name == null)
                 return null;
-            if (BaseElevators.containsElevatorClass(name))
-                return BaseElevators.getElevatorClass(name);
+            if (ElevatorTypeService.doesElevatorTypeExist(name))
+                return ElevatorTypeService.getElevatorType(name);
             else
-                return BaseElevators.getDefaultClass();
+                return ElevatorTypeService.getDefaultElevatorType();
         }
 
     }

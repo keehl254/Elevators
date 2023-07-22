@@ -15,6 +15,7 @@ public class ShulkerBoxHelper {
         return (ShulkerBox) box.getBlock().getState();
     }
 
+    @SuppressWarnings("deprecation")
     public static void setFacingUp(ShulkerBox box) {
 
         if (MCVersionHelper.doesVersionSupportShulkerFacingAPI() && box.getBlockData() instanceof Directional) {

@@ -25,6 +25,9 @@ public class ElevatorType {
     private boolean coloredOutput;
     private boolean blocksObstruction;
 
+    private ElevatorEffect elevatorUpEffect;
+    private ElevatorEffect elevatorDownEffect;
+
     private final List<ElevatorAction> actionsUp = new ArrayList<>();
     private final List<ElevatorAction> actionsDown = new ArrayList<>();
 
@@ -113,14 +116,27 @@ public class ElevatorType {
      * of a block.
      */
     public boolean canTeleportToObstructedBlock() {
-        return !blocksObstruction;
+        return !this.blocksObstruction;
     }
 
     /**
      * @return controls whether an elevator can be teleported to if the destination is a separate color than the origin.
      */
     public boolean canTeleportToOtherColor() {
-        return !checkColor;
+        return !this.checkColor;
+    }
+
+    /**
+     * @return the effect that will play upon going upwards in an elevator.
+     */
+    public ElevatorEffect getElevatorUpEffect() { return this.elevatorUpEffect;
+    }
+
+    /**
+     * @return the effect that will play upon going downwards in an elevator.
+     */
+    public ElevatorEffect getElevatorDownEffect() {
+        return this.elevatorDownEffect;
     }
 
     //endregion
@@ -199,6 +215,20 @@ public class ElevatorType {
      */
     public void setCanTeleportToOtherColor(boolean checkColor) {
         this.checkColor = checkColor;
+    }
+
+    /**
+     * Set the effect that will play upon going upwards in an elevator.
+     */
+    public void setElevatorUpEffect(ElevatorEffect elevatorUpEffect) {
+        this.elevatorUpEffect = elevatorUpEffect;
+    }
+
+    /**
+     * Set the effect that will play upon going downwards in an elevator.
+     */
+    public void setElevatorDownEffect(ElevatorEffect elevatorDownEffect) {
+        this.elevatorDownEffect = elevatorDownEffect;
     }
 
     //endregion

@@ -47,6 +47,7 @@ public class ElevatorActionGrouping<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public String getStringFromObject(Object object) {
         try {
             return this.toStringFunction.apply((T) object);
