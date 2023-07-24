@@ -1,7 +1,8 @@
 package com.lkeehl.elevators.helpers;
 
+import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.NameSpacedKeyService;
+import com.lkeehl.elevators.services.DataContainerService;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -48,12 +49,26 @@ public class ItemStackHelper {
         return elevator;
     }
 
+    public static ItemStack createItemStackFromElevator(Elevator elevator) {
+
+        ItemStack itemStack = new ItemStack(elevator.getShulkerBox().getType(), 1);
+        ItemMeta meta = itemStack.getItemMeta();
+        if(meta == null) return itemStack; // How?
+
+        meta.setDisplayName(elevator.getElevatorType().getDisplayName()); // TODO: Format the display name.
+        meta.setLore(elevator.getElevatorType().getLore()); // TODO: Format the lore.
+
+        DataContainerService.dumpDataFromShulkerBoxIntoItem(elevator.getShulkerBox(), itemStack);
+
+        return itemStack;
+    }
+
     public static void giveElevator(Item itemEntity, Inventory inv) {
         ItemStack item = itemEntity.getItemStack();
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(item);
         if (elevatorType == null)
             return;
-        NameSpacedKeyService.updateItemStackFromV2(item, elevatorType);
+        DataContainerService.updateItemStackFromV2(item, elevatorType);
         elevatorType.updateItemDisplay(item);
 
         while (item.getAmount() > 0) {

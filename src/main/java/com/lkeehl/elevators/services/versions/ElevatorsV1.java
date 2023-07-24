@@ -4,7 +4,7 @@ import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.ElevatorTypeService;
 import com.lkeehl.elevators.services.ElevatorVersionService;
-import com.lkeehl.elevators.services.NameSpacedKeyService;
+import com.lkeehl.elevators.services.DataContainerService;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
@@ -34,7 +34,7 @@ public class ElevatorsV1 extends ElevatorVersionService.ElevatorVersion {
         if (firstItem == null)
             return null;
 
-        String type = NameSpacedKeyService.getElevatorKey(firstItem);
+        String type = DataContainerService.getElevatorKey(firstItem);
         if (type != null)
             return ElevatorTypeService.getElevatorType(type);
 
@@ -57,7 +57,7 @@ public class ElevatorsV1 extends ElevatorVersionService.ElevatorVersion {
         ElevatorType type = getV1ElevatorType(itemStack);
         if (type == null)
             return null;
-        NameSpacedKeyService.updateItemStackFromV2(itemStack, type);
+        DataContainerService.updateItemStackFromV2(itemStack, type);
 
         BlockStateMeta meta = (BlockStateMeta) itemStack.getItemMeta();
         ShulkerBox box = (ShulkerBox) meta.getBlockState();
@@ -77,7 +77,7 @@ public class ElevatorsV1 extends ElevatorVersionService.ElevatorVersion {
             if (item.getType().equals(Material.COMMAND_BLOCK) && (item.getItemMeta() != null && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equalsIgnoreCase("elevator")))
                 return ElevatorTypeService.getDefaultElevatorType();
             if (item.getType().equals(Material.STONE)) {
-                String itemType = NameSpacedKeyService.getElevatorKey(item);
+                String itemType = DataContainerService.getElevatorKey(item);
                 if (itemType != null)
                     return ElevatorTypeService.getElevatorType(itemType);
             }
@@ -94,8 +94,8 @@ public class ElevatorsV1 extends ElevatorVersionService.ElevatorVersion {
 
     @Override
     public ShulkerBox convertToLaterVersion(ShulkerBox box) {
-        box = NameSpacedKeyService.updateTypeKeyOnElevator(box, ElevatorTypeService.getDefaultElevatorType());
-        box = NameSpacedKeyService.updateBox(box, ElevatorTypeService.getDefaultElevatorType());
+        box = DataContainerService.updateTypeKeyOnElevator(box, ElevatorTypeService.getDefaultElevatorType());
+        box = DataContainerService.updateBox(box, ElevatorTypeService.getDefaultElevatorType());
         return box;
     }
 

@@ -7,6 +7,10 @@ import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.localization.BentoBoxLocale;
+import world.bentobox.bentobox.database.objects.Island;
 
 import java.util.Locale;
 
@@ -32,7 +36,12 @@ public class BentoBoxHook implements ElevatorHook {
     }
     @Override
     public boolean canPlayerUseElevator(Player player, ShulkerBox box, ElevatorType elevatorType) {
-        return false;
+        Island island = BentoBox.getInstance().getIslands().getIslandAt(box.getLocation()).orElse(null);
+        if (island == null)
+            return true;
+        if (!island.getProtectionBoundingBox().contains(box.getX(), box.getY(), box.getZ()))
+            return true;
+        return island.isAllowed(BentoBox.getInstance().getPlayers().getUser(player.getUniqueId()), this.flag);
     }
 
     @Override

@@ -14,9 +14,6 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.AbstractMap;
-import java.util.Map;
-
 public class ElevatorHelper {
 
     static boolean isElevator(ShulkerBox box) {
@@ -107,5 +104,7 @@ public class ElevatorHelper {
 
         return null;
     }
+
+    
 
 }
