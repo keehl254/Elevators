@@ -2,13 +2,15 @@ package com.lkeehl.elevators.helpers;
 
 import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.DyeColor;
+import org.bukkit.Keyed;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapelessRecipe;
 
 public class ElevatorPermHelper {
 
-    public static boolean canCraftElevatorType(ElevatorType elevatorType, Player player, ShapelessRecipe recipe, DyeColor color) {
+    public static <T extends Recipe & Keyed> boolean canCraftElevatorType(ElevatorType elevatorType, Player player, T recipe, DyeColor color) {
 
         if(!elevatorType.doesElevatorRequirePermissions())
             return true;

@@ -81,6 +81,11 @@ public class DataContainerService {
 
         transferDataBetweenContainers(itemDataContainer, boxDataContainer);
     }
+    public static void dumpDataFromItemIntoItem(ItemStack originItem, ItemStack destinationItem) {
+        if(!originItem.hasItemMeta() || originItem.getType() != destinationItem.getType())
+            return;
+        destinationItem.setItemMeta(originItem.getItemMeta());
+    }
 
     public static String getElevatorKey(ItemStack item) {
         ItemMeta meta = item.getItemMeta();

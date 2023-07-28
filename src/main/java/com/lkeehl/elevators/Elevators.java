@@ -15,11 +15,10 @@ public class Elevators extends JavaPlugin {
         DataContainerService.init(this);
         ElevatorVersionService.init();
         ElevatorEffectService.init();
+        ElevatorRecipeService.init();
         ElevatorTypeService.init();
         ElevatorActionService.init();
         ObstructionService.init();
-
-        // TODO: load config
 
         this.reloadElevators();
     }
@@ -30,7 +29,7 @@ public class Elevators extends JavaPlugin {
     }
 
     private void reloadElevators() {
-
+        // TODO: load config
     }
 
     public static Elevators getInstance() {

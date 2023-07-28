@@ -1,7 +1,9 @@
 package com.lkeehl.elevators.services;
 
+import com.lkeehl.elevators.models.ElevatorRecipeGroup;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
+import com.lkeehl.elevators.services.configs.ConfigRecipe;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 
 import java.util.*;
@@ -38,25 +40,17 @@ public class ElevatorTypeService {
     }
 
     private static ElevatorType createElevatorFromConfig(String elevatorTypeKey, ConfigElevatorType config) {
-        ElevatorType elevatorType = new ElevatorType(elevatorTypeKey);
-
-        elevatorType.setDisplayName(config.displayName);
-        elevatorType.setMaxDistanceAllowedBetweenElevators(config.maxDistance);
-        elevatorType.setMaxSolidBlocksAllowedBetweenElevators(config.maxSolidBlocks);
-        elevatorType.setMaxStackSize(config.maxStackSize);
-        elevatorType.getLore().addAll(config.loreLines);
-        elevatorType.setCanRecipesProduceColor(config.coloredOutput);
-        elevatorType.setCanTeleportToOtherColor(config.checkColor);
-        elevatorType.setCheckDestinationElevatorType(config.classCheck);
-        elevatorType.setBlocksObstruction(config.stopObstruction);
-        elevatorType.setElevatorRequiresPermissions(config.checkPerms);
-        elevatorType.setCanElevatorExplode(config.canExplode);
+        ElevatorType elevatorType = new ElevatorType(elevatorTypeKey, config);
 
         elevatorType.getActionsUp().addAll(config.actions.up.stream().map(i->ElevatorActionService.createActionFromString(elevatorType, i)).filter(Objects::nonNull).collect(Collectors.toList()));
         elevatorType.getActionsDown().addAll(config.actions.down.stream().map(i->ElevatorActionService.createActionFromString(elevatorType, i)).filter(Objects::nonNull).collect(Collectors.toList()));
 
         elevatorType.setElevatorUpEffect(ElevatorEffectService.getEffectFromKey(config.effects.up));
         elevatorType.setElevatorDownEffect(ElevatorEffectService.getEffectFromKey(config.effects.down));
+
+        Map<String, ConfigRecipe> recipeMap = ConfigService.getElevatorRecipes(elevatorTypeKey);
+        for(String recipeKey : recipeMap.keySet())
+            ElevatorRecipeService.registerElevatorRecipeGroup(elevatorType, new ElevatorRecipeGroup(recipeKey, elevatorType, recipeMap.get(recipeKey)));
 
         return elevatorType;
     }

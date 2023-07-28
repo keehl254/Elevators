@@ -42,6 +42,16 @@ public class ShulkerBoxHelper {
         return (ShulkerBox) box.getBlock().getState();
     }
 
+    public static void playClose(ShulkerBox box) {
+        if (MCVersionHelper.doesVersionSupportOpenCloseAPI())
+            box.close();
+    }
+
+    public static void playOpen(ShulkerBox box) {
+        if (MCVersionHelper.doesVersionSupportOpenCloseAPI())
+            box.open();
+    }
+
 
 
 }

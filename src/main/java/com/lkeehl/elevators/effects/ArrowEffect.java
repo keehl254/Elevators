@@ -13,6 +13,10 @@ import java.util.Objects;
 
 public class ArrowEffect extends ElevatorEffect {
 
+    public ArrowEffect() {
+        super("ARROW");
+    }
+
     @Override
     public void playEffect(ElevatorSearchResult teleportResult, ElevatorType elevatorType, byte direction) {
 

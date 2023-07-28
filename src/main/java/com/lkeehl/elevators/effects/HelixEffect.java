@@ -10,6 +10,10 @@ import java.util.Objects;
 
 public class HelixEffect extends ElevatorEffect {
 
+    public HelixEffect() {
+        super("HELIX");
+    }
+
     @Override
     public void playEffect(ElevatorSearchResult teleportResult, ElevatorType elevatorType, byte direction) {
         Location locClone = this.getEffectLocation(teleportResult).getBlock().getLocation();

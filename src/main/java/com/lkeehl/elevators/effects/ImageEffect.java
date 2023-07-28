@@ -18,8 +18,6 @@ import java.util.UUID;
 
 public class ImageEffect extends ElevatorEffect {
 
-    private final String imageEffectKey;
-
     private final int[][] rgbPattern;
 
     private final float duration;
@@ -29,10 +27,11 @@ public class ImageEffect extends ElevatorEffect {
     private final int height;
 
     public ImageEffect(String imageEffectKey, File file, int scale, float duration, boolean useHolo, String hexBackgroundColor) {
+        super(imageEffectKey);
+
         scale = Math.max(0, Math.min(100, scale));
         int backgroundRGB = ColorHelper.getRGBFromHex(hexBackgroundColor);
 
-        this.imageEffectKey = imageEffectKey;
         this.duration = duration;
         this.useHolo = useHolo && Holo.isHooked();
 
@@ -65,7 +64,7 @@ public class ImageEffect extends ElevatorEffect {
             height = image.getHeight();
         }catch (IOException e){
             e.printStackTrace();
-            Elevators.getElevatorsLogger().warning("Error loading image for effect \"" + this.imageEffectKey + "\". Effect disabled.");
+            Elevators.getElevatorsLogger().warning("Error loading image for effect \"" + this.getEffectKey() + "\". Effect disabled.");
         }
         this.height = height;
         this.rgbPattern = rgbPattern;
@@ -83,7 +82,7 @@ public class ImageEffect extends ElevatorEffect {
             if (holo != null)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Elevators.getInstance(), () -> Holo.deleteHologram(holo), (long) (duration * 20));
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().warning("Effect \"" + this.imageEffectKey + "\" is too wide to use holographic displays. Max width is 150");
+            Elevators.getElevatorsLogger().warning("Effect \"" + this.getEffectKey() + "\" is too wide to use holographic displays. Max width is 150");
         }
     }
 

@@ -12,6 +12,12 @@ import org.bukkit.block.ShulkerBox;
 
 public abstract class ElevatorEffect {
 
+    private String effectKey;
+
+    public ElevatorEffect(String effectKey) {
+        this.effectKey = effectKey;
+    }
+
     protected Location getEffectLocation(ElevatorSearchResult teleportResult) {
         if(ConfigService.getRootConfig().playEffectAtDestination)
             return teleportResult.getDestination().getLocation();
@@ -31,6 +37,10 @@ public abstract class ElevatorEffect {
             return Color.WHITE;
 
         return this.extractColorFromDyeColor(((ShulkerBox)blockState).getColor());
+    }
+
+    public String getEffectKey() {
+        return this.effectKey;
     }
 
     public abstract void playEffect(ElevatorSearchResult teleportResult, ElevatorType elevatorType, byte direction);

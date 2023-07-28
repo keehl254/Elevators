@@ -11,24 +11,37 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ElevatorHelper {
 
-    static boolean isElevator(ShulkerBox box) {
+    public static boolean isElevator(ShulkerBox box) {
         return ElevatorVersionService.getElevatorType(box) != null;
     }
 
-    static ElevatorType getElevatorType(ItemStack item) {
+    public static boolean isElevator(Block block) {
+        return ElevatorVersionService.getElevatorType(block) != null;
+    }
+
+    public static boolean isElevator(ItemStack itemStack) {
+        return ElevatorVersionService.getElevatorType(itemStack) != null;
+    }
+
+    public static boolean isElevator(Item item) {
+        return ElevatorVersionService.getElevatorType(item.getItemStack()) != null;
+    }
+
+    public static ElevatorType getElevatorType(ItemStack item) {
         return ElevatorVersionService.getElevatorType(item);
     }
 
-    static ElevatorType getElevatorType(Block block) {
+    public static ElevatorType getElevatorType(Block block) {
         return ElevatorVersionService.getElevatorType(block);
     }
 
-    static ElevatorType getElevatorType(ShulkerBox box) {
+    public static ElevatorType getElevatorType(ShulkerBox box) {
         return ElevatorVersionService.getElevatorType(box);
     }
 
@@ -55,11 +68,11 @@ public class ElevatorHelper {
         return floor;
     }
 
-    static ElevatorSearchResult findDestinationElevator(Player player, ShulkerBox origin, ElevatorType elevatorType, byte direction) {
+    public static ElevatorSearchResult findDestinationElevator(Player player, ShulkerBox origin, ElevatorType elevatorType, byte direction) {
         return findDestinationElevator(player, origin.getLocation(), elevatorType, origin.getColor(), direction, false, false, false);
     }
 
-    static ElevatorSearchResult findDestinationElevator(Player player, Location originLocation, ElevatorType elevatorType, DyeColor elevatorColor,  byte direction, boolean ignoreSolidBlockCheck, boolean ignoreDistanceCheck, boolean ignoreObstructionCheck) {
+    public static ElevatorSearchResult findDestinationElevator(Player player, Location originLocation, ElevatorType elevatorType, DyeColor elevatorColor,  byte direction, boolean ignoreSolidBlockCheck, boolean ignoreDistanceCheck, boolean ignoreObstructionCheck) {
 
         World world = originLocation.getWorld();
         if(world == null)
@@ -95,16 +108,16 @@ public class ElevatorHelper {
                 continue;
 
             if(elevatorType.canTeleportToObstructedBlock() || ignoreObstructionCheck)
-                return new ElevatorSearchResult(originLocation,tempShulkerBox, 0.0D);
+                return new ElevatorSearchResult(originLocation, elevatorType, tempShulkerBox, direction, 0.0D);
 
             double addition = player != null ? ObstructionService.getHitBoxAddition(tempBlock.getRelative(BlockFace.UP), player) : 0.0;
             if (addition >= 0)
-                return new ElevatorSearchResult(originLocation, tempShulkerBox, Math.abs(addition));
+                return new ElevatorSearchResult(originLocation, elevatorType, tempShulkerBox, direction, Math.abs(addition));
         } while(tempLocation.getBlockY() != endPointY);
 
         return null;
     }
 
-    
+
 
 }

@@ -5,12 +5,14 @@ import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.DataContainerService;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -21,8 +23,19 @@ public class ItemStackHelper {
         return !type.toString().endsWith("SHULKER_BOX");
     }
 
+    public static DyeColor getDyeColorFromMaterial(Material material) {
+        String colorString = material.name().split("_")[0];
+        try {
+            return DyeColor.valueOf(colorString);
+        } catch (Exception ignored) {
+        }
+
+        return null;
+    }
+
     public static Material getVariant(Material type, DyeColor color) {
         String name = type.toString().toLowerCase();
+
         for (DyeColor tColor : DyeColor.values()) {
             if (name.startsWith(tColor.toString().toLowerCase() + "_"))
                 name = name.replaceFirst(Pattern.quote(tColor.toString().toLowerCase()), "");
@@ -49,14 +62,23 @@ public class ItemStackHelper {
         return elevator;
     }
 
-    public static ItemStack createItemStackFromElevator(Elevator elevator) {
-
-        ItemStack itemStack = new ItemStack(elevator.getShulkerBox().getType(), 1);
+    public static ItemStack createItemStackFromElevatorType(ElevatorType elevatorType, DyeColor dyeColor) {
+        ItemStack itemStack = new ItemStack(getVariant(Material.WHITE_SHULKER_BOX, dyeColor), 1);
         ItemMeta meta = itemStack.getItemMeta();
         if(meta == null) return itemStack; // How?
 
-        meta.setDisplayName(elevator.getElevatorType().getDisplayName()); // TODO: Format the display name.
-        meta.setLore(elevator.getElevatorType().getLore()); // TODO: Format the lore.
+        meta.setDisplayName(elevatorType.getDisplayName()); // TODO: Format the display name.
+        meta.setLore(elevatorType.getLore()); // TODO: Format the lore.
+
+        DataContainerService.setElevatorKey(itemStack, elevatorType);
+
+        return itemStack;
+    }
+
+    public static ItemStack createItemStackFromElevator(Elevator elevator) {
+
+        ItemStack itemStack = createItemStackFromElevatorType(elevator.getElevatorType(), DyeColor.WHITE);
+        itemStack.setType(elevator.getShulkerBox().getType());
 
         DataContainerService.dumpDataFromShulkerBoxIntoItem(elevator.getShulkerBox(), itemStack);
 

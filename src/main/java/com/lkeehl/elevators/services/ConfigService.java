@@ -4,6 +4,7 @@ import com.lkeehl.elevators.services.configs.ConfigEffect;
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigRecipe;
 import com.lkeehl.elevators.services.configs.ConfigRoot;
+import org.bukkit.World;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -79,6 +80,10 @@ public class ConfigService {
         }
 
         return map;
+    }
+
+    public static boolean isWorldDisabled(World world) {
+        return ConfigService.getRootConfig().disabledWorlds.stream().anyMatch(i -> i.equalsIgnoreCase(world.getName()));
     }
 
 }
