@@ -38,6 +38,8 @@ public class ConfigService {
 
     public static void addConfigCallback(Consumer<CommentedConfigurationNode> callback) {
         ConfigService.configLoadCallbacks.add(callback);
+        if(rootNode != null)
+            callback.accept(rootNode);
     }
 
     public static ConfigRoot getRootConfig() {

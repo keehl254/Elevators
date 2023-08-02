@@ -1,9 +1,11 @@
 package com.lkeehl.elevators;
 
+import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.services.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import world.bentobox.bentobox.api.hooks.Hook;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -19,6 +21,8 @@ public class Elevators extends JavaPlugin {
         ElevatorTypeService.init();
         ElevatorActionService.init();
         ObstructionService.init();
+        HookService.init();
+        ListenerService.init();
 
         this.reloadElevators();
     }
@@ -29,7 +33,11 @@ public class Elevators extends JavaPlugin {
     }
 
     private void reloadElevators() {
-        // TODO: load config
+
+        File configFile = new File(this.getDataFolder(), "config.yml");
+        ResourceHelper.exportResource(this, "config.yml", configFile,false);
+
+        ConfigService.loadConfig(configFile);
     }
 
     public static Elevators getInstance() {
