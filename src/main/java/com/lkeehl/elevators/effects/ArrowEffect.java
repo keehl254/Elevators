@@ -2,10 +2,9 @@ package com.lkeehl.elevators.effects;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.ElevatorEffect;
-import com.lkeehl.elevators.models.ElevatorSearchResult;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.*;
-import org.bukkit.block.ShulkerBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,8 @@ public class ArrowEffect extends ElevatorEffect {
     }
 
     @Override
-    public void playEffect(ElevatorSearchResult teleportResult, ElevatorType elevatorType, byte direction) {
+    public void playEffect(ElevatorEventData teleportResult) {
+        byte direction = teleportResult.getDirection();
 
         Color particleColor = this.getParticleColor(teleportResult);
 

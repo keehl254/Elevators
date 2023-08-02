@@ -90,7 +90,7 @@ public abstract class ElevatorAction {
 
     protected abstract void onInitialize(String value);
 
-    public abstract void execute(ShulkerBox origin, ShulkerBox destination, ElevatorType elevatorType, Player player);
+    public abstract void execute(ElevatorEventData eventData, Player player);
 
     public abstract CompletableFuture<Boolean> openCreate(ElevatorType elevator, Player player, byte direction);
 

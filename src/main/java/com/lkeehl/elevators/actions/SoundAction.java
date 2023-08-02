@@ -2,6 +2,7 @@ package com.lkeehl.elevators.actions;
 
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.Sound;
 import org.bukkit.block.ShulkerBox;
@@ -23,8 +24,8 @@ public class SoundAction extends ElevatorAction {
     }
 
     @Override
-    public void execute(ShulkerBox from, ShulkerBox to, ElevatorType elevator, Player player) {
-        from.getWorld().playSound(from.getLocation(), this.getGroupingObject(soundGrouping), this.getGroupingObject(volumeGrouping), this.getGroupingObject(pitchGrouping));
+    public void execute(ElevatorEventData eventData, Player player) {
+        eventData.getOrigin().getWorld().playSound(eventData.getOrigin().getLocation(), this.getGroupingObject(soundGrouping), this.getGroupingObject(volumeGrouping), this.getGroupingObject(pitchGrouping));
     }
 
     @Override

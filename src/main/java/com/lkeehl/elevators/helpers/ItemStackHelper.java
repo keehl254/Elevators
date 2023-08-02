@@ -5,14 +5,12 @@ import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.DataContainerService;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -65,7 +63,7 @@ public class ItemStackHelper {
     public static ItemStack createItemStackFromElevatorType(ElevatorType elevatorType, DyeColor dyeColor) {
         ItemStack itemStack = new ItemStack(getVariant(Material.WHITE_SHULKER_BOX, dyeColor), 1);
         ItemMeta meta = itemStack.getItemMeta();
-        if(meta == null) return itemStack; // How?
+        if (meta == null) return itemStack; // How?
 
         meta.setDisplayName(elevatorType.getDisplayName()); // TODO: Format the display name.
         meta.setLore(elevatorType.getLore()); // TODO: Format the lore.
@@ -91,7 +89,13 @@ public class ItemStackHelper {
         if (elevatorType == null)
             return;
         DataContainerService.updateItemStackFromV2(item, elevatorType);
-        elevatorType.updateItemDisplay(item);
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(MessageHelper.formatColors(elevatorType.getDisplayName()));
+            meta.setLore(MessageHelper.formatColors(elevatorType.getLore()));
+            item.setItemMeta(meta);
+        }
 
         while (item.getAmount() > 0) {
             ItemStack elevator = findElevatorType(elevatorType, item, inv);

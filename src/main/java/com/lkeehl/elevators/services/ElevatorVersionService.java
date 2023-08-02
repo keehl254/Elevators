@@ -3,7 +3,6 @@ package com.lkeehl.elevators.services;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.configs.ConfigEffect;
 import com.lkeehl.elevators.services.versions.ElevatorsV1;
 import com.lkeehl.elevators.services.versions.ElevatorsV2;
 import com.lkeehl.elevators.services.versions.ElevatorsV3;

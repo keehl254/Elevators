@@ -1,7 +1,8 @@
 package com.lkeehl.elevators.helpers;
 
-import com.lkeehl.elevators.models.ElevatorSearchResult;
-import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.models.*;
+import com.lkeehl.elevators.services.ElevatorEffectService;
 import com.lkeehl.elevators.services.ElevatorVersionService;
 import com.lkeehl.elevators.services.ObstructionService;
 import org.bukkit.DyeColor;
@@ -13,7 +14,12 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
+
+import java.util.List;
 
 public class ElevatorHelper {
 
@@ -53,9 +59,9 @@ public class ElevatorHelper {
         startingLocation.setY(worldMinHeight);
 
         int floor = 0;
-        ElevatorSearchResult searchResult;
+        ElevatorEventData searchResult = new ElevatorEventData(box, elevatorType, null, (byte) 1, 0.0F);
         do {
-            searchResult = findDestinationElevator(null, startingLocation, elevatorType, box.getColor(), (byte) 1, false, false, true);
+            searchResult = findDestinationElevator(null, searchResult.getOrigin(), elevatorType, box.getColor(), (byte) 1, false, false, true);
             if(searchResult == null)
                 continue;
             floor++;
@@ -68,23 +74,21 @@ public class ElevatorHelper {
         return floor;
     }
 
-    public static ElevatorSearchResult findDestinationElevator(Player player, ShulkerBox origin, ElevatorType elevatorType, byte direction) {
-        return findDestinationElevator(player, origin.getLocation(), elevatorType, origin.getColor(), direction, false, false, false);
+    public static ElevatorEventData findDestinationElevator(Player player, ShulkerBox origin, ElevatorType elevatorType, byte direction) {
+        return findDestinationElevator(player, origin, elevatorType, origin.getColor(), direction, false, false, false);
     }
 
-    public static ElevatorSearchResult findDestinationElevator(Player player, Location originLocation, ElevatorType elevatorType, DyeColor elevatorColor,  byte direction, boolean ignoreSolidBlockCheck, boolean ignoreDistanceCheck, boolean ignoreObstructionCheck) {
+    public static ElevatorEventData findDestinationElevator(Player player, ShulkerBox origin, ElevatorType elevatorType, DyeColor elevatorColor, byte direction, boolean ignoreSolidBlockCheck, boolean ignoreDistanceCheck, boolean ignoreObstructionCheck) {
 
-        World world = originLocation.getWorld();
-        if(world == null)
-            return null;
+        World world = origin.getWorld();
 
         int worldMinHeight = MCVersionHelper.getWorldMinHeight(world);
         int maxDistance = elevatorType.getMaxDistanceAllowedBetweenElevators() == -1 || ignoreDistanceCheck ? Short.MAX_VALUE : elevatorType.getMaxDistanceAllowedBetweenElevators();
 
-        int endPointY = Math.min(world.getMaxHeight(), Math.max(worldMinHeight, originLocation.getBlockY() + (maxDistance * direction)));
+        int endPointY = Math.min(world.getMaxHeight(), Math.max(worldMinHeight, origin.getY() + (maxDistance * direction)));
 
         int solidBlocks = elevatorType.getMaxSolidBlocksAllowedBetweenElevators() == -1 || ignoreSolidBlockCheck ? Short.MIN_VALUE : 0;
-        Location tempLocation = originLocation.clone();
+        Location tempLocation = origin.getLocation().clone();
         do {
             tempLocation = tempLocation.add(0,direction,0);
             Block tempBlock = tempLocation.getBlock();
@@ -108,14 +112,64 @@ public class ElevatorHelper {
                 continue;
 
             if(elevatorType.canTeleportToObstructedBlock() || ignoreObstructionCheck)
-                return new ElevatorSearchResult(originLocation, elevatorType, tempShulkerBox, direction, 0.0D);
+                return new ElevatorEventData(origin, elevatorType, tempShulkerBox, direction, 0.0D);
 
             double addition = player != null ? ObstructionService.getHitBoxAddition(tempBlock.getRelative(BlockFace.UP), player) : 0.0;
             if (addition >= 0)
-                return new ElevatorSearchResult(originLocation, elevatorType, tempShulkerBox, direction, Math.abs(addition));
+                return new ElevatorEventData(origin, elevatorType, tempShulkerBox, direction, Math.abs(addition));
         } while(tempLocation.getBlockY() != endPointY);
 
         return null;
+    }
+
+    public static void setElevatorDisabled(ShulkerBox shulkerBox) {
+        shulkerBox.setMetadata("elevator-disabled", new FixedMetadataValue(Elevators.getInstance(), true));
+    }
+
+    public static void setElevatorEnabled(ShulkerBox shulkerBox) {
+        shulkerBox.removeMetadata("elevator-disabled", Elevators.getInstance());
+    }
+
+    public static void onElevatorInteract(Player player, PlayerInteractEvent event, Elevator elevator) {
+
+    }
+
+    public static void onElevatorPlace(Elevator elevator) {
+
+    }
+
+    public static void onElevatorUse(Player player, ElevatorEventData elevatorEventData) {
+        ElevatorEffect effect;
+        List<ElevatorAction> actions;
+        if(elevatorEventData.getDirection() == 1) {
+            effect = elevatorEventData.getElevatorType().getElevatorUpEffect();
+            actions =  elevatorEventData.getElevatorType().getActionsUp();
+        }else {
+            effect = elevatorEventData.getElevatorType().getElevatorDownEffect();
+            actions =  elevatorEventData.getElevatorType().getActionsDown();
+        }
+
+        actions.forEach(action -> action.execute(elevatorEventData,  player));
+        effect.playEffect(elevatorEventData);
+
+    }
+
+    public static boolean hasOrAddPlayerCoolDown(Player player, String key) {
+        key = "elevator-cooldown-"+key;
+        if(player.hasMetadata(key)) {
+            MetadataValue value = player.getMetadata(key).get(0);
+            long lastTime = value.asLong();
+            if(System.currentTimeMillis() - lastTime < 1000)
+                return true;
+            player.removeMetadata(key, Elevators.getInstance());
+        }
+        player.setMetadata(key, new FixedMetadataValue(Elevators.getInstance(), System.currentTimeMillis()));
+        return false;
+    }
+
+    public static boolean isElevatorDisabled(ShulkerBox shulkerBox) {
+        return shulkerBox.hasMetadata("elevator-disabled");
+
     }
 
 

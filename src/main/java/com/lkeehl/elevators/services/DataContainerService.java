@@ -2,6 +2,7 @@ package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
+import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.ShulkerBox;
@@ -109,8 +110,6 @@ public class DataContainerService {
     }
 
     public static boolean shouldElevatorBeGPProtected(ShulkerBox box) {
-        if (!BaseElevators.supportsClaimProtection())
-            return false;
         PersistentDataContainer tagContainer = box.getPersistentDataContainer();
 
         if (tagContainer.has(DataContainerService.protectionKey, PersistentDataType.BYTE))
@@ -121,8 +120,6 @@ public class DataContainerService {
     }
 
     public static boolean toggleGPProtectionOnElevator(ShulkerBox box) {
-        if (!BaseElevators.supportsClaimProtection())
-            return false;
         PersistentDataContainer tagContainer = box.getPersistentDataContainer();
         byte current;
 
@@ -152,7 +149,7 @@ public class DataContainerService {
     public static ShulkerBox updateBox(ShulkerBox box, ElevatorType type) {
         box.update(true);
 
-        return TagHelper.updateTypeKeyOnElevator(box, type);
+        return DataContainerService.updateTypeKeyOnElevator(box, type);
     }
 
     public static void updateItemStackFromV2(ItemStack item, ElevatorType type) {
@@ -161,7 +158,7 @@ public class DataContainerService {
         ItemMeta meta = item.getItemMeta();
         if (meta.hasDisplayName()) {
             String name = meta.getDisplayName();
-            int sub = name.indexOf(BaseUtil.hideText("CoreEleKey:"));
+            int sub = name.indexOf(MessageHelper.hideText("CoreEleKey:"));
             if (sub > -1) {
                 name = name.substring(0, sub);
                 meta.setDisplayName(name);

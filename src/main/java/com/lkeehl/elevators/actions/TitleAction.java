@@ -1,7 +1,9 @@
 package com.lkeehl.elevators.actions;
 
+import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -23,9 +25,9 @@ public class TitleAction extends ElevatorAction {
     }
 
     @Override
-    public void execute(ShulkerBox origin, ShulkerBox destination, ElevatorType elevatorType, Player player) {
-        String title = elevator.formatPlaceholders(player, origin, destination, BaseUtil.formatColors(this.getGroupingObject(titleGrouping)));
-        String subTitle = elevator.formatPlaceholders(player, origin, destination, BaseUtil.formatColors(this.getGroupingObject(subTitleGrouping)));
+    public void execute(ElevatorEventData eventData, Player player) {
+        String title = formatText(this.getGroupingObject(titleGrouping), eventData, player);
+        String subTitle = formatText(this.getGroupingObject(subTitleGrouping), eventData, player);
 
         player.sendTitle(title, subTitle, 10, 70, 20);
     }
@@ -33,5 +35,13 @@ public class TitleAction extends ElevatorAction {
     @Override
     public CompletableFuture<Boolean> openCreate(ElevatorType elevator, Player player, byte direction) {
         return null;
+    }
+
+    private String formatText(String message, ElevatorEventData eventData, Player player) {
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, message);
+        value = MessageHelper.formatPlaceholders(player, value);
+        value = MessageHelper.formatColors(value);
+
+        return value;
     }
 }

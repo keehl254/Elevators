@@ -250,14 +250,6 @@ public class ElevatorType {
 
     //endregion
 
-
-    public void onElevatorUse(Player player, ShulkerBox origin, ShulkerBox destination, double additionalY, byte direction) {
-
-        List<ElevatorAction> actions = direction == 1 ? this.getActionsUp() : this.getActionsDown();
-        actions.forEach(action -> action.execute(origin, destination, this,  player));
-
-    }
-
     public void save() {
 
     }

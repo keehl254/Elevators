@@ -3,8 +3,10 @@ package com.lkeehl.elevators.effects;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ColorHelper;
 import com.lkeehl.elevators.models.ElevatorEffect;
-import com.lkeehl.elevators.models.ElevatorSearchResult;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.models.hooks.WrappedHologram;
+import com.lkeehl.elevators.services.HookService;
 import org.bukkit.*;
 import org.bukkit.Color;
 
@@ -13,7 +15,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.UUID;
 
 public class ImageEffect extends ElevatorEffect {
@@ -33,7 +34,7 @@ public class ImageEffect extends ElevatorEffect {
         int backgroundRGB = ColorHelper.getRGBFromHex(hexBackgroundColor);
 
         this.duration = duration;
-        this.useHolo = useHolo && Holo.isHooked();
+        this.useHolo = useHolo && HookService.getHologramHook() != null;
 
         int height = 0;
         int[][] rgbPattern = new int[][]{};
@@ -78,9 +79,9 @@ public class ImageEffect extends ElevatorEffect {
                     lines[y] = (lines[y] != null ? lines[y] : "") + (rgbPattern[y] == 0 ? ChatColor.BOLD + " " + ChatColor.RESET + " " : ColorHelper.getChatStringFromColor(rgbPattern[y]) + "█");
             }
 
-            UUID holo = Holo.createHologram(location, 0.0, lines);
-            if (holo != null)
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Elevators.getInstance(), () -> Holo.deleteHologram(holo), (long) (duration * 20));
+            WrappedHologram hologram = HookService.getHologramHook().createHologram(location, 0.0, lines);
+            if (hologram != null)
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Elevators.getInstance(), hologram::delete, (long) (duration * 20));
         } catch (Exception e) {
             Elevators.getElevatorsLogger().warning("Effect \"" + this.getEffectKey() + "\" is too wide to use holographic displays. Max width is 150");
         }
@@ -118,7 +119,7 @@ public class ImageEffect extends ElevatorEffect {
     }
 
     @Override
-    public void playEffect(ElevatorSearchResult teleportResult, ElevatorType elevatorType, byte direction) {
+    public void playEffect(ElevatorEventData teleportResult) {
         if(this.height <= 0)
             return;
 

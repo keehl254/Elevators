@@ -1,6 +1,7 @@
 package com.lkeehl.elevators.services.hooks;
 
-import com.lkeehl.elevators.models.ElevatorHook;
+import com.lkeehl.elevators.models.Elevator;
+import com.lkeehl.elevators.models.hooks.ElevatorHook;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.plotsquared.core.PlotAPI;
 import com.plotsquared.core.configuration.caption.Caption;
@@ -27,7 +28,7 @@ public class PlotSquaredHook implements ElevatorHook {
     }
 
     @Override
-    public boolean canPlayerUseElevator(Player player, ShulkerBox box, ElevatorType elevatorType) {
+    public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
 
         PlotPlayer<?> plotPlayer = this.api.wrapPlayer(player.getUniqueId());
         if(plotPlayer == null)

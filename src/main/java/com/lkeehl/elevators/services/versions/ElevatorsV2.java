@@ -1,7 +1,9 @@
 package com.lkeehl.elevators.services.versions;
 
 import com.lkeehl.elevators.helpers.ItemStackHelper;
+import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.services.DataContainerService;
 import com.lkeehl.elevators.services.ElevatorVersionService;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
@@ -18,16 +20,16 @@ public class ElevatorsV2 extends ElevatorVersionService.ElevatorVersion {
         if (!Objects.requireNonNull(itemStack.getItemMeta()).hasDisplayName())
             return null;
         String customName = itemStack.getItemMeta().getDisplayName();
-        if (!customName.contains(BaseUtil.hideText("CoreEleKey:")))
+        if (!customName.contains(MessageHelper.hideText("CoreEleKey:")))
             return null;
 
-        int sub = customName.indexOf(BaseUtil.hideText("CoreEleKey:"));
+        int sub = customName.indexOf(MessageHelper.hideText("CoreEleKey:"));
         if (sub == -1)
             return null;
         customName = customName.substring(sub);
         String hidden;
         try {
-            hidden = BaseUtil.revealText(customName.toLowerCase());
+            hidden = MessageHelper.revealText(customName.toLowerCase());
         } catch (Exception e) {
             return null;
         }
@@ -37,7 +39,7 @@ public class ElevatorsV2 extends ElevatorVersionService.ElevatorVersion {
             return null;
         ElevatorType elevatorType = getClassFromBoxName(hidden.split(":")[1]);
         if(elevatorType != null)
-            BaseElevators.getTag().updateItem(itemStack, elevatorType);
+            DataContainerService.setElevatorKey(itemStack, elevatorType);
         return elevatorType;
     }
 
@@ -46,16 +48,16 @@ public class ElevatorsV2 extends ElevatorVersionService.ElevatorVersion {
         if (box.getCustomName() == null)
             return null;
         String customName = box.getCustomName();
-        if(!customName.contains(BaseUtil.hideText("CoreEleKey:")))
+        if(!customName.contains(MessageHelper.hideText("CoreEleKey:")))
             return null;
 
-        int sub = customName.indexOf(BaseUtil.hideText("CoreEleKey:"));
+        int sub = customName.indexOf(MessageHelper.hideText("CoreEleKey:"));
         if (sub == -1)
             return null;
         customName = customName.substring(sub);
         String hidden;
         try {
-            hidden = BaseUtil.revealText(customName.toLowerCase());
+            hidden = MessageHelper.revealText(customName.toLowerCase());
         } catch (Exception e) {
             return null;
         }
@@ -76,8 +78,8 @@ public class ElevatorsV2 extends ElevatorVersionService.ElevatorVersion {
     @Override
     public ShulkerBox convertToLaterVersion(ShulkerBox box) {
         ElevatorType elevatorType = getElevatorType(box);
-        box = BaseElevators.getTag().fixPlacedBlock(box, elevatorType);
-        box = BaseElevators.getTag().updateBox(box, elevatorType);
+        box = DataContainerService.updateTypeKeyOnElevator(box,elevatorType);
+        box = DataContainerService.updateBox(box, elevatorType);
         return box;
     }
 

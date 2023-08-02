@@ -2,21 +2,20 @@ package com.lkeehl.elevators.services.listeners;
 
 import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
+import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
 import com.lkeehl.elevators.models.Elevator;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.ConfigService;
 import com.lkeehl.elevators.services.DataContainerService;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.entity.Item;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -63,9 +62,8 @@ public class WorldEventExecutor {
         if (event.getPlayer().isSneaking()) {
             if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
 
-            elevatorType.onInteract(box, event);
+            ElevatorHelper.onElevatorInteract(event.getPlayer(), event, new Elevator(box,elevatorType));
         }
-        this.onInteract(elevatorType, box);
     }
 
     public static void onDispenserPlace(BlockDispenseEvent event) {
@@ -82,7 +80,7 @@ public class WorldEventExecutor {
 
             box = DataContainerService.updateTypeKeyOnElevator(box, elevatorType);
             DataContainerService.dumpDataFromItemIntoShulkerBox(box, event.getItem());
-            this.onPlace(elevatorType, box);
+            ElevatorHelper.onElevatorPlace(new Elevator(box,elevatorType));
             if (ConfigService.getRootConfig().forceFacingUpwards)
                 ShulkerBoxHelper.setFacingUp(box);
         });
@@ -103,11 +101,7 @@ public class WorldEventExecutor {
     }
 
     public static void onBlockPlace(BlockPlaceEvent event) {
-        if (ElevatorsAPI.isElevatorDisabled(event.getBlock().getLocation())) {
-            event.setCancelled(true);
-            return;
-        }
-        //TODO: Check if elevator is disabled.
+        //TODO: Check if elevator is disabled based on location for speed.
 
         ItemStack item = event.getItemInHand();
         Material type = item.getType();
@@ -118,7 +112,7 @@ public class WorldEventExecutor {
 
         if (ConfigService.isWorldDisabled(event.getBlock().getWorld())) {
             event.setCancelled(true);
-            BaseUtil.sendMessage(event.getPlayer(), BaseElevators.locale.get("worldDisabledMessage"));
+            MessageHelper.sendWorldDisabledMessage(event.getPlayer(), new ElevatorEventData(elevatorType));
             return;
         }
         int count = item.getAmount();
@@ -126,7 +120,7 @@ public class WorldEventExecutor {
             item.setAmount(count - 1);
 
         ShulkerBox box = DataContainerService.updateTypeKeyOnElevator((ShulkerBox) event.getBlockPlaced().getState(), elevatorType);
-        this.onPlace(elevatorType, box);
+        ElevatorHelper.onElevatorPlace(new Elevator(box,elevatorType));
 
         if (ConfigService.getRootConfig().forceFacingUpwards)
             ShulkerBoxHelper.setFacingUp(box);

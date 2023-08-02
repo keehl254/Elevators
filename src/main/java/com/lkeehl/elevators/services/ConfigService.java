@@ -1,9 +1,6 @@
 package com.lkeehl.elevators.services;
 
-import com.lkeehl.elevators.services.configs.ConfigEffect;
-import com.lkeehl.elevators.services.configs.ConfigElevatorType;
-import com.lkeehl.elevators.services.configs.ConfigRecipe;
-import com.lkeehl.elevators.services.configs.ConfigRoot;
+import com.lkeehl.elevators.services.configs.*;
 import org.bukkit.World;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
@@ -23,6 +20,8 @@ public class ConfigService {
 
     private static YamlConfigurationLoader loader;
     private static CommentedConfigurationNode rootNode;
+
+    private static ConfigLocale defaultLocaleConfig;
 
     private static final List<Consumer<CommentedConfigurationNode>> configLoadCallbacks = new ArrayList<>();
 
@@ -47,6 +46,13 @@ public class ConfigService {
         } catch (SerializationException e) {
             return new ConfigRoot();
         }
+    }
+
+    public static ConfigLocale getDefaultLocaleConfig() {
+        if(ConfigService.defaultLocaleConfig == null)
+            ConfigService.defaultLocaleConfig = new ConfigLocale();
+
+        return ConfigService.defaultLocaleConfig;
     }
 
     public static Map<String, ConfigEffect> getEffectConfigs() {

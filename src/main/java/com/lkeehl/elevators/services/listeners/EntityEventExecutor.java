@@ -3,27 +3,21 @@ package com.lkeehl.elevators.services.listeners;
 import com.lkeehl.elevators.events.ElevatorUseEvent;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.ElevatorPermHelper;
-import com.lkeehl.elevators.helpers.ItemStackHelper;
-import com.lkeehl.elevators.models.ElevatorSearchResult;
+import com.lkeehl.elevators.helpers.MessageHelper;
+import com.lkeehl.elevators.models.Elevator;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.HookService;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.Map;
 
 public class EntityEventExecutor {
 
-    public void onJumpDefault(PlayerMoveEvent e) {
+    public static void onJumpDefault(PlayerMoveEvent e) {
 
         if (e.getTo() == null || e.getPlayer().isFlying()) return;
         if (((Math.ceil((e.getFrom().getY() % 1) * 10000.0) / 10000.0) % 0.0625) != 0) return;
@@ -31,87 +25,75 @@ public class EntityEventExecutor {
         if (((Math.ceil((e.getTo().getY() - e.getFrom().getY()) * 10000.0) / 10000.0) % 0.0625) == 0) return;
 
         Block block = e.getPlayer().getLocation().subtract(0, 1, 0).getBlock();
-        if (!(block.getState() instanceof ShulkerBox)) return;
+        if (!(block.getState() instanceof ShulkerBox box)) return;
 
-        ShulkerBox box = (ShulkerBox) block.getState();
-        ElevatorType elevator = ElevatorHelper.getElevatorType(box.getBlock());
-        if (elevator == null) return;
+        ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
+        if (elevatorType == null) return;
 
-        BaseElevators.giveCooldown(e.getPlayer().getUniqueId());
+        if (!ElevatorHelper.hasOrAddPlayerCoolDown(e.getPlayer(), "use"))
+            return;
 
         if (ConfigService.isWorldDisabled(e.getPlayer().getWorld())) {
-            if (BaseElevators.hasNoCooldown(e.getPlayer().getUniqueId()))
-                BaseUtil.sendMessage(e.getPlayer(), BaseElevators.locale.get("worldDisabledMessage"));
+            if (ElevatorHelper.hasOrAddPlayerCoolDown(e.getPlayer(), "message"))
+                MessageHelper.sendWorldDisabledMessage(e.getPlayer(), new ElevatorEventData(elevatorType));
             return;
         }
 
-        String accessMessage = BaseElevators.getTag().supportsProtection(box) ? GriefPrevention.canAccess(e.getPlayer(), block) : null;
-        if (accessMessage != null) {
-            if (BaseElevators.hasNoCooldown(e.getPlayer().getUniqueId()))
-                e.getPlayer().sendMessage(ChatColor.RED + accessMessage);
+        Elevator elevator = new Elevator(box, elevatorType);
+        if(!HookService.canUseElevator(e.getPlayer(), elevator, true))
             return;
-        }
 
-        ElevatorSearchResult closest = ElevatorHelper.findDestinationElevator(e.getPlayer(), box, elevator, (byte) 1);
+        ElevatorEventData closest = ElevatorHelper.findDestinationElevator(e.getPlayer(), box, elevatorType, (byte) 1);
         if (closest == null) return;
 
-        if (!ElevatorPermHelper.canUseElevatorType(elevator, e.getPlayer(), box, (byte) 1)) {
-            if (BaseElevators.hasNoCooldown(e.getPlayer().getUniqueId()))
-                BaseUtil.sendMessage(e.getPlayer(), BaseElevators.locale.get("cantUseMessage"));
+        if (!ElevatorPermHelper.canUseElevator(e.getPlayer(), elevator, (byte) 1)) {
+            if (ElevatorHelper.hasOrAddPlayerCoolDown(e.getPlayer(), "message"))
+                MessageHelper.sendCantUseMessage(e.getPlayer(), closest);
             return;
         }
-
-        if (!elevator.allowsUse(e.getPlayer(), box, (byte) 1)) return;
-
 
         ElevatorUseEvent event = new ElevatorUseEvent(e.getPlayer(), box, closest);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
-        elevator.use(e.getPlayer(), box, closest.getKey(), closest.getValue(), (byte) 1);
+        ElevatorHelper.onElevatorUse(e.getPlayer(), closest);
     }
 
-    public void onSneak(PlayerToggleSneakEvent e) {
+    public static void onSneak(PlayerToggleSneakEvent e) {
         if (!e.isSneaking()) return;
 
         Block block = e.getPlayer().getLocation().getBlock().getLocation().subtract(0, 1, 0).getBlock();
         if (!(block.getState() instanceof ShulkerBox box)) return;
 
-        ElevatorType elevator = ElevatorHelper.getElevatorType(box.getBlock());
-        if (elevator == null) return;
+        ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
+        if (elevatorType == null) return;
 
         if (ConfigService.isWorldDisabled(e.getPlayer().getWorld())) {
-            BaseUtil.sendMessage(e.getPlayer(), BaseElevators.locale.get("worldDisabledMessage"));
+            MessageHelper.sendWorldDisabledMessage(e.getPlayer(), new ElevatorEventData(elevatorType));
             return;
         }
 
-        String accessMessage = BaseElevators.getTag().supportsProtection(box) ? GriefPrevention.canAccess(e.getPlayer(), block) : null;
-        if (accessMessage != null) {
-            e.getPlayer().sendMessage(ChatColor.RED + accessMessage);
+        Elevator elevator = new Elevator(box, elevatorType);
+        if(!HookService.canUseElevator(e.getPlayer(), elevator, true))
             return;
-        }
 
-        ElevatorSearchResult closest = ElevatorHelper.findDestinationElevator(e.getPlayer(), box, elevator, (byte) -1);
+        ElevatorEventData closest = ElevatorHelper.findDestinationElevator(e.getPlayer(), box, elevatorType, (byte) -1);
         if (closest == null) return;
 
-        if (!ElevatorPermHelper.canUseElevatorType(elevator, e.getPlayer(), box, (byte) -1)) {
-            if (BaseElevators.hasNoCooldown(e.getPlayer().getUniqueId())) {
-                BaseUtil.sendMessage(e.getPlayer(), BaseElevators.locale.get("cantUseMessage"));
-                BaseElevators.giveCooldown(e.getPlayer().getUniqueId());
-            }
+        if (!ElevatorPermHelper.canUseElevator(e.getPlayer(), elevator, (byte) -1)) {
+            if (ElevatorHelper.hasOrAddPlayerCoolDown(e.getPlayer(), "message"))
+                MessageHelper.sendCantUseMessage(e.getPlayer(), closest);
             return;
         }
-
-        if (!elevator.allowsUse(e.getPlayer(), box, (byte) -1)) return;
 
         ElevatorUseEvent event = new ElevatorUseEvent(e.getPlayer(), box, closest);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
-        elevator.use(e.getPlayer(), box, closest.getKey(), closest.getValue(), (byte) -1);
+        ElevatorHelper.onElevatorUse(e.getPlayer(), closest);
     }
 
-    public void onPickup(EntityPickupItemEvent e) {
+/*    public void onPickup(EntityPickupItemEvent e) {
         ItemStack item = e.getItem().getItemStack();
         if (ItemStackHelper.isNotShulkerBox(item.getType())) return;
         if (!ElevatorHelper.isElevator(item)) return;
@@ -123,7 +105,7 @@ public class EntityEventExecutor {
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 1);
         BaseUtil.giveElevator(e.getItem(), inv);
 
-        //TODO: With the new drop system, this may no longer be required. I hope not. A more natural pickup would be perfect.
-    }
+        TODO: With the new drop system, this may no longer be required. I hope not. A more natural pickup would be perfect.
+    }*/
 
 }

@@ -21,6 +21,7 @@ repositories {
     maven("https://jitpack.io/")
     maven("https://repo.fancyplugins.de/releases/")
     maven("https://repo.spongepowered.org/maven/")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     mavenLocal()
     mavenCentral()
 }
@@ -28,22 +29,25 @@ repositories {
 dependencies {
     implementation(platform("com.intellectualsites.bom:bom-newest:1.32"))
     implementation("org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.700")
-    implementation("de.oliver:FancyHolograms:1.1.0")
+    implementation("net.kyori:adventure-text-minimessage:4.14.0")
+    implementation("net.kyori:adventure-api:4.14.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
 
+    implementation("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
+    implementation("org.spigotmc:spigot:1.19-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
+    implementation("org.spongepowered:configurate-yaml:4.1.2")
 
-    compileOnly("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") // The Spigot API with no shadowing. Requires the OSS repo.
-    compileOnly("org.spigotmc:spigot:1.19-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
-    compileOnly("org.spongepowered:configurate-yaml:4.1.2")
+    implementation("com.github.TechFortress:GriefPrevention:16.18")
+    implementation("com.plotsquared:PlotSquared-Core:6.11.1")
+    implementation("com.plotsquared:PlotSquared-Bukkit:6.11.1") { isTransitive = false }
+    implementation("world.bentobox:bentobox:1.24.0-SNAPSHOT")
+    implementation("com.griefdefender:api:2.1.0-SNAPSHOT")
+    implementation("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.1-SNAPSHOT")
+    implementation("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.1-SNAPSHOT")
+    implementation("me.clip:placeholderapi:2.11.3")
 
-    compileOnly("com.github.TechFortress:GriefPrevention:16.18")
-    compileOnly("com.plotsquared:PlotSquared-Core:6.11.1")
-    compileOnly("com.plotsquared:PlotSquared-Bukkit:6.11.1") { isTransitive = false }
-    compileOnly("world.bentobox:bentobox:1.24.0-SNAPSHOT")
-    compileOnly("com.griefdefender:api:2.1.0-SNAPSHOT")
-    compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.1-SNAPSHOT")
-    compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.1-SNAPSHOT")
-
-    compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
+    implementation("com.github.decentsoftware-eu:decentholograms:2.8.3")
+    //implementation("de.oliver:FancyHolograms:2.0.0")
 
 }
 

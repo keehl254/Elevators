@@ -19,7 +19,7 @@ public class ElevatorsV3 extends ElevatorVersionService.ElevatorVersion {
 
     @Override
     public ElevatorType getElevatorType(ShulkerBox box) {
-        return getClassFromBoxName(BaseElevators.getTag().getElevatorType(box));
+        return getClassFromBoxName(DataContainerService.getElevatorKey(box));
     }
 
     @Override

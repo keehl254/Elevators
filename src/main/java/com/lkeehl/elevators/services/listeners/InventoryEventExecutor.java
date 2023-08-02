@@ -1,9 +1,7 @@
 package com.lkeehl.elevators.services.listeners;
 
-import com.lkeehl.elevators.helpers.ElevatorHelper;
-import com.lkeehl.elevators.helpers.ElevatorPermHelper;
-import com.lkeehl.elevators.helpers.ItemStackHelper;
-import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
+import com.lkeehl.elevators.helpers.*;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.DataContainerService;
 import org.bukkit.DyeColor;
@@ -35,14 +33,19 @@ public class InventoryEventExecutor {
         ItemStack item = event.getItem();
         ItemMeta meta = item.getItemMeta();
         if(meta == null) return;
-        if (item.getType().equals(Material.COMMAND_BLOCK) && (meta.getDisplayName().equalsIgnoreCase("elevator")))
+        if (item.getType().equals(Material.COMMAND_BLOCK) && (meta.getDisplayName().equalsIgnoreCase("elevator"))) {
             event.setCancelled(true);
+            return;
+        }
         InventoryHolder from = event.getSource().getHolder();
         InventoryHolder to = event.getDestination().getHolder();
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(event.getItem());
-        if (elevatorType != null)
-            event.setItem(elevatorType.updateItemDisplay(event.getItem()));
+        if (elevatorType != null) {
+            meta.setDisplayName(MessageHelper.formatColors(elevatorType.getDisplayName()));
+            meta.setLore(MessageHelper.formatColors(elevatorType.getLore()));
+            event.getItem().setItemMeta(meta);
+        }
 
         if (((from instanceof ShulkerBox fromBox) && (ElevatorHelper.isElevator(fromBox))) || ((to instanceof ShulkerBox toBox) && (ElevatorHelper.isElevator(toBox))))
             event.setCancelled(true);
@@ -73,7 +76,7 @@ public class InventoryEventExecutor {
         e.setResult(newElevator);
     }
 
-    public void onDyeCraft(CraftItemEvent e) {
+    public static void onDyeCraft(CraftItemEvent e) {
         if(!(e.getRecipe() instanceof Keyed keyedRecipe))
             return;
         if(!(e.getWhoClicked() instanceof Player player)) return;
@@ -88,17 +91,14 @@ public class InventoryEventExecutor {
         boolean isElevatorCraftingRecipe = keyedRecipe.getKey().getNamespace().equalsIgnoreCase("elevators");
         DyeColor dyeColor = ItemStackHelper.getDyeColorFromMaterial(e.getRecipe().getResult().getType());
 
-        String locale = null;
-
         if (isElevatorCraftingRecipe) {
-            if(!ElevatorPermHelper.canCraftElevatorType(elevatorType, player, (Recipe & Keyed) e.getRecipe(), dyeColor))
-                locale = BaseElevators.locale.get("cantCreateMessage");
-        } else if (!ElevatorPermHelper.canDyeElevatorType(elevatorType, player, dyeColor))
-            locale = BaseElevators.locale.get("cantDyeMessage");
-
-        if(locale != null) {
+            if(!ElevatorPermHelper.canCraftElevatorType(elevatorType, player, (Recipe & Keyed) e.getRecipe(), dyeColor)) {
+                MessageHelper.sendCantCreateMessage(player, new ElevatorEventData(elevatorType));
+                e.setCancelled(true);
+            }
+        } else if (!ElevatorPermHelper.canDyeElevatorType(elevatorType, player, dyeColor)) {
+            MessageHelper.sendCantDyeMessage(player, new ElevatorEventData(elevatorType));
             e.setCancelled(true);
-            BaseUtil.sendMessage(player, locale);
         }
     }
 

@@ -1,8 +1,11 @@
 package com.lkeehl.elevators.actions;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
+import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.Bukkit;
 import org.bukkit.block.ShulkerBox;
@@ -12,11 +15,13 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public class BossBarAction extends ElevatorAction {
 
+    private static final Random random = new Random();
 
     private static final ElevatorActionGrouping<BarColor> barColorGrouping = new ElevatorActionGrouping<>(BarColor.BLUE, BarColor::valueOf, "barcolor","color","c");
     private static final ElevatorActionGrouping<BarStyle> barStyleGrouping = new ElevatorActionGrouping<>(BarStyle.SOLID, BarStyle::valueOf, "barstyle","style","s");
@@ -32,11 +37,21 @@ public class BossBarAction extends ElevatorAction {
     }
 
     @Override
-    public void execute(ShulkerBox origin, ShulkerBox destination, ElevatorType elevatorType, Player player) {
+    public void execute(ElevatorEventData eventData, Player player) {
         /*if (elevator instanceof PremiumElevator && ((PremiumElevator) elevator).getSpeed() > 0.0)
             return;*/
-        String message = BaseUtil.formatColors(elevator.formatPlaceholders(player, origin, destination, this.getGroupingObject(messageGrouping)));
-        this.displayMessage(player, () -> message, (1.0F / (ElevatorHelper.getFloorNumberOrCount(destination, elevatorType, false) - 1)) * (ElevatorHelper.getFloorNumberOrCount(destination, elevatorType, true) - 1), 30);
+
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping));
+        value = MessageHelper.formatPlaceholders(player, value);
+        value = MessageHelper.formatColors(value);
+
+        int floorCount = ElevatorHelper.getFloorNumberOrCount(eventData.getDestination(), eventData.getElevatorType(), false);
+        int currentFloor = ElevatorHelper.getFloorNumberOrCount(eventData.getDestination(), eventData.getElevatorType(), true);
+
+        double progress = (1.0F / (floorCount - 1)) * (currentFloor - 1);
+
+        String finalValue = value;
+        this.displayMessage(player, () -> finalValue, progress, 30);
     }
 
     @Override
@@ -48,13 +63,13 @@ public class BossBarAction extends ElevatorAction {
     public BossBar getPlayerBar(Player player) {
         if (!player.hasMetadata("elevator-boss-bar")) {
             BossBar bar = Bukkit.createBossBar("elevator-boss-bar", this.getGroupingObject(barColorGrouping), this.getGroupingObject(barStyleGrouping));
-            player.setMetadata("elevator-boss-bar", new FixedMetadataValue(Main.getInstance(), bar));
+            player.setMetadata("elevator-boss-bar", new FixedMetadataValue(Elevators.getInstance(), bar));
         }
         return (BossBar) player.getMetadata("elevator-boss-bar").get(0).value();
     }
 
     public String getMessage() {
-        return this.message;
+        return this.getGroupingObject(messageGrouping);
     }
 
     public void changeProgress(Player player, double progress) {
@@ -80,12 +95,12 @@ public class BossBarAction extends ElevatorAction {
             bar.addPlayer(player);
 
         if (player.hasMetadata("elevators-bossbar-seed"))
-            player.removeMetadata("elevators-bossbar-seed", Main.getInstance());
+            player.removeMetadata("elevators-bossbar-seed", Elevators.getInstance());
 
-        final long seed = BaseUtil.getRandom().nextLong();
-        player.setMetadata("elevators-bossbar-seed", new FixedMetadataValue(Main.getInstance(), seed));
+        final long seed = random.nextLong();
+        player.setMetadata("elevators-bossbar-seed", new FixedMetadataValue(Elevators.getInstance(), seed));
         bar.setVisible(true);
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(Elevators.getInstance(), () -> {
             if (player.getMetadata("elevators-bossbar-seed").get(0).asLong() == seed)
                 bar.setVisible(false);
         }, ticks);

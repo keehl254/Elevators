@@ -1,6 +1,6 @@
 package com.lkeehl.elevators.events;
 
-import com.lkeehl.elevators.models.ElevatorSearchResult;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -13,13 +13,13 @@ public class ElevatorUseEvent extends Event implements Cancellable {
     private final Player player;
     private final ShulkerBox originShulkerBox;
 
-    private final ElevatorSearchResult searchResult;
+    private final ElevatorEventData searchResult;
 
     private boolean cancelled = false;
 
     private static final HandlerList handlers = new HandlerList();
 
-    public ElevatorUseEvent(Player player, ShulkerBox origin, ElevatorSearchResult searchResult) {
+    public ElevatorUseEvent(Player player, ShulkerBox origin, ElevatorEventData searchResult) {
         super(false);
 
         this.player = player;
@@ -47,7 +47,7 @@ public class ElevatorUseEvent extends Event implements Cancellable {
         return this.searchResult.getDirection();
     }
 
-    public ElevatorSearchResult getSearchResult() {
+    public ElevatorEventData getSearchResult() {
         return this.searchResult;
     }
 

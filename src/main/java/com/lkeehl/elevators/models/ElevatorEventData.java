@@ -3,24 +3,32 @@ package com.lkeehl.elevators.models;
 import org.bukkit.Location;
 import org.bukkit.block.ShulkerBox;
 
-public class ElevatorSearchResult {
+public class ElevatorEventData {
 
-    private final Location originLocation;
+    private final ShulkerBox origin;
     private final ElevatorType elevatorType;
     private final ShulkerBox destination;
     private final byte direction;
     private final double standOnAddition;
 
-    public ElevatorSearchResult(Location originLocation, ElevatorType elevatorType, ShulkerBox destination, byte direction, double standOnAddition) {
-        this.originLocation = originLocation;
+    public ElevatorEventData(ShulkerBox origin, ElevatorType elevatorType, ShulkerBox destination, byte direction, double standOnAddition) {
+        this.origin = origin;
         this.elevatorType = elevatorType;
         this.destination = destination;
         this.direction = direction;
         this.standOnAddition = standOnAddition;
     }
 
-    public Location getOriginLocation() {
-        return this.originLocation;
+    public ElevatorEventData(ShulkerBox origin, ElevatorType elevatorType, ShulkerBox destination) {
+        this(origin, elevatorType, destination, (byte) 1, 0.0);
+    }
+
+    public ElevatorEventData(ElevatorType elevatorType) {
+        this(null, elevatorType, null);
+    }
+
+    public ShulkerBox getOrigin() {
+        return this.origin;
     }
 
     public ElevatorType getElevatorType() { return this.elevatorType;}

@@ -1,7 +1,9 @@
 package com.lkeehl.elevators.actions;
 
+import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.block.ShulkerBox;
@@ -23,9 +25,10 @@ public class ActionBarAction extends ElevatorAction {
     }
 
     @Override
-    public void execute(ShulkerBox origin, ShulkerBox destination, ElevatorType elevatorType, Player player) {
-        String value = elevatorType.formatPlaceholders(player, from, to, BaseUtil.formatColors(this.value));
-        value = PlaceHolders.request(player.getUniqueId(), value);
+    public void execute(ElevatorEventData eventData, Player player) {
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping));
+        value = MessageHelper.formatPlaceholders(player, value);
+        value = MessageHelper.formatColors(value);
 
         player.spigot().sendMessage(net.md_5.bungee.api.ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(value));
     }

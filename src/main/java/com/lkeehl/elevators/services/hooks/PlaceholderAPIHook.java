@@ -1,31 +1,27 @@
 package com.lkeehl.elevators.services.hooks;
 
-import com.griefdefender.api.GriefDefender;
-import com.griefdefender.api.claim.Claim;
-import com.griefdefender.api.claim.TrustTypes;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.hooks.ElevatorHook;
 import com.lkeehl.elevators.models.ElevatorType;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class GriefDefenderHook implements ElevatorHook {
+public class PlaceholderAPIHook implements ElevatorHook {
 
+    public String formatPlaceholders(Player player, String message){
+        return PlaceholderAPI.setPlaceholders(player, message);
+    }
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        ShulkerBox box = elevator.getShulkerBox();
-        final Claim claim = GriefDefender.getCore().getClaimAt(box.getLocation());
-
-        if (claim == null || claim.isWilderness())
-            return true;
-
-        return claim.canUseBlock(box, box.getLocation(), GriefDefender.getCore().getUser(player.getUniqueId()), TrustTypes.ACCESSOR);
+        return true;
     }
 
     @Override
     public ItemStack createIconForElevator(Player player, ShulkerBox box, ElevatorType elevatorType) {
         return null;
     }
+
 }

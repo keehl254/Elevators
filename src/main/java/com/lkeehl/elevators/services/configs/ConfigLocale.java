@@ -5,7 +5,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable()
 public class ConfigLocale {
 
-    private final transient String prefix = "&b&lELEVATORS&f ";
+    private final transient String prefix = "&c&lELEVATORS&f ";
 
     public String cantCreateMessage = prefix + "You do not have permission to create an Elevator!";
 

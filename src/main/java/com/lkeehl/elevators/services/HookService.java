@@ -1,11 +1,11 @@
 package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.Elevators;
-import com.lkeehl.elevators.models.ElevatorHook;
-import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.models.Elevator;
+import com.lkeehl.elevators.models.hooks.ElevatorHook;
+import com.lkeehl.elevators.models.hooks.HologramHook;
 import com.lkeehl.elevators.services.hooks.*;
 import org.bukkit.Bukkit;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
@@ -35,6 +35,8 @@ public class HookService {
         HookService.registerHookIfPluginActive("RedProtect", RedProtectHook.class);
         HookService.registerHookIfPluginActive("PlotSquared", PlotSquaredHook.class);
         HookService.registerHookIfPluginActive("BentoBox", BentoBoxHook.class);
+        HookService.registerHookIfPluginActive("PlaceholderAPI", PlaceholderAPIHook.class);
+        HookService.registerHookIfPluginActive("DecentHolograms", DecentHologramsHook.class);
 
     }
 
@@ -55,8 +57,8 @@ public class HookService {
         }
     }
 
-    public static boolean canUseElevator(Player player, ShulkerBox shulkerBox, ElevatorType elevatorType) {
-        return hookMap.values().stream().anyMatch(hook -> !hook.canPlayerUseElevator(player, shulkerBox, elevatorType));
+    public static boolean canUseElevator(Player player, Elevator elevator, boolean sendMessage) {
+        return hookMap.values().stream().anyMatch(hook -> !hook.canPlayerUseElevator(player, elevator, sendMessage));
     }
 
     public static GriefPreventionHook getGriefPreventionHook() {
@@ -77,6 +79,19 @@ public class HookService {
 
     public static BentoBoxHook getBentoBoxHook() {
         return getHook("BentoBox", BentoBoxHook.class);
+    }
+
+    public static PlaceholderAPIHook getPlaceholderAPIHook() {
+        return getHook("PlaceholderAPI", PlaceholderAPIHook.class);
+    }
+
+    public static HologramHook<?> getHologramHook() {
+        HologramHook<?> hook = getHook("DecentHolograms", DecentHologramsHook.class);
+        /*if(hook == null) {
+             TODO: Check FancyHolograms when their API is accessible.
+        }*/
+
+        return hook;
     }
 
     @SuppressWarnings("unchecked")

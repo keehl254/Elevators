@@ -1,12 +1,12 @@
 package com.lkeehl.elevators.helpers;
 
+import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.services.HookService;
 import org.bukkit.DyeColor;
 import org.bukkit.Keyed;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapelessRecipe;
 
 public class ElevatorPermHelper {
 
@@ -30,11 +30,14 @@ public class ElevatorPermHelper {
         return true;
     }
 
-    public static boolean canUseElevatorType(ElevatorType elevatorType, Player player, ShulkerBox elevator, byte direction) {
+    public static boolean canUseElevator(Player player, Elevator elevator, byte direction) {
 
-        // TODO: Check hooks.
+        if(!HookService.canUseElevator(player, elevator, false))
+            return false;
 
-        if(!elevatorType.doesElevatorRequirePermissions())
+        //TODO: Check per-elevator settings.
+
+        if(!elevator.getElevatorType().doesElevatorRequirePermissions())
             return true;
 
         //TODO: Add logic. Duh.
