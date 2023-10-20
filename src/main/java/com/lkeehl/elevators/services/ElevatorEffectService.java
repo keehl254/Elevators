@@ -8,7 +8,7 @@ import com.lkeehl.elevators.effects.NoEffect;
 import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.services.configs.ConfigEffect;
-import org.spongepowered.configurate.CommentedConfigurationNode;
+import com.lkeehl.elevators.services.configs.ConfigRoot;
 
 import java.io.File;
 import java.util.HashMap;
@@ -29,11 +29,11 @@ public class ElevatorEffectService {
         ElevatorEffectService.initialized = true;
     }
 
-    private static void loadEffects(CommentedConfigurationNode rootNode) {
+    private static void loadEffects(ConfigRoot rootNode) {
         elevatorEffects.clear();
 
         File effectDirectory = new File(Elevators.getConfigDirectory(), "effects");
-        ResourceHelper.exportResource(Elevators.getInstance(), "Creeper.png", effectDirectory, false);
+        ResourceHelper.exportResource(Elevators.getInstance(), "Creeper.png", new File(effectDirectory, "Creeper.png"), false);
 
         elevatorEffects.put("NONE", new NoEffect());
         elevatorEffects.put("ARROW", new ArrowEffect());

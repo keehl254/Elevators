@@ -51,7 +51,7 @@ public class ResourceHelper {
         InputStream stream = null;
         OutputStream resStreamOut = null;
         try {
-            stream = clazz.getClass().getResourceAsStream(resourceName);
+            stream = clazz.getClass().getClassLoader().getResourceAsStream(resourceName);
             if (stream == null)
                 throw new Exception("Cannot get resource \"" + resourceName + "\"!");
 

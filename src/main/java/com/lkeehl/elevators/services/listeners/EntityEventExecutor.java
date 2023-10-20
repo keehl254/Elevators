@@ -30,7 +30,7 @@ public class EntityEventExecutor {
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
         if (elevatorType == null) return;
 
-        if (!ElevatorHelper.hasOrAddPlayerCoolDown(e.getPlayer(), "use"))
+        if (ElevatorHelper.hasOrAddPlayerCoolDown(e.getPlayer(), "use"))
             return;
 
         if (ConfigService.isWorldDisabled(e.getPlayer().getWorld())) {

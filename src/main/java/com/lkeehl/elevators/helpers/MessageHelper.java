@@ -2,34 +2,40 @@ package com.lkeehl.elevators.helpers;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.ElevatorEventData;
-import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.ConfigService;
 import com.lkeehl.elevators.services.DataContainerService;
 import com.lkeehl.elevators.services.HookService;
 import com.lkeehl.elevators.services.configs.ConfigLocale;
 import com.lkeehl.elevators.services.hooks.PlaceholderAPIHook;
 import io.netty.handler.codec.DecoderException;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.apache.commons.lang.math.IntRange;
-import org.apache.commons.lang.math.Range;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
 public class MessageHelper {
 
-    private static BukkitAudiences audience = BukkitAudiences.create(Elevators.getInstance());
+    private static BiConsumer<Player, String> sendMessageConsumer;
+
+    private static boolean adventureEnabled;
+    static {
+        try {
+            Class.forName("net.kyori.adventure");
+            try (BukkitAudiences audience = BukkitAudiences.create(Elevators.getInstance())) {
+                sendMessageConsumer = (player, message) -> audience.player(player).sendMessage(MiniMessage.miniMessage().deserialize(message));
+            }
+        } catch (ClassNotFoundException ignore) {
+            sendMessageConsumer = (player, message) -> player.sendMessage(message);
+        }
+    }
 
     public static void sendCantCreateMessage(Player player, ElevatorEventData elevatorEventData) {
         MessageHelper.sendFormattedLocale(player, i -> i.cantCreateMessage, elevatorEventData);
@@ -82,12 +88,10 @@ public class MessageHelper {
     }
 
     public static void sendFormattedMessage(Player player, String message) {
-        Audience playerAudience = audience.player(player);
-
         message = formatPlaceholders(player, message);
         message = formatColors(message);
 
-        playerAudience.sendMessage(MiniMessage.miniMessage().deserialize(message));
+        sendMessageConsumer.accept(player, message);
     }
 
     public static String formatElevatorPlaceholders(Player player, ElevatorEventData searchResult, String message) {

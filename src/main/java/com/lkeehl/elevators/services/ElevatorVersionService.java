@@ -33,7 +33,7 @@ public class ElevatorVersionService {
         ElevatorVersionService.initialized = true;
     }
 
-    private static <T> Map.Entry<ElevatorType, Function<ShulkerBox, ShulkerBox>> executeAll(T arg, Function<ElevatorVersion, Function<T, ElevatorType>> func) {
+    private static <T> Map.Entry<ElevatorType, Function<ShulkerBox, ShulkerBox>> executeAllAndGetUpdateFunc(T arg, Function<ElevatorVersion, Function<T, ElevatorType>> func) {
         for (ElevatorVersion version : versions) {
             ElevatorType obj = func.apply(version).apply(arg);
             if (obj != null)
@@ -44,25 +44,27 @@ public class ElevatorVersionService {
     }
 
     public static ElevatorType getElevatorType(ItemStack item) {
-        return executeAll(item, version -> version::getElevatorType).getKey();
+        return executeAllAndGetUpdateFunc(item, version -> version::getElevatorType).getKey();
     }
 
-    public static ElevatorType getElevatorType(ShulkerBox box) {
-        Map.Entry<ElevatorType, Function<ShulkerBox, ShulkerBox>> result = executeAll(box, version -> version::getElevatorType);
+    public static ElevatorType getElevatorType(ShulkerBox box, boolean updateBlock) {
+        Map.Entry<ElevatorType, Function<ShulkerBox, ShulkerBox>> result = executeAllAndGetUpdateFunc(box, version -> version::getElevatorType);
         if (result.getKey() == null)
             return null;
 
-        ShulkerBox newBox = result.getValue().apply(box);
-        newBox = ShulkerBoxHelper.clearContents(newBox);
-        if (ConfigService.getRootConfig().forceFacingUpwards)
-            ShulkerBoxHelper.setFacingUp(newBox);
+        if(updateBlock) {
+            ShulkerBox newBox = result.getValue().apply(box);
+            newBox = ShulkerBoxHelper.clearContents(newBox);
+            if (ConfigService.getRootConfig().forceFacingUpwards)
+                ShulkerBoxHelper.setFacingUp(newBox);
+        }
         return result.getKey();
     }
 
     public static ElevatorType getElevatorType(Block block) {
         if(ItemStackHelper.isNotShulkerBox(block.getType()))
             return null;
-        return getElevatorType((ShulkerBox) block.getState());
+        return getElevatorType((ShulkerBox) block.getState(), true);
     }
 
     public abstract static class ElevatorVersion {

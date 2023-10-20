@@ -19,6 +19,8 @@ public class ColorHelper {
         colorModel = new IndexColorModel(4, 16, colorMap, 0, false, -1, DataBuffer.TYPE_BYTE);
     }
     public static int getRGBFromHex(String hex) {
+        if (hex.startsWith("#"))
+            hex = hex.substring(1);
         int i = Integer.valueOf(hex, 16);
         return (0xFF << 24) | (((i >> 16) & 0xFF) << 16) | (((i >> 8) & 0xFF) << 8) | ((i & 0xFF));
     }

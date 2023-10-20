@@ -68,7 +68,7 @@ public class ElevatorActionService {
         ElevatorAction action = actionConstructors.get(key).apply(elevatorType);
         action.initialize(actionString);
 
-        return actionConstructors.get(key).apply(elevatorType);
+        return action;
     }
 
     public static ElevatorAction createBlankAction(ElevatorType elevatorType, String actionKey) {

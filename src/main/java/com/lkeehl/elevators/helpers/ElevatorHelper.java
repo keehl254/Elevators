@@ -24,7 +24,7 @@ import java.util.List;
 public class ElevatorHelper {
 
     public static boolean isElevator(ShulkerBox box) {
-        return ElevatorVersionService.getElevatorType(box) != null;
+        return ElevatorVersionService.getElevatorType(box, false) != null;
     }
 
     public static boolean isElevator(Block block) {
@@ -48,7 +48,11 @@ public class ElevatorHelper {
     }
 
     public static ElevatorType getElevatorType(ShulkerBox box) {
-        return ElevatorVersionService.getElevatorType(box);
+        return ElevatorVersionService.getElevatorType(box, true);
+    }
+
+    public static ElevatorType getElevatorType(ShulkerBox box, boolean updateBlock) {
+        return ElevatorVersionService.getElevatorType(box, updateBlock);
     }
 
     public static int getFloorNumberOrCount(ShulkerBox box, ElevatorType elevatorType, boolean stopAtProvidedBox) {
@@ -152,6 +156,9 @@ public class ElevatorHelper {
         actions.forEach(action -> action.execute(elevatorEventData,  player));
         effect.playEffect(elevatorEventData);
 
+        Location teleportLocation = player.getLocation();
+        teleportLocation.setY(elevatorEventData.getDestination().getY() + elevatorEventData.getStandOnAddition() + 1.0);
+        player.teleport(teleportLocation);
     }
 
     public static boolean hasOrAddPlayerCoolDown(Player player, String key) {

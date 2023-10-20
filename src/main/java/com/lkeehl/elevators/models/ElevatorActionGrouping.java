@@ -31,7 +31,7 @@ public class ElevatorActionGrouping<T> {
 
         List<String> groupingAliases = new ArrayList<>();
         groupingAliases.add(mainAlias.toLowerCase());
-        groupingAliases.addAll(Arrays.stream(aliases).map(String::toLowerCase).collect(Collectors.toList()));
+        groupingAliases.addAll(Arrays.stream(aliases).map(String::toLowerCase).toList());
 
         this.groupingAliases = groupingAliases;
 

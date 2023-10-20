@@ -1,71 +1,72 @@
 package com.lkeehl.elevators.services.configs;
 
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Comment;
+import com.lkeehl.elevators.util.config.Comments;
+import com.lkeehl.elevators.util.config.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-@ConfigSerializable()
-public class ConfigElevatorType {
+public class ConfigElevatorType implements Config {
 
-    @Comment("The item display name of the elevator.")
+    @Comments("The item display name of the elevator.")
     public String displayName = "Elevator";
 
-    @Comment("The maximum distance an elevator will search for the receiving end. Set to -1 to disable.")
+    @Comments("The maximum distance an elevator will search for the receiving end. Set to -1 to disable.")
     public int maxDistance = 20;
 
-    @Comment("The maximum amount of solid blocks that can be between the sending and receiving elevator.")
+    @Comments("The maximum amount of solid blocks that can be between the sending and receiving elevator.")
     public int maxSolidBlocks = -1;
 
-    @Comment("The maximum stack size of elevators.")
+    @Comments("The maximum stack size of elevators.")
     public int maxStackSize = 16;
 
-    @Comment("The cost to use the elevator. Requires vault.")
+    @Comments("The cost to use the elevator. Requires vault.")
     public float costUp = 0.0F;
 
-    @Comment("The cost to use the elevator. Requires vault.")
+    @Comments("The cost to use the elevator. Requires vault.")
     public float costDown = 0.0F;
 
-    @Comment("This option will require both a destination and origin elevator to be of the same type.")
+    @Comments("This option will require both a destination and origin elevator to be of the same type.")
     public boolean classCheck = true;
 
-    @Comment("This option will stop the use of elevators if the receiving elevator has a blocked path.")
+    @Comments("This option will stop the use of elevators if the receiving elevator has a blocked path.")
     public boolean stopObstruction = true;
 
-    @Comment("This option controls whether the shulker will support dye colors besides the default.")
+    @Comments("This option controls whether the shulker will support dye colors besides the default.")
     public boolean coloredOutput = true;
 
-    @Comment("Whether the elevator will allow teleportation to an elevator of a different color.")
+    @Comments("Whether the elevator will allow teleportation to an elevator of a different color.")
     public boolean checkColor = true;
 
-    @Comment("If enabled, this will require the player to have the 'use' permission for the elevator.")
+    @Comments("If enabled, this will require the player to have the 'use' permission for the elevator.")
     public boolean checkPerms = true;
 
-    @Comment("This config option controls whether elevators should be able to to explode from TNT or mobs.")
+    @Comments("This config option controls whether elevators should be able to to explode from TNT or mobs.")
     public boolean canExplode = false;
 
-    @Comment("This option sets the default color of the elevator. This is really only useful if 'coloredOutput' is false.")
+    @Comments("This option sets the default color of the elevator. This is really only useful if 'coloredOutput' is false.")
     public String defaultColor = "WHITE";
 
-    @Comment("Allows the addition of a hologram that appears above elevators of this type.")
+    @Comments("Allows the addition of a hologram that appears above elevators of this type.")
     public List<String> hologramLines = new ArrayList<>();
 
-    @Comment("Allows the addition of a lore to the item stack.\nThis can be useful both to look great or to create support for plugins with lore blacklists.")
+    @Comments({"Allows the addition of a lore to the item stack.","This can be useful both to look great or to create support for plugins with lore blacklists."})
     public List<String> loreLines = new ArrayList<>();
 
-    @Comment("Define actions that can be run on elevator usage.\nDefault actions are:\naction-bar\nboss-bar\ncommand-console\ncommand-player\nmessage-all\nmessage-player\nsound\ntitle\n\nIf you do not wish to use actions on use, you can either delete the actions section\nor set the \"up\" and \"down\" values to an empty array with \"[]\" such as shown with the \"down\" value. PlaceholderAPI is supported.")
+    @Comments({"Define actions that can be run on elevator usage.","Default actions are:","action-bar","boss-bar","command-console","command-player","message-all","message-player","sound","title","","If you do not wish to use actions on use, you can either delete the actions section","or set the \"up\" and \"down\" values to an empty array with \"[]\" such as shown with the \"down\" value. PlaceholderAPI is supported."})
     public ConfigActions actions = new ConfigActions();
 
-    @Comment("Define a cost to use the elevator. Requires Vault to be installed on the server to work. Set to 0 or below to disable.")
+    @Comments("Define a cost to use the elevator. Requires Vault to be installed on the server to work. Set to 0 or below to disable.")
     public ConfigCosts cost = new ConfigCosts();
 
-    @Comment("Define effects that should play when an elevator is used. Effects can be created from image files using the #Effects section of this config above, or you can you can use predefined animations such as:\narrow\nhelix\nsparkles\nnone")
+    @Comments({"Define effects that should play when an elevator is used. Effects can be created from image files using the #Effects section of this config above, or you can you can use predefined animations such as:","arrow","helix","sparkles","none"})
     public ConfigEffects effects = new ConfigEffects();
 
-    @ConfigSerializable()
-    public static class ConfigActions {
+    public Map<String, ConfigRecipe> recipes;
+
+    public static class ConfigActions implements Config {
 
         public List<String> up = Collections.singletonList("sound: ENTITY_BLAZE_SHOOT pitch=2.0 volume=1.0");
 
@@ -73,8 +74,7 @@ public class ConfigElevatorType {
 
     }
 
-    @ConfigSerializable()
-    public static class ConfigCosts {
+    public static class ConfigCosts implements Config {
 
         public double up = 0.0D;
 
@@ -82,8 +82,7 @@ public class ConfigElevatorType {
 
     }
 
-    @ConfigSerializable()
-    public static class ConfigEffects {
+    public static class ConfigEffects implements Config {
 
         public String up = "sparkle";
 

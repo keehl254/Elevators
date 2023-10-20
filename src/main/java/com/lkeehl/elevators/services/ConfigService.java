@@ -1,15 +1,11 @@
 package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.services.configs.*;
+import com.lkeehl.elevators.util.config.ConfigConverter;
+import com.lkeehl.elevators.util.config.nodes.ConfigRootNode;
 import org.bukkit.World;
-import org.spongepowered.configurate.CommentedConfigurationNode;
-import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.serialize.SerializationException;
-import org.spongepowered.configurate.yaml.NodeStyle;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,36 +14,34 @@ import java.util.function.Consumer;
 
 public class ConfigService {
 
-    private static YamlConfigurationLoader loader;
-    private static CommentedConfigurationNode rootNode;
+    private static ConfigRootNode<ConfigRoot> rootNode;
 
     private static ConfigLocale defaultLocaleConfig;
 
-    private static final List<Consumer<CommentedConfigurationNode>> configLoadCallbacks = new ArrayList<>();
+    private static final List<Consumer<ConfigRoot>> configLoadCallbacks = new ArrayList<>();
 
     public static void loadConfig(File configFile) {
-        ConfigService.loader = YamlConfigurationLoader.builder().nodeStyle(NodeStyle.BLOCK).file(configFile).build();
+        boolean configCurrentlyExists = configFile.exists();
 
         try {
-            ConfigService.rootNode = loader.load();
-            configLoadCallbacks.forEach(i -> i.accept(ConfigService.rootNode));
-        } catch (IOException e) {
+            ConfigService.rootNode = ConfigConverter.createNodeForConfig(new ConfigRoot(), configFile);
+            configLoadCallbacks.forEach(i -> i.accept(ConfigService.rootNode.getConfig()));
+
+            //ConfigService.rootNode.save();
+            ConfigConverter.saveConfigToFile(ConfigService.rootNode, configFile);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void addConfigCallback(Consumer<CommentedConfigurationNode> callback) {
+    public static void addConfigCallback(Consumer<ConfigRoot> callback) {
         ConfigService.configLoadCallbacks.add(callback);
-        if(rootNode != null)
-            callback.accept(rootNode);
+        if(ConfigService.rootNode != null)
+            callback.accept(ConfigService.rootNode.getConfig());
     }
 
     public static ConfigRoot getRootConfig() {
-        try {
-            return rootNode.get(ConfigRoot.class);
-        } catch (SerializationException e) {
-            return new ConfigRoot();
-        }
+        return ConfigService.rootNode.getConfig();
     }
 
     public static ConfigLocale getDefaultLocaleConfig() {
@@ -58,36 +52,26 @@ public class ConfigService {
     }
 
     public static Map<String, ConfigEffect> getEffectConfigs() {
-        return getMappedSection(ConfigEffect.class,"effects");
+        return ConfigService.getRootConfig().effects;
     }
 
     public static Map<String, ConfigElevatorType> getElevatorTypeConfigs() {
-        return getMappedSection(ConfigElevatorType.class,"elevators");
+        return ConfigService.getRootConfig().elevators;
     }
 
     public static Map<String, ConfigRecipe> getElevatorRecipes(String elevatorKey) {
-        return getMappedSection(ConfigRecipe.class, "elevators",elevatorKey,"recipes");
+        if(!ConfigService.getRootConfig().elevators.containsKey(elevatorKey))
+            return new HashMap<>();
+        return ConfigService.getRootConfig().elevators.get(elevatorKey).recipes;
     }
 
     public static Map<String, String> getElevatorRecipeMaterials(String elevatorKey, String recipeKey) {
-        return getMappedSection(String.class, "elevators",elevatorKey,"recipes",recipeKey,"materials");
-    }
-
-    public static <T> Map<String, T> getMappedSection(Class<T> clazz, String... path) {
-        Map<String, T> map = new HashMap<>();
-        if(!rootNode.hasChild((Object[]) path))
-            return map;
-
-        Map<Object, CommentedConfigurationNode> children = rootNode.node((Object[]) path).childrenMap();
-        for (Object key : children.keySet()) {
-            try {
-                map.put(key.toString(), children.get(key).get(clazz));
-            } catch (ConfigurateException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return map;
+        if(!ConfigService.getRootConfig().elevators.containsKey(elevatorKey))
+            return new HashMap<>();
+        ConfigElevatorType elevatorType = ConfigService.getRootConfig().elevators.get(elevatorKey);
+        if(!elevatorType.recipes.containsKey(recipeKey))
+            return new HashMap<>();
+        return elevatorType.recipes.get(recipeKey).materials;
     }
 
     public static boolean isWorldDisabled(World world) {

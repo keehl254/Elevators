@@ -89,7 +89,7 @@ public class WorldEventExecutor {
     public static void onBlockBreak(BlockDropItemEvent event) {
         if (!(event.getBlockState() instanceof ShulkerBox box)) return;
 
-        ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
+        ElevatorType elevatorType = ElevatorHelper.getElevatorType(box, false);
         if (elevatorType == null) return;
 
         ItemStack newElevatorItem = ItemStackHelper.createItemStackFromElevator(new Elevator(box, elevatorType));

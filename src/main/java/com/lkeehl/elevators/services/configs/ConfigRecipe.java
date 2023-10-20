@@ -1,12 +1,12 @@
 package com.lkeehl.elevators.services.configs;
 
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import com.lkeehl.elevators.util.config.Config;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-@ConfigSerializable()
-public class ConfigRecipe {
+public class ConfigRecipe implements Config {
 
     public int amount = 1;
 
@@ -15,5 +15,7 @@ public class ConfigRecipe {
     public boolean coloredCrafting = true;
 
     public List<String> recipe = Arrays.asList("www","wew","www");
+
+    public Map<String, String> materials;
 
 }

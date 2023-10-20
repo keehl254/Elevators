@@ -12,8 +12,12 @@ import java.util.logging.Logger;
 
 public class Elevators extends JavaPlugin {
 
+    private static Elevators instance;
+
     @Override()
     public void onEnable() {
+        instance = this;
+
         DataContainerService.init(this);
         ElevatorVersionService.init();
         ElevatorEffectService.init();
@@ -35,16 +39,16 @@ public class Elevators extends JavaPlugin {
     private void reloadElevators() {
 
         File configFile = new File(this.getDataFolder(), "config.yml");
-        ResourceHelper.exportResource(this, "config.yml", configFile,false);
+        this.saveDefaultConfig();
 
         ConfigService.loadConfig(configFile);
     }
 
-    public static Elevators getInstance() {
+    public static Elevators getInstance() { // I consider it bad practice to rely on a static instance, so I am prioritizing using getPlugin.
         Plugin plugin = Bukkit.getPluginManager().getPlugin("Elevators");
         if(plugin instanceof Elevators)
             return (Elevators) plugin;
-        return null;
+        return instance;
     }
 
     public static File getConfigDirectory() {

@@ -3,7 +3,10 @@ package com.lkeehl.elevators.services;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.models.ElevatorEventExecutor;
-import com.lkeehl.elevators.services.listeners.*;
+import com.lkeehl.elevators.services.listeners.EntityEventExecutor;
+import com.lkeehl.elevators.services.listeners.InventoryEventExecutor;
+import com.lkeehl.elevators.services.listeners.PaperEventExecutor;
+import com.lkeehl.elevators.services.listeners.WorldEventExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -25,8 +28,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ListenerService {
 
@@ -37,6 +38,8 @@ public class ListenerService {
     public static void init() {
         if(ListenerService.initialized)
             return;
+
+        listener = new Listener() {};
 
         // This might be over-engineered. I may back-track this.
 
@@ -65,7 +68,7 @@ public class ListenerService {
         If it weren't for the fact the plugin let people open elevators, I would never work with it. */
         if (Bukkit.getPluginManager().isPluginEnabled("CMI")) {
             try {
-                Class<? extends Event> backpackOpenEventClass = (Class<? extends Event>) Class.forName("com.Zrips.CMI.events.CMIBackpackOpenEvent");
+                @SuppressWarnings("unchecked") Class<? extends Event> backpackOpenEventClass = (Class<? extends Event>) Class.forName("com.Zrips.CMI.events.CMIBackpackOpenEvent");
                 Method getShulkerBoxMethod = backpackOpenEventClass.getMethod("getShulkerBox");
                 getShulkerBoxMethod.setAccessible(true);
 
@@ -85,9 +88,13 @@ public class ListenerService {
         ListenerService.initialized = true;
     }
 
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
+    @SuppressWarnings({"unchecked"})
     public static <T extends Event> void registerEventExecutor(Class<T> clazz, EventPriority priority, ElevatorEventExecutor<T> executor, boolean ignoreCancelled) {
-        Bukkit.getPluginManager().registerEvent(clazz, listener, priority, (listener, event) -> executor.execute((T) event), Elevators.getInstance(), ignoreCancelled);
+        Bukkit.getPluginManager().registerEvent(clazz, listener, priority, (listener, event) ->
+        {
+            if(clazz.isAssignableFrom(event.getClass()))
+                executor.execute((T) event);
+        }, Elevators.getInstance(), ignoreCancelled);
     }
 
     public static <T extends Event> void registerEventExecutor(Class<T> clazz, EventPriority priority, ElevatorEventExecutor<T> executor) {

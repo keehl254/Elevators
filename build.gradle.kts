@@ -6,6 +6,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 plugins {
     java
     `maven-publish`
+    id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 repositories {
@@ -27,27 +28,27 @@ repositories {
 }
 
 dependencies {
-    implementation(platform("com.intellectualsites.bom:bom-newest:1.32"))
-    implementation("org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.700")
-    implementation("net.kyori:adventure-text-minimessage:4.14.0")
-    implementation("net.kyori:adventure-api:4.14.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
+    compileOnly(platform("com.intellectualsites.bom:bom-newest:1.32"))
+    compileOnly("org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.700")
 
-    implementation("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
-    implementation("org.spigotmc:spigot:1.19-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
-    implementation("org.spongepowered:configurate-yaml:4.1.2")
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot:1.19-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
 
-    implementation("com.github.TechFortress:GriefPrevention:16.18")
-    implementation("com.plotsquared:PlotSquared-Core:6.11.1")
-    implementation("com.plotsquared:PlotSquared-Bukkit:6.11.1") { isTransitive = false }
-    implementation("world.bentobox:bentobox:1.24.0-SNAPSHOT")
-    implementation("com.griefdefender:api:2.1.0-SNAPSHOT")
-    implementation("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.1-SNAPSHOT")
-    implementation("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.1-SNAPSHOT")
-    implementation("me.clip:placeholderapi:2.11.3")
+    compileOnly("com.github.TechFortress:GriefPrevention:16.18")
+    compileOnly("com.plotsquared:PlotSquared-Core:6.11.1")
+    compileOnly("com.plotsquared:PlotSquared-Bukkit:6.11.1") { isTransitive = false }
+    compileOnly("world.bentobox:bentobox:1.24.0-SNAPSHOT")
+    compileOnly("com.griefdefender:api:2.1.0-SNAPSHOT")
+    compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.1-SNAPSHOT")
+    compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.1-SNAPSHOT")
+    compileOnly("me.clip:placeholderapi:2.11.3")
 
-    implementation("com.github.decentsoftware-eu:decentholograms:2.8.3")
+    compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
     //implementation("de.oliver:FancyHolograms:2.0.0")
+
+    compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
+    compileOnly("net.kyori:adventure-api:4.14.0")
+    compileOnly("net.kyori:adventure-platform-bukkit:4.3.0")
 
 }
 
@@ -57,6 +58,22 @@ publishing {
     }
 }
 
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
+
+tasks {
+
+    compileJava {
+        options.encoding = Charsets.UTF_8.name()
+        options.release.set(17)
+    }
+    javadoc {
+        options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
+    }
+    processResources {
+        filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
+    }
+    shadowJar {
+
+        // relocate("net.kyori.adventure.text.minimessage", "com.lkeehl.elevators.depend")
+    }
+
 }

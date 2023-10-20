@@ -95,8 +95,8 @@ public class ObstructionService {
             return ObstructionService.isBlockObstructed(block, 2) ? -1 : 0;
 
         Location location = player.getLocation();
-        double newX = (location.getX() % 1) + location.getX() < 0 ? 1.0 : 0.0;
-        double newZ = (location.getZ() % 1) + location.getZ() < 0 ? 1.0 : 0.0;
+        double newX = location.getX() < 0 ? 1.0 + location.getX() % 1 : location.getX() % 1;
+        double newZ = location.getZ() < 0 ? 1.0 + location.getZ() % 1 : location.getZ() % 1;
 
         BoundingBox box = new BoundingBox(newX - 0.3, 0.0, newZ - 0.3, newX + 0.3, 1.8, newZ + 0.3);
 

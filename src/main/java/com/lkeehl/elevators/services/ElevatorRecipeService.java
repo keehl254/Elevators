@@ -2,13 +2,12 @@ package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.models.ElevatorRecipeGroup;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.services.configs.ConfigRoot;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.permissions.Permissible;
-import org.spongepowered.configurate.CommentedConfigurationNode;
 
 import java.util.*;
 
@@ -27,7 +26,7 @@ public class ElevatorRecipeService {
         ElevatorRecipeService.initialized = true;
     }
 
-    private static void unregisterRecipes(CommentedConfigurationNode root) {
+    private static void unregisterRecipes(ConfigRoot root) {
         Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
 
         List<NamespacedKey> recipesToUnlearn = new ArrayList<>();

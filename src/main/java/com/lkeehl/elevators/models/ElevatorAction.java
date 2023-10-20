@@ -39,12 +39,13 @@ public abstract class ElevatorAction {
     public final void initialize(String value) {
         if(value.contains(":"))
             value = value.substring(value.indexOf(':') + 1);
-        this.value = value.trim();
+        value = value.trim();
+        this.value = value;
 
         Matcher matcher = subPattern.matcher(this.value);
         while (matcher.find()) {
             this.calculateGroupingFromAlias(matcher.group(1), matcher.group(2));
-            value = value.replace(value.substring(matcher.start(), matcher.end()), "");
+            value = value.replace(this.value.substring(matcher.start(), matcher.end()), "");
         }
 
         this.calculateGroupingFromAlias(this.defaultGroupingAlias, value);
@@ -85,7 +86,7 @@ public abstract class ElevatorAction {
         String groupingValueFixed = groupingValue.trim();
 
         Optional<ElevatorActionGrouping<?>> grouping = this.groupings.stream().filter(i -> i.isGroupingAlias(groupingAliasFixed)).findFirst();
-        grouping.ifPresent(elevatorActionGrouping -> groupingData.put(elevatorActionGrouping, elevatorActionGrouping.getObjectFromString(groupingValueFixed, this)));
+        grouping.ifPresent(elevatorActionGrouping -> this.groupingData.put(elevatorActionGrouping, elevatorActionGrouping.getObjectFromString(groupingValueFixed, this)));
     }
 
     protected abstract void onInitialize(String value);

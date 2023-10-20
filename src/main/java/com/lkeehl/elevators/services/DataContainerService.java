@@ -43,10 +43,14 @@ public class DataContainerService {
         DataContainerService.initialized = true;
     }
 
-    public static NamespacedKey getKeyFromKey(String keyKey, PersistentDataType<?,?> dataType) { // Do you love me? Are you riding?
+    public static NamespacedKey createKey(String key) {
+        return new NamespacedKey(DataContainerService.elevatorsInstance, key);
+    }
+
+    public static NamespacedKey getKeyFromKey(String keyKey, PersistentDataType<?,?> dataType) { // keyKey, do you love me? Are you riding?
         keyKey = keyKey.toLowerCase();
         if(!keyMap.containsKey(keyKey))
-            keyMap.put(keyKey, new AbstractMap.SimpleEntry<>(new NamespacedKey(DataContainerService.elevatorsInstance, keyKey), dataType));
+            keyMap.put(keyKey, new AbstractMap.SimpleEntry<>(DataContainerService.createKey(keyKey), dataType));
 
         return keyMap.get(keyKey).getKey();
     }
@@ -55,6 +59,8 @@ public class DataContainerService {
         for(String keyKey : keyMap.keySet()) {
             Map.Entry<NamespacedKey, PersistentDataType<?,?>> keyData = keyMap.get(keyKey);
             Object boxValue = from.get(keyData.getKey(), keyData.getValue());
+            if(boxValue == null)
+                continue;
             PersistentDataType<?, Object> boxType = (PersistentDataType<?, Object>) keyData.getValue();
             to.set(keyData.getKey(), boxType, boxValue);
         }

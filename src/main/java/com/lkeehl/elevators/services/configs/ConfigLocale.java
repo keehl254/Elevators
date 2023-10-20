@@ -1,9 +1,8 @@
 package com.lkeehl.elevators.services.configs;
 
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import com.lkeehl.elevators.util.config.Config;
 
-@ConfigSerializable()
-public class ConfigLocale {
+public class ConfigLocale implements Config {
 
     private final transient String prefix = "&c&lELEVATORS&f ";
 

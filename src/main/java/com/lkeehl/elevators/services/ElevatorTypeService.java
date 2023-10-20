@@ -4,10 +4,9 @@ import com.lkeehl.elevators.models.ElevatorRecipeGroup;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigRecipe;
-import org.spongepowered.configurate.CommentedConfigurationNode;
+import com.lkeehl.elevators.services.configs.ConfigRoot;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ElevatorTypeService {
 
@@ -26,7 +25,7 @@ public class ElevatorTypeService {
         ElevatorTypeService.initialized = true;
     }
 
-    private static void reloadElevatorsFromConfig(CommentedConfigurationNode config) {
+    private static void reloadElevatorsFromConfig(ConfigRoot config) {
         elevatorTypes.clear();
         // TODO: Clear elevator recipes
 
@@ -42,8 +41,8 @@ public class ElevatorTypeService {
     private static ElevatorType createElevatorFromConfig(String elevatorTypeKey, ConfigElevatorType config) {
         ElevatorType elevatorType = new ElevatorType(elevatorTypeKey, config);
 
-        elevatorType.getActionsUp().addAll(config.actions.up.stream().map(i->ElevatorActionService.createActionFromString(elevatorType, i)).filter(Objects::nonNull).collect(Collectors.toList()));
-        elevatorType.getActionsDown().addAll(config.actions.down.stream().map(i->ElevatorActionService.createActionFromString(elevatorType, i)).filter(Objects::nonNull).collect(Collectors.toList()));
+        elevatorType.getActionsUp().addAll(config.actions.up.stream().map(i -> ElevatorActionService.createActionFromString(elevatorType, i)).filter(Objects::nonNull).toList());
+        elevatorType.getActionsDown().addAll(config.actions.down.stream().map(i -> ElevatorActionService.createActionFromString(elevatorType, i)).filter(Objects::nonNull).toList());
 
         elevatorType.setElevatorUpEffect(ElevatorEffectService.getEffectFromKey(config.effects.up));
         elevatorType.setElevatorDownEffect(ElevatorEffectService.getEffectFromKey(config.effects.down));

@@ -62,10 +62,7 @@ effects:
     scale: 50
     duration: 1.0
     useHolo: true
-    background:
-      r: 255
-      g: 255
-      b: 255
+    background: "#FFFFFF"
     
 # Elevator Classifications
 

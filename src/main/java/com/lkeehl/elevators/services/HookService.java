@@ -58,7 +58,7 @@ public class HookService {
     }
 
     public static boolean canUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        return hookMap.values().stream().anyMatch(hook -> !hook.canPlayerUseElevator(player, elevator, sendMessage));
+        return hookMap.values().stream().allMatch(hook -> hook.canPlayerUseElevator(player, elevator, sendMessage));
     }
 
     public static GriefPreventionHook getGriefPreventionHook() {
