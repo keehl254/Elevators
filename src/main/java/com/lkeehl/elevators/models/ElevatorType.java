@@ -2,8 +2,6 @@ package com.lkeehl.elevators.models;
 
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
 import org.bukkit.DyeColor;
-import org.bukkit.block.ShulkerBox;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,8 +137,10 @@ public class ElevatorType {
     }
 
     public List<ElevatorAction> getActionsDown() {
-        return actionsDown;
+        return this.actionsDown;
     }
+
+    public ConfigElevatorType getConfig() { return this.elevatorTypeConfig; }
 
     //endregion
 

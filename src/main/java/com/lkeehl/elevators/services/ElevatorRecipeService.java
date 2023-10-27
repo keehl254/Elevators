@@ -5,6 +5,7 @@ import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigRoot;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.permissions.Permissible;
@@ -49,8 +50,12 @@ public class ElevatorRecipeService {
 
     public static void registerElevatorRecipeGroup(ElevatorType elevatorType, ElevatorRecipeGroup recipeGroup) {
         ElevatorRecipeService.elevatorRecipeGroupMap.put(elevatorType, recipeGroup);
-
         Bukkit.getOnlinePlayers().forEach(i -> i.discoverRecipes(recipeGroup.getNameSpacedKeys()));
+    }
+
+    public static void discoverRecipesForPlayer(Player player) {
+        for(ElevatorRecipeGroup recipeGroup : elevatorRecipeGroupMap.values())
+            player.discoverRecipes(recipeGroup.getNameSpacedKeys());
     }
 
     public static boolean doesPermissibleHaveCraftPermission(Permissible permissible, ShapedRecipe recipe) {

@@ -17,11 +17,10 @@ import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -45,8 +44,9 @@ public class ListenerService {
 
         registerEventExecutor(InventoryOpenEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onInventoryOpen, false);
         registerEventExecutor(InventoryMoveItemEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onHopperTake, false);
+        registerEventExecutor(InventoryClickEvent.class, EventPriority.LOWEST, InventoryEventExecutor::onClickStackHandler, true);
         registerEventExecutor(PrepareAnvilEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onAnvilPrepare, false);
-        registerEventExecutor(CraftItemEvent.class, EventPriority.NORMAL , InventoryEventExecutor::onDyeCraft, false);
+        registerEventExecutor(CraftItemEvent.class, EventPriority.NORMAL , InventoryEventExecutor::onCraft, false);
 
         registerEventExecutor(BlockPistonExtendEvent.class, EventPriority.NORMAL , WorldEventExecutor::onPistonExtend, false);
         registerEventExecutor(EntityExplodeEvent.class, EventPriority.NORMAL , WorldEventExecutor::onExplode, false);
@@ -55,17 +55,17 @@ public class ListenerService {
         registerEventExecutor(BlockDropItemEvent.class, EventPriority.LOWEST , WorldEventExecutor::onBlockBreak, false);
         registerEventExecutor(BlockPlaceEvent.class, EventPriority.NORMAL , WorldEventExecutor::onBlockPlace, false);
 
+        registerEventExecutor(PlayerJoinEvent.class, EventPriority.NORMAL, EntityEventExecutor::onJoin, false);
         registerEventExecutor(PlayerToggleSneakEvent.class, EventPriority.NORMAL , EntityEventExecutor::onSneak, false);
+        registerEventExecutor(EntityPickupItemEvent.class, EventPriority.NORMAL , EntityEventExecutor::onPickup, false);
 
-        try {
-            Class.forName("com.destroystokyo.paper.PaperConfig");
+        if(HookService.isServerRunningPaper())
             registerEventExecutor(com.destroystokyo.paper.event.player.PlayerJumpEvent.class, EventPriority.NORMAL , PaperEventExecutor::onJump, false);
-        } catch (ClassNotFoundException ignored) {
+        else
             registerEventExecutor(PlayerMoveEvent.class, EventPriority.NORMAL , EntityEventExecutor::onJumpDefault, false);
-        }
 
         /* I hate CMI. This plugin is way too massive with abhorrent API support.
-        If it weren't for the fact the plugin let people open elevators, I would never work with it. */
+        If it weren't for the fact the plugin lets players open elevators, I would never work with it. */
         if (Bukkit.getPluginManager().isPluginEnabled("CMI")) {
             try {
                 @SuppressWarnings("unchecked") Class<? extends Event> backpackOpenEventClass = (Class<? extends Event>) Class.forName("com.Zrips.CMI.events.CMIBackpackOpenEvent");

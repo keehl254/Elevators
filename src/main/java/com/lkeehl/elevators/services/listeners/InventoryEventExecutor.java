@@ -9,10 +9,7 @@ import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -27,6 +24,61 @@ public class InventoryEventExecutor {
         event.getPlayer().closeInventory();
 
         ShulkerBoxHelper.playClose(box);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static void onClickStackHandler(InventoryClickEvent event) {
+        if(!(event.getWhoClicked() instanceof Player player)) return;
+
+        ItemStack clickedItem = event.getCurrentItem();
+
+        if(event.getCursor() == null || event.getCursor().getType().isAir()) { // Only for halving elevators to cursor.
+
+            if(event.getClick() != ClickType.RIGHT) return;
+
+            if(clickedItem == null) return;
+            if(ItemStackHelper.isNotShulkerBox(clickedItem.getType())) return;
+            if(!ElevatorHelper.isElevator(clickedItem)) return;
+
+            event.setCancelled(true);
+
+            int currentLeftSize = (clickedItem.getAmount() - (clickedItem.getAmount() % 2)) / 2; // Change size of the current item rather than cursor to mimic MC behavior.
+
+            ItemStack cursorItem = clickedItem.clone();
+            cursorItem.setAmount(cursorItem.getAmount() - currentLeftSize);
+
+            clickedItem.setAmount(currentLeftSize);
+            player.setItemOnCursor(cursorItem);
+
+            return;
+        }
+        if(event.getClick() != ClickType.LEFT) return; // Dropping outside still counts.
+        if(event.getClickedInventory() == null) return; // In case they drop it outside their inventory.
+
+        if(ItemStackHelper.isNotShulkerBox(event.getCursor().getType())) return;
+        if(!ElevatorHelper.isElevator(event.getCursor())) return;
+
+        event.setCancelled(true);
+
+        if(clickedItem == null || clickedItem.getType().isAir()) {
+            event.getClickedInventory().setItem(event.getSlot(), event.getCursor());
+            player.setItemOnCursor(null);
+            return;
+        }
+
+        if(!clickedItem.isSimilar(event.getCursor())) { // Swapping items.
+            event.getClickedInventory().setItem(event.getSlot(), event.getCursor());
+            player.setItemOnCursor(clickedItem);
+            return;
+        }
+        // Adding cursor to clicked stack.
+        ElevatorType elevatorType = ElevatorHelper.getElevatorType(clickedItem);
+        int amountToAdd = elevatorType.getMaxStackSize() - clickedItem.getAmount();
+        amountToAdd = Math.min(amountToAdd, event.getCursor().getAmount());
+
+        clickedItem.setAmount(clickedItem.getAmount() + amountToAdd);
+        event.getCursor().setAmount(event.getCursor().getAmount() - amountToAdd);
+
     }
 
     public static void onHopperTake(InventoryMoveItemEvent event) {
@@ -76,9 +128,8 @@ public class InventoryEventExecutor {
         e.setResult(newElevator);
     }
 
-    public static void onDyeCraft(CraftItemEvent e) {
-        if(!(e.getRecipe() instanceof Keyed keyedRecipe))
-            return;
+    public static void onCraft(CraftItemEvent e) {
+        if(!(e.getRecipe() instanceof Keyed keyedRecipe))  return;
         if(!(e.getWhoClicked() instanceof Player player)) return;
 
         ItemStack result = e.getInventory().getResult();

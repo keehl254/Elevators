@@ -47,9 +47,11 @@ public class ElevatorTypeService {
         elevatorType.setElevatorUpEffect(ElevatorEffectService.getEffectFromKey(config.effects.up));
         elevatorType.setElevatorDownEffect(ElevatorEffectService.getEffectFromKey(config.effects.down));
 
-        Map<String, ConfigRecipe> recipeMap = ConfigService.getElevatorRecipes(elevatorTypeKey);
-        for(String recipeKey : recipeMap.keySet())
+        Map<String, ConfigRecipe> recipeMap = config.recipes;
+
+        for(String recipeKey : recipeMap.keySet()) {
             ElevatorRecipeService.registerElevatorRecipeGroup(elevatorType, new ElevatorRecipeGroup(recipeKey, elevatorType, recipeMap.get(recipeKey)));
+        }
 
         return elevatorType;
     }

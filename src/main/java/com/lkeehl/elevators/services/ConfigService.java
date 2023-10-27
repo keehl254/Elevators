@@ -1,13 +1,15 @@
 package com.lkeehl.elevators.services;
 
-import com.lkeehl.elevators.services.configs.*;
+import com.lkeehl.elevators.services.configs.ConfigEffect;
+import com.lkeehl.elevators.services.configs.ConfigElevatorType;
+import com.lkeehl.elevators.services.configs.ConfigLocale;
+import com.lkeehl.elevators.services.configs.ConfigRoot;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 import com.lkeehl.elevators.util.config.nodes.ConfigRootNode;
 import org.bukkit.World;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -57,21 +59,6 @@ public class ConfigService {
 
     public static Map<String, ConfigElevatorType> getElevatorTypeConfigs() {
         return ConfigService.getRootConfig().elevators;
-    }
-
-    public static Map<String, ConfigRecipe> getElevatorRecipes(String elevatorKey) {
-        if(!ConfigService.getRootConfig().elevators.containsKey(elevatorKey))
-            return new HashMap<>();
-        return ConfigService.getRootConfig().elevators.get(elevatorKey).recipes;
-    }
-
-    public static Map<String, String> getElevatorRecipeMaterials(String elevatorKey, String recipeKey) {
-        if(!ConfigService.getRootConfig().elevators.containsKey(elevatorKey))
-            return new HashMap<>();
-        ConfigElevatorType elevatorType = ConfigService.getRootConfig().elevators.get(elevatorKey);
-        if(!elevatorType.recipes.containsKey(recipeKey))
-            return new HashMap<>();
-        return elevatorType.recipes.get(recipeKey).materials;
     }
 
     public static boolean isWorldDisabled(World world) {

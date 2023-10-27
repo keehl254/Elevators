@@ -10,9 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class ItemStackHelper {
@@ -68,6 +66,8 @@ public class ItemStackHelper {
         meta.setDisplayName(elevatorType.getDisplayName()); // TODO: Format the display name.
         meta.setLore(elevatorType.getLore()); // TODO: Format the lore.
 
+        itemStack.setItemMeta(meta);
+
         DataContainerService.setElevatorKey(itemStack, elevatorType);
 
         return itemStack;
@@ -112,6 +112,77 @@ public class ItemStackHelper {
             itemEntity.remove();
         else
             itemEntity.setItemStack(item);
+    }
+
+    public static Map<ItemStack, Integer> addElevatorToInventory(ElevatorType elevatorType, int itemAmount, Material dyeMaterial, Inventory inventory) {
+        return ItemStackHelper.addElevatorToInventory(elevatorType, itemAmount, dyeMaterial, inventory, elevatorType.getDisplayName(), elevatorType.getLore());
+    }
+
+    public static Map<ItemStack, Integer> addElevatorToInventory(ElevatorType elevatorType, int itemAmount, Material dyeMaterial, Inventory inventory, String displayName, List<String> lore) {
+        displayName = MessageHelper.formatColors(displayName);
+        lore = MessageHelper.formatColors(lore);
+
+        Map<ItemStack, Integer> partialList = new HashMap<>();
+
+        for(ItemStack inventoryItem : inventory.getContents()) {
+            if(inventoryItem == null) continue;
+            if(inventoryItem.getType() != dyeMaterial) continue;
+            if(ItemStackHelper.isNotShulkerBox(inventoryItem.getType())) continue; // This should technically be caught on the last line.
+            if(!ElevatorHelper.isElevator(inventoryItem)) continue;
+            if(ElevatorHelper.getElevatorType(inventoryItem) != elevatorType) continue;
+
+            if(inventoryItem.getAmount() >= elevatorType.getMaxStackSize()) continue; // Dud .-.
+
+            // Found our first partial :)
+
+            ItemMeta inventoryItemMeta = inventoryItem.getItemMeta();
+            if(inventoryItemMeta == null) continue; // How would this even happen?
+            if(!inventoryItemMeta.getDisplayName().equals(displayName)) continue;
+            if(!Objects.equals(inventoryItemMeta.getLore(), lore)) continue;
+
+            //TODO: Check here for differences in persistant data container.
+
+            int amountToGive = elevatorType.getMaxStackSize() - inventoryItem.getAmount();
+            amountToGive = Math.min(amountToGive, itemAmount);
+
+            itemAmount -= amountToGive;
+            inventoryItem.setAmount(inventoryItem.getAmount() + amountToGive);
+
+            if(itemAmount == 0)
+                break;
+        }
+
+        if(itemAmount > 0) {
+            ItemStack item = ItemStackHelper.createItemStackFromElevatorType(elevatorType, getDyeColorFromMaterial(dyeMaterial));
+            ItemMeta itemMeta = item.getItemMeta();
+            itemMeta.setDisplayName(displayName);
+            itemMeta.setLore(lore);
+            item.setItemMeta(itemMeta);
+
+            int leftoverToGive = itemAmount % elevatorType.getMaxStackSize();
+            int stacksToGive = (itemAmount - leftoverToGive) / elevatorType.getMaxStackSize();
+            for(int i=0; i < stacksToGive; i++) {
+                ItemStack newItem = item.clone();
+                newItem.setAmount(elevatorType.getMaxStackSize());
+
+                partialList.put(newItem, elevatorType.getMaxStackSize());
+            }
+
+            ItemStack newItem = item.clone();
+            newItem.setAmount(leftoverToGive);
+            partialList.put(newItem, leftoverToGive);
+        }
+
+        List<ItemStack> keySet = new ArrayList<>(partialList.keySet());
+        for(ItemStack itemKey : keySet) {
+            int firstEmpty = inventory.firstEmpty();
+            if(firstEmpty == -1) break;
+
+            inventory.setItem(firstEmpty, itemKey);
+            partialList.remove(itemKey);
+        }
+
+        return partialList;
     }
 
     private static ItemStack createItem(Material type, int amount) {

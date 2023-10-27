@@ -2,9 +2,9 @@ package com.lkeehl.elevators.models;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
-import com.lkeehl.elevators.services.ConfigService;
 import com.lkeehl.elevators.services.DataContainerService;
 import com.lkeehl.elevators.services.configs.ConfigRecipe;
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -46,14 +46,14 @@ public class ElevatorRecipeGroup {
     }
 
     private void loadMaterialMap() {
-        Map<String, String> stringMaterialMap = ConfigService.getElevatorRecipeMaterials(elevatorType.getTypeKey(), this.recipeKey);
+        Map<String, String> stringMaterialMap = this.recipeConfig.materials;
 
         for (String character : stringMaterialMap.keySet()) {
             String materialString = stringMaterialMap.get(character);
 
             Material type = Material.matchMaterial(materialString);
             if (type == null) {
-                System.out.println("Elevators: There was an error loading \"" + this.recipeKey + "\" recipe of elevator type \"" + this.elevatorType.getTypeKey() + "\"! Reason: Invalid material \"" + materialString + "\"");
+                Elevators.getElevatorsLogger().warning("Elevators: There was an error loading \"" + this.recipeKey + "\" recipe of elevator type \"" + this.elevatorType.getTypeKey() + "\"! Reason: Invalid material \"" + materialString + "\"");
                 return;
             }
             this.materialMap.put(character.charAt(0), type);
@@ -92,6 +92,8 @@ public class ElevatorRecipeGroup {
             recipe.setIngredient(character, getMaterialVariant(this.materialMap.get(character), dyeColor));
 
         this.recipeList.add(new ElevatorRecipe(permission, namespacedKey, recipe));
+
+        Bukkit.addRecipe(recipe);
 
     }
 

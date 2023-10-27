@@ -131,6 +131,7 @@ public class MessageHelper {
     }
 
     public static List<String> formatColors(List<String> messages) {
+        if(messages == null) return messages;
         List<String> finalMessages = new ArrayList<>(messages);
         messages.forEach(i -> finalMessages.add(formatColors(i)));
         return finalMessages;

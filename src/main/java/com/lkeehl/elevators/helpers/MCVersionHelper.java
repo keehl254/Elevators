@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.helpers;
 
+import com.lkeehl.elevators.services.HookService;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
@@ -16,6 +17,7 @@ public class MCVersionHelper {
     private static final int supportBlockBoundingBoxes = getVersionID("V1_17_R1");
     private static final int supportNewBuildLimits = getVersionID("v1_18_R1");
     private static final int shulkerOpenCloseUseAPI = getVersionID("V1_16_R2");
+    private static final int paperCollectItemEffect = getVersionID("V1_16_R5");
 
     private static final int slimeSizeMetaData = 0;
 
@@ -51,6 +53,8 @@ public class MCVersionHelper {
     public static boolean doesVersionSupportOpenCloseAPI() {
         return currentVersionID >= shulkerOpenCloseUseAPI;
     }
+
+    public static boolean doesVersionSupportPaperCollectEffect() { return HookService.isServerRunningPaper() && currentVersionID >= paperCollectItemEffect; }
 
     public static int getWorldMinHeight(World world) {
         if(doesVersionSupportNewBuildLimits())

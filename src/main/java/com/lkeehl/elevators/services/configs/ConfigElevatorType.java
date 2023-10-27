@@ -3,10 +3,7 @@ package com.lkeehl.elevators.services.configs;
 import com.lkeehl.elevators.util.config.Comments;
 import com.lkeehl.elevators.util.config.Config;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigElevatorType implements Config {
 
@@ -64,7 +61,7 @@ public class ConfigElevatorType implements Config {
     @Comments({"Define effects that should play when an elevator is used. Effects can be created from image files using the #Effects section of this config above, or you can you can use predefined animations such as:","arrow","helix","sparkles","none"})
     public ConfigEffects effects = new ConfigEffects();
 
-    public Map<String, ConfigRecipe> recipes;
+    public Map<String, ConfigRecipe> recipes = new HashMap<>();
 
     public static class ConfigActions implements Config {
 

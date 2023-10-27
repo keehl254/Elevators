@@ -94,7 +94,7 @@ public class WorldEventExecutor {
 
         ItemStack newElevatorItem = ItemStackHelper.createItemStackFromElevator(new Elevator(box, elevatorType));
 
-        Optional<Item> defaultItem = event.getItems().stream().filter(ElevatorHelper::isElevator).findAny();
+        Optional<Item> defaultItem = event.getItems().stream().filter(i -> !ItemStackHelper.isNotShulkerBox(i.getItemStack().getType())).findAny();
         if(defaultItem.isEmpty()) return;
 
         defaultItem.get().setItemStack(newElevatorItem);

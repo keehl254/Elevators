@@ -19,11 +19,19 @@ public class HookService {
 
     private static final Map<String, ElevatorHook> hookMap = new HashMap<>();
 
+    private static boolean isPaper = false;
+
     public static void init() {
         if(HookService.initialized)
             return;
 
         HookService.buildHooks();
+
+        try {
+            Class.forName("com.destroystokyo.paper.PaperConfig");
+            isPaper = true;
+        } catch (ClassNotFoundException ignored) {
+        }
 
         HookService.initialized = true;
     }
@@ -92,6 +100,10 @@ public class HookService {
         }*/
 
         return hook;
+    }
+
+    public static boolean isServerRunningPaper() {
+        return isPaper;
     }
 
     @SuppressWarnings("unchecked")
