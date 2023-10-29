@@ -8,10 +8,7 @@ import com.lkeehl.elevators.services.listeners.InventoryEventExecutor;
 import com.lkeehl.elevators.services.listeners.PaperEventExecutor;
 import com.lkeehl.elevators.services.listeners.WorldEventExecutor;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -86,6 +83,13 @@ public class ListenerService {
         }
 
         ListenerService.initialized = true;
+    }
+
+    public static void unInitialize() {
+        if(ListenerService.listener != null)
+            HandlerList.unregisterAll(ListenerService.listener);
+
+        ListenerService.initialized = false;
     }
 
     @SuppressWarnings({"unchecked"})

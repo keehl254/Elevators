@@ -8,7 +8,6 @@ import com.lkeehl.elevators.models.ElevatorActionGrouping;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.Bukkit;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;

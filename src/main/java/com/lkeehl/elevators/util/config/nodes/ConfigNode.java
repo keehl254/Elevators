@@ -2,7 +2,7 @@ package com.lkeehl.elevators.util.config.nodes;
 
 import com.lkeehl.elevators.util.config.ConfigConverter;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public interface ConfigNode<T> {
 
@@ -10,7 +10,7 @@ public interface ConfigNode<T> {
 
     T getValue();
 
-    List<ConfigNode<?>> getChildren();
+    ArrayList<ConfigNode<?>> getChildren();
 
     void addComment(String comment);
 

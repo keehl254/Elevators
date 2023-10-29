@@ -4,10 +4,7 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.util.config.Config;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
 
@@ -17,7 +14,7 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
 
     private final T config;
 
-    private final List<ConfigNode<?>> children = new ArrayList<>();
+    private final ArrayList<ConfigNode<?>> children = new ArrayList<>();
 
     public ConfigRootNode(Map<?,?> value, T config) {
         this.data = value;
@@ -67,7 +64,7 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
     }
 
     public Object serializeToObject() {
-        Map<Object, Object> map = new HashMap<>();
+        LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
         for(ConfigNode<?> childNode : this.getChildren()) {
             try {
                 map.put(childNode.getKey(), childNode.getConfigConverter().createObjectFromNode(childNode));
@@ -81,7 +78,7 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
     }
 
     @Override
-    public List<ConfigNode<?>> getChildren() {
+    public ArrayList<ConfigNode<?>> getChildren() {
         return this.children;
     }
 

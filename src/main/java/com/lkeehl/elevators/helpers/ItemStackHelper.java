@@ -123,6 +123,7 @@ public class ItemStackHelper {
         lore = MessageHelper.formatColors(lore);
 
         Map<ItemStack, Integer> partialList = new HashMap<>();
+        ItemStack newElevator = ItemStackHelper.createItemStackFromElevatorType(elevatorType, getDyeColorFromMaterial(dyeMaterial));
 
         for(ItemStack inventoryItem : inventory.getContents()) {
             if(inventoryItem == null) continue;
@@ -135,12 +136,16 @@ public class ItemStackHelper {
 
             // Found our first partial :)
 
+/*
             ItemMeta inventoryItemMeta = inventoryItem.getItemMeta();
             if(inventoryItemMeta == null) continue; // How would this even happen?
             if(!inventoryItemMeta.getDisplayName().equals(displayName)) continue;
             if(!Objects.equals(inventoryItemMeta.getLore(), lore)) continue;
 
             //TODO: Check here for differences in persistant data container.
+*/
+
+            if(!inventoryItem.isSimilar(newElevator)) continue;
 
             int amountToGive = elevatorType.getMaxStackSize() - inventoryItem.getAmount();
             amountToGive = Math.min(amountToGive, itemAmount);
@@ -153,22 +158,21 @@ public class ItemStackHelper {
         }
 
         if(itemAmount > 0) {
-            ItemStack item = ItemStackHelper.createItemStackFromElevatorType(elevatorType, getDyeColorFromMaterial(dyeMaterial));
-            ItemMeta itemMeta = item.getItemMeta();
+            ItemMeta itemMeta = newElevator.getItemMeta();
             itemMeta.setDisplayName(displayName);
             itemMeta.setLore(lore);
-            item.setItemMeta(itemMeta);
+            newElevator.setItemMeta(itemMeta);
 
             int leftoverToGive = itemAmount % elevatorType.getMaxStackSize();
             int stacksToGive = (itemAmount - leftoverToGive) / elevatorType.getMaxStackSize();
             for(int i=0; i < stacksToGive; i++) {
-                ItemStack newItem = item.clone();
+                ItemStack newItem = newElevator.clone();
                 newItem.setAmount(elevatorType.getMaxStackSize());
 
                 partialList.put(newItem, elevatorType.getMaxStackSize());
             }
 
-            ItemStack newItem = item.clone();
+            ItemStack newItem = newElevator.clone();
             newItem.setAmount(leftoverToGive);
             partialList.put(newItem, leftoverToGive);
         }

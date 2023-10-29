@@ -14,6 +14,8 @@ public class ConfigLocale implements Config {
 
     public String cantGiveMessage = prefix + "You do not have permission to give Elevators!";
 
+    public String cantAdministrateMessage = prefix + "You do not have permission to administrate Elevators!";
+
     public String cantReloadMessage = prefix + "You do not have permission to reload Elevators!";
 
     public String notEnoughRoomGiveMessage = prefix + "You do not have enough space in your inventory! The Elevator is on the ground in front of you!";

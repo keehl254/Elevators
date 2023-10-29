@@ -1,12 +1,10 @@
 package com.lkeehl.elevators.models;
 
-import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
 import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.util.ExecutionMode;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.ShulkerBox;
 
 public abstract class ElevatorEffect {
 
@@ -17,7 +15,7 @@ public abstract class ElevatorEffect {
     }
 
     protected Location getEffectLocation(ElevatorEventData teleportResult) {
-        if(ConfigService.getRootConfig().playEffectAtDestination)
+        if (ConfigService.getRootConfig().effectDestination == ExecutionMode.DESTINATION)
             return teleportResult.getDestination().getLocation();
 
         return teleportResult.getOrigin().getLocation().clone();
@@ -28,7 +26,7 @@ public abstract class ElevatorEffect {
     }
 
     protected Color getParticleColor(ElevatorEventData teleportResult) {
-        if(ConfigService.getRootConfig().playEffectAtDestination)
+        if (ConfigService.getRootConfig().effectDestination == ExecutionMode.DESTINATION)
             return this.extractColorFromDyeColor(teleportResult.getDestination().getColor());
         return this.extractColorFromDyeColor(teleportResult.getOrigin().getColor());
     }
@@ -37,6 +35,10 @@ public abstract class ElevatorEffect {
         return this.effectKey;
     }
 
-    public abstract void playEffect(ElevatorEventData teleportResult);
+    public abstract void playEffect(ElevatorEventData teleportResult, ExecutionMode executionMode);
+
+    public void playEffect(ElevatorEventData teleportResult) {
+        ExecutionMode.executeConsumerWithMode(i->i, executionMode -> playEffect(teleportResult, executionMode));
+    }
 
 }

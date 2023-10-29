@@ -3,7 +3,6 @@ package com.lkeehl.elevators.util.config.nodes;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DirectConfigNode<T> implements ConfigNode<T> {
 
@@ -12,7 +11,7 @@ public class DirectConfigNode<T> implements ConfigNode<T> {
     private final String key;
     private final T value;
 
-    private final List<ConfigNode<?>> children = new ArrayList<>();
+    private final ArrayList<ConfigNode<?>> children = new ArrayList<>();
 
     public DirectConfigNode(ConfigNode<?> parentNode, String key, T value) {
         this.parentNode = parentNode;
@@ -31,7 +30,7 @@ public class DirectConfigNode<T> implements ConfigNode<T> {
     }
 
     @Override
-    public List<ConfigNode<?>> getChildren() {
+    public ArrayList<ConfigNode<?>> getChildren() {
         return this.children;
     }
 

@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.services;
 
+import com.lkeehl.elevators.helpers.MCVersionHelper;
 import com.lkeehl.elevators.models.ElevatorRecipeGroup;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigRoot;
@@ -43,6 +44,9 @@ public class ElevatorRecipeService {
         }
 
         ElevatorRecipeService.elevatorRecipeGroupMap.clear();
+
+        if(MCVersionHelper.doesVersionSupportRemoveRecipe())
+            recipesToUnlearn.forEach(Bukkit.getServer()::removeRecipe);
 
         Bukkit.getOnlinePlayers().forEach(i -> i.undiscoverRecipes(recipesToUnlearn));
 

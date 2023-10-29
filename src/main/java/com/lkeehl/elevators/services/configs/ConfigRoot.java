@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.services.configs;
 
+import com.lkeehl.elevators.util.ExecutionMode;
 import com.lkeehl.elevators.util.config.Comments;
 import com.lkeehl.elevators.util.config.Config;
 
@@ -14,8 +15,13 @@ public class ConfigRoot implements Config {
     @Comments({"This option controls whether the plugin will check for plugin updates upon startup or every four hours.", "Players with the update permission will receive a message if one is available."})
     public boolean updateCheckerEnabled = true;
 
-    @Comments("If playEffectAtDestination is true, any effects applied to an elevator type will instead play at the elevator being teleported to.")
-    public boolean playEffectAtDestination = false;
+    @Comments({"effectDestination controls which elevator the effects and elevators sounds will play at. Options are:",
+    "Origin","Destination","Both"})
+    public ExecutionMode effectDestination = ExecutionMode.ORIGIN;
+
+    @Comments({"Dictates which elevator the player needs permission from to teleport.Options are:",
+            "Origin","Destination","Both"})
+    public ExecutionMode permissionMode = ExecutionMode.BOTH;
 
     @Comments("This option controls whether elevators should always face upwards.")
     public boolean forceFacingUpwards = true;

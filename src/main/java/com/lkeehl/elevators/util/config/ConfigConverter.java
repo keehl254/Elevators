@@ -6,12 +6,16 @@ import com.lkeehl.elevators.util.config.nodes.ClassicConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigRootNode;
 import com.lkeehl.elevators.util.config.nodes.DirectConfigNode;
+import org.bukkit.configuration.file.YamlRepresenter;
 import org.eclipse.jdt.annotation.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.introspector.BeanAccess;
+import org.yaml.snakeyaml.introspector.Property;
+import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
@@ -19,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class ConfigConverter {
 
@@ -34,6 +39,7 @@ public abstract class ConfigConverter {
             addConverter(MapConfigConverter.class);
             addConverter(ArrayConfigConverter.class);
             addConverter(SetConfigConverter.class);
+            addConverter(EnumConfigConverter.class);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -42,8 +48,14 @@ public abstract class ConfigConverter {
         yamlOptions.setIndent(2);
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
-        Representer yamlRepresenter = new Representer(yamlOptions);
+        Representer yamlRepresenter = new YamlRepresenter(yamlOptions);
         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        yamlRepresenter.setPropertyUtils(new PropertyUtils() {
+            @Override
+            protected Set<Property> createPropertySet(Class<?> type, BeanAccess bAccess) {
+                return getPropertiesMap(type, bAccess).values().stream().sequential().filter(prop -> prop.isReadable() && (isAllowReadOnlyProperties() || prop.isWritable())).collect(Collectors.toCollection(LinkedHashSet::new));
+            }
+        });
 
         ConfigConverter.yaml = new Yaml(new CustomClassLoaderConstructor(Elevators.class.getClassLoader(), new LoaderOptions()), yamlRepresenter, yamlOptions);
     }

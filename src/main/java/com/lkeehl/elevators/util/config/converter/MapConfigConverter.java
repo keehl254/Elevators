@@ -6,17 +6,13 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MapConfigConverter extends ConfigConverter {
 
     @Override
     public ConfigNode<?> createNodeFromFieldAndObject(ConfigNode<?> parentNode, Class<?> fieldType, String key, Object object, @Nullable Field field) throws Exception {
-        Map<Object,Object> mapObj = new HashMap<>();
-        List<ConfigNode<?>> children = new ArrayList<>();
+        HashMap<Object,Object> mapObj = new HashMap<>();
 
         ConfigNode<?> myNode = createNodeWithData(parentNode, key, mapObj, field);
 
@@ -38,17 +34,16 @@ public class MapConfigConverter extends ConfigConverter {
             else
                 childNode = this.createNodeWithData(myNode,entry.getKey().toString(), entry.getValue(), null);
 
-            children.add(childNode);
+            myNode.getChildren().add(childNode);
             mapObj.put(entry.getKey(), childNode.getValue());
         }
-        myNode.getChildren().addAll(children);
 
         return myNode;
     }
 
     public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
 
-        Map<String,Object> newMap = new HashMap<>();
+        LinkedHashMap<String,Object> newMap = new LinkedHashMap<>();
 
         for(ConfigNode<?> childNode : node.getChildren()) {
 

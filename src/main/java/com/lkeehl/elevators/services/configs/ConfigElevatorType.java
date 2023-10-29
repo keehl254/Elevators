@@ -19,12 +19,6 @@ public class ConfigElevatorType implements Config {
     @Comments("The maximum stack size of elevators.")
     public int maxStackSize = 16;
 
-    @Comments("The cost to use the elevator. Requires vault.")
-    public float costUp = 0.0F;
-
-    @Comments("The cost to use the elevator. Requires vault.")
-    public float costDown = 0.0F;
-
     @Comments("This option will require both a destination and origin elevator to be of the same type.")
     public boolean classCheck = true;
 
@@ -52,13 +46,21 @@ public class ConfigElevatorType implements Config {
     @Comments({"Allows the addition of a lore to the item stack.","This can be useful both to look great or to create support for plugins with lore blacklists."})
     public List<String> loreLines = new ArrayList<>();
 
-    @Comments({"Define actions that can be run on elevator usage.","Default actions are:","action-bar","boss-bar","command-console","command-player","message-all","message-player","sound","title","","If you do not wish to use actions on use, you can either delete the actions section","or set the \"up\" and \"down\" values to an empty array with \"[]\" such as shown with the \"down\" value. PlaceholderAPI is supported."})
+    @Comments({"Define actions that can be run on elevator usage.",
+            "Default actions are:",
+            "action-bar, boss-bar, command-console",
+            "command-player, message-all, message-player",
+            "sound, title",
+            "",
+            "If you do not wish to use actions on use, you can either delete the actions section",
+            "or set the \"up\" and \"down\" values to an empty array with \"[]\". PlaceholderAPI is supported."})
     public ConfigActions actions = new ConfigActions();
 
-    @Comments("Define a cost to use the elevator. Requires Vault to be installed on the server to work. Set to 0 or below to disable.")
+    @Comments("Define a cost to use the elevator. Requires Vault to be installed on the server to work. Set to 0 or below to disable. Requires Vault.")
     public ConfigCosts cost = new ConfigCosts();
 
-    @Comments({"Define effects that should play when an elevator is used. Effects can be created from image files using the #Effects section of this config above, or you can you can use predefined animations such as:","arrow","helix","sparkles","none"})
+    @Comments({"Define effects that should play when an elevator is used. Effects can be created from image files using the #Effects section of this config above, or you can you can use predefined animations such as:",
+            "arrow, helix, sparkles, none"})
     public ConfigEffects effects = new ConfigEffects();
 
     public Map<String, ConfigRecipe> recipes = new HashMap<>();

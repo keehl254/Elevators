@@ -25,17 +25,14 @@ public class SetConfigConverter extends ConfigConverter {
         }
 
         List<Object> values = new ArrayList<>((Collection<?>) object);
+        ConfigNode<?> myNode = createNodeWithData(parentNode, key, new HashSet<>(values), field);
 
-        List<ConfigNode<?>> nodeList = new ArrayList<>();
         for (Object obj : values) {
             if (converter != null)
-                nodeList.add(converter.createNodeFromFieldAndObject(parentNode, genericClazz, obj.toString(), obj, null));
+                myNode.getChildren().add(converter.createNodeFromFieldAndObject(parentNode, genericClazz, obj.toString(), obj, null));
             else
-                nodeList.add(this.createNodeWithData(parentNode, obj.toString(), obj, null));
+                myNode.getChildren().add(this.createNodeWithData(parentNode, obj.toString(), obj, null));
         }
-
-        ConfigNode<?> myNode = createNodeWithData(parentNode, key, new HashSet<>(values), field);
-        myNode.getChildren().addAll(nodeList);
 
         return myNode;
     }

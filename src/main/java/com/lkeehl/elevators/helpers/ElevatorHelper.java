@@ -2,7 +2,6 @@ package com.lkeehl.elevators.helpers;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.*;
-import com.lkeehl.elevators.services.ElevatorEffectService;
 import com.lkeehl.elevators.services.ElevatorVersionService;
 import com.lkeehl.elevators.services.ObstructionService;
 import org.bukkit.DyeColor;

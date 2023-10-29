@@ -10,7 +10,9 @@ import com.lkeehl.elevators.services.hooks.PlaceholderAPIHook;
 import io.netty.handler.codec.DecoderException;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -18,22 +20,26 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
 public class MessageHelper {
 
-    private static BiConsumer<Player, String> sendMessageConsumer;
+    private static BiConsumer<Player, String> sendPlayerMessageConsumer;
+    private static Consumer< String> sendConsoleMessageConsumer;
 
     private static boolean adventureEnabled;
     static {
         try {
             Class.forName("net.kyori.adventure");
             try (BukkitAudiences audience = BukkitAudiences.create(Elevators.getInstance())) {
-                sendMessageConsumer = (player, message) -> audience.player(player).sendMessage(MiniMessage.miniMessage().deserialize(message));
+                sendPlayerMessageConsumer = (player, message) -> audience.player(player).sendMessage(MiniMessage.miniMessage().deserialize(message));
+                sendConsoleMessageConsumer = message -> audience.console().sendMessage(MiniMessage.miniMessage().deserialize(message));
             }
         } catch (ClassNotFoundException ignore) {
-            sendMessageConsumer = (player, message) -> player.sendMessage(message);
+            sendPlayerMessageConsumer = CommandSender::sendMessage;
+            sendConsoleMessageConsumer = Bukkit.getConsoleSender()::sendMessage;
         }
     }
 
@@ -49,20 +55,24 @@ public class MessageHelper {
         MessageHelper.sendFormattedLocale(player, i -> i.cantUseMessage, elevatorEventData);
     }
 
-    public static void sendCantGiveMessage(Player player, ElevatorEventData elevatorEventData) {
-        MessageHelper.sendFormattedLocale(player, i -> i.cantGiveMessage, elevatorEventData);
+    public static void sendCantGiveMessage(CommandSender sender, ElevatorEventData elevatorEventData) {
+        MessageHelper.sendFormattedLocale(sender, i -> i.cantGiveMessage, elevatorEventData);
     }
 
-    public static void sendCantReloadMessage(Player player, ElevatorEventData elevatorEventData) {
-        MessageHelper.sendFormattedLocale(player, i -> i.cantReloadMessage, elevatorEventData);
+    public static void sendCantReloadMessage(CommandSender sender, ElevatorEventData elevatorEventData) {
+        MessageHelper.sendFormattedLocale(sender, i -> i.cantReloadMessage, elevatorEventData);
     }
 
-    public static void sendNotEnoughRoomGiveMessage(Player player, ElevatorEventData elevatorEventData) {
-        MessageHelper.sendFormattedLocale(player, i -> i.notEnoughRoomGiveMessage, elevatorEventData);
+    public static void sendNotEnoughRoomGiveMessage(CommandSender sender, ElevatorEventData elevatorEventData) {
+        MessageHelper.sendFormattedLocale(sender, i -> i.notEnoughRoomGiveMessage, elevatorEventData);
     }
 
-    public static void sendGivenElevatorMessage(Player player, ElevatorEventData elevatorEventData) {
-        MessageHelper.sendFormattedLocale(player, i -> i.givenElevatorMessage, elevatorEventData);
+    public static void sendGivenElevatorMessage(CommandSender sender, ElevatorEventData elevatorEventData) {
+        MessageHelper.sendFormattedLocale(sender, i -> i.givenElevatorMessage, elevatorEventData);
+    }
+
+    public static void sendCantAdministrateMessage(CommandSender sender, ElevatorEventData elevatorEventData) {
+        MessageHelper.sendFormattedLocale(sender, i -> i.cantAdministrateMessage, elevatorEventData);
     }
 
     public static void sendWorldDisabledMessage(Player player, ElevatorEventData elevatorEventData) {
@@ -77,25 +87,36 @@ public class MessageHelper {
         MessageHelper.sendFormattedLocale(player, i -> i.elevatorNowUnprotected, elevatorEventData);
     }
 
-    public static void sendFormattedLocale(Player player, Function<ConfigLocale, String> messageFunc, ElevatorEventData elevatorEventData) {
+    public static void sendFormattedLocale(CommandSender sender, Function<ConfigLocale, String> messageFunc, ElevatorEventData elevatorEventData) {
         String message = messageFunc.apply(ConfigService.getRootConfig().locale);
         String defaultMessage = messageFunc.apply(ConfigService.getDefaultLocaleConfig());
 
         message = message == null ? defaultMessage : message;
-        message = formatElevatorPlaceholders(player, elevatorEventData, message);
+        message = formatElevatorPlaceholders(sender, elevatorEventData, message);
 
-        MessageHelper.sendFormattedMessage(player, message);
+        MessageHelper.sendFormattedMessage(sender, message);
     }
 
-    public static void sendFormattedMessage(Player player, String message) {
-        message = formatPlaceholders(player, message);
+    public static void sendFormattedMessage(CommandSender sender, String message) {
+        message = formatPlaceholders(sender, message);
         message = formatColors(message);
 
-        sendMessageConsumer.accept(player, message);
+        if(sender instanceof Player player)
+            sendPlayerMessageConsumer.accept(player, message);
+        else
+            sendConsoleMessageConsumer.accept(message);
     }
 
-    public static String formatElevatorPlaceholders(Player player, ElevatorEventData searchResult, String message) {
-        message = message.replace("%player%", player.getName());
+    public static String formatElevatorPlaceholders(CommandSender sender, ElevatorEventData searchResult, String message) {
+
+        if(sender instanceof Player player)
+            message = message.replace("%player%", player.getName());
+        else
+            message = message.replace("%player%", "Console");
+
+        if(searchResult == null)
+            return message;
+
         message = message.replace("%elevators_type%", searchResult.getElevatorType().getTypeKey());
         if(searchResult.getDestination() != null) {
 
@@ -137,7 +158,9 @@ public class MessageHelper {
         return finalMessages;
     }
 
-    public static String formatPlaceholders(Player player, String message) {
+    public static String formatPlaceholders(CommandSender sender, String message) {
+        if(!(sender instanceof Player player))
+            return message;
 
         PlaceholderAPIHook hook = HookService.getPlaceholderAPIHook();
         if(hook == null)

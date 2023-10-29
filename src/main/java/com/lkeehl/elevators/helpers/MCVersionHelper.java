@@ -18,6 +18,7 @@ public class MCVersionHelper {
     private static final int supportNewBuildLimits = getVersionID("v1_18_R1");
     private static final int shulkerOpenCloseUseAPI = getVersionID("V1_16_R2");
     private static final int paperCollectItemEffect = getVersionID("V1_16_R5");
+    private static final int supportRemoveRecipe = getVersionID("V1_15_R2");
 
     private static final int slimeSizeMetaData = 0;
 
@@ -55,6 +56,8 @@ public class MCVersionHelper {
     }
 
     public static boolean doesVersionSupportPaperCollectEffect() { return HookService.isServerRunningPaper() && currentVersionID >= paperCollectItemEffect; }
+
+    public static boolean doesVersionSupportRemoveRecipe() { return currentVersionID >= supportRemoveRecipe; }
 
     public static int getWorldMinHeight(World world) {
         if(doesVersionSupportNewBuildLimits())

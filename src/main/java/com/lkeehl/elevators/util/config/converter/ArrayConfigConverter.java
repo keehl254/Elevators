@@ -18,17 +18,15 @@ public class ArrayConfigConverter extends ConfigConverter {
         Class<?> singleType = fieldType.getComponentType();
         java.util.List<?> values = new ArrayList<>(object instanceof List ? (List<?>) object : Arrays.asList((Object[]) object));
 
+        ConfigNode<?> myNode = createNodeWithData(parentNode, key, values.toArray(), field);
+
         ConfigConverter converter = ConfigConverter.getConverter(singleType);
-        List<ConfigNode<?>> nodeList = new ArrayList<>();
         for(Object obj : values) {
             if(converter != null)
-                nodeList.add(converter.createNodeFromFieldAndObject(parentNode, singleType, obj.toString(), obj, null));
+                myNode.getChildren().add(converter.createNodeFromFieldAndObject(parentNode, singleType, obj.toString(), obj, null));
             else
-                nodeList.add(this.createNodeWithData(parentNode,obj.toString(),obj,null));
+                myNode.getChildren().add(this.createNodeWithData(parentNode,obj.toString(),obj,null));
         }
-
-        ConfigNode<?> myNode = createNodeWithData(parentNode, key, values.toArray(), field);
-        myNode.getChildren().addAll(nodeList);
 
         return myNode;
     }

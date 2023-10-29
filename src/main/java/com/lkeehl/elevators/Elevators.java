@@ -1,11 +1,9 @@
 package com.lkeehl.elevators;
 
-import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.services.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import world.bentobox.bentobox.api.hooks.Hook;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -27,16 +25,17 @@ public class Elevators extends JavaPlugin {
         ObstructionService.init();
         HookService.init();
         ListenerService.init();
+        CommandService.init(this);
 
         this.reloadElevators();
     }
 
     @Override()
     public void onDisable() {
-
+        ListenerService.unInitialize();
     }
 
-    private void reloadElevators() {
+    public void reloadElevators() {
 
         File configFile = new File(this.getDataFolder(), "config.yml");
         this.saveDefaultConfig();

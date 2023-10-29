@@ -5,7 +5,6 @@ import com.lkeehl.elevators.util.config.ConfigConverter;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ClassicConfigNode<T> implements ConfigNode<T> {
 
@@ -13,7 +12,7 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
 
     private final Field field;
 
-    private final List<ConfigNode<?>> children = new ArrayList<>();
+    private final ArrayList<ConfigNode<?>> children = new ArrayList<>();
 
     public ClassicConfigNode(ConfigNode<?> parentNode, Field field, T value) {
         this.parentNode = parentNode;
@@ -53,7 +52,7 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
     }
 
     @Override
-    public List<ConfigNode<?>> getChildren() {
+    public ArrayList<ConfigNode<?>> getChildren() {
         return this.children;
     }
 

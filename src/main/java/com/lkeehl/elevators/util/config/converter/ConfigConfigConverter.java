@@ -25,7 +25,6 @@ public class ConfigConfigConverter extends ConfigConverter {
     }
 
     public void constructMapToConfig(ConfigNode<?> parentNode, ConfigNode<?> myNode, Object object, Class<?> fieldType) throws Exception {
-        List<ConfigNode<?>> children = new ArrayList<>();
 
         for (Field childField : fieldType.getDeclaredFields()) {
             if (doSkip(childField)) //TODO: Fix up
@@ -45,6 +44,8 @@ public class ConfigConfigConverter extends ConfigConverter {
                         obj = new HashMap<>();
                     else if(Set.class.isAssignableFrom(childField.getType()))
                         obj = new HashSet<>();
+                    else if(childField.isEnumConstant())
+                        obj = childField.getType().getEnumConstants()[0];
                     else
                         continue;
                 }
@@ -64,15 +65,13 @@ public class ConfigConfigConverter extends ConfigConverter {
                     childNode.addComment(comment);
             }
 
-            children.add(childNode);
-
+            myNode.getChildren().add(childNode);
         }
-        myNode.getChildren().addAll(children);
     }
 
     public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
 
-        Map<String,Object> newMap = new HashMap<>();
+        LinkedHashMap<String,Object> newMap = new LinkedHashMap<>();
         for(ConfigNode<?> childNode : node.getChildren()) {
             Object value = childNode.getValue();
 

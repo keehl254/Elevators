@@ -4,10 +4,13 @@ import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.util.ExecutionMode;
 import org.bukkit.Sound;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
+
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class SoundAction extends ElevatorAction {
 
@@ -25,7 +28,8 @@ public class SoundAction extends ElevatorAction {
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
-        eventData.getOrigin().getWorld().playSound(eventData.getOrigin().getLocation(), this.getGroupingObject(soundGrouping), this.getGroupingObject(volumeGrouping), this.getGroupingObject(pitchGrouping));
+        Consumer<ShulkerBox> soundConsumer = box -> box.getWorld().playSound(box.getLocation(), this.getGroupingObject(soundGrouping), this.getGroupingObject(volumeGrouping), this.getGroupingObject(pitchGrouping));
+        ExecutionMode.executeConsumerWithMode(i-> i == ExecutionMode.DESTINATION ? eventData.getDestination() : eventData.getOrigin(), soundConsumer);
     }
 
     @Override
