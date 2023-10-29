@@ -27,7 +27,6 @@ public class ElevatorTypeService {
 
     private static void reloadElevatorsFromConfig(ConfigRoot config) {
         elevatorTypes.clear();
-        // TODO: Clear elevator recipes
 
         Map<String, ConfigElevatorType> elevatorTypeConfigs = ConfigService.getElevatorTypeConfigs();
         elevatorTypes.put("DEFAULT", ElevatorTypeService.createElevatorFromConfig("DEFAULT", new ConfigElevatorType()));
@@ -49,9 +48,8 @@ public class ElevatorTypeService {
 
         Map<String, ConfigRecipe> recipeMap = config.recipes;
 
-        for(String recipeKey : recipeMap.keySet()) {
+        for(String recipeKey : recipeMap.keySet())
             ElevatorRecipeService.registerElevatorRecipeGroup(elevatorType, new ElevatorRecipeGroup(recipeKey, elevatorType, recipeMap.get(recipeKey)));
-        }
 
         return elevatorType;
     }

@@ -4,11 +4,9 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.services.DataContainerService;
 import com.lkeehl.elevators.services.configs.ConfigRecipe;
-import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.permissions.Permissible;
 
@@ -39,9 +37,11 @@ public class ElevatorRecipeGroup {
 
         if(recipeConfig.coloredCrafting) {
             for (DyeColor color : DyeColor.values())
-                this.addRecipe(this.recipeConfig.permission + "." + color.toString().toLowerCase(), color);
-        }else
-            this.addRecipe(this.recipeConfig.permission, this.elevatorType.getDefaultElevatorColor());
+                this.addRecipe(this.recipeConfig.craftPermission + "." + color.toString().toLowerCase(), color);
+        } else
+            this.addRecipe(this.recipeConfig.craftPermission, this.elevatorType.getDefaultElevatorColor());
+
+        elevatorType.addRecipeGroup(this);
 
     }
 
@@ -66,10 +66,13 @@ public class ElevatorRecipeGroup {
         return initialType;
     }
 
-    public boolean doesPermissibleHavePermissionForRecipe(Permissible permissible, ShapedRecipe recipe) {
-        if(this.recipeConfig.coloredCrafting)
-            return permissible.hasPermission(this.recipeConfig.permission);
-        if(permissible.hasPermission(this.recipeConfig.permission + ".*"))
+    /* Note to anyone working with this method: A new recipe is registered for each color, so the namespacedKey check
+    on the last line is sufficient for checking colored crafting permission.
+     */
+    public <T extends Recipe & Keyed> boolean doesPermissibleHavePermissionForRecipe(Permissible permissible, T recipe) {
+        if(!this.recipeConfig.coloredCrafting)
+            return permissible.hasPermission(this.recipeConfig.craftPermission);
+        if(permissible.hasPermission(this.recipeConfig.craftPermission + ".*"))
             return true;
 
         return this.recipeList.stream().filter(i ->recipe.getKey().equals(i.namespacedKey)).anyMatch(i -> permissible.hasPermission(i.permission));

@@ -19,6 +19,8 @@ public class ElevatorType {
     private final List<ElevatorAction> actionsUp = new ArrayList<>();
     private final List<ElevatorAction> actionsDown = new ArrayList<>();
 
+    private List<ElevatorRecipeGroup> recipeGroups = new ArrayList<>();
+
     //endregion
 
     public ElevatorType(String elevatorTypeKey, ConfigElevatorType elevatorTypeConfig) {
@@ -140,6 +142,8 @@ public class ElevatorType {
         return this.actionsDown;
     }
 
+    public List<ElevatorRecipeGroup> getRecipeGroups() { return this.recipeGroups; }
+
     public ConfigElevatorType getConfig() { return this.elevatorTypeConfig; }
 
     //endregion
@@ -246,6 +250,10 @@ public class ElevatorType {
         this.elevatorDownEffect = elevatorDownEffect;
         this.elevatorTypeConfig.effects.down = elevatorUpEffect.getEffectKey();
         this.save();
+    }
+
+    protected void addRecipeGroup(ElevatorRecipeGroup recipeGroup) {
+        this.recipeGroups.add(recipeGroup);
     }
 
     //endregion

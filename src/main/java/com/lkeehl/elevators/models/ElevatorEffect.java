@@ -37,7 +37,7 @@ public abstract class ElevatorEffect {
     public abstract void playEffect(ElevatorEventData teleportResult, ExecutionMode executionMode);
 
     public void playEffect(ElevatorEventData teleportResult) {
-        ExecutionMode.executeConsumerWithMode(i->i, executionMode -> playEffect(teleportResult, executionMode));
+        ExecutionMode.executeConsumerWithMode(ConfigService.getRootConfig().effectDestination, i->i, executionMode -> playEffect(teleportResult, executionMode));
     }
 
 }

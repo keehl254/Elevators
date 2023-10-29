@@ -10,7 +10,7 @@ public class ConfigRecipe implements Config {
 
     public int amount = 1;
 
-    public String permission = "elevators.craft.default";
+    public String craftPermission = "elevators.craft.default";
 
     public boolean coloredCrafting = true;
 

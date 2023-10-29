@@ -143,7 +143,9 @@ public class InventoryEventExecutor {
         DyeColor dyeColor = ItemStackHelper.getDyeColorFromMaterial(e.getRecipe().getResult().getType());
 
         if (isElevatorCraftingRecipe) {
-            if(!ElevatorPermHelper.canCraftElevatorType(elevatorType, player, (Recipe & Keyed) e.getRecipe(), dyeColor)) {
+
+            // There is no need to pass in the color as the recipe can only represent one color anyway.
+            if(!ElevatorPermHelper.canCraftElevatorType(elevatorType, player, (Recipe & Keyed) e.getRecipe())) {
                 MessageHelper.sendCantCreateMessage(player, new ElevatorEventData(elevatorType));
                 e.setCancelled(true);
             }

@@ -1,7 +1,5 @@
 package com.lkeehl.elevators.util;
 
-import com.lkeehl.elevators.services.ConfigService;
-
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -11,8 +9,8 @@ public enum ExecutionMode {
     ORIGIN,
     DESTINATION;
 
-    public static <T> void executeConsumerWithMode(Function<ExecutionMode, T> modeConverter, Consumer<T> execConsumer) {
-        switch (ConfigService.getRootConfig().effectDestination) {
+    public static <T> void executeConsumerWithMode(ExecutionMode mode, Function<ExecutionMode, T> modeConverter, Consumer<T> execConsumer) {
+        switch (mode) {
             case BOTH:
                 execConsumer.accept(modeConverter.apply(ExecutionMode.ORIGIN));
             case DESTINATION:

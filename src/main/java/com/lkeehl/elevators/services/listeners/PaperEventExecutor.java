@@ -23,9 +23,6 @@ public class PaperEventExecutor {
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
         if (elevatorType == null) return;
 
-        if (!ElevatorHelper.hasOrAddPlayerCoolDown(e.getPlayer(), "use"))
-            return;
-
         if (ConfigService.isWorldDisabled(e.getPlayer().getWorld())) {
             if (ElevatorHelper.hasOrAddPlayerCoolDown(e.getPlayer(), "message"))
                 MessageHelper.sendWorldDisabledMessage(e.getPlayer(), new ElevatorEventData(elevatorType));
@@ -39,7 +36,7 @@ public class PaperEventExecutor {
         ElevatorEventData closest = ElevatorHelper.findDestinationElevator(e.getPlayer(), box, elevatorType, (byte) 1);
         if (closest == null) return;
 
-        if (!ElevatorPermHelper.canUseElevator(e.getPlayer(), elevator, (byte) 1)) {
+        if (!ElevatorPermHelper.canUseElevator(e.getPlayer(), closest)) {
             if (ElevatorHelper.hasOrAddPlayerCoolDown(e.getPlayer(), "message"))
                 MessageHelper.sendCantUseMessage(e.getPlayer(), closest);
             return;
