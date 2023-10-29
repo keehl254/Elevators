@@ -27,7 +27,7 @@ public class ConfigConfigConverter extends ConfigConverter {
     public void constructMapToConfig(ConfigNode<?> parentNode, ConfigNode<?> myNode, Object object, Class<?> fieldType) throws Exception {
 
         for (Field childField : fieldType.getDeclaredFields()) {
-            if (doSkip(childField)) //TODO: Fix up
+            if (Modifier.isTransient(childField.getModifiers()) || Modifier.isFinal(childField.getModifiers()))
                 continue;
 
             if (Modifier.isPrivate(childField.getModifiers()))
@@ -88,10 +88,6 @@ public class ConfigConfigConverter extends ConfigConverter {
     @Override
     public boolean supports(Class<?> type) {
         return Config.class.isAssignableFrom(type);
-    }
-
-    protected boolean doSkip(Field field) {
-        return Modifier.isTransient(field.getModifiers()) || Modifier.isFinal(field.getModifiers());
     }
 
     @Override

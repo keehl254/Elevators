@@ -44,7 +44,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.3")
 
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
-    //implementation("de.oliver:FancyHolograms:2.0.0")
+    compileOnly("de.oliver:FancyHolograms:2.0.3-alpha2")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
     compileOnly("net.kyori:adventure-api:4.14.0")

@@ -14,10 +14,9 @@ public abstract class ElevatorEffect {
         this.effectKey = effectKey;
     }
 
-    protected Location getEffectLocation(ElevatorEventData teleportResult) {
-        if (ConfigService.getRootConfig().effectDestination == ExecutionMode.DESTINATION)
-            return teleportResult.getDestination().getLocation();
-
+    protected Location getEffectLocation(ElevatorEventData teleportResult, ExecutionMode executionMode) {
+        if (executionMode == ExecutionMode.DESTINATION)
+            return teleportResult.getDestination().getLocation().clone();
         return teleportResult.getOrigin().getLocation().clone();
     }
 

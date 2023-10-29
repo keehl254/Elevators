@@ -3,7 +3,7 @@ package com.lkeehl.elevators.effects;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.models.ElevatorEventData;
-import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.util.ExecutionMode;
 import org.bukkit.*;
 
 import java.util.Objects;
@@ -15,8 +15,8 @@ public class HelixEffect extends ElevatorEffect {
     }
 
     @Override
-    public void playEffect(ElevatorEventData teleportResult) {
-        Location locClone = this.getEffectLocation(teleportResult).getBlock().getLocation();
+    public void playEffect(ElevatorEventData teleportResult, ExecutionMode executionMode) {
+        Location locClone = this.getEffectLocation(teleportResult, executionMode).getBlock().getLocation();
         Color particleColor = this.getParticleColor(teleportResult);
 
         World world = locClone.getWorld();

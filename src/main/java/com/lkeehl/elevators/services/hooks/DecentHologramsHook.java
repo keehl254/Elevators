@@ -1,16 +1,11 @@
 package com.lkeehl.elevators.services.hooks;
 
-import com.lkeehl.elevators.models.Elevator;
-import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.hooks.HologramHook;
 import com.lkeehl.elevators.models.hooks.WrappedHologram;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import org.bukkit.Location;
-import org.bukkit.block.ShulkerBox;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,7 +39,7 @@ public class DecentHologramsHook extends HologramHook<DecentHologramsHook.Decent
         this.holograms.values().forEach(DecentHologramWrapper::delete);
     }
 
-    public static class DecentHologramWrapper extends WrappedHologram {
+    public class DecentHologramWrapper extends WrappedHologram {
 
         private final Hologram hologram;
 
@@ -81,6 +76,7 @@ public class DecentHologramsHook extends HologramHook<DecentHologramsHook.Decent
         @Override
         public void delete() {
             this.hologram.delete();
+            DecentHologramsHook.this.holograms.remove(this.hologram.getName());
         }
     }
 

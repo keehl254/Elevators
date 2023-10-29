@@ -3,8 +3,11 @@ package com.lkeehl.elevators.effects;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.models.ElevatorEventData;
-import com.lkeehl.elevators.models.ElevatorType;
-import org.bukkit.*;
+import com.lkeehl.elevators.util.ExecutionMode;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +20,15 @@ public class ArrowEffect extends ElevatorEffect {
     }
 
     @Override
-    public void playEffect(ElevatorEventData teleportResult) {
+    public void playEffect(ElevatorEventData teleportResult, ExecutionMode executionMode) {
         byte direction = teleportResult.getDirection();
 
         Color particleColor = this.getParticleColor(teleportResult);
 
-        Location locClone = getEffectLocation(teleportResult).getBlock().getLocation();
+        Location locClone = getEffectLocation(teleportResult, executionMode).getBlock().getLocation();
         locClone.add(0.5, direction == 1 ? 0 : 2, 0.5);
 
-        List<Location> spawnPositions = new ArrayList<Location>();
+        List<Location> spawnPositions = new ArrayList<>();
 
         for(int i=0;i<20;i++)
             spawnPositions.add(locClone.add(0, direction * 0.1, 0).clone());

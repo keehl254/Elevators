@@ -4,18 +4,17 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ColorHelper;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.models.ElevatorEventData;
-import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.hooks.WrappedHologram;
 import com.lkeehl.elevators.services.HookService;
-import org.bukkit.*;
+import com.lkeehl.elevators.util.ExecutionMode;
 import org.bukkit.Color;
+import org.bukkit.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
 public class ImageEffect extends ElevatorEffect {
 
@@ -119,11 +118,11 @@ public class ImageEffect extends ElevatorEffect {
     }
 
     @Override
-    public void playEffect(ElevatorEventData teleportResult) {
+    public void playEffect(ElevatorEventData teleportResult, ExecutionMode executionMode) {
         if(this.height <= 0)
             return;
 
-        Location location = this.getEffectLocation(teleportResult).add(0.5, 0.5, 0.5);
+        Location location = this.getEffectLocation(teleportResult, executionMode).add(0.5, 0.5, 0.5);
 
         if(this.useHolo)
             this.playHoloEffect(location);

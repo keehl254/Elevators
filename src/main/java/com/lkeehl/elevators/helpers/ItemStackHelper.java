@@ -63,8 +63,8 @@ public class ItemStackHelper {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return itemStack; // How?
 
-        meta.setDisplayName(elevatorType.getDisplayName()); // TODO: Format the display name.
-        meta.setLore(elevatorType.getLore()); // TODO: Format the lore.
+        meta.setDisplayName(MessageHelper.formatColors(elevatorType.getDisplayName()));
+        meta.setLore(MessageHelper.formatColors(elevatorType.getLore()));
 
         itemStack.setItemMeta(meta);
 
@@ -135,15 +135,6 @@ public class ItemStackHelper {
             if(inventoryItem.getAmount() >= elevatorType.getMaxStackSize()) continue; // Dud .-.
 
             // Found our first partial :)
-
-/*
-            ItemMeta inventoryItemMeta = inventoryItem.getItemMeta();
-            if(inventoryItemMeta == null) continue; // How would this even happen?
-            if(!inventoryItemMeta.getDisplayName().equals(displayName)) continue;
-            if(!Objects.equals(inventoryItemMeta.getLore(), lore)) continue;
-
-            //TODO: Check here for differences in persistant data container.
-*/
 
             if(!inventoryItem.isSimilar(newElevator)) continue;
 

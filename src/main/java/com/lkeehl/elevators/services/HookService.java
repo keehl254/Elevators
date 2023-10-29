@@ -45,6 +45,7 @@ public class HookService {
         HookService.registerHookIfPluginActive("BentoBox", BentoBoxHook.class);
         HookService.registerHookIfPluginActive("PlaceholderAPI", PlaceholderAPIHook.class);
         HookService.registerHookIfPluginActive("DecentHolograms", DecentHologramsHook.class);
+        HookService.registerHookIfPluginActive("FancyHolograms", FancyHologramsHook.class);
 
     }
 
@@ -95,9 +96,8 @@ public class HookService {
 
     public static HologramHook<?> getHologramHook() {
         HologramHook<?> hook = getHook("DecentHolograms", DecentHologramsHook.class);
-        /*if(hook == null) {
-             TODO: Check FancyHolograms when their API is accessible.
-        }*/
+        if(hook == null)
+            hook = getHook("FancyHolograms", FancyHologramsHook.class);
 
         return hook;
     }
