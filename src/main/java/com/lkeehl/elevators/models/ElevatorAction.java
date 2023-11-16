@@ -42,13 +42,19 @@ public abstract class ElevatorAction {
         value = value.trim();
         this.value = value;
 
+        boolean defaultGroupingSet = false;
+
         Matcher matcher = subPattern.matcher(this.value);
         while (matcher.find()) {
-            this.calculateGroupingFromAlias(matcher.group(1), matcher.group(2));
+            String alias = matcher.group(1);
+            if(this.calculateGroupingFromAlias(alias, matcher.group(2)))
+                defaultGroupingSet = true;
+
             value = value.replace(this.value.substring(matcher.start(), matcher.end()), "");
         }
 
-        this.calculateGroupingFromAlias(this.defaultGroupingAlias, value);
+        if(!defaultGroupingSet)
+            this.calculateGroupingFromAlias(this.defaultGroupingAlias, value);
         this.onInitialize(this.value);
     }
 
@@ -81,12 +87,14 @@ public abstract class ElevatorAction {
         return grouping.getDefaultObject();
     }
 
-    private void calculateGroupingFromAlias(String groupingAlias, String groupingValue) {
+    private boolean calculateGroupingFromAlias(String groupingAlias, String groupingValue) {
         String groupingAliasFixed = groupingAlias.trim().toLowerCase();
         String groupingValueFixed = groupingValue.trim();
 
         Optional<ElevatorActionGrouping<?>> grouping = this.groupings.stream().filter(i -> i.isGroupingAlias(groupingAliasFixed)).findFirst();
         grouping.ifPresent(elevatorActionGrouping -> this.groupingData.put(elevatorActionGrouping, elevatorActionGrouping.getObjectFromString(groupingValueFixed, this)));
+
+        return grouping.map(elevatorActionGrouping -> elevatorActionGrouping.getMainAlias().equalsIgnoreCase(this.defaultGroupingAlias)).orElse(false);
     }
 
     protected abstract void onInitialize(String value);

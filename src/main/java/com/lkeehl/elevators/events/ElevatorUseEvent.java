@@ -32,7 +32,7 @@ public class ElevatorUseEvent extends Event implements Cancellable {
     }
 
     public ElevatorType getElevatorType() {
-        return this.searchResult.getElevatorType();
+        return this.searchResult.getOrigin().getElevatorType();
     }
 
     public ShulkerBox getOriginShulkerBox() {
@@ -40,7 +40,7 @@ public class ElevatorUseEvent extends Event implements Cancellable {
     }
 
     public ShulkerBox getDestinationShulkerBox() {
-        return this.searchResult.getDestination();
+        return this.searchResult.getDestination().getShulkerBox();
     }
 
     public byte getDirection() {

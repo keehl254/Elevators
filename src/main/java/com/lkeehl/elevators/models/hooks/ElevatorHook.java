@@ -10,6 +10,6 @@ public interface ElevatorHook {
 
     boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage);
 
-    ItemStack createIconForElevator(Player player, ShulkerBox box, ElevatorType elevatorType);
+    ItemStack createIconForElevator(Player player, Elevator elevator);
 
 }

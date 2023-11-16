@@ -117,29 +117,29 @@ public class MessageHelper {
         if(searchResult == null)
             return message;
 
-        message = message.replace("%elevators_type%", searchResult.getElevatorType().getTypeKey());
-        if(searchResult.getDestination() != null) {
+        message = message.replace("%elevators_type%", searchResult.getOrigin().getElevatorType().getTypeKey());
+        if(searchResult.getDestination().getShulkerBox() != null) {
 
             if (message.contains("%elevators_new_floor%"))
-                message = message.replace("%elevators_new_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getDestination(), searchResult.getElevatorType(), true)+"");
+                message = message.replace("%elevators_new_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getDestination(), true)+"");
 
             if (message.contains("%elevators_top_floor%"))
-                message = message.replace("%elevators_top_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getDestination(), searchResult.getElevatorType(), false)+"");
+                message = message.replace("%elevators_top_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getDestination(), false)+"");
 
             if (message.contains("%elevators_new_floor_name%"))
-                message = message.replace("%elevators_new_floor_name%", DataContainerService.getFloorName(searchResult.getDestination(), searchResult.getElevatorType()));
+                message = message.replace("%elevators_new_floor_name%", DataContainerService.getFloorName(searchResult.getDestination()));
 
         }
-        if(searchResult.getOrigin() != null) {
+        if(searchResult.getOrigin().getShulkerBox() != null) {
 
             if (message.contains("%elevators_old_floor%"))
-                message = message.replace("%elevators_new_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getDestination(), searchResult.getElevatorType(), true)+"");
+                message = message.replace("%elevators_new_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getOrigin(), true)+"");
 
-            if (message.contains("%elevators_top_floor%") && searchResult.getDestination() == null)
-                message = message.replace("%elevators_top_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getOrigin(), searchResult.getElevatorType(), false)+"");
+            if (message.contains("%elevators_top_floor%") && searchResult.getDestination().getShulkerBox() == null)
+                message = message.replace("%elevators_top_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getOrigin(), false)+"");
 
             if (message.contains("%elevators_old_floor_name%"))
-                message = message.replace("%elevators_old_floor_name%", DataContainerService.getFloorName(searchResult.getOrigin(), searchResult.getElevatorType()));
+                message = message.replace("%elevators_old_floor_name%", DataContainerService.getFloorName(searchResult.getOrigin()));
 
         }
 

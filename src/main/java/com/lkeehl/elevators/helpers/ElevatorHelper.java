@@ -4,7 +4,6 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.*;
 import com.lkeehl.elevators.services.ElevatorVersionService;
 import com.lkeehl.elevators.services.ObstructionService;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -54,44 +53,51 @@ public class ElevatorHelper {
         return ElevatorVersionService.getElevatorType(box, updateBlock);
     }
 
-    public static int getFloorNumberOrCount(ShulkerBox box, ElevatorType elevatorType, boolean stopAtProvidedBox) {
-        World world = box.getWorld();
-        int worldMinHeight = MCVersionHelper.getWorldMinHeight(world);
+    public static int getFloorNumberOrCount(Elevator elevator, boolean stopAtProvidedBox) {
+        Location startingLocation = elevator.getLocation();
+        ElevatorEventData searchResult;
 
-        Location startingLocation = box.getLocation();
-        startingLocation.setY(worldMinHeight);
+        // Iterate downwards to find the lowest floor
+        while(true) {
+            searchResult = findDestinationElevator(null, startingLocation, elevator, (byte) -1, false, false, true);
+            if(searchResult == null) break;
 
-        int floor = 0;
-        ElevatorEventData searchResult = new ElevatorEventData(box, elevatorType, null, (byte) 1, 0.0F);
-        do {
-            searchResult = findDestinationElevator(null, searchResult.getOrigin(), elevatorType, box.getColor(), (byte) 1, false, false, true);
-            if(searchResult == null)
-                continue;
+            startingLocation = searchResult.getDestination().getLocation();
+        }
+
+        if((elevator.getLocation().getBlockY() == startingLocation.getBlockY()) && stopAtProvidedBox)
+            return 1;
+
+        // Start upwards iteration
+        int floor = 1;
+        while(true) {
+            searchResult = findDestinationElevator(null, startingLocation, elevator, (byte) 1, false, false, true);
+            if(searchResult == null) break;
             floor++;
 
             startingLocation = searchResult.getDestination().getLocation();
-            if(stopAtProvidedBox && startingLocation.getY() == box.getY())
+            if(stopAtProvidedBox && startingLocation.getY() == elevator.getLocation().getBlockY())
                 break;
-        } while(searchResult != null);
+        }
 
         return floor;
     }
 
-    public static ElevatorEventData findDestinationElevator(Player player, ShulkerBox origin, ElevatorType elevatorType, byte direction) {
-        return findDestinationElevator(player, origin, elevatorType, origin.getColor(), direction, false, false, false);
+    public static ElevatorEventData findDestinationElevator(Player player, Elevator elevator, byte direction) {
+        return findDestinationElevator(player, elevator.getLocation(), elevator, direction, false, false, false);
     }
 
-    public static ElevatorEventData findDestinationElevator(Player player, ShulkerBox origin, ElevatorType elevatorType, DyeColor elevatorColor, byte direction, boolean ignoreSolidBlockCheck, boolean ignoreDistanceCheck, boolean ignoreObstructionCheck) {
+    public static ElevatorEventData findDestinationElevator(Player player, Location origin, Elevator elevator, byte direction, boolean ignoreSolidBlockCheck, boolean ignoreDistanceCheck, boolean ignoreObstructionCheck) {
 
         World world = origin.getWorld();
 
         int worldMinHeight = MCVersionHelper.getWorldMinHeight(world);
-        int maxDistance = elevatorType.getMaxDistanceAllowedBetweenElevators() == -1 || ignoreDistanceCheck ? Short.MAX_VALUE : elevatorType.getMaxDistanceAllowedBetweenElevators();
+        int maxDistance = elevator.getElevatorType().getMaxDistanceAllowedBetweenElevators() == -1 || ignoreDistanceCheck ? Short.MAX_VALUE : elevator.getElevatorType().getMaxDistanceAllowedBetweenElevators();
 
-        int endPointY = Math.min(world.getMaxHeight(), Math.max(worldMinHeight, origin.getY() + (maxDistance * direction)));
+        int endPointY = Math.min(world.getMaxHeight(), Math.max(worldMinHeight, origin.getBlockY() + (maxDistance * direction)));
 
-        int solidBlocks = elevatorType.getMaxSolidBlocksAllowedBetweenElevators() == -1 || ignoreSolidBlockCheck ? Short.MIN_VALUE : 0;
-        Location tempLocation = origin.getLocation().clone();
+        int solidBlocks = elevator.getElevatorType().getMaxSolidBlocksAllowedBetweenElevators() == -1 || ignoreSolidBlockCheck ? Short.MIN_VALUE : 0;
+        Location tempLocation = origin.clone();
         do {
             tempLocation = tempLocation.add(0,direction,0);
             Block tempBlock = tempLocation.getBlock();
@@ -104,22 +110,22 @@ public class ElevatorHelper {
                 continue;
 
             ShulkerBox tempShulkerBox = (ShulkerBox) tempBlockState;
-            ElevatorType tempElevatorType = ElevatorHelper.getElevatorType(tempShulkerBox);
-            if(tempElevatorType == null || (elevatorType.checkDestinationElevatorType() && !elevatorType.equals(tempElevatorType)))
+            ElevatorType tempElevatorType = ElevatorHelper.getElevatorType(tempShulkerBox, false);
+            if(tempElevatorType == null || (elevator.getElevatorType().checkDestinationElevatorType() && !elevator.getElevatorType().equals(tempElevatorType)))
                 continue;
 
-            if(--solidBlocks >= elevatorType.getMaxSolidBlocksAllowedBetweenElevators())
+            if(--solidBlocks >= elevator.getElevatorType().getMaxSolidBlocksAllowedBetweenElevators())
                 return null;
 
-            if(tempShulkerBox.getColor() != elevatorColor && !elevatorType.canTeleportToOtherColor())
+            if(tempShulkerBox.getColor() != elevator.getDyeColor() && !elevator.getElevatorType().canTeleportToOtherColor())
                 continue;
 
-            if(elevatorType.canTeleportToObstructedBlock() || ignoreObstructionCheck)
-                return new ElevatorEventData(origin, elevatorType, tempShulkerBox, direction, 0.0D);
+            if(elevator.getElevatorType().canTeleportToObstructedBlock() || ignoreObstructionCheck)
+                return new ElevatorEventData(elevator, new Elevator(tempShulkerBox, tempElevatorType), direction, 0.0D);
 
             double addition = player != null ? ObstructionService.getHitBoxAddition(tempBlock.getRelative(BlockFace.UP), player) : 0.0;
             if (addition >= 0)
-                return new ElevatorEventData(origin, elevatorType, tempShulkerBox, direction, Math.abs(addition));
+                return new ElevatorEventData(elevator, new Elevator(tempShulkerBox, tempElevatorType), direction, Math.abs(addition));
         } while(tempLocation.getBlockY() != endPointY);
 
         return null;
@@ -145,18 +151,18 @@ public class ElevatorHelper {
         ElevatorEffect effect;
         List<ElevatorAction> actions;
         if(elevatorEventData.getDirection() == 1) {
-            effect = elevatorEventData.getElevatorType().getElevatorUpEffect();
-            actions =  elevatorEventData.getElevatorType().getActionsUp();
+            effect = elevatorEventData.getOrigin().getElevatorType().getElevatorUpEffect();
+            actions =  elevatorEventData.getOrigin().getElevatorType().getActionsUp();
         }else {
-            effect = elevatorEventData.getElevatorType().getElevatorDownEffect();
-            actions =  elevatorEventData.getElevatorType().getActionsDown();
+            effect = elevatorEventData.getOrigin().getElevatorType().getElevatorDownEffect();
+            actions =  elevatorEventData.getOrigin().getElevatorType().getActionsDown();
         }
 
         actions.forEach(action -> action.execute(elevatorEventData,  player));
         effect.playEffect(elevatorEventData);
 
         Location teleportLocation = player.getLocation();
-        teleportLocation.setY(elevatorEventData.getDestination().getY() + elevatorEventData.getStandOnAddition() + 1.0);
+        teleportLocation.setY(elevatorEventData.getDestination().getLocation().getBlockY() + elevatorEventData.getStandOnAddition() + 1.0);
         player.teleport(teleportLocation);
     }
 

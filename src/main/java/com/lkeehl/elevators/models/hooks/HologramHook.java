@@ -24,7 +24,7 @@ public abstract class HologramHook<HOLO extends WrappedHologram> implements Elev
     }
 
     @Override
-    public ItemStack createIconForElevator(Player player, ShulkerBox box, ElevatorType elevatorType) {
+    public ItemStack createIconForElevator(Player player, Elevator elevator) {
         return null;
     }
 

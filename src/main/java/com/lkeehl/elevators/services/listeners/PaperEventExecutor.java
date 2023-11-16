@@ -33,7 +33,7 @@ public class PaperEventExecutor {
         if(!HookService.canUseElevator(e.getPlayer(), elevator, true))
             return;
 
-        ElevatorEventData closest = ElevatorHelper.findDestinationElevator(e.getPlayer(), box, elevatorType, (byte) 1);
+        ElevatorEventData closest = ElevatorHelper.findDestinationElevator(e.getPlayer(), elevator, (byte) 1);
         if (closest == null) return;
 
         if (!ElevatorPermHelper.canUseElevator(e.getPlayer(), closest)) {

@@ -3,6 +3,7 @@ package com.lkeehl.elevators.services;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
+import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.ShulkerBox;
@@ -115,6 +116,25 @@ public class DataContainerService {
         return null;
     }
 
+    public static <T> T getElevatorValue(ShulkerBox box, NamespacedKey key, T defaultValue) {
+        Map.Entry<NamespacedKey, PersistentDataType<?,?>> keyData = keyMap.get(key.getKey());
+        PersistentDataContainer dataContainer = box.getPersistentDataContainer();
+        if(!dataContainer.has(keyData.getKey(), keyData.getValue()))
+            return defaultValue;
+
+        Object boxValue = dataContainer.get(keyData.getKey(), keyData.getValue());
+        return (T) boxValue;
+    }
+
+    public static <Z> void setElevatorValue(ShulkerBox box, NamespacedKey key, Z value) {
+        Map.Entry<NamespacedKey, PersistentDataType<?,?>> keyData = keyMap.get(key.getKey());
+        PersistentDataContainer dataContainer = box.getPersistentDataContainer();
+        if(!dataContainer.has(keyData.getKey(), keyData.getValue()))
+            return;
+        PersistentDataType<?,Z> dataType = (PersistentDataType<?, Z>) keyData.getValue();
+        dataContainer.set(keyData.getKey(), dataType, value);
+    }
+
     public static boolean shouldElevatorBeGPProtected(ShulkerBox box) {
         PersistentDataContainer tagContainer = box.getPersistentDataContainer();
 
@@ -174,22 +194,22 @@ public class DataContainerService {
         item.setItemMeta(meta);
     }
 
-    public static String getFloorName(ShulkerBox box, ElevatorType elevatorType) {
-        PersistentDataContainer tagContainer = box.getPersistentDataContainer();
+    public static String getFloorName(Elevator elevator) {
+        PersistentDataContainer tagContainer = elevator.getShulkerBox().getPersistentDataContainer();
 
         if (tagContainer.has(DataContainerService.nameKey, PersistentDataType.STRING))
             return tagContainer.get(DataContainerService.nameKey, PersistentDataType.STRING);
         else
-            return "Floor #" + ElevatorHelper.getFloorNumberOrCount(box, elevatorType, true);
+            return "Floor #" + ElevatorHelper.getFloorNumberOrCount(elevator, true);
     }
 
-    public static void setFloorName(ShulkerBox box, String name) {
-        PersistentDataContainer tagContainer = box.getPersistentDataContainer();
+    public static void setFloorName(Elevator elevator, String name) {
+        PersistentDataContainer tagContainer = elevator.getShulkerBox().getPersistentDataContainer();
         if (name == null)
             tagContainer.remove(DataContainerService.nameKey);
         else
             tagContainer.set(DataContainerService.nameKey, PersistentDataType.STRING, name);
-        box.update(true);
+        elevator.getShulkerBox().update(true);
     }
 
 }

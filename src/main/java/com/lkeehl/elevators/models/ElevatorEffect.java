@@ -8,7 +8,7 @@ import org.bukkit.Location;
 
 public abstract class ElevatorEffect {
 
-    private String effectKey;
+    private final String effectKey;
 
     public ElevatorEffect(String effectKey) {
         this.effectKey = effectKey;
@@ -26,8 +26,8 @@ public abstract class ElevatorEffect {
 
     protected Color getParticleColor(ElevatorEventData teleportResult) {
         if (ConfigService.getRootConfig().effectDestination == ExecutionMode.DESTINATION)
-            return this.extractColorFromDyeColor(teleportResult.getDestination().getColor());
-        return this.extractColorFromDyeColor(teleportResult.getOrigin().getColor());
+            return this.extractColorFromDyeColor(teleportResult.getDestination().getDyeColor());
+        return this.extractColorFromDyeColor(teleportResult.getOrigin().getDyeColor());
     }
 
     public String getEffectKey() {

@@ -4,6 +4,7 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.hooks.ElevatorHook;
 import com.lkeehl.elevators.models.hooks.HologramHook;
+import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import com.lkeehl.elevators.services.hooks.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,7 +12,9 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class HookService {
 
@@ -113,6 +116,10 @@ public class HookService {
             return null;
 
         return (T) hookMap.get(hookKey);
+    }
+
+    public static List<ProtectionHook> getProtectionHooks() {
+        return hookMap.values().stream().filter(i -> i instanceof ProtectionHook).map(i -> (ProtectionHook) i).collect(Collectors.toList());
     }
 
 }

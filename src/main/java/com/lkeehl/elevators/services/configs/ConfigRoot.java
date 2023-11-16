@@ -26,6 +26,11 @@ public class ConfigRoot implements Config {
     @Comments("This option controls whether elevators should always face upwards.")
     public boolean forceFacingUpwards = true;
 
+    @Comments({"This configuration section will automatically populate as supported protection plugins are detected.",
+            "\"allowCustomization\" will determine whether a player can toggle the hook check on and off individually for an elevator.",
+    "\"blockNonMemberUseDefault\" sets the default state for the individual elevators protection. If marked as true, only trusted / members or those with bypass perms will be able to use the elevator."})
+    public Map<String, ConfigHookData> protectionHooks;
+
     @Comments("Locale change. All messages support color codes.")
     public ConfigLocale locale;
 

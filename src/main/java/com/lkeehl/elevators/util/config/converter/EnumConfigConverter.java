@@ -8,15 +8,22 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class EnumConfigConverter extends ConfigConverter {
 
     @Override
     public ConfigNode<?> createNodeFromFieldAndObject(ConfigNode<?> parentNode, Class<?> fieldType, String key, Object object, @Nullable Field field) throws Exception {
 
-        if(object instanceof String strValue)
-            object = Arrays.stream(fieldType.getEnumConstants()).filter(i -> i.toString().equalsIgnoreCase(strValue));
-        else if(!object.getClass().isEnum()) {
+        if(object instanceof String strValue) {
+            Optional<?> objectOpt = Arrays.stream(fieldType.getEnumConstants()).filter(i -> i.toString().equalsIgnoreCase(strValue)).findFirst();
+            if(objectOpt.isPresent())
+                object = objectOpt.get();
+            else {
+                Elevators.getElevatorsLogger().warning("Value at path \"" + parentNode.getPath() + "\" must be a \"" + fieldType.getSimpleName()+"\" enum value! Using default: \"" + object.toString() + "\".");
+                object = fieldType.getEnumConstants()[0];
+            }
+        }else if(!object.getClass().isEnum()) {
             object = fieldType.getEnumConstants()[0];
             Elevators.getElevatorsLogger().warning("Value at path \"" + parentNode.getPath() + "\" must be a \"" + fieldType.getSimpleName()+"\" enum value! Using default: \"" + object.toString() + "\".");
         }

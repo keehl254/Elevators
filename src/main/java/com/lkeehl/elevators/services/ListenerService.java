@@ -39,22 +39,23 @@ public class ListenerService {
 
         // This might be over-engineered. I may back-track this.
 
-        registerEventExecutor(InventoryOpenEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onInventoryOpen, false);
-        registerEventExecutor(InventoryMoveItemEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onHopperTake, false);
+        registerEventExecutor(InventoryOpenEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onInventoryOpen);
+        registerEventExecutor(InventoryMoveItemEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onHopperTake);
         registerEventExecutor(InventoryClickEvent.class, EventPriority.LOWEST, InventoryEventExecutor::onClickStackHandler, true);
-        registerEventExecutor(PrepareAnvilEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onAnvilPrepare, false);
-        registerEventExecutor(CraftItemEvent.class, EventPriority.NORMAL , InventoryEventExecutor::onCraft, false);
+        registerEventExecutor(PrepareAnvilEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onAnvilPrepare);
+        registerEventExecutor(CraftItemEvent.class, EventPriority.NORMAL , InventoryEventExecutor::onCraft);
 
-        registerEventExecutor(BlockPistonExtendEvent.class, EventPriority.NORMAL , WorldEventExecutor::onPistonExtend, false);
-        registerEventExecutor(EntityExplodeEvent.class, EventPriority.NORMAL , WorldEventExecutor::onExplode, false);
-        registerEventExecutor(PlayerInteractEvent.class, EventPriority.NORMAL , WorldEventExecutor::onRightClick, false);
-        registerEventExecutor(BlockDispenseEvent.class, EventPriority.NORMAL , WorldEventExecutor::onDispenserPlace, false);
-        registerEventExecutor(BlockDropItemEvent.class, EventPriority.LOWEST , WorldEventExecutor::onBlockBreak, false);
-        registerEventExecutor(BlockPlaceEvent.class, EventPriority.NORMAL , WorldEventExecutor::onBlockPlace, false);
+        registerEventExecutor(BlockPistonExtendEvent.class, EventPriority.NORMAL , WorldEventExecutor::onPistonExtend);
+        registerEventExecutor(EntityExplodeEvent.class, EventPriority.NORMAL , WorldEventExecutor::onExplode);
+        registerEventExecutor(PlayerInteractEvent.class, EventPriority.NORMAL , WorldEventExecutor::onRightClick);
+        registerEventExecutor(BlockDispenseEvent.class, EventPriority.NORMAL , WorldEventExecutor::onDispenserPlace);
+        registerEventExecutor(BlockDropItemEvent.class, EventPriority.LOWEST , WorldEventExecutor::onBlockBreak);
+        registerEventExecutor(BlockPlaceEvent.class, EventPriority.NORMAL , WorldEventExecutor::onBlockPlace);
 
-        registerEventExecutor(PlayerJoinEvent.class, EventPriority.NORMAL, EntityEventExecutor::onJoin, false);
-        registerEventExecutor(PlayerToggleSneakEvent.class, EventPriority.NORMAL , EntityEventExecutor::onSneak, false);
-        registerEventExecutor(EntityPickupItemEvent.class, EventPriority.NORMAL , EntityEventExecutor::onPickup, false);
+        registerEventExecutor(PlayerJoinEvent.class, EventPriority.NORMAL, EntityEventExecutor::onJoin);
+        registerEventExecutor(PlayerToggleSneakEvent.class, EventPriority.NORMAL , EntityEventExecutor::onSneak);
+        registerEventExecutor(EntityPickupItemEvent.class, EventPriority.NORMAL , EntityEventExecutor::onPickup);
+        registerEventExecutor(PlayerInteractEvent.class, EventPriority.NORMAL, EntityEventExecutor::onRightClick);
 
         if(HookService.isServerRunningPaper())
             registerEventExecutor(com.destroystokyo.paper.event.player.PlayerJumpEvent.class, EventPriority.NORMAL , PaperEventExecutor::onJump, false);

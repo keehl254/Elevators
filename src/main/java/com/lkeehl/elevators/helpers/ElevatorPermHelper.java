@@ -9,7 +9,6 @@ import com.lkeehl.elevators.services.HookService;
 import com.lkeehl.elevators.util.ExecutionMode;
 import org.bukkit.DyeColor;
 import org.bukkit.Keyed;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Recipe;
 
@@ -50,11 +49,9 @@ public class ElevatorPermHelper {
 
         AtomicBoolean hasPermission = new AtomicBoolean(true);
 
-        Consumer<ShulkerBox> checkPermission = box -> {
+        Consumer<Elevator> checkPermission = elevator -> {
             if (!hasPermission.get())
                 return;
-
-            Elevator elevator = new Elevator(box, ElevatorHelper.getElevatorType(box));
 
             if (!HookService.canUseElevator(player, elevator, false)) {
                 hasPermission.set(false);

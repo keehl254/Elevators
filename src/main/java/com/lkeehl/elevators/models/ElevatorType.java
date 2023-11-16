@@ -19,7 +19,7 @@ public class ElevatorType {
     private final List<ElevatorAction> actionsUp = new ArrayList<>();
     private final List<ElevatorAction> actionsDown = new ArrayList<>();
 
-    private List<ElevatorRecipeGroup> recipeGroups = new ArrayList<>();
+    private final List<ElevatorRecipeGroup> recipeGroups = new ArrayList<>();
 
     //endregion
 

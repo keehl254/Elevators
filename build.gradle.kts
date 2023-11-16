@@ -50,6 +50,8 @@ dependencies {
     compileOnly("net.kyori:adventure-api:4.14.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.3.0")
 
+    implementation("io.github.rapha149.signgui:signgui:2.2.1")
+
 }
 
 publishing {
@@ -72,8 +74,7 @@ tasks {
         filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
     }
     shadowJar {
-
-        // relocate("net.kyori.adventure.text.minimessage", "com.lkeehl.elevators.depend")
+        relocate("io.github.rapha149.signgui", "com.lkeehl.elevators.util.signgui")
     }
 
 }

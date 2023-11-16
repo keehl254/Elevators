@@ -1,8 +1,13 @@
 package com.lkeehl.elevators.services.hooks;
 
+import com.griefdefender.api.GriefDefender;
+import com.griefdefender.api.claim.Claim;
+import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.hooks.ElevatorHook;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.models.hooks.ProtectionHook;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
@@ -15,13 +20,16 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-public class BentoBoxHook implements ElevatorHook {
+public class BentoBoxHook extends ProtectionHook {
 
     Flag flag;
 
     public BentoBoxHook() {
+        super("BentoBox");
 
         this.flag = (new Flag.Builder("USE_ELEVATOR", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
         BentoBox.getInstance().getFlagsManager().registerFlag(this.flag);
@@ -39,11 +47,14 @@ public class BentoBoxHook implements ElevatorHook {
     }
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        ShulkerBox box = elevator.getShulkerBox();
-        Island island = BentoBox.getInstance().getIslands().getIslandAt(box.getLocation()).orElse(null);
+        if(!this.shouldDenyNonMemberUse(elevator))
+            return true;
+
+        Location location = elevator.getLocation();
+        Island island = BentoBox.getInstance().getIslands().getIslandAt(location).orElse(null);
         if (island == null)
             return true;
-        if (!island.getProtectionBoundingBox().contains(box.getX(), box.getY(), box.getZ()))
+        if (!island.getProtectionBoundingBox().contains(location.getX(), location.getY(), location.getZ()))
             return true;
 
         User user = BentoBox.getInstance().getPlayers().getUser(player.getUniqueId());
@@ -56,9 +67,28 @@ public class BentoBoxHook implements ElevatorHook {
         return false;
     }
 
+    @Override
+    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+        Island island = BentoBox.getInstance().getIslands().getIslandAt(elevator.getLocation()).orElse(null);
+        if (island == null)
+            return null;
+
+        boolean flagEnabled = !this.shouldDenyNonMemberUse(elevator);
+
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Controls whether non-members");
+        lore.add(ChatColor.GRAY + "can use this elevator.");
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Status: ");
+        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
+
+        return ItemStackHelper.createItem(ChatColor.GREEN + "" + ChatColor.BOLD + "Bento Box", Material.DIAMOND, 1, lore);
+    }
 
     @Override
-    public ItemStack createIconForElevator(Player player, ShulkerBox box, ElevatorType elevatorType) {
-        return null;
+    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+        this.toggleAllowMemberUse(elevator);
+        onReturn.run();
     }
 }

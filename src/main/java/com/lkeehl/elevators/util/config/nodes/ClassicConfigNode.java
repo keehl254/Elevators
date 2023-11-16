@@ -24,7 +24,7 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
         this.field.setAccessible(true);
         try {
             this.field.set(parentNode.getValue(), value);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             Elevators.getElevatorsLogger().warning("Config input at path '" + this.getPath() +"' must be of type '" + this.getFieldDisplay()+"'. Default value has been substituted.");
         }
     }

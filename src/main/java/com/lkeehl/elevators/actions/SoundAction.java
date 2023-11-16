@@ -30,7 +30,7 @@ public class SoundAction extends ElevatorAction {
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
         Consumer<ShulkerBox> soundConsumer = box -> box.getWorld().playSound(box.getLocation(), this.getGroupingObject(soundGrouping), this.getGroupingObject(volumeGrouping), this.getGroupingObject(pitchGrouping));
-        ExecutionMode.executeConsumerWithMode(ConfigService.getRootConfig().effectDestination, i-> i == ExecutionMode.DESTINATION ? eventData.getDestination() : eventData.getOrigin(), soundConsumer);
+        ExecutionMode.executeConsumerWithMode(ConfigService.getRootConfig().effectDestination, i-> i == ExecutionMode.DESTINATION ? eventData.getDestination().getShulkerBox() : eventData.getOrigin().getShulkerBox(), soundConsumer);
     }
 
     @Override

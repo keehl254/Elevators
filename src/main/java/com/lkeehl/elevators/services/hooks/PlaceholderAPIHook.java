@@ -20,7 +20,7 @@ public class PlaceholderAPIHook implements ElevatorHook {
     }
 
     @Override
-    public ItemStack createIconForElevator(Player player, ShulkerBox box, ElevatorType elevatorType) {
+    public ItemStack createIconForElevator(Player player, Elevator elevator) {
         return null;
     }
 

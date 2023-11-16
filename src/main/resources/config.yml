@@ -42,13 +42,6 @@ locale:
 playEffectOnNext: false
 forceFacingUpwards: true
 
-# GriefPrevention hook
-## This option controls whether claims should affect usability of elevators as a whole
-
-## If claimProtectionDefault in enabled, elevators will only work for trusted users in claims by default.
-supportClaims: true
-claimProtectionDefault: false
-
 #Disabled Worlds
 ##Lists worlds that elevators should not work in.
 disabled-worlds:

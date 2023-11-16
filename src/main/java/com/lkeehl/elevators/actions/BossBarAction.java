@@ -44,8 +44,8 @@ public class BossBarAction extends ElevatorAction {
         value = MessageHelper.formatPlaceholders(player, value);
         value = MessageHelper.formatColors(value);
 
-        int floorCount = ElevatorHelper.getFloorNumberOrCount(eventData.getDestination(), eventData.getElevatorType(), false);
-        int currentFloor = ElevatorHelper.getFloorNumberOrCount(eventData.getDestination(), eventData.getElevatorType(), true);
+        int floorCount = ElevatorHelper.getFloorNumberOrCount(eventData.getDestination(), false);
+        int currentFloor = ElevatorHelper.getFloorNumberOrCount(eventData.getDestination(), true);
 
         double progress = (1.0F / (floorCount - 1)) * (currentFloor - 1);
 

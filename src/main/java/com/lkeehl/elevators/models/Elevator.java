@@ -1,5 +1,7 @@
 package com.lkeehl.elevators.models;
 
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 
@@ -20,6 +22,15 @@ public class Elevator {
 
     public ElevatorType getElevatorType() {
         return this.elevatorType;
+    }
+
+    public Location getLocation() {
+        return this.shulkerBox.getLocation();
+    }
+
+    public DyeColor getDyeColor() {
+        DyeColor dyeColor = this.shulkerBox.getColor();
+        return dyeColor == null ? DyeColor.BLACK : dyeColor;
     }
 
 }

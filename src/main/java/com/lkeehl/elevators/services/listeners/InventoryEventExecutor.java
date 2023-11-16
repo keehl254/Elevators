@@ -81,6 +81,7 @@ public class InventoryEventExecutor {
 
     }
 
+    @SuppressWarnings("deprecation")
     public static void onHopperTake(InventoryMoveItemEvent event) {
         ItemStack item = event.getItem();
         ItemMeta meta = item.getItemMeta();
