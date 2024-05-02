@@ -1,12 +1,12 @@
 group = "com.lkeehl.elevators"
 version = "5.0"
 description = "Fifth major semantic for the Elevators Spigot Plugin"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 plugins {
     java
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("io.github.goooler.shadow") version "8.1.7"
 }
 
 repositories {
@@ -31,8 +31,8 @@ dependencies {
     compileOnly(platform("com.intellectualsites.bom:bom-newest:1.32"))
     compileOnly("org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.700")
 
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot:1.19-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
+    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
 
     compileOnly("com.github.TechFortress:GriefPrevention:16.18")
     compileOnly("com.plotsquared:PlotSquared-Core:6.11.1")
@@ -44,13 +44,14 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.3")
 
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
-    compileOnly("de.oliver:FancyHolograms:2.0.3-alpha2")
+    compileOnly("de.oliver:FancyHolograms:2.0.6")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
     compileOnly("net.kyori:adventure-api:4.14.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.3.0")
 
-    implementation("io.github.rapha149.signgui:signgui:2.2.1")
+    implementation("io.github.rapha149.signgui:signgui:2.3.2")
+    implementation("net.wesjd:anvilgui:1.9.3-SNAPSHOT")
 
 }
 
@@ -65,7 +66,7 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(17)
+        options.release.set(21)
     }
     javadoc {
         options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
@@ -74,7 +75,8 @@ tasks {
         filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
     }
     shadowJar {
-        relocate("io.github.rapha149.signgui", "com.lkeehl.elevators.util.signgui")
+        relocate("de.rapha149.signgui", "com.lkeehl.elevators.util.signgui")
+        relocate("net.wesjd.anvilgui", "com.lkeehl.elevators.util.anvilgui")
     }
 
 }

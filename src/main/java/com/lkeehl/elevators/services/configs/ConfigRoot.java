@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.services.configs;
 
+import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.util.ExecutionMode;
 import com.lkeehl.elevators.util.config.Comments;
 import com.lkeehl.elevators.util.config.Config;
@@ -42,6 +43,6 @@ public class ConfigRoot implements Config {
 
     public Map<String, ConfigEffect> effects;
 
-    public Map<String, ConfigElevatorType> elevators;
+    public Map<String, ElevatorType> elevators;
 
 }

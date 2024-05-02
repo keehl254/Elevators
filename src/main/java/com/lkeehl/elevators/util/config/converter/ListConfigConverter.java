@@ -3,8 +3,8 @@ package com.lkeehl.elevators.util.config.converter;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 import com.lkeehl.elevators.util.config.nodes.ClassicConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigNode;
-import org.eclipse.jdt.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -52,6 +52,22 @@ public class ListConfigConverter extends ConfigConverter {
             values.add(value);
         }
 
+        return values;
+    }
+
+    @Override
+    public Object createObjectFromValue(Object listObj) throws Exception {
+
+        if(!(listObj instanceof List<?> list))
+            return new ArrayList<>();
+
+        List<Object> values = new ArrayList<>();
+        for(Object item : list) {
+            ConfigConverter converter = ConfigConverter.getConverter(item.getClass());
+            if (converter != null)
+                item = converter.createObjectFromValue(item);
+            values.add(item);
+        }
         return values;
     }
 

@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.services;
 
+import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigEffect;
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigLocale;
@@ -36,6 +37,10 @@ public class ConfigService {
         }
     }
 
+    public static void saveConfig(File configFile) {
+        ConfigConverter.saveConfigToFile(ConfigService.rootNode, configFile);
+    }
+
     public static void addConfigCallback(Consumer<ConfigRoot> callback) {
         ConfigService.configLoadCallbacks.add(callback);
         if(ConfigService.rootNode != null)
@@ -57,7 +62,7 @@ public class ConfigService {
         return ConfigService.getRootConfig().effects;
     }
 
-    public static Map<String, ConfigElevatorType> getElevatorTypeConfigs() {
+    public static Map<String, ElevatorType> getElevatorTypeConfigs() {
         return ConfigService.getRootConfig().elevators;
     }
 

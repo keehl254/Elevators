@@ -117,10 +117,10 @@ public class ElevatorHelper {
             if(--solidBlocks >= elevator.getElevatorType().getMaxSolidBlocksAllowedBetweenElevators())
                 return null;
 
-            if(tempShulkerBox.getColor() != elevator.getDyeColor() && !elevator.getElevatorType().canTeleportToOtherColor())
+            if(tempShulkerBox.getColor() != elevator.getDyeColor() && elevator.getElevatorType().shouldValidateSameColor())
                 continue;
 
-            if(elevator.getElevatorType().canTeleportToObstructedBlock() || ignoreObstructionCheck)
+            if(!elevator.getElevatorType().shouldStopObstructedTeleport() || ignoreObstructionCheck)
                 return new ElevatorEventData(elevator, new Elevator(tempShulkerBox, tempElevatorType), direction, 0.0D);
 
             double addition = player != null ? ObstructionService.getHitBoxAddition(tempBlock.getRelative(BlockFace.UP), player) : 0.0;
@@ -150,16 +150,12 @@ public class ElevatorHelper {
     public static void onElevatorUse(Player player, ElevatorEventData elevatorEventData) {
         ElevatorEffect effect;
         List<ElevatorAction> actions;
-        if(elevatorEventData.getDirection() == 1) {
-            effect = elevatorEventData.getOrigin().getElevatorType().getElevatorUpEffect();
+        if(elevatorEventData.getDirection() == 1)
             actions =  elevatorEventData.getOrigin().getElevatorType().getActionsUp();
-        }else {
-            effect = elevatorEventData.getOrigin().getElevatorType().getElevatorDownEffect();
+        else
             actions =  elevatorEventData.getOrigin().getElevatorType().getActionsDown();
-        }
 
         actions.forEach(action -> action.execute(elevatorEventData,  player));
-        effect.playEffect(elevatorEventData);
 
         Location teleportLocation = player.getLocation();
         teleportLocation.setY(elevatorEventData.getDestination().getLocation().getBlockY() + elevatorEventData.getStandOnAddition() + 1.0);

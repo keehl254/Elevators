@@ -2,13 +2,14 @@ package com.lkeehl.elevators.helpers;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.Elevator;
+import com.lkeehl.elevators.models.settings.ElevatorSetting;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import com.lkeehl.elevators.services.DataContainerService;
 import com.lkeehl.elevators.services.HookService;
 import com.lkeehl.elevators.services.interaction.SimpleDisplay;
-import io.github.rapha149.signgui.SignGUI;
-import io.github.rapha149.signgui.SignGUIAction;
-import io.github.rapha149.signgui.SignGUIBuilder;
+import de.rapha149.signgui.SignGUI;
+import de.rapha149.signgui.SignGUIAction;
+import de.rapha149.signgui.SignGUIBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -17,14 +18,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import world.bentobox.bentobox.api.hooks.Hook;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class InventoryHelper {
@@ -124,22 +123,27 @@ public class InventoryHelper {
         Elevators.getElevatorsLogger().info("InteractName method called");
 
         String currentName = DataContainerService.getFloorName(elevator);
+        try {
+            SignGUIBuilder builder = SignGUI.builder();
+            builder.setLines(currentName, ChatColor.BOLD + "^^^^^^^^", "Enter floor", "name above");
+            builder.setHandler((p, result) -> {
+                String newName = result.getLineWithoutColor(0).trim();
+                return List.of(SignGUIAction.runSync(Elevators.getInstance(), () -> {
+                    DataContainerService.setFloorName(elevator, newName.isEmpty() ? null : newName);
+                    InventoryHelper.openInteractMenu(player, elevator);
+                }));
+            });
 
-        SignGUIBuilder builder = SignGUI.builder();
-        builder.setLines(currentName, ChatColor.BOLD+"^^^^^^^^", "Enter floor", "name above");
-        builder.setHandler((p, result) -> {
-            String newName = result.getLineWithoutColor(0).trim();
-            return List.of(SignGUIAction.runSync(Elevators.getInstance(), () -> {
-                DataContainerService.setFloorName(elevator, newName.isEmpty() ? null : newName);
-                InventoryHelper.openInteractMenu(player, elevator);
-            }));
-        });
+            builder.build().open(player);
+        } catch (Exception e) {
 
-        builder.build().open(player);
+        }
     }
 
     public static void openInteractSettingsMenu(Player player, Elevator elevator) {
-        Elevators.getElevatorsLogger().info("InteractSettings method called");
+
+
+        List<ElevatorSetting<?>> settings = new ArrayList<>();
 
     }
 

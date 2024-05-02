@@ -5,6 +5,7 @@ import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.util.persistantDataTypes.StringArrayPersistentDataType;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +30,8 @@ public class DataContainerService {
     private static NamespacedKey protectionKey;
     private static NamespacedKey nameKey;
     private static NamespacedKey instanceKey;
+
+    public static StringArrayPersistentDataType stringArrayPersistentDataType = new StringArrayPersistentDataType();
 
     public static void init(Elevators elevators) {
         if(DataContainerService.initialized)

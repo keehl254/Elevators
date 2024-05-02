@@ -4,8 +4,13 @@ import com.lkeehl.elevators.models.hooks.HologramHook;
 import com.lkeehl.elevators.models.hooks.WrappedHologram;
 import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.Hologram;
-import de.oliver.fancyholograms.api.HologramData;
+import de.oliver.fancyholograms.api.HologramType;
+import de.oliver.fancyholograms.api.data.DisplayHologramData;
+import de.oliver.fancyholograms.api.data.HologramData;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Display;
 
 import java.util.*;
 
@@ -41,39 +46,46 @@ public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHol
         public FancyHologramWrapper(String name, Location location, String... lines) {
             super(location);
 
-            HologramData hologramData = new HologramData(name);
-            hologramData.setText(Arrays.asList(lines));
+            DisplayHologramData displayData = DisplayHologramData.getDefault(location);
+            displayData.setBillboard(Display.Billboard.FIXED);
 
+            TextHologramData textData = TextHologramData.getDefault(name);
+            Arrays.stream(lines).forEach(textData::addLine);
+
+            HologramData hologramData = new HologramData(name, displayData, HologramType.TEXT, textData);
             this.hologram = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
         }
 
         @Override
         public void addLine(String text) {
-            HologramData data = this.hologram.getData();
+            TextHologramData data = (TextHologramData) this.hologram.getData().getTypeData();
             List<String> hologramText = new ArrayList<>(data.getText());
             hologramText.add(text);
             data.setText(hologramText);
 
             this.hologram.updateHologram();
+            hologram.refreshHologram(Bukkit.getOnlinePlayers());
         }
 
         @Override
         public void clearLines() {
-            HologramData data = this.hologram.getData();
+            TextHologramData data = (TextHologramData) this.hologram.getData().getTypeData();
             data.setText(new ArrayList<>());
 
             this.hologram.updateHologram();
+            hologram.refreshHologram(Bukkit.getOnlinePlayers());
         }
 
         @Override
         public double getHeight() {
-            return this.hologram.getData().getScale().y; // I know this isn't really how this works >_>
+            return this.hologram.getData().getDisplayData().getScale().y(); //.getScale().y; // I know this isn't really how this works >_>
         }
 
         @Override
         public void teleportTo(Location location) {
-            this.hologram.getData().setLocation(location);
+            this.hologram.getData().getDisplayData().setLocation(location);
             this.hologram.updateHologram();
+            hologram.refreshHologram(Bukkit.getOnlinePlayers());
         }
 
         @Override

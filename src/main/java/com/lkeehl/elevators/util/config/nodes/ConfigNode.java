@@ -24,4 +24,8 @@ public interface ConfigNode<T> {
 
     String getChildPath(String key);
 
+    default ConfigNode<?> getChildWithKey(String key) {
+        return this.getChildren().stream().filter(i -> i.getKey().equalsIgnoreCase(key)).findFirst().orElse(null);
+    }
+
 }

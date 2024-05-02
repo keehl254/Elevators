@@ -7,7 +7,6 @@ import com.lkeehl.elevators.util.config.nodes.ConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigRootNode;
 import com.lkeehl.elevators.util.config.nodes.DirectConfigNode;
 import org.bukkit.configuration.file.YamlRepresenter;
-import org.eclipse.jdt.annotation.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -18,6 +17,7 @@ import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.representer.Representer;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -57,7 +57,7 @@ public abstract class ConfigConverter {
             }
         });
 
-        ConfigConverter.yaml = new Yaml(new CustomClassLoaderConstructor(Elevators.class.getClassLoader(), new LoaderOptions()), yamlRepresenter, yamlOptions);
+        ConfigConverter.yaml = new Yaml(new CustomClassLoaderConstructor(Elevators.getInstance().getClass().getClassLoader(), new LoaderOptions()), yamlRepresenter, yamlOptions);
     }
 
     public static void addConverter(Class<? extends ConfigConverter> clazz) throws Exception {
@@ -77,15 +77,13 @@ public abstract class ConfigConverter {
         }
     }
 
-    public static <T extends Config> ConfigRootNode<T> createNodeForConfig(T config, File file) throws Exception {
+    public static <T extends Config> ConfigRootNode<T> createNodeForConfig(T config, InputStream inputStream) throws Exception {
         Map<?, ?> yamlData;
-        try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+        try (InputStreamReader fileReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
             yamlData = yaml.load(fileReader);
         } catch (IOException | ClassCastException | YAMLException e) {
             throw new Exception("Could not load YML", e);
         }
-        if (yamlData == null)
-            return null;
 
         Optional<ConfigConverter> optConverter = converters.stream().filter(i -> i.supports(config.getClass())).findAny();
         if (optConverter.isEmpty())
@@ -93,11 +91,17 @@ public abstract class ConfigConverter {
 
         ConfigConverter converter = optConverter.get();
         if (converter instanceof ConfigConfigConverter ccc) {
-            ConfigRootNode<T> root = new ConfigRootNode<>(yamlData, config);
+            ConfigRootNode<T> root = new ConfigRootNode<>(yamlData == null ? new HashMap<>() : yamlData, config);
+            config.setKey("root");
             ccc.constructMapToConfig(root, root, config, config.getClass());
+            config.onLoad();
             return root;
         }
         return null;
+    }
+
+    public static <T extends Config> ConfigRootNode<T> createNodeForConfig(T config, File file) throws Exception {
+        return createNodeForConfig(config, new FileInputStream(file));
     }
 
     public static void saveConfigToFile(ConfigRootNode<?> node, File file) {
@@ -190,6 +194,8 @@ public abstract class ConfigConverter {
     public abstract ConfigNode<?> createNodeFromFieldAndObject(ConfigNode<?> parentNode, Class<?> fieldType, String key, Object object, @Nullable Field field) throws Exception;
 
     public abstract Object createObjectFromNode(ConfigNode<?> node) throws Exception;
+
+    public abstract Object createObjectFromValue(Object value) throws Exception;
 
     public abstract boolean supports(Class<?> type);
 

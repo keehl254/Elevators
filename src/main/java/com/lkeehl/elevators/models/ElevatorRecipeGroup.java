@@ -16,37 +16,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ElevatorRecipeGroup {
+public class ElevatorRecipeGroup extends ConfigRecipe {
 
-    private final String recipeKey;
+    private transient String recipeKey;
 
-    private final ElevatorType elevatorType;
+    private transient ElevatorType elevatorType;
 
-    private final ConfigRecipe recipeConfig;
+    private transient final List<ElevatorRecipe> recipeList = new ArrayList<>();
 
-    private final List<ElevatorRecipe> recipeList = new ArrayList<>();
+    private transient final Map<Character, Material> materialMap = new HashMap<>();
 
-    private final Map<Character, Material> materialMap = new HashMap<>();
+    @Override()
+    public void setKey(String key) {
+        this.recipeKey = key;
+    }
 
-    public ElevatorRecipeGroup(String recipeKey, ElevatorType elevatorType, ConfigRecipe recipeConfig) {
-        this.recipeKey = recipeKey;
+    public void load(ElevatorType elevatorType) {
         this.elevatorType = elevatorType;
-        this.recipeConfig = recipeConfig;
 
         this.loadMaterialMap();
-
-        if(recipeConfig.coloredCrafting) {
+        if(this.supportMultiColorMaterials) {
             for (DyeColor color : DyeColor.values())
-                this.addRecipe(this.recipeConfig.craftPermission + "." + color.toString().toLowerCase(), color);
+                this.addRecipe(this.craftPermission + "." + color.toString().toLowerCase(), color);
         } else
-            this.addRecipe(this.recipeConfig.craftPermission, this.elevatorType.getDefaultElevatorColor());
-
-        elevatorType.addRecipeGroup(this);
-
+            this.addRecipe(this.craftPermission, this.defaultOutputColor);
     }
 
     private void loadMaterialMap() {
-        Map<String, String> stringMaterialMap = this.recipeConfig.materials;
+        Map<String, String> stringMaterialMap = this.materials;
 
         for (String character : stringMaterialMap.keySet()) {
             String materialString = stringMaterialMap.get(character);
@@ -61,48 +58,46 @@ public class ElevatorRecipeGroup {
     }
 
     private Material getMaterialVariant(Material initialType, DyeColor color) {
-        if(this.recipeConfig.coloredCrafting)
-            return ItemStackHelper.getVariant(initialType, color);
-        return initialType;
+        return ItemStackHelper.getVariant(initialType, color);
     }
 
     /* Note to anyone working with this method: A new recipe is registered for each color, so the namespacedKey check
     on the last line is sufficient for checking colored crafting permission.
      */
     public <T extends Recipe & Keyed> boolean doesPermissibleHavePermissionForRecipe(Permissible permissible, T recipe) {
-        if(!this.recipeConfig.coloredCrafting)
-            return permissible.hasPermission(this.recipeConfig.craftPermission);
-        if(permissible.hasPermission(this.recipeConfig.craftPermission + ".*"))
+        if (!this.supportMultiColorMaterials)
+            return permissible.hasPermission(this.craftPermission);
+        if (permissible.hasPermission(this.craftPermission + ".*"))
             return true;
 
-        return this.recipeList.stream().filter(i ->recipe.getKey().equals(i.namespacedKey)).anyMatch(i -> permissible.hasPermission(i.permission));
+        return this.recipeList.stream().filter(i -> recipe.getKey().equals(i.namespacedKey)).anyMatch(i -> permissible.hasPermission(i.permission));
     }
 
     public List<NamespacedKey> getNameSpacedKeys() {
-        return this.recipeList.stream().map(i ->i.namespacedKey).collect(Collectors.toList());
+        return this.recipeList.stream().map(i -> i.namespacedKey).collect(Collectors.toList());
     }
 
     private void addRecipe(String permission, DyeColor dyeColor) {
 
         NamespacedKey namespacedKey = DataContainerService.createKey(dyeColor.toString() + "_" + this.elevatorType.getTypeKey() + "_" + this.recipeKey + "_ELEVATOR");
-        ItemStack elevatorItemStack = ItemStackHelper.createItemStackFromElevatorType(this.elevatorType, dyeColor);
-        elevatorItemStack.setAmount(this.recipeConfig.amount);
+
+        DyeColor elevatorColor = this.supportMultiColorOutput ? dyeColor : this.defaultOutputColor;
+
+        ItemStack elevatorItemStack = ItemStackHelper.createItemStackFromElevatorType(this.elevatorType, elevatorColor);
+        elevatorItemStack.setAmount(this.amount);
 
         ShapedRecipe recipe = new ShapedRecipe(namespacedKey, elevatorItemStack);
-        recipe.shape(this.recipeConfig.recipe.toArray(new String[]{}));
+        recipe.shape(this.recipe.toArray(new String[]{}));
 
-        for(char character : this.materialMap.keySet())
+        for (char character : this.materialMap.keySet())
             recipe.setIngredient(character, getMaterialVariant(this.materialMap.get(character), dyeColor));
 
         this.recipeList.add(new ElevatorRecipe(permission, namespacedKey, recipe));
-
         Bukkit.addRecipe(recipe);
-
     }
 
     private record ElevatorRecipe(String permission, NamespacedKey namespacedKey, ShapedRecipe recipe) {
     }
-
 
 
 }

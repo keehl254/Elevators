@@ -35,8 +35,4 @@ public class MessageAllAction extends ElevatorAction {
             otherPlayer.sendMessage(value);
     }
 
-    @Override
-    public CompletableFuture<Boolean> openCreate(ElevatorType elevatorType, Player player, byte direction) {
-        return new CompletableFuture<>();
-    }
 }

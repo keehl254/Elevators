@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.services;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.MCVersionHelper;
 import com.lkeehl.elevators.models.ElevatorRecipeGroup;
 import com.lkeehl.elevators.models.ElevatorType;
@@ -23,12 +24,13 @@ public class ElevatorRecipeService {
         if(ElevatorRecipeService.initialized)
             return;
 
-        ConfigService.addConfigCallback(ElevatorRecipeService::unregisterRecipes);
+        ConfigService.addConfigCallback(ElevatorRecipeService::registerRecipes);
 
         ElevatorRecipeService.initialized = true;
     }
 
-    private static void unregisterRecipes(ConfigRoot root) {
+    private static void registerRecipes(ConfigRoot root) {
+
         Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
 
         List<NamespacedKey> recipesToUnlearn = new ArrayList<>();
@@ -50,16 +52,25 @@ public class ElevatorRecipeService {
 
         Bukkit.getOnlinePlayers().forEach(i -> i.undiscoverRecipes(recipesToUnlearn));
 
-    }
+        List<NamespacedKey> recipeKeys = new ArrayList<>();
 
-    public static void registerElevatorRecipeGroup(ElevatorType elevatorType, ElevatorRecipeGroup recipeGroup) {
-        ElevatorRecipeService.elevatorRecipeGroupMap.put(elevatorType, recipeGroup);
-        Bukkit.getOnlinePlayers().forEach(i -> i.discoverRecipes(recipeGroup.getNameSpacedKeys()));
+        for(ElevatorType elevatorType : root.elevators.values()) {
+            for(ElevatorRecipeGroup recipeGroup : elevatorType.getRecipeGroups()) {
+                recipeGroup.load(elevatorType);
+                ElevatorRecipeService.elevatorRecipeGroupMap.put(elevatorType, recipeGroup);
+                recipeKeys.addAll(recipeGroup.getNameSpacedKeys());
+            }
+        }
+
+        Bukkit.getOnlinePlayers().forEach(i -> i.discoverRecipes(recipeKeys));
     }
 
     public static void discoverRecipesForPlayer(Player player) {
-        for(ElevatorRecipeGroup recipeGroup : elevatorRecipeGroupMap.values())
+        Elevators.getElevatorsLogger().warning("Trying to teach player recipes");
+        for(ElevatorRecipeGroup recipeGroup : ElevatorRecipeService.elevatorRecipeGroupMap.values()) {
+            Elevators.getElevatorsLogger().warning("Teaching player recipe");
             player.discoverRecipes(recipeGroup.getNameSpacedKeys());
+        }
     }
 
     public static boolean doesPermissibleHaveCraftPermission(Permissible permissible, ShapedRecipe recipe) {

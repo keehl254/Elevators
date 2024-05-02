@@ -53,12 +53,6 @@ public class BossBarAction extends ElevatorAction {
         this.displayMessage(player, () -> finalValue, progress, 30);
     }
 
-    @Override
-    public CompletableFuture<Boolean> openCreate(ElevatorType elevator, Player player, byte direction) {
-        return null;
-    }
-
-
     public BossBar getPlayerBar(Player player) {
         if (!player.hasMetadata("elevator-boss-bar")) {
             BossBar bar = Bukkit.createBossBar("elevator-boss-bar", this.getGroupingObject(barColorGrouping), this.getGroupingObject(barStyleGrouping));

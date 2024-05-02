@@ -33,8 +33,4 @@ public class ActionBarAction extends ElevatorAction {
         player.spigot().sendMessage(net.md_5.bungee.api.ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(value));
     }
 
-    @Override
-    public CompletableFuture<Boolean> openCreate(ElevatorType elevator, Player player, byte direction) {
-        return new CompletableFuture<>();
-    }
 }

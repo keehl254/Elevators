@@ -1,32 +1,22 @@
 package com.lkeehl.elevators.models;
 
+import com.lkeehl.elevators.services.ElevatorActionService;
+import com.lkeehl.elevators.services.ElevatorRecipeService;
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
-import org.bukkit.DyeColor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class ElevatorType {
+public class ElevatorType extends ConfigElevatorType {
 
     //region properties
-    private final String elevatorTypeKey;
+    private transient String elevatorTypeKey;
 
-    private final ConfigElevatorType elevatorTypeConfig;
-
-    private ElevatorEffect elevatorUpEffect;
-    private ElevatorEffect elevatorDownEffect;
-
-    private final List<ElevatorAction> actionsUp = new ArrayList<>();
-    private final List<ElevatorAction> actionsDown = new ArrayList<>();
-
-    private final List<ElevatorRecipeGroup> recipeGroups = new ArrayList<>();
+    private transient final List<ElevatorAction> actionsUp = new ArrayList<>();
+    private transient final List<ElevatorAction> actionsDown = new ArrayList<>();
 
     //endregion
-
-    public ElevatorType(String elevatorTypeKey, ConfigElevatorType elevatorTypeConfig) {
-        this.elevatorTypeKey = elevatorTypeKey;
-        this.elevatorTypeConfig = elevatorTypeConfig;
-    }
 
     /* region property getters */
 
@@ -41,28 +31,36 @@ public class ElevatorType {
      * @return the elevators ItemStack display name.
      */
     public String getDisplayName() {
-        return this.elevatorTypeConfig.displayName;
+        return this.displayName;
+    }
+
+    public String getUsePermission() {
+        return this.usePermission;
+    }
+
+    public String getDyePermission() {
+        return this.dyePermission;
     }
 
     /**
      * @return the max stack size of an elevator ItemStack
      */
     public int getMaxStackSize() {
-        return this.elevatorTypeConfig.maxStackSize;
+        return this.maxStackSize;
     }
 
     /**
      * @return the lore of an elevator ItemStack
      */
     public List<String> getLore() {
-        return this.elevatorTypeConfig.loreLines;
+        return this.loreLines;
     }
 
     /**
      * @return the maximum distance that an elevator will search for a destination elevator.
      */
     public int getMaxDistanceAllowedBetweenElevators() {
-        return this.elevatorTypeConfig.maxDistance;
+        return this.maxDistance;
     }
 
     /**
@@ -70,14 +68,14 @@ public class ElevatorType {
      * it stops searching.
      */
     public int getMaxSolidBlocksAllowedBetweenElevators() {
-        return this.elevatorTypeConfig.maxSolidBlocks;
+        return this.maxSolidBlocks;
     }
 
     /**
      * @return controls whether the elevator must teleport to destination elevator of the same type.
      */
     public boolean checkDestinationElevatorType() {
-        return this.elevatorTypeConfig.classCheck;
+        return this.classCheck;
     }
 
     /**
@@ -86,52 +84,35 @@ public class ElevatorType {
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean doesElevatorRequirePermissions() {
-        return this.elevatorTypeConfig.checkPerms;
+        return this.checkPerms;
     }
 
     /**
      * @return whether the elevator can explode from creepers, tnt, etc.
      */
     public boolean canElevatorExplode() {
-        return this.elevatorTypeConfig.canExplode;
+        return this.canExplode;
     }
 
     /**
      * @return where a recipe for this elevator type can produce a colored elevator.
      */
-    public boolean canRecipesProduceColor() {
-        return this.elevatorTypeConfig.coloredOutput;
+    public boolean canElevatorBeDyed() {
+        return this.supportDying;
     }
     /**
      * @return controls whether an elevator can be teleported to if the destination will place the player inside
      * of a block.
      */
-    public boolean canTeleportToObstructedBlock() {
-        return !this.elevatorTypeConfig.stopObstruction;
+    public boolean shouldStopObstructedTeleport() {
+        return this.stopObstruction;
     }
 
     /**
      * @return controls whether an elevator can be teleported to if the destination is a separate color than the origin.
      */
-    public boolean canTeleportToOtherColor() {
-        return !this.elevatorTypeConfig.checkColor;
-    }
-
-    public DyeColor getDefaultElevatorColor() {
-        return DyeColor.valueOf(this.elevatorTypeConfig.defaultColor);
-    }
-
-    /**
-     * @return the effect that will play upon going upwards in an elevator.
-     */
-    public ElevatorEffect getElevatorUpEffect() { return this.elevatorUpEffect;
-    }
-
-    /**
-     * @return the effect that will play upon going downwards in an elevator.
-     */
-    public ElevatorEffect getElevatorDownEffect() {
-        return this.elevatorDownEffect;
+    public boolean shouldValidateSameColor() {
+        return this.checkColor;
     }
 
     public List<ElevatorAction> getActionsUp() {
@@ -142,9 +123,13 @@ public class ElevatorType {
         return this.actionsDown;
     }
 
-    public List<ElevatorRecipeGroup> getRecipeGroups() { return this.recipeGroups; }
+    public List<ElevatorRecipeGroup> getRecipeGroups() { return new ArrayList<>(this.recipes.values()); }
 
-    public ConfigElevatorType getConfig() { return this.elevatorTypeConfig; }
+    public List<String> getHolographicLines() {
+        return this.hologramLines;
+    }
+
+    public ConfigElevatorType getConfig() { return this; }
 
     //endregion
 
@@ -154,7 +139,7 @@ public class ElevatorType {
      *  Sets the elevators ItemStack display name.
      */
     public void setDisplayName(String displayName) {
-        this.elevatorTypeConfig.displayName = displayName;
+        this.displayName = displayName;
         this.save();
     }
 
@@ -162,7 +147,7 @@ public class ElevatorType {
      * Sets the maximum distance that an elevator will search for a destination elevator.
      */
     public void setMaxDistanceAllowedBetweenElevators(int maxDistance) {
-        this.elevatorTypeConfig.maxDistance = maxDistance;
+        this.maxDistance = maxDistance;
         this.save();
     }
 
@@ -170,7 +155,7 @@ public class ElevatorType {
      * Sets the max stack size of an elevator ItemStack
      */
     public void setMaxStackSize(int maxStackSize) {
-        this.elevatorTypeConfig.maxStackSize = maxStackSize;
+        this.maxStackSize = maxStackSize;
         this.save();
     }
 
@@ -179,7 +164,7 @@ public class ElevatorType {
      * it stops searching.
      */
     public void setMaxSolidBlocksAllowedBetweenElevators(int maxSolidBlocks) {
-        this.elevatorTypeConfig.maxSolidBlocks = maxSolidBlocks;
+        this.maxSolidBlocks = maxSolidBlocks;
         this.save();
     }
 
@@ -187,7 +172,7 @@ public class ElevatorType {
      * Sets whether the elevator must teleport to destination elevator of the same type.
      */
     public void setCheckDestinationElevatorType(boolean checkType) {
-        this.elevatorTypeConfig.classCheck = checkType;
+        this.classCheck = checkType;
         this.save();
     }
 
@@ -197,7 +182,7 @@ public class ElevatorType {
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public void setElevatorRequiresPermissions(boolean checkPerms) {
-        this.elevatorTypeConfig.checkPerms = checkPerms;
+        this.checkPerms = checkPerms;
         this.save();
     }
 
@@ -205,15 +190,15 @@ public class ElevatorType {
      * Set whether the elevator can explode from creepers, tnt, etc.
      */
     public void setCanElevatorExplode(boolean canExplode) {
-        this.elevatorTypeConfig.canExplode = canExplode;
+        this.canExplode = canExplode;
         this.save();
     }
 
     /**
      * Set whether a recipe for this elevator type can produce a colored elevator.
      */
-    public void setCanRecipesProduceColor(boolean coloredOutput) {
-        this.elevatorTypeConfig.coloredOutput = coloredOutput;
+    public void setCanDye(boolean supportDying) {
+        this.supportDying = supportDying;
         this.save();
     }
 
@@ -221,45 +206,34 @@ public class ElevatorType {
      * Set whether an elevator can be teleported to if the destination will place the player inside
      * of a block.
      */
-    public void setBlocksObstruction(boolean blocksObstruction) {
-        this.elevatorTypeConfig.stopObstruction = blocksObstruction;
+    public void setStopsObstructedTeleportation(boolean stopsObstruction) {
+        this.stopObstruction = stopsObstruction;
         this.save();
     }
 
     /**
      * Set whether an elevator can be teleported to if the destination is a separate color than the origin.
      */
-    public void setCanTeleportToOtherColor(boolean checkColor) {
-        this.elevatorTypeConfig.checkColor = checkColor;
+    public void setShouldValidateColor(boolean checkColor) {
+        this.checkColor = checkColor;
         this.save();
-    }
-
-    /**
-     * Set the effect that will play upon going upwards in an elevator.
-     */
-    public void setElevatorUpEffect(ElevatorEffect elevatorUpEffect) {
-        this.elevatorUpEffect = elevatorUpEffect;
-        this.elevatorTypeConfig.effects.up = elevatorUpEffect.getEffectKey();
-        this.save();
-    }
-
-    /**
-     * Set the effect that will play upon going downwards in an elevator.
-     */
-    public void setElevatorDownEffect(ElevatorEffect elevatorDownEffect) {
-        this.elevatorDownEffect = elevatorDownEffect;
-        this.elevatorTypeConfig.effects.down = elevatorUpEffect.getEffectKey();
-        this.save();
-    }
-
-    protected void addRecipeGroup(ElevatorRecipeGroup recipeGroup) {
-        this.recipeGroups.add(recipeGroup);
     }
 
     //endregion
 
     public void save() {
 
+    }
+
+    @Override()
+    public void onLoad() {
+        this.getActionsUp().addAll(this.actions.up.stream().map(i -> ElevatorActionService.createActionFromString(this, i)).filter(Objects::nonNull).toList());
+        this.getActionsDown().addAll(this.actions.down.stream().map(i -> ElevatorActionService.createActionFromString(this, i)).filter(Objects::nonNull).toList());
+    }
+
+    @Override()
+    public void setKey(String key) {
+        this.elevatorTypeKey = key.toUpperCase();
     }
 
 

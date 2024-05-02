@@ -4,8 +4,8 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 import com.lkeehl.elevators.util.config.nodes.ClassicConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigNode;
-import org.eclipse.jdt.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Optional;
@@ -33,6 +33,11 @@ public class EnumConfigConverter extends ConfigConverter {
 
     public Object createObjectFromNode(ConfigNode<?> node) {
         return node.getValue().toString();
+    }
+
+    @Override
+    public Object createObjectFromValue(Object value) throws Exception {
+        return value.toString();
     }
 
     @Override

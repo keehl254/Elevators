@@ -34,6 +34,7 @@ public class EntityEventExecutor {
     public static void onJoin(PlayerJoinEvent e) {
         ElevatorRecipeService.discoverRecipesForPlayer(e.getPlayer());
     }
+
     public static void onJumpDefault(PlayerMoveEvent event) {
 
         if (event.getPlayer().isFlying()) return;
@@ -141,7 +142,7 @@ public class EntityEventExecutor {
 
         Map<ItemStack, Integer> leftoverItems = ItemStackHelper.addElevatorToInventory(elevatorType, item.getAmount(), item.getType(), player.getInventory(), itemMeta.getDisplayName(), itemMeta.getLore());
 
-        if(leftoverItems.size() >= 1) { // The itemstack helper will add to all possible places. If it failed, there is no space. This event shouldn't fire again if that is the case.
+        if(!leftoverItems.isEmpty()) { // The itemstack helper will add to all possible places. If it failed, there is no space. This event shouldn't fire again if that is the case.
             int itemsLeft = leftoverItems.values().stream().mapToInt(i->i).sum();
             item.setAmount(itemsLeft);
 

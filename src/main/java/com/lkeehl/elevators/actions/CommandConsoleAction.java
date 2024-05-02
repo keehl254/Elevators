@@ -32,8 +32,4 @@ public class CommandConsoleAction extends ElevatorAction {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value);
     }
 
-    @Override
-    public CompletableFuture<Boolean> openCreate(ElevatorType elevatorType, Player player, byte direction) {
-        return new CompletableFuture<>();
-    }
 }

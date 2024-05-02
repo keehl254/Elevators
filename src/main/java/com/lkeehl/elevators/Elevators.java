@@ -33,6 +33,9 @@ public class Elevators extends JavaPlugin {
     @Override()
     public void onDisable() {
         ListenerService.unInitialize();
+
+        File configFile = new File(this.getDataFolder(), "config.yml");
+        ConfigService.saveConfig(configFile);
     }
 
     public void reloadElevators() {

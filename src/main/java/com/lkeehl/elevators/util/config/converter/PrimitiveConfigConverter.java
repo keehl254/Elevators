@@ -3,8 +3,8 @@ package com.lkeehl.elevators.util.config.converter;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 import com.lkeehl.elevators.util.config.nodes.ClassicConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigNode;
-import org.eclipse.jdt.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 
 public class PrimitiveConfigConverter extends ConfigConverter {
@@ -23,6 +23,12 @@ public class PrimitiveConfigConverter extends ConfigConverter {
                     return createNodeWithData(parentNode, key, (object instanceof Float) ? object : Double.valueOf((double) object).floatValue(), field);
             case "char":
                 return createNodeWithData(parentNode, key, (object instanceof Character) ? object : ((String) object).charAt(0), field);
+            case "boolean":
+                return createNodeWithData(parentNode, key, (object instanceof Boolean) ? object : Boolean.getBoolean((String) object), field);
+            case "integer":
+                return createNodeWithData(parentNode, key, object instanceof Integer ? object : Integer.valueOf(object.toString()), field);
+            case "long":
+                return createNodeWithData(parentNode, key, object instanceof Long ? object : Long.valueOf(object.toString()), field);
             case "string":
                 return createNodeWithData(parentNode, key, object.toString(), field);
         }
@@ -32,6 +38,34 @@ public class PrimitiveConfigConverter extends ConfigConverter {
 
     public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
         return node.getValue();
+    }
+
+    @Override
+    public Object createObjectFromValue(Object value) throws Exception {
+        return value;
+    }
+
+    public static Object createPrimitiveFromObj(Class<?> fieldType, Object object) {
+        switch(fieldType.getSimpleName().toLowerCase()) {
+            case "short":
+                return (object instanceof Short) ? object : Integer.valueOf((int) object).shortValue();
+            case "byte":
+                return (object instanceof Byte) ? object : Integer.valueOf((int) object).byteValue();
+            case "float":
+                if (object instanceof Integer)
+                    return Double.valueOf((int) object).floatValue();
+                else
+                    return (object instanceof Float) ? object : Double.valueOf((double) object).floatValue();
+            case "boolean":
+                return (object instanceof Boolean) ? object : Boolean.getBoolean((String) object);
+            case "integer":
+                return object instanceof Integer ? object : Integer.valueOf(object.toString());
+            case "long":
+                return object instanceof Long ? object : Long.valueOf(object.toString());
+            case "char":
+                return (object instanceof Character) ? object : ((String) object).charAt(0);
+        }
+        return object.toString();
     }
 
     @Override

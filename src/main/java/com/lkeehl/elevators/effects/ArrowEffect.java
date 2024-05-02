@@ -54,7 +54,7 @@ public class ArrowEffect extends ElevatorEffect {
         for(int i=0;i<10;i++) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(Elevators.getInstance(), () -> {
                 for(Location location1 : spawnPositions)
-                    Objects.requireNonNull(location1.getWorld()).spawnParticle(Particle.REDSTONE, location1, 1, 0, 0, 0, 1, new Particle.DustOptions(particleColor, 1));
+                    Objects.requireNonNull(location1.getWorld()).spawnParticle(Particle.DUST, location1, 1, 0, 0, 0, 1, new Particle.DustOptions(particleColor, 1));
             }, i*2);
         }
 

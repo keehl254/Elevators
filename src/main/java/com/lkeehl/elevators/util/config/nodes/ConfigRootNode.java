@@ -10,13 +10,13 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
 
     private final Map<String, List<String>> comments = new HashMap<>();
 
-    private final Map<?,?> data;
+    private final Map<?, ?> data;
 
     private final T config;
 
     private final ArrayList<ConfigNode<?>> children = new ArrayList<>();
 
-    public ConfigRootNode(Map<?,?> value, T config) {
+    public ConfigRootNode(Map<?, ?> value, T config) {
         this.data = value;
         this.config = config;
     }
@@ -24,13 +24,13 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
     private Object traverseData(Map<?, ?> currentMap, String[] keys, int index) {
         if (index == keys.length)
             return currentMap;
-        if(currentMap == null)
+        if (currentMap == null)
             return null;
 
         String currentKey = keys[index];
 
-        for(Object key : currentMap.keySet()) {
-            if(!key.toString().equalsIgnoreCase(currentKey))
+        for (Object key : currentMap.keySet()) {
+            if (!key.toString().equalsIgnoreCase(currentKey))
                 continue;
             Object value = currentMap.get(key);
             if (value instanceof Map)
@@ -41,6 +41,7 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
 
         return null;
     }
+
 
     public Object getObjectAtPath(String path, Object defaultValue) {
         String[] keyPath = path.split("\\.");
@@ -64,12 +65,23 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
     }
 
     public Object serializeToObject() {
+
+        ConfigConverter converter = ConfigConverter.getConverter(this.config.getClass());
+        if (converter != null) {
+            try {
+                return converter.createObjectFromValue(this.config);
+            } catch (Exception ignored) {
+            }
+        }
+
+        Elevators.getElevatorsLogger().warning("Failed to convert main root node! Using old data.");
+
         LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
-        for(ConfigNode<?> childNode : this.getChildren()) {
+        for (ConfigNode<?> childNode : this.getChildren()) {
             try {
                 map.put(childNode.getKey(), childNode.getConfigConverter().createObjectFromNode(childNode));
             } catch (Exception e) {
-                Elevators.getElevatorsLogger().warning("Failed to save config path '" + childNode.getPath()+"'!");
+                Elevators.getElevatorsLogger().warning("Failed to save config path '" + childNode.getPath() + "'!");
                 e.printStackTrace();
             }
         }
@@ -84,18 +96,18 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
 
     @Override()
     public void addComment(String comment) {
-        this.addComment("",comment);
+        this.addComment("", comment);
     }
 
     public void addComment(String path, String comment) {
-        if(!this.comments.containsKey(path))
+        if (!this.comments.containsKey(path))
             this.comments.put(path, new ArrayList<>());
 
         this.comments.get(path).add(comment);
     }
 
     public List<String> getCommentsAtPath(String path) {
-        if(this.comments.containsKey(path))
+        if (this.comments.containsKey(path))
             return this.comments.get(path);
         return new ArrayList<>();
     }

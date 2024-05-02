@@ -1,0 +1,53 @@
+package com.lkeehl.elevators.models.settings;
+
+import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.models.ElevatorType;
+import de.rapha149.signgui.SignGUI;
+import de.rapha149.signgui.SignGUIAction;
+import de.rapha149.signgui.SignGUIBuilder;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MaxSolidBlocksSetting extends ElevatorSetting<Integer> {
+
+    public MaxSolidBlocksSetting() {
+        super("Max Solid Blocks", "This controls the maximum number of solid blocks that can be between an origin and destination elevator.", Material.IRON_BLOCK, ChatColor.RED, false);
+        this.setGetValueGlobal(ElevatorType::getMaxSolidBlocksAllowedBetweenElevators);
+    }
+
+    @Override
+    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, Integer currentValue) {
+
+        SignGUIBuilder builder = SignGUI.builder();
+        builder.setLines(currentValue+"", ChatColor.BOLD+"^^^^^^^^", "Enter new", "max solid blocks");
+        builder.setHandler((p, result) -> {
+            String maxSolidBlocksStr = result.getLineWithoutColor(0).trim();
+
+            int maxSolidBlocks = currentValue;
+            if(maxSolidBlocksStr.equalsIgnoreCase("infinite"))
+                maxSolidBlocks = -1;
+            else {
+                try {
+                    maxSolidBlocks = Integer.parseInt(maxSolidBlocksStr);
+                    if(maxSolidBlocks < 0 && maxSolidBlocks != -1)
+                        throw new Exception("Invalid entry");
+                } catch (Exception ignored) {
+                    return List.of(SignGUIAction.displayNewLines(currentValue+"", ChatColor.BOLD+"^^^^^^^^", "Enter new", "max solid blocks"));
+                }
+            }
+
+            final int finalMaxSolidBlocks = maxSolidBlocks;
+            return List.of(SignGUIAction.runSync(Elevators.getInstance(), () -> {
+                elevatorType.setMaxSolidBlocksAllowedBetweenElevators(finalMaxSolidBlocks);
+                returnMethod.run();
+            }));
+        });
+        builder.build().open(player);
+
+    }
+
+}

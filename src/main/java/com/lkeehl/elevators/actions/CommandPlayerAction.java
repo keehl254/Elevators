@@ -31,8 +31,4 @@ public class CommandPlayerAction extends ElevatorAction {
         player.performCommand(value);
     }
 
-    @Override
-    public CompletableFuture<Boolean> openCreate(ElevatorType elevatorType, Player player, byte direction) {
-        return new CompletableFuture<>();
-    }
 }

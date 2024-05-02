@@ -36,13 +36,13 @@ public class ElevatorPermHelper {
         if (!elevatorType.doesElevatorRequirePermissions())
             return true;
 
-        if (!elevatorType.canRecipesProduceColor())
-            return player.hasPermission("elevators.dye." + elevatorType.getTypeKey());
+        if (!elevatorType.canElevatorBeDyed())
+            return player.hasPermission(elevatorType.getDyePermission());
 
-        if (player.hasPermission("elevators.dye.*"))
+        if (player.hasPermission(elevatorType.getDyePermission() + ".*"))
             return true;
 
-        return player.hasPermission("elevators.dye." + color.toString());
+        return player.hasPermission(elevatorType.getDyePermission() + "." + color.toString());
     }
 
     public static boolean canUseElevator(Player player, ElevatorEventData elevatorEventData) {
@@ -65,18 +65,12 @@ public class ElevatorPermHelper {
                 return;
             }
 
-            DyeColor elevatorColor = elevator.getShulkerBox().getColor(); // Elevators should only support colored shulkerboxes... but just in case
-            if (!elevator.getElevatorType().canRecipesProduceColor() || elevatorColor == null) {
-                hasPermission.set(player.hasPermission("elevators.use." + elevator.getElevatorType().getTypeKey()));
-                return;
-            }
-
-            if (player.hasPermission("elevators.use.*")) {
+            if (player.hasPermission(elevator.getElevatorType().getUsePermission() + ".*")) {
                 hasPermission.set(true);
                 return;
             }
 
-            hasPermission.set(player.hasPermission("elevators.use." + elevatorColor));
+            hasPermission.set(player.hasPermission(elevator.getElevatorType().getUsePermission() + "." + elevator.getDyeColor()));
         };
 
         ExecutionMode.executeConsumerWithMode(ConfigService.getRootConfig().permissionMode, i -> i == ExecutionMode.DESTINATION ? elevatorEventData.getDestination() : elevatorEventData.getOrigin(), checkPermission);

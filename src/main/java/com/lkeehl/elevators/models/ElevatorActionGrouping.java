@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ElevatorActionGrouping<T> {
 
@@ -34,7 +33,6 @@ public class ElevatorActionGrouping<T> {
         groupingAliases.addAll(Arrays.stream(aliases).map(String::toLowerCase).toList());
 
         this.groupingAliases = groupingAliases;
-
         this.conversionErrorMessage = "An invalid value was provided for action %s on elevator type '%s'. Defaulting to '%s'";
     }
 
