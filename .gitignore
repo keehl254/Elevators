@@ -103,4 +103,4 @@ javadocs/
 build/
 
 # Common working directory
-run/
+run/!/gradle/wrapper/gradle-wrapper.jar
