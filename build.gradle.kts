@@ -1,5 +1,5 @@
 group = "com.lkeehl.elevators"
-version = "5.0"
+version = "5.0.0-beta.3"
 description = "Fifth major semantic for the Elevators Spigot Plugin"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
@@ -57,9 +57,6 @@ dependencies {
 
 publishing {
     publications.create<MavenPublication>("maven") {
-        groupId = "com.lkeehl"
-        artifactId = "elevators"
-        version = "5.0.0-beta.1"
         from(components["java"])
     }
 }
