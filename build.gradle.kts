@@ -32,7 +32,7 @@ dependencies {
     compileOnly("org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.700")
 
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
+    //compileOnly("org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
 
     compileOnly("com.github.TechFortress:GriefPrevention:16.18")
     compileOnly("com.plotsquared:PlotSquared-Core:6.11.1")

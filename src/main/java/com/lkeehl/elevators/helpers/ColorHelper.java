@@ -1,6 +1,5 @@
 package com.lkeehl.elevators.helpers;
 
-import io.netty.handler.codec.DecoderException;
 import org.bukkit.ChatColor;
 
 import java.awt.image.DataBuffer;
@@ -56,16 +55,16 @@ public class ColorHelper {
         return code.toString();
     }
 
-    public static byte[] decodeHex(final String data) throws DecoderException {
+    public static byte[] decodeHex(final String data) throws Exception {
         return decodeHex(data.toCharArray());
     }
 
-    public static byte[] decodeHex(final char[] data) throws DecoderException {
+    public static byte[] decodeHex(final char[] data) throws Exception {
 
         final int len = data.length;
 
         if ((len & 0x01) != 0)
-            throw new DecoderException("Odd number of characters.");
+            throw new Exception("Odd number of characters.");
 
         final byte[] out = new byte[len >> 1];
 
@@ -114,10 +113,10 @@ public class ColorHelper {
         return new String(encodeHex(data));
     }
 
-    protected static int toDigit(final char ch, final int index) throws DecoderException {
+    protected static int toDigit(final char ch, final int index) throws Exception {
         final int digit = Character.digit(ch, 16);
         if (digit == -1) {
-            throw new DecoderException("Illegal hexadecimal character " + ch + " at index " + index);
+            throw new Exception("Illegal hexadecimal character " + ch + " at index " + index);
         }
         return digit;
     }

@@ -7,7 +7,6 @@ import com.lkeehl.elevators.services.DataContainerService;
 import com.lkeehl.elevators.services.HookService;
 import com.lkeehl.elevators.services.configs.ConfigLocale;
 import com.lkeehl.elevators.services.hooks.PlaceholderAPIHook;
-import io.netty.handler.codec.DecoderException;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -212,7 +211,7 @@ public class MessageHelper {
 
         try {
             return new String(ColorHelper.decodeHex(hexChars), StandardCharsets.UTF_8);
-        } catch (DecoderException ignored) {
+        } catch (Exception ignored) {
         }
         return text;
     }
