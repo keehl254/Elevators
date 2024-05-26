@@ -11,22 +11,28 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ItemStackHelper {
+
+    private static final Pattern dyeColorPattern = Pattern.compile("(?:LIGHT_)?.+?(?=_)");
 
     public static boolean isNotShulkerBox(Material type) {
         return !type.toString().endsWith("SHULKER_BOX");
     }
 
     public static DyeColor getDyeColorFromMaterial(Material material) {
-        String colorString = material.name().split("_")[0];
+        Matcher matcher = dyeColorPattern.matcher(material.name());
+        if(!matcher.find())
+            return null;
+
         try {
-            return DyeColor.valueOf(colorString);
+            return DyeColor.valueOf(matcher.group());
         } catch (Exception ignored) {
+            return null;
         }
 
-        return null;
     }
 
     public static Material getVariant(Material type, DyeColor color) {
