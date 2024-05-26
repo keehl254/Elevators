@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.helpers;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.services.HookService;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -9,26 +10,23 @@ import java.util.regex.Pattern;
 
 public class MCVersionHelper {
 
-    private static final Pattern versionIDPattern = Pattern.compile("V(\\d+)_(\\d+)_R(\\d+)");
+    private static final Pattern versionIDPattern = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)");
 
-    private static final int supportedVersion = getVersionID("V1_13_R2");
-    private static final int hexVersion = getVersionID("V1_16_R1");
-    private static final int shulkerFacingUseAPI = getVersionID("V1_14_R1");
-    private static final int supportBlockBoundingBoxes = getVersionID("V1_17_R1");
-    private static final int supportNewBuildLimits = getVersionID("v1_18_R1");
-    private static final int shulkerOpenCloseUseAPI = getVersionID("V1_16_R2");
-    private static final int paperCollectItemEffect = getVersionID("V1_16_R5");
-    private static final int supportRemoveRecipe = getVersionID("V1_15_R2");
+    private static final int supportedVersion = getVersionID("1.13.2");
+    private static final int hexVersion = getVersionID("1.16.1");
+    private static final int shulkerFacingUseAPI = getVersionID("1.14.1");
+    private static final int supportBlockBoundingBoxes = getVersionID("1.17.1");
+    private static final int supportNewBuildLimits = getVersionID("1.18.1");
+    private static final int shulkerOpenCloseUseAPI = getVersionID("1.16.2");
+    private static final int paperCollectItemEffect = getVersionID("1.16.5");
+    private static final int supportRemoveRecipe = getVersionID("1.15.2");
 
     private static final int slimeSizeMetaData = 0;
 
 
     private static final int currentVersionID;
     static {
-        String name = Bukkit.getServer().getClass().getPackage().getName();
-        String version = name.substring(name.lastIndexOf('.') + 1);
-
-        currentVersionID = getVersionID(version);
+        currentVersionID = getVersionID(Bukkit.getServer().getBukkitVersion());
     }
 
     public static boolean isVersionUnsupported(){
