@@ -50,13 +50,16 @@ dependencies {
     compileOnly("net.kyori:adventure-api:4.14.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.3.0")
 
-    implementation("io.github.rapha149.signgui:signgui:2.3.2")
-    implementation("net.wesjd:anvilgui:1.9.3-SNAPSHOT")
+    implementation("de.rapha149.signgui:signgui:2.3.3")
+    implementation("net.wesjd:anvilgui:1.9.4-SNAPSHOT")
 
 }
 
 publishing {
     publications.create<MavenPublication>("maven") {
+        groupId = "com.lkeehl"
+        artifactId = "elevators"
+        version = "5.0.0-beta.1"
         from(components["java"])
     }
 }

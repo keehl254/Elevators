@@ -78,7 +78,7 @@ public class WorldEventExecutor {
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Elevators")), () -> {
             if (!(relative.getState() instanceof ShulkerBox box)) return;
 
-            box = DataContainerService.updateTypeKeyOnElevator(box, elevatorType);
+            DataContainerService.updateTypeKeyOnElevator(box, elevatorType);
             DataContainerService.dumpDataFromItemIntoShulkerBox(box, event.getItem());
             ElevatorHelper.onElevatorPlace(new Elevator(box,elevatorType));
             if (ConfigService.getRootConfig().forceFacingUpwards)
@@ -120,16 +120,10 @@ public class WorldEventExecutor {
             item.setAmount(count - 1);
 
         ShulkerBox box = DataContainerService.updateTypeKeyOnElevator((ShulkerBox) event.getBlockPlaced().getState(), elevatorType);
-        ElevatorHelper.onElevatorPlace(new Elevator(box,elevatorType));
+        ElevatorHelper.onElevatorPlace(new Elevator(box, elevatorType));
 
         if (ConfigService.getRootConfig().forceFacingUpwards)
             ShulkerBoxHelper.setFacingUp(box);
     }
-
-
-
-
-
-
 
 }

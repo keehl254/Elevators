@@ -80,7 +80,7 @@ public class InventoryHelper {
 
         SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory);
 
-        if (protectionHooks.size() == 0) {
+        if (protectionHooks.isEmpty()) {
             display.setItemSimple(11, nameItem, (event, myDisplay) -> InventoryHelper.openInteractNameMenu(player, elevator));
             display.setItemSimple(15, settingsItem, (event, myDisplay) -> InventoryHelper.openInteractSettingsMenu(player, elevator));
             display.open();
@@ -92,7 +92,7 @@ public class InventoryHelper {
         display.setItemSimple(16, settingsItem, (event, myDisplay) -> InventoryHelper.openInteractSettingsMenu(player, elevator));
 
         if (protectionHooks.size() == 1) {
-            ProtectionHook hook = protectionHooks.get(0);
+            ProtectionHook hook = protectionHooks.getFirst();
             ItemStack protectionIcon = hook.createIconForElevator(player, elevator);
             display.setItemSimple(10, protectionIcon, (event, myDisplay) -> hook.onProtectionClick(player, elevator, () -> openInteractMenu(player, elevator)));
         }
@@ -120,8 +120,6 @@ public class InventoryHelper {
     }
 
     public static void openInteractNameMenu(Player player, Elevator elevator) {
-        Elevators.getElevatorsLogger().info("InteractName method called");
-
         String currentName = DataContainerService.getFloorName(elevator);
         try {
             SignGUIBuilder builder = SignGUI.builder();
@@ -136,7 +134,7 @@ public class InventoryHelper {
 
             builder.build().open(player);
         } catch (Exception e) {
-
+            e.printStackTrace(); // Use backup method here.
         }
     }
 
