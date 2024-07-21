@@ -1,6 +1,5 @@
 package com.lkeehl.elevators.helpers;
 
-import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.services.HookService;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -10,7 +9,8 @@ import java.util.regex.Pattern;
 
 public class MCVersionHelper {
 
-    private static final Pattern versionIDPattern = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)");
+    private static final Pattern majorMinorPatchPattern = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)");
+    private static final Pattern majorMinorPattern = Pattern.compile("^(\\d+)\\.(\\d+)");
 
     private static final int supportedVersion = getVersionID("1.13.2");
     private static final int hexVersion = getVersionID("1.16.1");
@@ -64,13 +64,22 @@ public class MCVersionHelper {
     }
 
     public static int getVersionID(String key) {
-        Matcher matcher = versionIDPattern.matcher(key.toUpperCase());
-        if(!matcher.find())
-            return -1;
+        Matcher matcher = majorMinorPatchPattern.matcher(key.toUpperCase());
+        byte major = 0;
+        byte minor = 0;
+        byte patch = 0;
+        if(matcher.find()) {
+            major = Byte.parseByte(matcher.group(1));
+            minor = Byte.parseByte(matcher.group(2));
+            patch = Byte.parseByte(matcher.group(3));
+        } else {
+            matcher = majorMinorPattern.matcher(key.toUpperCase());
+            if(!matcher.find())
+                return -1;
 
-        byte major = Byte.parseByte(matcher.group(1));
-        byte minor = Byte.parseByte(matcher.group(2));
-        byte patch = Byte.parseByte(matcher.group(3));
+            major = Byte.parseByte(matcher.group(1));
+            minor = Byte.parseByte(matcher.group(2));
+        }
 
         int ID = major << 8;
         ID |= minor;
