@@ -8,7 +8,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,7 +30,11 @@ public class SimpleDisplay implements Listener {
     private final DisplayClickResult defaultClickResult;
     private final Runnable returnRunnable;
 
+    private boolean blockReturn = false;
+
     private final Map<Integer, DisplaySlotData> slotDataMap = new HashMap<>();
+
+    private final Map<String, Object> cache = new HashMap<>();
 
     private DisplayClickFlag[] initialFlags;
     private BiFunction<InventoryClickEvent, SimpleDisplay, DisplayClickResult> initialOnClick;
@@ -84,10 +90,14 @@ public class SimpleDisplay implements Listener {
 
     public void returnOrClose() {
         HandlerList.unregisterAll(this);
-        if(this.returnRunnable != null)
+        if(this.returnRunnable != null && !this.blockReturn)
             this.returnRunnable.run();
         else
             this.player.closeInventory();
+    }
+
+    public void stopReturn() {
+        this.blockReturn = true;
     }
 
     public SimpleDisplay onClick(BiFunction<InventoryClickEvent, SimpleDisplay, DisplayClickResult> onClick, DisplayClickFlag... initialFlags) {
@@ -134,19 +144,29 @@ public class SimpleDisplay implements Listener {
         if (event.getInventory() != this.inventory) return;
 
         DisplayClickResult clickResult = DisplayClickResult.combineResults(this.defaultClickResult, this.validateSlotClicks(event), this.validateInitialClick(event));
-
         event.setCancelled(clickResult == DisplayClickResult.CANCEL);
     }
 
     @EventHandler()
     public void onInventoryClose(InventoryCloseEvent event) {
         if(event.getPlayer() != this.player) return; // Regardless of the inventory, if the player is closing an inventory, this display should stop xD
-        if(event.getPlayer().getOpenInventory().getTopInventory() == this.inventory) return; // Opening this current inventory.
 
         HandlerList.unregisterAll(this);
-        if(this.returnRunnable == null) return;
 
-        this.returnRunnable.run();
+        if(this.returnRunnable == null) return;
+        if(this.blockReturn) return;
+
+        Bukkit.getScheduler().runTaskLater(Elevators.getInstance(), this.returnRunnable, 1L);
+    }
+
+    public <T> T getOrDefaultCache(String key, T defaultT) {
+        if(!this.cache.containsKey(key))
+            return defaultT;
+        return (T) this.cache.get(key);
+    }
+
+    public void setCache(String key, Object value) {
+        this.cache.put(key, value);
     }
 
     public enum DisplayClickResult {

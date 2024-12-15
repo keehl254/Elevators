@@ -2,7 +2,11 @@ package com.lkeehl.elevators.helpers;
 
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.models.settings.DisplayNameSetting;
+import com.lkeehl.elevators.models.settings.LoreLinesSetting;
+import com.lkeehl.elevators.models.settings.MaxStackSizeSetting;
 import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorSettingService;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -49,13 +53,14 @@ public class ItemStackHelper {
 
     private static ItemStack findElevatorType(ElevatorType elevatorType, ItemStack item, Inventory inv) {
         ItemStack elevator = null;
+        int maxStackSize = ElevatorSettingService.getSettingValue(elevatorType, MaxStackSizeSetting.class);
         for (ItemStack content : inv.getContents()) {
             if (content == null || content.getType().equals(Material.AIR))
                 continue;
             if (ElevatorHelper.getElevatorType(content) != null && content.isSimilar(item)) {
                 if (!Objects.equals(ElevatorHelper.getElevatorType(content), elevatorType))
                     continue;
-                if (content.getAmount() >= elevatorType.getMaxStackSize())
+                if (content.getAmount() >= maxStackSize)
                     continue;
                 elevator = content;
                 break;
@@ -69,8 +74,8 @@ public class ItemStackHelper {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return itemStack; // How?
 
-        meta.setDisplayName(MessageHelper.formatColors(elevatorType.getDisplayName()));
-        meta.setLore(MessageHelper.formatColors(elevatorType.getLore()));
+        meta.setDisplayName(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, DisplayNameSetting.class)));
+        meta.setLore(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class)));
 
         itemStack.setItemMeta(meta);
 
@@ -98,8 +103,8 @@ public class ItemStackHelper {
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(MessageHelper.formatColors(elevatorType.getDisplayName()));
-            meta.setLore(MessageHelper.formatColors(elevatorType.getLore()));
+            meta.setDisplayName(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, DisplayNameSetting.class)));
+            meta.setLore(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class)));
             item.setItemMeta(meta);
         }
 
@@ -121,7 +126,9 @@ public class ItemStackHelper {
     }
 
     public static Map<ItemStack, Integer> addElevatorToInventory(ElevatorType elevatorType, int itemAmount, Material dyeMaterial, Inventory inventory) {
-        return ItemStackHelper.addElevatorToInventory(elevatorType, itemAmount, dyeMaterial, inventory, elevatorType.getDisplayName(), elevatorType.getLore());
+        List<String> lore = ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class);
+        String displayName = ElevatorSettingService.getSettingValue(elevatorType, DisplayNameSetting.class);
+        return ItemStackHelper.addElevatorToInventory(elevatorType, itemAmount, dyeMaterial, inventory, displayName, lore);
     }
 
     public static Map<ItemStack, Integer> addElevatorToInventory(ElevatorType elevatorType, int itemAmount, Material dyeMaterial, Inventory inventory, String displayName, List<String> lore) {
@@ -131,6 +138,8 @@ public class ItemStackHelper {
         Map<ItemStack, Integer> partialList = new HashMap<>();
         ItemStack newElevator = ItemStackHelper.createItemStackFromElevatorType(elevatorType, getDyeColorFromMaterial(dyeMaterial));
 
+        int maxStackSize = ElevatorSettingService.getSettingValue(elevatorType, MaxStackSizeSetting.class);
+
         for(ItemStack inventoryItem : inventory.getContents()) {
             if(inventoryItem == null) continue;
             if(inventoryItem.getType() != dyeMaterial) continue;
@@ -138,13 +147,13 @@ public class ItemStackHelper {
             if(!ElevatorHelper.isElevator(inventoryItem)) continue;
             if(ElevatorHelper.getElevatorType(inventoryItem) != elevatorType) continue;
 
-            if(inventoryItem.getAmount() >= elevatorType.getMaxStackSize()) continue; // Dud .-.
+            if(inventoryItem.getAmount() >= maxStackSize) continue; // Dud .-.
 
             // Found our first partial :)
 
             if(!inventoryItem.isSimilar(newElevator)) continue;
 
-            int amountToGive = elevatorType.getMaxStackSize() - inventoryItem.getAmount();
+            int amountToGive = maxStackSize - inventoryItem.getAmount();
             amountToGive = Math.min(amountToGive, itemAmount);
 
             itemAmount -= amountToGive;
@@ -160,13 +169,13 @@ public class ItemStackHelper {
             itemMeta.setLore(lore);
             newElevator.setItemMeta(itemMeta);
 
-            int leftoverToGive = itemAmount % elevatorType.getMaxStackSize();
-            int stacksToGive = (itemAmount - leftoverToGive) / elevatorType.getMaxStackSize();
+            int leftoverToGive = itemAmount % maxStackSize;
+            int stacksToGive = (itemAmount - leftoverToGive) / maxStackSize;
             for(int i=0; i < stacksToGive; i++) {
                 ItemStack newItem = newElevator.clone();
-                newItem.setAmount(elevatorType.getMaxStackSize());
+                newItem.setAmount(maxStackSize);
 
-                partialList.put(newItem, elevatorType.getMaxStackSize());
+                partialList.put(newItem, maxStackSize);
             }
 
             ItemStack newItem = newElevator.clone();

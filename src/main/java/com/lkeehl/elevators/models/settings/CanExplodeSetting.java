@@ -15,7 +15,7 @@ import java.util.List;
 public class CanExplodeSetting extends ElevatorSetting<Boolean> {
 
     public CanExplodeSetting() {
-        super("Break With Explosions", "If enabled, the elevator will be able to be broken by explosions.", Material.TNT, ChatColor.RED, false);
+        super("Break With Explosions", "If enabled, the elevator will be able to be broken by explosions.", Material.TNT, ChatColor.RED);
         this.setGetValueGlobal(ElevatorType::canElevatorExplode);
         this.setupDataStore("can-explode", PersistentDataType.BOOLEAN);
     }

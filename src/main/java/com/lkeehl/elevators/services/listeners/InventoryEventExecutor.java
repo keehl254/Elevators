@@ -4,7 +4,11 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.*;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.models.settings.DisplayNameSetting;
+import com.lkeehl.elevators.models.settings.LoreLinesSetting;
+import com.lkeehl.elevators.models.settings.MaxStackSizeSetting;
 import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorSettingService;
 import org.bukkit.DyeColor;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -74,7 +78,7 @@ public class InventoryEventExecutor {
         }
         // Adding cursor to clicked stack.
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(clickedItem);
-        int amountToAdd = elevatorType.getMaxStackSize() - clickedItem.getAmount();
+        int amountToAdd = ElevatorSettingService.getSettingValue(elevatorType, MaxStackSizeSetting.class) - clickedItem.getAmount();
         amountToAdd = Math.min(amountToAdd, event.getCursor().getAmount());
 
         clickedItem.setAmount(clickedItem.getAmount() + amountToAdd);
@@ -87,22 +91,28 @@ public class InventoryEventExecutor {
         ItemStack item = event.getItem();
         ItemMeta meta = item.getItemMeta();
         if(meta == null) return;
+
         if (item.getType().equals(Material.COMMAND_BLOCK) && (meta.getDisplayName().equalsIgnoreCase("elevator"))) {
             event.setCancelled(true);
             return;
         }
-        InventoryHolder from = event.getSource().getHolder();
-        InventoryHolder to = event.getDestination().getHolder();
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(event.getItem());
         if (elevatorType != null) {
-            meta.setDisplayName(MessageHelper.formatColors(elevatorType.getDisplayName()));
-            meta.setLore(MessageHelper.formatColors(elevatorType.getLore()));
+            meta.setDisplayName(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, DisplayNameSetting.class)));
+            meta.setLore(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class)));
             event.getItem().setItemMeta(meta);
         }
 
-        if (((from instanceof ShulkerBox fromBox) && (ElevatorHelper.isElevator(fromBox))) || ((to instanceof ShulkerBox toBox) && (ElevatorHelper.isElevator(toBox))))
-            event.setCancelled(true);
+        if (event.getSource().getType() == InventoryType.SHULKER_BOX && event.getSource().getHolder() instanceof ShulkerBox fromBox) {
+            if (ElevatorHelper.isElevator(fromBox))
+                event.setCancelled(true);
+        }
+
+        if (event.getDestination().getType() == InventoryType.SHULKER_BOX && event.getDestination().getHolder() instanceof ShulkerBox toBox) {
+            if (ElevatorHelper.isElevator(toBox))
+                event.setCancelled(true);
+        }
     }
 
     public static void onAnvilPrepare(PrepareAnvilEvent e) {

@@ -10,7 +10,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class ClassCheckSetting extends ElevatorSetting<Boolean> {
 
     public ClassCheckSetting() {
-        super("Type Check", "If enabled, the destination elevator must be of the same elevator type.", Material.SHULKER_SHELL, ChatColor.LIGHT_PURPLE,true);
+        super("Type Check", "If enabled, the destination elevator must be of the same elevator type.", Material.SHULKER_SHELL, ChatColor.LIGHT_PURPLE);
         this.setGetValueGlobal(ElevatorType::checkDestinationElevatorType);
         this.setupDataStore("class-check", PersistentDataType.BOOLEAN);
     }

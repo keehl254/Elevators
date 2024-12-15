@@ -4,25 +4,26 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.settings.ElevatorSetting;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
+import com.lkeehl.elevators.services.ConfigService;
 import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorSettingService;
 import com.lkeehl.elevators.services.HookService;
 import com.lkeehl.elevators.services.interaction.SimpleDisplay;
+import com.lkeehl.elevators.services.interaction.SimpleInput;
 import de.rapha149.signgui.SignGUI;
 import de.rapha149.signgui.SignGUIAction;
 import de.rapha149.signgui.SignGUIBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
+import de.rapha149.signgui.exception.SignGUIVersionException;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.IntStream;
 
@@ -62,8 +63,16 @@ public class InventoryHelper {
         IntStream.range(0, inventory.getSize()).filter(i -> inventory.getItem(i) == null).forEach(i -> inventory.setItem(i, pane.clone()));
     }
 
+    private static void openMenuFromDisplay(SimpleDisplay myDisplay, Player player, Elevator elevator, BiConsumer<Player, Elevator> newMethod) {
+        myDisplay.stopReturn();
+        newMethod.accept(player, elevator);
+    }
+
     public static void openInteractMenu(Player player, Elevator elevator) {
         Inventory inventory = Bukkit.createInventory(null, 27, "Elevator");
+
+        ElevatorHelper.setElevatorDisabled(elevator.getShulkerBox());
+        ShulkerBoxHelper.playOpen(elevator.getShulkerBox());
 
         InventoryHelper.fillEmptySlotsWithPanes(inventory, elevator.getDyeColor());
 
@@ -78,23 +87,29 @@ public class InventoryHelper {
 
         List<ProtectionHook> protectionHooks = HookService.getProtectionHooks().stream().filter(i -> i.createIconForElevator(player, elevator) != null).toList();
 
-        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory);
+        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> {
+            ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
+            ShulkerBoxHelper.playClose(elevator.getShulkerBox());
+        });
 
         if (protectionHooks.isEmpty()) {
-            display.setItemSimple(11, nameItem, (event, myDisplay) -> InventoryHelper.openInteractNameMenu(player, elevator));
-            display.setItemSimple(15, settingsItem, (event, myDisplay) -> InventoryHelper.openInteractSettingsMenu(player, elevator));
+            display.setItemSimple(11, nameItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractNameMenu));
+            display.setItemSimple(15, settingsItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractSettingsMenu));
             display.open();
             return;
         }
 
-        display.setItemSimple(10, protectionItem, (event, myDisplay) -> InventoryHelper.openInteractProtectMenu(player, elevator));
-        display.setItemSimple(13, nameItem, (event, myDisplay) -> InventoryHelper.openInteractNameMenu(player, elevator));
-        display.setItemSimple(16, settingsItem, (event, myDisplay) -> InventoryHelper.openInteractSettingsMenu(player, elevator));
+        display.setItemSimple(10, protectionItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractProtectMenu));
+        display.setItemSimple(13, nameItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractNameMenu));
+        display.setItemSimple(16, settingsItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractSettingsMenu));
 
         if (protectionHooks.size() == 1) {
             ProtectionHook hook = protectionHooks.getFirst();
             ItemStack protectionIcon = hook.createIconForElevator(player, elevator);
-            display.setItemSimple(10, protectionIcon, (event, myDisplay) -> hook.onProtectionClick(player, elevator, () -> openInteractMenu(player, elevator)));
+            display.setItemSimple(10, protectionIcon, (event, myDisplay) -> {
+                myDisplay.stopReturn();
+                hook.onProtectionClick(player, elevator, () -> openInteractMenu(player, elevator));
+            });
         }
 
         display.open();
@@ -111,7 +126,10 @@ public class InventoryHelper {
         for (Map.Entry<ProtectionHook, Integer> hookData : InventoryHelper.mapToInventorySlot(protectionHooks).entrySet()) {
             int slot = hookData.getValue() + 9;
             ItemStack icon = hookData.getKey().createIconForElevator(player, elevator);
-            BiConsumer<InventoryClickEvent, SimpleDisplay> onClick = (event, myDisplay) -> hookData.getKey().onProtectionClick(player, elevator, () -> openInteractProtectMenu(player, elevator));
+            BiConsumer<InventoryClickEvent, SimpleDisplay> onClick = (event, myDisplay) -> {
+                myDisplay.stopReturn();
+                hookData.getKey().onProtectionClick(player, elevator, () -> openInteractProtectMenu(player, elevator));
+            };
             display.setItemSimple(slot, icon, onClick);
         }
 
@@ -132,17 +150,44 @@ public class InventoryHelper {
                 }));
             });
 
+            player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
             builder.build().open(player);
-        } catch (Exception e) {
-            e.printStackTrace(); // Use backup method here.
+        } catch (SignGUIVersionException e) {
+            player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
+
+            SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
+            input.allowReset();
+            input.onComplete(newName -> {
+                DataContainerService.setFloorName(elevator, newName);
+                InventoryHelper.openInteractMenu(player, elevator);
+                return SimpleInput.SimpleInputResult.STOP;
+            });
+            input.onCancel(() -> {
+                InventoryHelper.openInteractMenu(player, elevator);
+            });
+            MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterFloorName);
+            input.start();
         }
     }
 
     public static void openInteractSettingsMenu(Player player, Elevator elevator) {
+        List<ElevatorSetting<?>> settings = ElevatorSettingService.getElevatorSettings().stream().filter(i -> i.canBeEditedIndividually(elevator)).toList();
 
+        int inventorySize = (Math.floorDiv(settings.size() + 8, 9) * 9) + 9;
+        Inventory inventory = Bukkit.createInventory(null, inventorySize, "Elevator > Settings");
 
-        List<ElevatorSetting<?>> settings = new ArrayList<>();
-
+        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> {
+            openInteractMenu(player, elevator);
+        });
+        for(int i=0;i< settings.size();i++) {
+            ElevatorSetting<?> setting = settings.get(i);
+            display.setItemSimple(i+9, setting.createIcon(setting.getIndividualElevatorValue(elevator), false), (event, myDisplay) -> {
+                myDisplay.stopReturn();
+                setting.clickIndividual(player, elevator, () -> openInteractSettingsMenu(player, elevator));
+            });
+        }
+        display.setReturnButton(0, ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "BACK", Material.ARROW, 1));
+        display.open();
     }
 
 }

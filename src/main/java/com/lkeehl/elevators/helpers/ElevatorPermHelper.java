@@ -4,7 +4,10 @@ import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorRecipeGroup;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.models.settings.CheckPermsSetting;
+import com.lkeehl.elevators.models.settings.SupportDyingSetting;
 import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorSettingService;
 import com.lkeehl.elevators.services.HookService;
 import com.lkeehl.elevators.util.ExecutionMode;
 import org.bukkit.DyeColor;
@@ -20,7 +23,7 @@ public class ElevatorPermHelper {
 
     public static <T extends Recipe & Keyed> boolean canCraftElevatorType(ElevatorType elevatorType, Player player, T recipe) {
 
-        if (!elevatorType.doesElevatorRequirePermissions())
+        if (!ElevatorSettingService.getSettingValue(elevatorType, CheckPermsSetting.class))
             return true;
 
         Optional<ElevatorRecipeGroup> optRecipeGroup = elevatorType.getRecipeGroups().stream().filter(i -> i.getNameSpacedKeys().contains(recipe.getKey())).findAny();
@@ -33,10 +36,10 @@ public class ElevatorPermHelper {
 
     public static boolean canDyeElevatorType(ElevatorType elevatorType, Player player, DyeColor color) {
 
-        if (!elevatorType.doesElevatorRequirePermissions())
+        if (!ElevatorSettingService.getSettingValue(elevatorType, CheckPermsSetting.class))
             return true;
 
-        if (!elevatorType.canElevatorBeDyed())
+        if (!ElevatorSettingService.getSettingValue(elevatorType, SupportDyingSetting.class))
             return player.hasPermission(elevatorType.getDyePermission());
 
         if (player.hasPermission(elevatorType.getDyePermission() + ".*"))
@@ -60,7 +63,7 @@ public class ElevatorPermHelper {
 
             //TODO: Check per-elevator settings.
 
-            if (!elevator.getElevatorType().doesElevatorRequirePermissions()) {
+            if (!ElevatorSettingService.getSettingValue(elevator, CheckPermsSetting.class)) {
                 hasPermission.set(true);
                 return;
             }

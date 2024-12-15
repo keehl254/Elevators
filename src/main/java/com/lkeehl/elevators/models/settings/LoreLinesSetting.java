@@ -15,7 +15,7 @@ import java.util.List;
 public class LoreLinesSetting extends ElevatorSetting<List<String>> {
 
     public LoreLinesSetting() {
-        super("Lore Lines", "Click to alter the lore lines that appear on dropped elevators of this type.", Material.LAPIS_LAZULI,ChatColor.DARK_PURPLE, false);
+        super("Lore Lines", "Click to alter the lore lines that appear on dropped elevators of this type.", Material.LAPIS_LAZULI,ChatColor.DARK_PURPLE);
         this.setGetValueGlobal(ElevatorType::getLore);
     }
 

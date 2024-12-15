@@ -7,8 +7,10 @@ import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.models.settings.CanExplodeSetting;
 import com.lkeehl.elevators.services.ConfigService;
 import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorSettingService;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -41,28 +43,13 @@ public class WorldEventExecutor {
     public static void onExplode(EntityExplodeEvent event) {
         for (int i = 0; i < event.blockList().size(); i++) {
             Block block = event.blockList().get(i);
-            if (!(block.getState() instanceof ShulkerBox))
+            if (!(block.getState() instanceof ShulkerBox shulkerBox))
                 continue;
-            ElevatorType elevator = ElevatorHelper.getElevatorType(block);
-            if (elevator != null && !elevator.canElevatorExplode())
+            ElevatorType elevatorType = ElevatorHelper.getElevatorType(shulkerBox);
+            if(elevatorType == null) continue;
+
+            if (ElevatorSettingService.getSettingValue(new Elevator(shulkerBox, elevatorType), CanExplodeSetting.class))
                 event.blockList().remove(block);
-        }
-    }
-
-    public static void onRightClick(PlayerInteractEvent event) {
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
-        if (event.isBlockInHand() && event.getPlayer().isSneaking()) return;
-        if (event.getClickedBlock() == null) return;
-        if (!(event.getClickedBlock().getState() instanceof ShulkerBox box)) return;
-        if (!ElevatorHelper.isElevator(box)) return;
-
-        event.setCancelled(true);
-        ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
-
-        if (event.getPlayer().isSneaking()) {
-            if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
-
-            ElevatorHelper.onElevatorInteract(event.getPlayer(), event, new Elevator(box,elevatorType));
         }
     }
 

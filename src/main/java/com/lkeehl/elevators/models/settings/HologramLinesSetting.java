@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 public class HologramLinesSetting extends ElevatorSetting<String[]> {
 
     public HologramLinesSetting() {
-        super("Hologram Lines", "Click to alter the hologram lines that appear above the elevator.", Material.PAPER, ChatColor.YELLOW, true);
+        super("Hologram Lines", "Click to alter the hologram lines that appear above the elevator.", Material.PAPER, ChatColor.YELLOW);
         this.setGetValueGlobal(e -> e.getHolographicLines().toArray(new String[]{}));
         this.setupDataStore("hologram-lines", DataContainerService.stringArrayPersistentDataType);
     }

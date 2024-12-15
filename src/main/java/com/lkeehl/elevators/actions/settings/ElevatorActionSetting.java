@@ -21,11 +21,7 @@ public class ElevatorActionSetting<T> extends ElevatorSetting<T> {
     private QuadConsumer<Player, Runnable, T, Consumer<T>> onClickMethod;
 
     public ElevatorActionSetting(ElevatorAction action, ElevatorActionGrouping<T> grouping, String settingName, String description, Material icon, ChatColor textColor) {
-        this(action, grouping, settingName, description, icon, textColor, false);
-    }
-
-    public ElevatorActionSetting(ElevatorAction action, ElevatorActionGrouping<T> grouping, String settingName, String description, Material icon, ChatColor textColor, boolean supportsIndividualEditing) {
-        super(settingName, description, icon, textColor, supportsIndividualEditing);
+        super(settingName, description, icon, textColor);
 
         this.elevatorAction = action;
         this.actionGrouping = grouping;

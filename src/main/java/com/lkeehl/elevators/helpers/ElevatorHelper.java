@@ -2,6 +2,8 @@ package com.lkeehl.elevators.helpers;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.*;
+import com.lkeehl.elevators.models.settings.*;
+import com.lkeehl.elevators.services.ElevatorSettingService;
 import com.lkeehl.elevators.services.ElevatorVersionService;
 import com.lkeehl.elevators.services.ObstructionService;
 import org.bukkit.Location;
@@ -88,15 +90,23 @@ public class ElevatorHelper {
     }
 
     public static ElevatorEventData findDestinationElevator(Player player, Location origin, Elevator elevator, byte direction, boolean ignoreSolidBlockCheck, boolean ignoreDistanceCheck, boolean ignoreObstructionCheck) {
+        direction = (byte) (direction > 0 ? 1 : -1);
 
         World world = origin.getWorld();
 
         int worldMinHeight = MCVersionHelper.getWorldMinHeight(world);
-        int maxDistance = elevator.getElevatorType().getMaxDistanceAllowedBetweenElevators() == -1 || ignoreDistanceCheck ? Short.MAX_VALUE : elevator.getElevatorType().getMaxDistanceAllowedBetweenElevators();
+        int maxDistance = ElevatorSettingService.getSettingValue(elevator, MaxDistanceSetting.class);
+        if(maxDistance == -1 || ignoreDistanceCheck)
+            maxDistance = Short.MAX_VALUE;
 
-        int endPointY = Math.min(world.getMaxHeight(), Math.max(worldMinHeight, origin.getBlockY() + (maxDistance * direction)));
+        int endPointY = Math.clamp(origin.getBlockY() + (maxDistance * direction), worldMinHeight, world.getMaxHeight());
 
-        int solidBlocks = elevator.getElevatorType().getMaxSolidBlocksAllowedBetweenElevators() == -1 || ignoreSolidBlockCheck ? Short.MIN_VALUE : 0;
+        boolean stopsObstruction = ElevatorSettingService.getSettingValue(elevator, StopObstructionSetting.class);
+        boolean checkColor = ElevatorSettingService.getSettingValue(elevator, CheckColorSetting.class);
+        boolean checksClass = ElevatorSettingService.getSettingValue(elevator, ClassCheckSetting.class);
+        int maxSolidBlocks = ElevatorSettingService.getSettingValue(elevator, MaxSolidBlocksSetting.class);
+
+        int solidBlocks = maxSolidBlocks == -1 || ignoreSolidBlockCheck ? Short.MIN_VALUE : 0;
         Location tempLocation = origin.clone();
         do {
             tempLocation = tempLocation.add(0,direction,0);
@@ -111,21 +121,22 @@ public class ElevatorHelper {
 
             ShulkerBox tempShulkerBox = (ShulkerBox) tempBlockState;
             ElevatorType tempElevatorType = ElevatorHelper.getElevatorType(tempShulkerBox, false);
-            if(tempElevatorType == null || (elevator.getElevatorType().checkDestinationElevatorType() && !elevator.getElevatorType().equals(tempElevatorType)))
+            Elevator tempElevator = new Elevator(tempShulkerBox, tempElevatorType);
+            if(tempElevatorType == null || (checksClass && !elevator.getElevatorType().equals(tempElevatorType)))
                 continue;
 
-            if(--solidBlocks >= elevator.getElevatorType().getMaxSolidBlocksAllowedBetweenElevators())
+            if(--solidBlocks >= maxSolidBlocks)
                 return null;
 
-            if(tempShulkerBox.getColor() != elevator.getDyeColor() && elevator.getElevatorType().shouldValidateSameColor())
+            if(tempShulkerBox.getColor() != elevator.getDyeColor() && checkColor)
                 continue;
 
-            if(!elevator.getElevatorType().shouldStopObstructedTeleport() || ignoreObstructionCheck)
-                return new ElevatorEventData(elevator, new Elevator(tempShulkerBox, tempElevatorType), direction, 0.0D);
+            if(!stopsObstruction || ignoreObstructionCheck)
+                return new ElevatorEventData(elevator, tempElevator, direction, 0.0D);
 
             double addition = player != null ? ObstructionService.getHitBoxAddition(tempBlock.getRelative(BlockFace.UP), player) : 0.0;
             if (addition >= 0)
-                return new ElevatorEventData(elevator, new Elevator(tempShulkerBox, tempElevatorType), direction, Math.abs(addition));
+                return new ElevatorEventData(elevator, tempElevator, direction, Math.abs(addition));
         } while(tempLocation.getBlockY() != endPointY);
 
         return null;
@@ -140,10 +151,13 @@ public class ElevatorHelper {
     }
 
     public static void onElevatorInteract(Player player, PlayerInteractEvent event, Elevator elevator) {
-
+        if(isElevatorDisabled(elevator.getShulkerBox())) {
+            return; // TODO: Message that elevator is temporarily unable to be interacted with.
+        }
+        InventoryHelper.openInteractMenu(event.getPlayer(), elevator);
     }
 
-    public static void onElevatorPlace(Elevator elevator) {
+    public static void onElevatorPlace(Elevator belevator) {
 
     }
 

@@ -17,10 +17,11 @@ public class Elevators extends JavaPlugin {
         instance = this;
 
         DataContainerService.init(this);
+        ElevatorSettingService.init();
         ElevatorVersionService.init();
         ElevatorEffectService.init();
-        ElevatorRecipeService.init();
         ElevatorTypeService.init();
+        ElevatorRecipeService.init();
         ElevatorActionService.init();
         ObstructionService.init();
         HookService.init();

@@ -1,6 +1,7 @@
 package com.lkeehl.elevators.services.configs;
 
 import com.lkeehl.elevators.util.config.Config;
+import org.bukkit.ChatColor;
 
 public class ConfigLocale implements Config {
 
@@ -27,6 +28,12 @@ public class ConfigLocale implements Config {
     public String elevatorNowProtected = prefix + "The elevator can now only be used by trusted players.";
 
     public String elevatorNowUnprotected = prefix + "The elevator can now be used by anyone.";
+
+    public String chatInputBackOut = "&7Type \"cancel\" to back out of chat input.";
+
+    public String chatInputBackOutAllowReset = "&7Type \"cancel\" to back out of chat input or type \"reset\" to reset.";
+
+    public String enterFloorName = prefix + "Enter a new floor name into the chat.";
 
 
 

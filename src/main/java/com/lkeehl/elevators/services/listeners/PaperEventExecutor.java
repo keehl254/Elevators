@@ -8,11 +8,19 @@ import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.models.settings.DisplayNameSetting;
+import com.lkeehl.elevators.models.settings.LoreLinesSetting;
 import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorSettingService;
 import com.lkeehl.elevators.services.HookService;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class PaperEventExecutor {
 
@@ -47,6 +55,35 @@ public class PaperEventExecutor {
         if (event.isCancelled()) return;
 
         ElevatorHelper.onElevatorUse(e.getPlayer(), closest);
+    }
+
+    // Improvement made here is the use of getHolder without snapshots. Man I love paper.
+    public static void onHopperTake(InventoryMoveItemEvent event) {
+        ItemStack item = event.getItem();
+        ItemMeta meta = item.getItemMeta();
+        if(meta == null) return;
+
+        if (item.getType().equals(Material.COMMAND_BLOCK) && (meta.getDisplayName().equalsIgnoreCase("elevator"))) {
+            event.setCancelled(true);
+            return;
+        }
+
+        ElevatorType elevatorType = ElevatorHelper.getElevatorType(event.getItem());
+        if (elevatorType != null) {
+            meta.setDisplayName(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, DisplayNameSetting.class)));
+            meta.setLore(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class)));
+            event.getItem().setItemMeta(meta);
+        }
+
+        if (event.getSource().getType() == InventoryType.SHULKER_BOX && event.getSource().getHolder(false) instanceof ShulkerBox fromBox) {
+            if (ElevatorHelper.isElevator(fromBox))
+                event.setCancelled(true);
+        }
+
+        if (event.getDestination().getType() == InventoryType.SHULKER_BOX && event.getDestination().getHolder(false) instanceof ShulkerBox toBox) {
+            if (ElevatorHelper.isElevator(toBox))
+                event.setCancelled(true);
+        }
     }
 
 }

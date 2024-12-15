@@ -47,7 +47,6 @@ public class ListenerService {
 
         registerEventExecutor(BlockPistonExtendEvent.class, EventPriority.NORMAL , WorldEventExecutor::onPistonExtend);
         registerEventExecutor(EntityExplodeEvent.class, EventPriority.NORMAL , WorldEventExecutor::onExplode);
-        registerEventExecutor(PlayerInteractEvent.class, EventPriority.NORMAL , WorldEventExecutor::onRightClick);
         registerEventExecutor(BlockDispenseEvent.class, EventPriority.NORMAL , WorldEventExecutor::onDispenserPlace);
         registerEventExecutor(BlockDropItemEvent.class, EventPriority.LOWEST , WorldEventExecutor::onBlockBreak);
         registerEventExecutor(BlockPlaceEvent.class, EventPriority.NORMAL , WorldEventExecutor::onBlockPlace);
@@ -57,10 +56,13 @@ public class ListenerService {
         registerEventExecutor(EntityPickupItemEvent.class, EventPriority.NORMAL , EntityEventExecutor::onPickup);
         registerEventExecutor(PlayerInteractEvent.class, EventPriority.NORMAL, EntityEventExecutor::onRightClick);
 
-        if(HookService.isServerRunningPaper())
-            registerEventExecutor(com.destroystokyo.paper.event.player.PlayerJumpEvent.class, EventPriority.NORMAL , PaperEventExecutor::onJump, false);
-        else
-            registerEventExecutor(PlayerMoveEvent.class, EventPriority.NORMAL , EntityEventExecutor::onJumpDefault, false);
+        if(HookService.isServerRunningPaper()) {
+            registerEventExecutor(com.destroystokyo.paper.event.player.PlayerJumpEvent.class, EventPriority.NORMAL, PaperEventExecutor::onJump, false);
+            registerEventExecutor(InventoryMoveItemEvent.class, EventPriority.LOWEST , PaperEventExecutor::onHopperTake);
+        }else {
+            registerEventExecutor(PlayerMoveEvent.class, EventPriority.NORMAL, EntityEventExecutor::onJumpDefault, false);
+            registerEventExecutor(InventoryMoveItemEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onHopperTake);
+        }
 
         /* I hate CMI. This plugin is way too massive with abhorrent API support.
         If it weren't for the fact the plugin lets players open elevators, I would never work with it. */

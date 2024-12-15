@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.models.settings;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.Elevator;
@@ -25,13 +26,13 @@ public class ElevatorSetting<T> {
     private final ItemStack iconTemplate;
 
     private Function<ElevatorType, T> getGlobalCurrentValueFunc = this::getCurrentValueGlobal;
-    private Function<Elevator, T> getIndividualCurrentValueFunc = e -> null;
-    private BiConsumer<Elevator, T> setIndividualCurrentValueFunc = (e,t) -> {};
+    private Function<Elevator, T> getIndividualCurrentValueFunc = null;
+    private BiConsumer<Elevator, T> setIndividualCurrentValueFunc = null;
 
     private QuadConsumer<Player, ElevatorType, Runnable, T> onClickGlobalConsumer;
     private QuadConsumer<Player, Elevator, Runnable, T> onClickIndividualConsumer;
 
-    public ElevatorSetting(String settingName, String description, Material icon, ChatColor textColor, boolean supportsIndividualEditing) {
+    public ElevatorSetting(String settingName, String description, Material icon, ChatColor textColor) {
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.addAll(MessageHelper.formatLore(description, ChatColor.GRAY));
@@ -49,16 +50,17 @@ public class ElevatorSetting<T> {
         this.setIndividualCurrentValueFunc = (elevator, value) -> {
             DataContainerService.setElevatorValue(elevator.getShulkerBox(), containerKey, value);
             elevator.getShulkerBox().update();
+            Elevators.getElevatorsLogger().info("Updated elevator value: " + containerKey+ " to " + value);
         };
 
         return this;
     }
 
     public boolean canBeEditedIndividually(Elevator elevator) {
-        return false;
+        return this.getIndividualCurrentValueFunc != null;
     }
 
-    public ItemStack createIcon(T value, boolean global) {
+    public ItemStack createIcon(Object value, boolean global) {
 
         List<String> lore = new ArrayList<>();
 
@@ -113,10 +115,22 @@ public class ElevatorSetting<T> {
 
 
     public T getIndividualElevatorValue(Elevator elevator) {
-        return this.getIndividualCurrentValueFunc.apply(elevator);
+
+        T value = null;
+        if (this.getIndividualCurrentValueFunc != null)
+            value = this.getIndividualCurrentValueFunc.apply(elevator);
+
+        if(value != null)
+            return value;
+
+        return this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType());
     }
 
     public void setIndividualElevatorValue(Elevator elevator, T value) {
+
+        if(this.setIndividualCurrentValueFunc == null)
+            throw new RuntimeException("Setting does not have a method for setting individual value.");
+
         this.setIndividualCurrentValueFunc.accept(elevator, value);
     }
 
@@ -126,7 +140,7 @@ public class ElevatorSetting<T> {
         return this;
     }
     public T getCurrentValueGlobal(ElevatorType elevatorType) {
-        return null;
+        return this.getGlobalCurrentValueFunc.apply(elevatorType);
     }
 
 }

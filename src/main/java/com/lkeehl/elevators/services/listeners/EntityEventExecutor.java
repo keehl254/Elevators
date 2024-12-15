@@ -5,8 +5,10 @@ import com.lkeehl.elevators.helpers.*;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.models.settings.MaxStackSizeSetting;
 import com.lkeehl.elevators.services.ConfigService;
 import com.lkeehl.elevators.services.ElevatorRecipeService;
+import com.lkeehl.elevators.services.ElevatorSettingService;
 import com.lkeehl.elevators.services.HookService;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -117,10 +119,12 @@ public class EntityEventExecutor {
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
         if (elevatorType == null) return;
 
+        event.setCancelled(true);
+
         if (event.getPlayer().isSneaking()) {
-            if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND))
-                return;
-            InventoryHelper.openInteractMenu(event.getPlayer(), new Elevator(box, elevatorType));
+            if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
+
+            ElevatorHelper.onElevatorInteract(event.getPlayer(), event, new Elevator(box,elevatorType));
         }
 
     }
@@ -136,7 +140,7 @@ public class EntityEventExecutor {
         if(itemMeta == null) return; // To appease the god that is intellisense.
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(item);
-        if(elevatorType.getMaxStackSize() <= 1) return; // I really wish Minecraft would support custom item maxStackSizes already. Returning here gives the most natural pickup.
+        if(ElevatorSettingService.getSettingValue(elevatorType, MaxStackSizeSetting.class) <= 1) return; // I really wish Minecraft would support custom item maxStackSizes already. Returning here gives the most natural pickup.
 
         int pickupAmount = item.getAmount();
 

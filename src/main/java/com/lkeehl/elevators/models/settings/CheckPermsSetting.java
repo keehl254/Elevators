@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class CheckPermsSetting extends ElevatorSetting<Boolean> {
 
     public CheckPermsSetting() {
-        super("Check Perms", "If enabled, the player must have access to elevator 'use', 'dye', and 'craft' permissions to have access to their respective abilities.", Material.ANVIL, ChatColor.DARK_GRAY, false);
+        super("Check Perms", "If enabled, the player must have access to elevator 'use', 'dye', and 'craft' permissions to have access to their respective abilities.", Material.ANVIL, ChatColor.DARK_GRAY);
         this.setGetValueGlobal(ElevatorType::doesElevatorRequirePermissions);
     }
 

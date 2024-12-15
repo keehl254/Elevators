@@ -10,7 +10,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class StopObstructionSetting extends ElevatorSetting<Boolean> {
 
     public StopObstructionSetting() {
-        super("Stop Obstructed Teleports", "If enabled, the destination elevator must have enough space to teleport the player safely.", Material.PISTON, ChatColor.DARK_GRAY, true);
+        super("Stop Obstructed Teleports", "If enabled, the destination elevator must have enough space to teleport the player safely.", Material.PISTON, ChatColor.DARK_GRAY);
         this.setupDataStore("stop-obstruction", PersistentDataType.BOOLEAN);
         this.setGetValueGlobal(ElevatorType::shouldStopObstructedTeleport);
     }

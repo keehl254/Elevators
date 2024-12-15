@@ -122,11 +122,7 @@ public abstract class ElevatorAction {
     }
 
     protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionGrouping<T> grouping, String settingName, String description, Material icon, ChatColor textColor) {
-        return this.mapSetting(grouping, settingName, description, icon, textColor, false);
-    }
-
-    protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionGrouping<T> grouping, String settingName, String description, Material icon, ChatColor textColor, boolean supportsIndividualEditing) {
-        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, description, icon, textColor, supportsIndividualEditing);
+        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, description, icon, textColor);
         this.settings.put(grouping, setting);
 
         this.initIdentifier();
