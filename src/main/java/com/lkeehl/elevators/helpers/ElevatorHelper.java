@@ -191,7 +191,6 @@ public class ElevatorHelper {
 
     public static boolean isElevatorDisabled(ShulkerBox shulkerBox) {
         return shulkerBox.hasMetadata("elevator-disabled");
-
     }
 
 

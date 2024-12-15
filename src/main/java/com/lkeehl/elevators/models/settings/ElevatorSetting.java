@@ -48,9 +48,10 @@ public class ElevatorSetting<T> {
 
         this.getIndividualCurrentValueFunc = elevator -> DataContainerService.getElevatorValue(elevator.getShulkerBox(), containerKey, getGlobalCurrentValueFunc.apply(elevator.getElevatorType()));
         this.setIndividualCurrentValueFunc = (elevator, value) -> {
+            if(value == this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType())) // Store as little data as possible. Remove from data-container if default.
+                value = null;
             DataContainerService.setElevatorValue(elevator.getShulkerBox(), containerKey, value);
             elevator.getShulkerBox().update();
-            Elevators.getElevatorsLogger().info("Updated elevator value: " + containerKey+ " to " + value);
         };
 
         return this;

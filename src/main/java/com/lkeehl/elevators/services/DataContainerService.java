@@ -132,6 +132,11 @@ public class DataContainerService {
     public static <Z> void setElevatorValue(ShulkerBox box, NamespacedKey key, Z value) {
         Map.Entry<NamespacedKey, PersistentDataType<?,?>> keyData = keyMap.get(key.getKey());
         PersistentDataContainer dataContainer = box.getPersistentDataContainer();
+
+        if(value == null) {
+            dataContainer.remove(keyData.getKey());
+            return;
+        }
         PersistentDataType<?,Z> dataType = (PersistentDataType<?, Z>) keyData.getValue();
         dataContainer.set(keyData.getKey(), dataType, value);
     }
