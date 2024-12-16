@@ -61,6 +61,12 @@ public class WorldEventExecutor {
         if (elevatorType == null) return;
         if (!event.getBlock().getType().equals(Material.DISPENSER)) return;
 
+        if(!ConfigService.getRootConfig().allowElevatorDispense) {
+            event.setCancelled(true);
+            ShulkerBoxHelper.fakeDispense(event.getBlock(), event.getItem());
+            return;
+        }
+
         Dispenser dispenser = (Dispenser) event.getBlock().getBlockData();
         Block relative = event.getBlock().getRelative(dispenser.getFacing());
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Elevators")), () -> {

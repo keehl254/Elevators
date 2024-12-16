@@ -9,7 +9,7 @@ public class ConfigEffect implements Config {
     public String file = "Creeper.png";
 
     @Comments("Scales down the effect to be a percentage of original images width and height.")
-    public int scale = 50;
+    public int scale = 1;
 
     @Comments("Controls how long the effect will be present before disappearing.")
     public float duration = 1.0F;

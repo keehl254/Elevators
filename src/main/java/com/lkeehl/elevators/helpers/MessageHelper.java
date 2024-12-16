@@ -132,7 +132,7 @@ public class MessageHelper {
         if(searchResult.getOrigin().getShulkerBox() != null) {
 
             if (message.contains("%elevators_old_floor%"))
-                message = message.replace("%elevators_new_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getOrigin(), true)+"");
+                message = message.replace("%elevators_old_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getOrigin(), true)+"");
 
             if (message.contains("%elevators_top_floor%") && searchResult.getDestination().getShulkerBox() == null)
                 message = message.replace("%elevators_top_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getOrigin(), false)+"");

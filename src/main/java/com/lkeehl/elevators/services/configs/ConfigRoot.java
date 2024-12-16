@@ -38,6 +38,9 @@ public class ConfigRoot implements Config {
     @Comments("If this option is enabled, elevators will only work with trusted users in claims by default. Elevators can be changed individually to allow visitors by trusted members.")
     public boolean claimProtectionDefault = true;
 
+    @Comments("If this option is enabled, elevators will be able to be placed using dispensers. Keep in mind that this can be used to bypass the elevator placement permission.")
+    public boolean allowElevatorDispense = false;
+
     @Comments("Elevators cannot be used in the world names listed below.")
     public List<String> disabledWorlds = Arrays.asList("example_world");
 
