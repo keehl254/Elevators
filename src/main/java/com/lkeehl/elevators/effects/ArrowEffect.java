@@ -26,7 +26,7 @@ public class ArrowEffect extends ElevatorEffect {
         Color particleColor = this.getParticleColor(teleportResult);
 
         Location locClone = getEffectLocation(teleportResult, executionMode).getBlock().getLocation();
-        locClone.add(0.5, direction == 1 ? 0 : 2, 0.5);
+        locClone.add(0.5, direction == 1 ? 1 : 3, 0.5);
 
         List<Location> spawnPositions = new ArrayList<>();
 

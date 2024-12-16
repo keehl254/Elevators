@@ -35,6 +35,8 @@ public class ElevatorActionService {
         registerElevatorAction("message-player", MessagePlayerAction::new, ChatColor.YELLOW.toString(), "Message User", Material.WRITTEN_BOOK);
         registerElevatorAction("message-all", MessageAllAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.ENCHANTED_BOOK);
 
+        registerElevatorAction("effect", EffectAction::new, ChatColor.BLUE.toString(), "Effect", Material.FIREWORK_ROCKET);
+
         registerElevatorAction("title", TitleAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.ENCHANTED_BOOK);
         registerElevatorAction("action-bar", ActionBarAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.ENCHANTED_BOOK);
         registerElevatorAction("boss-bar", BossBarAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.ENCHANTED_BOOK);

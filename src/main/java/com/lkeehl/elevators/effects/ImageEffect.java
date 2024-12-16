@@ -47,17 +47,22 @@ public class ImageEffect extends ElevatorEffect {
             else if (scaledDimension.getHeight() < 16)
                 scaledDimension.setSize((scaledDimension.getWidth() * 16) / scaledDimension.getHeight(), 16);
 
-            image = new BufferedImage((int) scaledDimension.getWidth(), (int) scaledDimension.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            Image toolKitImage = image.getScaledInstance(image.getWidth(), image.getHeight(), Image.SCALE_SMOOTH);
-            Graphics g = image.getGraphics();
-            g.drawImage(toolKitImage, 0, 0, null);
-            g.dispose();
+            BufferedImage scaledImage = new BufferedImage((int) scaledDimension.getWidth(), (int) scaledDimension.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = scaledImage.createGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.drawImage(image, 0, 0, scaledImage.getWidth(), scaledImage.getHeight(), null);
+            g2d.dispose();
+
+            image = scaledImage;
 
             rgbPattern = new int[image.getWidth()][image.getHeight()];
             for (int x = 0; x < rgbPattern.length; x++) {
                 for (int y = 0; y < rgbPattern[x].length; y++) {
                     int rgb = image.getRGB(x, y);
                     rgbPattern[x][y] = (rgb == backgroundRGB || (rgb >> 24) == 0) ? 0 : rgb;
+                    //rgbPattern[x][y] = rgb == backgroundRGB ? 0 : rgb;
                 }
             }
 
@@ -92,7 +97,7 @@ public class ImageEffect extends ElevatorEffect {
 
         double size = this.rgbPattern.length * 0.2;
         double offset = ((size * 4.5) / 2.0) * 0.2;
-        location.add(0, this.height * 0.2, 0);
+        location.add(-0.5, this.height * 0.2, -0.5);
         for (int time = 0; time < duration * 20; time++) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(Elevators.getInstance(), () -> {
                 for (int side = 0; side < 4; side++) {
@@ -100,16 +105,17 @@ public class ImageEffect extends ElevatorEffect {
                         for (int y = 0; y < this.rgbPattern[x].length; y++) {
                             int tempX = (this.rgbPattern.length - 1) - x;
                             Location locClone = location.clone();
-                            if (side == 0)
-                                locClone.subtract((offset - 0.5) + (tempX * 0.2), (y * 0.2), offset);
-                            else if (side == 1)
-                                locClone.add((x * 0.2) - (offset - 0.5), -(y * 0.2), (offset + 1.0));
-                            else if (side == 2)
+                            if (side == 0) {
+                                locClone.add((tempX * 0.2) - (offset - 0.5), -(y * 0.2), -offset);
+                            } else if (side == 1) {
+                                 locClone.add((x * 0.2) - (offset - 0.5), -(y * 0.2), (offset + 1.0));
+                            } else if (side == 2) {
                                 locClone.subtract(offset, (y * 0.2), (offset - 0.5) - (x * 0.2));
-                            else
+                            } else {
                                 locClone.add((offset + 1.0), -(y * 0.2), (tempX * 0.2) - (offset - 0.5));
+                            }
 
-                            location.getWorld().spawnParticle(Particle.DUST, locClone, 1, 0, 0, 0, 1, new Particle.DustOptions(Color.fromRGB(this.rgbPattern[x][y]), 1));
+                            location.getWorld().spawnParticle(Particle.DUST, locClone, 1, 0, 0, 0, 1, new Particle.DustOptions(Color.fromARGB(this.rgbPattern[x][y]), 1));
                         }
                     }
                 }

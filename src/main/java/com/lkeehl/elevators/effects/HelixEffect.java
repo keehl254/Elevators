@@ -21,7 +21,7 @@ public class HelixEffect extends ElevatorEffect {
 
         World world = locClone.getWorld();
 
-        //location.add(0.5, 0, 0.5);
+        locClone.add(0, 1, 0);
         for (int i = 0; i < 2000; i += 50) {
             float x = (float) ((Math.sin(i / 7.0D)) * 0.5);
             float z = (float) ((Math.cos(i / 7.0D)) * 0.5);
