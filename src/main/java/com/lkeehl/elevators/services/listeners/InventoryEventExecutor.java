@@ -88,6 +88,9 @@ public class InventoryEventExecutor {
 
     @SuppressWarnings("deprecation")
     public static void onHopperTake(InventoryMoveItemEvent event) {
+        if(event.getSource().getType() != InventoryType.SHULKER_BOX && event.getDestination().getType() != InventoryType.SHULKER_BOX)
+            return;
+
         ItemStack item = event.getItem();
         ItemMeta meta = item.getItemMeta();
         if(meta == null) return;

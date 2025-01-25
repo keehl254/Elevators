@@ -59,6 +59,9 @@ public class PaperEventExecutor {
 
     // Improvement made here is the use of getHolder without snapshots. Man I love paper.
     public static void onHopperTake(InventoryMoveItemEvent event) {
+        if(event.getSource().getType() != InventoryType.SHULKER_BOX && event.getDestination().getType() != InventoryType.SHULKER_BOX)
+            return;
+
         ItemStack item = event.getItem();
         ItemMeta meta = item.getItemMeta();
         if(meta == null) return;
