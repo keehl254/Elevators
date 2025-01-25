@@ -91,6 +91,8 @@ public class ElevatorHelper {
 
     public static ElevatorEventData findDestinationElevator(Player player, Location origin, Elevator elevator, byte direction, boolean ignoreSolidBlockCheck, boolean ignoreDistanceCheck, boolean ignoreObstructionCheck) {
         direction = (byte) (direction > 0 ? 1 : -1);
+        if(direction == -1 && origin.getBlockY() == MCVersionHelper.getWorldMinHeight(origin.getWorld()))
+            return null;
 
         World world = origin.getWorld();
 
