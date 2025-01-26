@@ -5,12 +5,9 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.Elevator;
-import com.lkeehl.elevators.models.hooks.ElevatorHook;
-import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,7 +29,7 @@ public class RedProtectHook extends ProtectionHook {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(!this.shouldDenyNonMemberUse(elevator))
+        if(this.shouldAllowGuestUse(elevator))
             return true;
 
         Region region = redProtect.getRegion(elevator.getShulkerBox().getLocation());
@@ -52,7 +49,7 @@ public class RedProtectHook extends ProtectionHook {
         Region region = redProtect.getRegion(elevator.getLocation());
         if(region == null) return null;
 
-        boolean flagEnabled = !this.shouldDenyNonMemberUse(elevator);
+        boolean flagEnabled = this.shouldAllowGuestUse(elevator);
 
         List<String> lore = new ArrayList<>();
         lore.add("");

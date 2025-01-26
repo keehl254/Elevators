@@ -1,16 +1,11 @@
 package com.lkeehl.elevators.services.hooks;
 
-import com.griefdefender.api.GriefDefender;
-import com.griefdefender.api.claim.Claim;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.Elevator;
-import com.lkeehl.elevators.models.hooks.ElevatorHook;
-import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import world.bentobox.bentobox.BentoBox;
@@ -47,7 +42,7 @@ public class BentoBoxHook extends ProtectionHook {
     }
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(!this.shouldDenyNonMemberUse(elevator))
+        if(this.shouldAllowGuestUse(elevator))
             return true;
 
         Location location = elevator.getLocation();
@@ -73,7 +68,7 @@ public class BentoBoxHook extends ProtectionHook {
         if (island == null)
             return null;
 
-        boolean flagEnabled = !this.shouldDenyNonMemberUse(elevator);
+        boolean flagEnabled = this.shouldAllowGuestUse(elevator);
 
         List<String> lore = new ArrayList<>();
         lore.add("");

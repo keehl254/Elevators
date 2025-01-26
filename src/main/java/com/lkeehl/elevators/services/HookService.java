@@ -64,7 +64,8 @@ public class HookService {
             hookMap.put(pluginName.toUpperCase(), (ElevatorHook) hookConstructor.newInstance());
             return true;
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            Elevators.getElevatorsLogger().warning("Failed to register hook for \"" + pluginName + "\" due to an inaccessible constructor.");
+            Elevators.getElevatorsLogger().warning("Failed to register hook for \"" + pluginName + "\" due to an inaccessible constructor. The plugin will still function; however, this hook will not work. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues");
+            e.printStackTrace();
             return false;
         }
     }

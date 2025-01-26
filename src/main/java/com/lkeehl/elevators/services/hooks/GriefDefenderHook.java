@@ -5,10 +5,7 @@ import com.griefdefender.api.claim.Claim;
 import com.griefdefender.api.claim.TrustTypes;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.Elevator;
-import com.lkeehl.elevators.models.hooks.ElevatorHook;
-import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
-import me.ryanhamshire.GriefPrevention.PlayerData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
@@ -26,7 +23,7 @@ public class GriefDefenderHook extends ProtectionHook {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(!this.shouldDenyNonMemberUse(elevator))
+        if(this.shouldAllowGuestUse(elevator))
             return true;
 
         ShulkerBox box = elevator.getShulkerBox();
@@ -43,7 +40,7 @@ public class GriefDefenderHook extends ProtectionHook {
         final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
         if(claim == null || claim.isWilderness()) return null;
 
-        boolean flagEnabled = !this.shouldDenyNonMemberUse(elevator);
+        boolean flagEnabled = this.shouldAllowGuestUse(elevator);
 
         List<String> lore = new ArrayList<>();
         lore.add("");

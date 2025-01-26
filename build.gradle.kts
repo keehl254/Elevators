@@ -33,12 +33,13 @@ dependencies {
     compileOnly(platform("com.intellectualsites.bom:bom-newest:1.32"))
     compileOnly("org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.700")
 
+    //compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     //compileOnly("org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
 
     compileOnly("com.github.TechFortress:GriefPrevention:16.18")
-    compileOnly("com.plotsquared:PlotSquared-Core:6.11.1")
-    compileOnly("com.plotsquared:PlotSquared-Bukkit:6.11.1") { isTransitive = false }
+    compileOnly("com.intellectualsites.plotsquared:plotsquared-core")
+    compileOnly("com.intellectualsites.plotsquared:plotsquared-bukkit") { isTransitive = false }
     compileOnly("world.bentobox:bentobox:1.24.0-SNAPSHOT")
     compileOnly("com.griefdefender:api:2.1.0-SNAPSHOT")
     compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.2"){ exclude(group = "*") }

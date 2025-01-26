@@ -117,7 +117,7 @@ public class MessageHelper {
             return message;
 
         message = message.replace("%elevators_type%", searchResult.getOrigin().getElevatorType().getTypeKey());
-        if(searchResult.getDestination().getShulkerBox() != null) {
+        if(searchResult.getDestination() != null && searchResult.getDestination().getShulkerBox() != null) {
 
             if (message.contains("%elevators_new_floor%"))
                 message = message.replace("%elevators_new_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getDestination(), true)+"");
@@ -129,7 +129,7 @@ public class MessageHelper {
                 message = message.replace("%elevators_new_floor_name%", DataContainerService.getFloorName(searchResult.getDestination()));
 
         }
-        if(searchResult.getOrigin().getShulkerBox() != null) {
+        if(searchResult.getOrigin() != null && searchResult.getOrigin().getShulkerBox() != null) {
 
             if (message.contains("%elevators_old_floor%"))
                 message = message.replace("%elevators_old_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getOrigin(), true)+"");
@@ -165,7 +165,7 @@ public class MessageHelper {
 
     public static List<String> formatColors(List<String> messages) {
         if(messages == null) return messages;
-        List<String> finalMessages = new ArrayList<>(messages);
+        List<String> finalMessages = new ArrayList<>();
         messages.forEach(i -> finalMessages.add(formatColors(i)));
         return finalMessages;
     }

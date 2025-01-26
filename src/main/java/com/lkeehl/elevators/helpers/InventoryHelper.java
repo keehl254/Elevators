@@ -85,7 +85,7 @@ public class InventoryHelper {
         ItemStack nameItem = ItemStackHelper.createItem(ChatColor.YELLOW + "" + ChatColor.BOLD + "Floor Name", Material.NAME_TAG, 1, nameLore);
         ItemStack settingsItem = ItemStackHelper.createItem(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Settings", Material.SEA_LANTERN, 1);
 
-        List<ProtectionHook> protectionHooks = HookService.getProtectionHooks().stream().filter(i -> i.createIconForElevator(player, elevator) != null).toList();
+        List<ProtectionHook> protectionHooks = HookService.getProtectionHooks().stream().filter(i -> i.getConfig().allowCustomization).filter(i -> i.createIconForElevator(player, elevator) != null).toList();
 
         SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> {
             ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
@@ -117,7 +117,7 @@ public class InventoryHelper {
 
     public static void openInteractProtectMenu(Player player, Elevator elevator) {
 
-        List<ProtectionHook> protectionHooks = HookService.getProtectionHooks().stream().filter(i -> i.createIconForElevator(player, elevator) != null).toList();
+        List<ProtectionHook> protectionHooks = HookService.getProtectionHooks().stream().filter(i -> i.getConfig().allowCustomization).filter(i -> i.createIconForElevator(player, elevator) != null).toList();
 
         Inventory inventory = InventoryHelper.createInventoryWithMinSlots(protectionHooks.size() + 9, "Elevator > Protection");
         InventoryHelper.fillEmptySlotsWithPanes(inventory, elevator.getDyeColor());

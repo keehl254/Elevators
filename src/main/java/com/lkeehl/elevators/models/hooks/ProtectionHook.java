@@ -15,21 +15,23 @@ public abstract class ProtectionHook implements ElevatorHook {
     public ProtectionHook(String configKey) {
         this.configKey = configKey;
         this.containerKey = DataContainerService.getKeyFromKey("protection-" + configKey, PersistentDataType.BOOLEAN);
-        this.getConfig();
+
+        ConfigService.addConfigCallback(root -> getConfig());
     }
 
     public ConfigHookData getConfig() {
+
         if (!ConfigService.getRootConfig().protectionHooks.containsKey(this.configKey))
             ConfigService.getRootConfig().protectionHooks.put(this.configKey, new ConfigHookData());
         return ConfigService.getRootConfig().protectionHooks.get(this.configKey);
     }
 
-    public boolean shouldDenyNonMemberUse(Elevator elevator) {
-        return DataContainerService.getElevatorValue(elevator.getShulkerBox(), this.containerKey, getConfig().blockNonMemberUseDefault);
+    public boolean shouldAllowGuestUse(Elevator elevator) {
+        return !DataContainerService.getElevatorValue(elevator.getShulkerBox(), this.containerKey, getConfig().blockNonMemberUseDefault);
     }
 
     public void toggleAllowMemberUse(Elevator elevator) {
-        boolean currentValue = this.shouldDenyNonMemberUse(elevator);
+        boolean currentValue = this.shouldAllowGuestUse(elevator);
         DataContainerService.setElevatorValue(elevator.getShulkerBox(), this.containerKey, !currentValue);
         elevator.getShulkerBox().update();
     }

@@ -2,21 +2,17 @@ package com.lkeehl.elevators.services.hooks;
 
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.Elevator;
-import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import com.plotsquared.core.PlotAPI;
-import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.caption.LocaleHolder;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +33,7 @@ public class PlotSquaredHook extends ProtectionHook {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(!this.shouldDenyNonMemberUse(elevator))
+        if(this.shouldAllowGuestUse(elevator))
             return true;
 
         PlotPlayer<?> plotPlayer = this.api.wrapPlayer(player.getUniqueId());
@@ -65,7 +61,7 @@ public class PlotSquaredHook extends ProtectionHook {
         Plot currentPlot = plotPlayer.getCurrentPlot();
         if(currentPlot == null) return null;
 
-        boolean flagEnabled = !this.shouldDenyNonMemberUse(elevator);
+        boolean flagEnabled = this.shouldAllowGuestUse(elevator);
 
         List<String> lore = new ArrayList<>();
         lore.add("");
@@ -87,12 +83,7 @@ public class PlotSquaredHook extends ProtectionHook {
     public static class ElevatorFlag extends BooleanFlag<ElevatorFlag> {
 
         protected ElevatorFlag(boolean value) {
-            super(value, new Caption() {
-                @Override
-                public @NonNull String getComponent(@NonNull LocaleHolder localeHolder) {
-                    return "Set to `true` to allow guests to use elevators.";
-                }
-            });
+            super(value, TranslatableCaption.of("flags.guest_elevators"));
         }
 
         @Override

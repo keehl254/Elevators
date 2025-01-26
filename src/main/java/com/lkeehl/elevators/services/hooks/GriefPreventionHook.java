@@ -2,11 +2,7 @@ package com.lkeehl.elevators.services.hooks;
 
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.Elevator;
-import com.lkeehl.elevators.models.hooks.ElevatorHook;
-import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.Plot;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -14,7 +10,6 @@ import me.ryanhamshire.GriefPrevention.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -33,7 +28,7 @@ public class GriefPreventionHook extends ProtectionHook {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(!this.shouldDenyNonMemberUse(elevator))
+        if(this.shouldAllowGuestUse(elevator))
             return true;
 
         if(this.griefPrevention == null)
@@ -61,7 +56,7 @@ public class GriefPreventionHook extends ProtectionHook {
         Claim claim = this.griefPrevention.dataStore.getClaimAt(elevator.getLocation(), false, playerData.lastClaim);
         if(claim == null) return null;
 
-        boolean flagEnabled = !this.shouldDenyNonMemberUse(elevator);
+        boolean flagEnabled = this.shouldAllowGuestUse(elevator);
 
         List<String> lore = new ArrayList<>();
         lore.add("");
