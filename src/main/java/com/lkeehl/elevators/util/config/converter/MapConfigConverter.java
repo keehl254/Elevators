@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.util.config.converter;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 import com.lkeehl.elevators.util.config.nodes.ConfigNode;
 
@@ -36,28 +37,32 @@ public class MapConfigConverter extends ConfigConverter {
             valueClazz = containerParam;
         }
 
-        for (Map.Entry<?, ?> entry : ((Map<?, ?>) object).entrySet()) {
-            if (entry.getValue() == null) continue;
-            Class<?> clazz = entry.getValue().getClass();
+        if(object instanceof Map<?,?>) {
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) object).entrySet()) {
+                if (entry.getValue() == null) continue;
+                Class<?> clazz = entry.getValue().getClass();
 
-            ConfigNode<?> childNode;
+                ConfigNode<?> childNode;
 
-            if (valueConverter != null)
-                childNode = valueConverter.createNodeFromFieldAndObject(myNode, valueClazz == null ? clazz : valueClazz, entry.getKey().toString(), entry.getValue(), null);
-            else
-                childNode = this.createNodeWithData(myNode, entry.getKey().toString(), entry.getValue(), null);
+                if (valueConverter != null)
+                    childNode = valueConverter.createNodeFromFieldAndObject(myNode, valueClazz == null ? clazz : valueClazz, entry.getKey().toString(), entry.getValue(), null);
+                else
+                    childNode = this.createNodeWithData(myNode, entry.getKey().toString(), entry.getValue(), null);
 
-            Object keyObj = null;
-            if(keyClazz.isEnum()) {
-                Optional<?> objectOpt = Arrays.stream(keyClazz.getEnumConstants()).filter(i -> i.toString().equalsIgnoreCase(entry.getKey().toString())).findFirst();
-                if(objectOpt.isPresent())
-                    keyObj = objectOpt.get();
+                Object keyObj = null;
+                if(keyClazz.isEnum()) {
+                    Optional<?> objectOpt = Arrays.stream(keyClazz.getEnumConstants()).filter(i -> i.toString().equalsIgnoreCase(entry.getKey().toString())).findFirst();
+                    if(objectOpt.isPresent())
+                        keyObj = objectOpt.get();
+                }
+                if(keyObj == null)
+                    keyObj = PrimitiveConfigConverter.createPrimitiveFromObj(keyClazz, entry.getKey());
+
+                myNode.getChildren().add(childNode);
+                mapObj.put(keyObj, childNode.getValue());
             }
-            if(keyObj == null)
-                keyObj = PrimitiveConfigConverter.createPrimitiveFromObj(keyClazz == null ? String.class : keyClazz, entry.getKey());
-
-            myNode.getChildren().add(childNode);
-            mapObj.put(keyObj, childNode.getValue());
+        } else if(!(object instanceof ArrayList<?>)) {
+            Elevators.getElevatorsLogger().warning("An invalid value was entered for key: " + key + ". Expected Map or Empty Array.");
         }
 
         return myNode;

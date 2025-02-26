@@ -147,25 +147,17 @@ public class InventoryEventExecutor {
         if(!(e.getRecipe() instanceof Keyed keyedRecipe))  return;
         if(!(e.getWhoClicked() instanceof Player player)) return;
 
-        Elevators.getElevatorsLogger().warning("Crafting");
-
         ItemStack result = e.getInventory().getResult();
         if (result == null || result.getType() == Material.AIR) return;
         if (ItemStackHelper.isNotShulkerBox(result.getType())) return;
 
-        Elevators.getElevatorsLogger().warning("Is shulkerbox");
-
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(result);
         if (elevatorType == null) return;
-
-        Elevators.getElevatorsLogger().warning("Is elevator");
 
         boolean isElevatorCraftingRecipe = keyedRecipe.getKey().getNamespace().equalsIgnoreCase("elevators");
         DyeColor dyeColor = ItemStackHelper.getDyeColorFromMaterial(e.getRecipe().getResult().getType());
 
         if (isElevatorCraftingRecipe) {
-
-            Elevators.getElevatorsLogger().warning("Is crafting");
 
             // There is no need to pass in the color as the recipe can only represent one color anyway.
             if(!ElevatorPermHelper.canCraftElevatorType(elevatorType, player, (Recipe & Keyed) e.getRecipe())) {

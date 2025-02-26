@@ -60,6 +60,9 @@ public class ConfigElevatorType implements Config {
             "IF AN IDENTIFIER KEY HAS BEEN GENERATED, DO NOT MESS WITH IT OR INDIVIDUAL ELEVATOR DATA MAY BE LOST."})
     protected ConfigActions actions = new ConfigActions();
 
+    @Comments({"Define recipes to craft an elevator type. If you do not wish to have any recipes, replace the section",
+    "with an empty map by settings recipes to \"{}\". Example:",
+    "recipes: {}"})
     protected Map<String, ElevatorRecipeGroup> recipes = Map.of("classic", new ElevatorRecipeGroup());
 
     public static class ConfigActions implements Config {
