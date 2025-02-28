@@ -1,5 +1,5 @@
 group = "com.lkeehl.elevators"
-version = "5.0.0-beta.5"
+version = "5.0.0-beta.6"
 description = "Fifth major semantic for the Elevators Spigot Plugin"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
