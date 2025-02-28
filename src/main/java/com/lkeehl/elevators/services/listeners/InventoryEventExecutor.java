@@ -34,16 +34,14 @@ public class InventoryEventExecutor {
     @SuppressWarnings("ConstantConditions")
     public static void onClickStackHandler(InventoryClickEvent event) {
         if(!(event.getWhoClicked() instanceof Player player)) return;
-
         ItemStack clickedItem = event.getCurrentItem();
 
         if(event.getCursor() == null || event.getCursor().getType().isAir()) { // Only for halving elevators to cursor.
+            if (event.getClick() != ClickType.RIGHT) return;
 
-            if(event.getClick() != ClickType.RIGHT) return;
-
-            if(clickedItem == null) return;
-            if(ItemStackHelper.isNotShulkerBox(clickedItem.getType())) return;
-            if(!ElevatorHelper.isElevator(clickedItem)) return;
+            if (clickedItem == null) return;
+            if (ItemStackHelper.isNotShulkerBox(clickedItem.getType())) return;
+            if (!ElevatorHelper.isElevator(clickedItem)) return;
 
             event.setCancelled(true);
 
@@ -54,47 +52,37 @@ public class InventoryEventExecutor {
 
             clickedItem.setAmount(currentLeftSize);
             player.setItemOnCursor(cursorItem);
-
             return;
         }
         if(event.getClick() != ClickType.LEFT) return; // Dropping outside still counts.
         if(event.getClickedInventory() == null) return; // In case they drop it outside their inventory.
-
         if(ItemStackHelper.isNotShulkerBox(event.getCursor().getType())) return;
         if(!ElevatorHelper.isElevator(event.getCursor())) return;
 
-        event.setCancelled(true);
 
-        if(clickedItem == null || clickedItem.getType().isAir()) {
-            event.getClickedInventory().setItem(event.getSlot(), event.getCursor());
-            player.setItemOnCursor(null);
+        if(clickedItem == null) {
+            event.setCancelled(true);
             return;
         }
 
-        if(!clickedItem.isSimilar(event.getCursor())) { // Swapping items.
-            event.getClickedInventory().setItem(event.getSlot(), event.getCursor());
-            player.setItemOnCursor(clickedItem);
-            return;
-        }
         // Adding cursor to clicked stack.
-        ElevatorType elevatorType = ElevatorHelper.getElevatorType(clickedItem);
-        int amountToAdd = ElevatorSettingService.getSettingValue(elevatorType, MaxStackSizeSetting.class) - clickedItem.getAmount();
-        amountToAdd = Math.min(amountToAdd, event.getCursor().getAmount());
+        if(!clickedItem.getType().isAir() && clickedItem instanceof ShulkerBox) {
+            ElevatorType elevatorType = ElevatorHelper.getElevatorType(clickedItem);
+            int amountToAdd = ElevatorSettingService.getSettingValue(elevatorType, MaxStackSizeSetting.class) - clickedItem.getAmount();
+            amountToAdd = Math.min(amountToAdd, event.getCursor().getAmount());
 
-        clickedItem.setAmount(clickedItem.getAmount() + amountToAdd);
-        event.getCursor().setAmount(event.getCursor().getAmount() - amountToAdd);
-
+            clickedItem.setAmount(clickedItem.getAmount() + amountToAdd);
+            event.getCursor().setAmount(event.getCursor().getAmount() - amountToAdd);
+        }
     }
 
     @SuppressWarnings("deprecation")
     public static void onHopperTake(InventoryMoveItemEvent event) {
         if(event.getSource().getType() != InventoryType.SHULKER_BOX && event.getDestination().getType() != InventoryType.SHULKER_BOX)
             return;
-
         ItemStack item = event.getItem();
         ItemMeta meta = item.getItemMeta();
         if(meta == null) return;
-
         if (item.getType().equals(Material.COMMAND_BLOCK) && (meta.getDisplayName().equalsIgnoreCase("elevator"))) {
             event.setCancelled(true);
             return;
@@ -106,12 +94,10 @@ public class InventoryEventExecutor {
             meta.setLore(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class)));
             event.getItem().setItemMeta(meta);
         }
-
         if (event.getSource().getType() == InventoryType.SHULKER_BOX && event.getSource().getHolder() instanceof ShulkerBox fromBox) {
             if (ElevatorHelper.isElevator(fromBox))
                 event.setCancelled(true);
         }
-
         if (event.getDestination().getType() == InventoryType.SHULKER_BOX && event.getDestination().getHolder() instanceof ShulkerBox toBox) {
             if (ElevatorHelper.isElevator(toBox))
                 event.setCancelled(true);
