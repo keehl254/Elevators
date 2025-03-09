@@ -41,7 +41,7 @@ public class ListenerService {
 
         registerEventExecutor(InventoryOpenEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onInventoryOpen);
         registerEventExecutor(InventoryMoveItemEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onHopperTake);
-        registerEventExecutor(InventoryClickEvent.class, EventPriority.LOWEST, InventoryEventExecutor::onClickStackHandler, true);
+        registerEventExecutor(InventoryClickEvent.class, EventPriority.HIGHEST, InventoryEventExecutor::onClickStackHandler, true);
         registerEventExecutor(PrepareAnvilEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onAnvilPrepare);
         registerEventExecutor(CraftItemEvent.class, EventPriority.NORMAL , InventoryEventExecutor::onCraft);
 
