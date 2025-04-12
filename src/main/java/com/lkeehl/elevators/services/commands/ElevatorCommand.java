@@ -28,7 +28,7 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
         if (command.getName().equalsIgnoreCase("elevators")) {
             if (args.length >= 1) {
                 if (args[0].equalsIgnoreCase("reload")) {
@@ -65,7 +65,7 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) { // Why does it want the @NotNull between the array brackets and data type...
         if (!command.getName().equalsIgnoreCase("elevators"))
             return null;
 
@@ -176,10 +176,12 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
         }
 
         Map<ItemStack, Integer> leftover =  ItemStackHelper.addElevatorToInventory(elevatorType, amount, ItemStackHelper.getVariant(Material.BLACK_SHULKER_BOX, dye), player.getInventory());
-        if(leftover.isEmpty())
-            if(!silent) MessageHelper.sendGivenElevatorMessage(player, null);
-        else {
-            if(!silent) MessageHelper.sendNotEnoughRoomGiveMessage(player, null);
+        if(leftover.isEmpty()) {
+            if (!silent)
+                MessageHelper.sendGivenElevatorMessage(player, null);
+        } else {
+            if(!silent)
+                MessageHelper.sendNotEnoughRoomGiveMessage(player, null);
             leftover.keySet().forEach(item -> player.getWorld().dropItem(player.getLocation(), item));
         }
     }

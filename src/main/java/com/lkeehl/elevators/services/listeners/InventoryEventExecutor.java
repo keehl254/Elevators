@@ -103,6 +103,7 @@ public class InventoryEventExecutor {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static void onAnvilPrepare(PrepareAnvilEvent e) {
         AnvilInventory inventory = e.getInventory();
         ItemStack item = inventory.getItem(0);
@@ -140,7 +141,7 @@ public class InventoryEventExecutor {
         if (elevatorType == null) return;
 
         boolean isElevatorCraftingRecipe = keyedRecipe.getKey().getNamespace().equalsIgnoreCase("elevators");
-        DyeColor dyeColor = ItemStackHelper.getDyeColorFromMaterial(e.getInventory().getResult().getType());
+        DyeColor dyeColor = ItemStackHelper.getDyeColorFromMaterial(result.getType());
 
         if (isElevatorCraftingRecipe) {
 
