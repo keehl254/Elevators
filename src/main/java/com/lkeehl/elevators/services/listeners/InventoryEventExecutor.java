@@ -141,7 +141,7 @@ public class InventoryEventExecutor {
         if (elevatorType == null) return;
 
         boolean isElevatorCraftingRecipe = keyedRecipe.getKey().getNamespace().equalsIgnoreCase("elevators");
-        DyeColor dyeColor = ItemStackHelper.getDyeColorFromMaterial(e.getRecipe().getResult().getType());
+        DyeColor dyeColor = ItemStackHelper.getDyeColorFromMaterial(e.getInventory().getResult().getType());
 
         if (isElevatorCraftingRecipe) {
 
