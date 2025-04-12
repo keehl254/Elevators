@@ -46,8 +46,12 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
                         case 3 -> this.onCommand(sender, args[0], args[1], args[2].toUpperCase());
                         case 4 ->
                                 this.onCommand(sender, args[0], args[1], args[2].toUpperCase(), args[3].toUpperCase());
-                        default ->
+                        case 5 ->
                                 this.onCommand(sender, args[0], args[1], args[2].toUpperCase(), args[3].toUpperCase(), args[4]);
+                        default -> {
+                            boolean silent = args[5].equalsIgnoreCase("-s") || args[5].equalsIgnoreCase("-silent");
+                            this.onCommand(sender, args[0], args[1], args[2].toUpperCase(), args[3].toUpperCase(), args[4], silent);
+                        }
                     }
                     return true;
                 }
@@ -55,7 +59,7 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(this.prefix + "Did you mean: ");
             sender.sendMessage(ChatColor.GOLD + "/elevators reload" + ChatColor.WHITE + "?");
             sender.sendMessage(ChatColor.GOLD + "/elevators admin" + ChatColor.WHITE + "?");
-            sender.sendMessage(ChatColor.GOLD + "/elevators give <player> <type> [color] [amount]" + ChatColor.WHITE + "?");
+            sender.sendMessage(ChatColor.GOLD + "/elevators give <player> <type> [color] [amount] [silent]" + ChatColor.WHITE + "?");
         }
         return true;
     }
@@ -76,6 +80,11 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
         } else if (args.length == 4 && args[0].equalsIgnoreCase("give")) {
             for (DyeColor dye : DyeColor.values())
                 completions.add(dye.toString().toLowerCase());
+        } else if(args.length == 5 && args[0].equalsIgnoreCase("give")) {
+            completions.add("[amount]");
+        }
+        else if(args.length == 6 && args[0].equalsIgnoreCase("give")) {
+            completions.add("-silent");
         }
         if (completions.isEmpty())
             return null;
@@ -125,7 +134,11 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
         this.onCommand(sender, give, player, name, color, "1");
     }
 
-    private void onCommand(CommandSender sender, String give, String playerName, String name, String color, String stringAmount) {
+    private void onCommand(CommandSender sender, String give, String player, String name, String color, String stringAmount) {
+        this.onCommand(sender, give, player, name, color, stringAmount, false);
+    }
+
+    private void onCommand(CommandSender sender, String give, String playerName, String name, String color, String stringAmount, boolean silent) {
         color = color.toUpperCase();
         if (!sender.hasPermission("elevators.give")) {
             MessageHelper.sendCantGiveMessage(sender, null);
@@ -164,9 +177,9 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
 
         Map<ItemStack, Integer> leftover =  ItemStackHelper.addElevatorToInventory(elevatorType, amount, ItemStackHelper.getVariant(Material.BLACK_SHULKER_BOX, dye), player.getInventory());
         if(leftover.isEmpty())
-            MessageHelper.sendGivenElevatorMessage(player, null);
+            if(!silent) MessageHelper.sendGivenElevatorMessage(player, null);
         else {
-            MessageHelper.sendNotEnoughRoomGiveMessage(player, null);
+            if(!silent) MessageHelper.sendNotEnoughRoomGiveMessage(player, null);
             leftover.keySet().forEach(item -> player.getWorld().dropItem(player.getLocation(), item));
         }
     }
