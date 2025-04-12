@@ -5,6 +5,7 @@ import com.lkeehl.elevators.models.*;
 import com.lkeehl.elevators.models.settings.*;
 import com.lkeehl.elevators.services.ElevatorSettingService;
 import com.lkeehl.elevators.services.ElevatorVersionService;
+import com.lkeehl.elevators.services.HookService;
 import com.lkeehl.elevators.services.ObstructionService;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -156,6 +157,10 @@ public class ElevatorHelper {
         if(isElevatorDisabled(elevator.getShulkerBox())) {
             return; // TODO: Message that elevator is temporarily unable to be interacted with.
         }
+
+        if(!HookService.canUseElevator(player, elevator, true))
+            return;
+
         InventoryHelper.openInteractMenu(event.getPlayer(), elevator);
     }
 

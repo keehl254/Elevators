@@ -55,6 +55,7 @@ dependencies {
 
     implementation("de.rapha149.signgui:signgui:2.5.0")
     implementation("net.wesjd:anvilgui:1.10.0-SNAPSHOT")
+    implementation("com.github.technicallycoded:FoliaLib:main-SNAPSHOT")
 
 }
 
@@ -80,6 +81,7 @@ tasks {
     shadowJar {
         relocate("de.rapha149.signgui", "com.lkeehl.elevators.util.signgui")
         relocate("net.wesjd.anvilgui", "com.lkeehl.elevators.util.anvilgui")
+        relocate("com.tcoded.folialib", "com.lkeehl.elevators.util.folialib")
     }
 
 }

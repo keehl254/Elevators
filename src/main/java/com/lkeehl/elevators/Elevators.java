@@ -1,6 +1,7 @@
 package com.lkeehl.elevators;
 
 import com.lkeehl.elevators.services.*;
+import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,10 +12,12 @@ import java.util.logging.Logger;
 public class Elevators extends JavaPlugin {
 
     private static Elevators instance;
+    private static FoliaLib foliaLib;
 
     @Override()
     public void onEnable() {
         instance = this;
+        foliaLib = new FoliaLib(this);
 
         DataContainerService.init(this);
         ElevatorSettingService.init();
@@ -52,6 +55,10 @@ public class Elevators extends JavaPlugin {
         if(plugin instanceof Elevators)
             return (Elevators) plugin;
         return instance;
+    }
+
+    public static FoliaLib getFoliaLib() {
+        return foliaLib;
     }
 
     public static File getConfigDirectory() {
