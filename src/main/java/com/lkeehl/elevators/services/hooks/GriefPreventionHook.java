@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class GriefPreventionHook extends ProtectionHook {
-
+    //TODO: Add in the configs the option for select the minimium rank for edit name and settings
     private final GriefPrevention griefPrevention;
 
     public GriefPreventionHook() {
@@ -73,5 +73,35 @@ public class GriefPreventionHook extends ProtectionHook {
     public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
         this.toggleAllowMemberUse(elevator);
         onReturn.run();
+    }
+
+    @Override
+    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+        if(this.griefPrevention == null)
+            return false;
+        PlayerData playerData = this.griefPrevention.dataStore.getPlayerData(player.getUniqueId());
+        Claim claim = this.griefPrevention.dataStore.getClaimAt(elevator.getLocation(), false, playerData.lastClaim);
+        Supplier<String> message = claim.checkPermission(player, ClaimPermission.Edit, null);
+        if(message != null) {
+            if(sendMessage)
+                player.sendMessage(ChatColor.RED + message.get());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+        if(this.griefPrevention == null)
+            return false;
+        PlayerData playerData = this.griefPrevention.dataStore.getPlayerData(player.getUniqueId());
+        Claim claim = this.griefPrevention.dataStore.getClaimAt(elevator.getLocation(), false, playerData.lastClaim);
+        Supplier<String> message = claim.checkPermission(player, ClaimPermission.Manage, null);
+        if(message != null) {
+            if(sendMessage)
+                player.sendMessage(ChatColor.RED + message.get());
+            return false;
+        }
+        return true;
     }
 }

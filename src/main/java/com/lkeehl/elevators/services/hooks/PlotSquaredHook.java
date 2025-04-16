@@ -20,13 +20,17 @@ import java.util.List;
 // Gotta be honest, I think that PlotSquared has one of the most inconvenient and convoluted flag systems ever.
 public class PlotSquaredHook extends ProtectionHook {
 
-    private final ElevatorFlag flag;
+    private final ElevatorUseFlag useFlag;
+    private final ElevatorEditNameFlag nameFlag;
+    private final ElevatorEditSettingsFlag settingsFlag;
 
     private final PlotAPI api;
 
     public PlotSquaredHook() {
         super("PlotSquared");
-        GlobalFlagContainer.getInstance().addFlag(this.flag = new ElevatorFlag(true));
+        GlobalFlagContainer.getInstance().addFlag(this.useFlag = new ElevatorUseFlag(true));
+        GlobalFlagContainer.getInstance().addFlag(this.nameFlag = new ElevatorEditNameFlag(true));
+        GlobalFlagContainer.getInstance().addFlag(this.settingsFlag = new ElevatorEditSettingsFlag(false));
 
         this.api = new PlotAPI();
     }
@@ -40,7 +44,7 @@ public class PlotSquaredHook extends ProtectionHook {
         if(plotPlayer == null)
             return false;
         Plot currentPlot = plotPlayer.getCurrentPlot();
-        if(currentPlot == null || currentPlot.getFlag(flag))
+        if(currentPlot == null || currentPlot.getFlag(useFlag))
             return true;
 
         if(currentPlot.getTrusted().contains(player.getUniqueId()))
@@ -80,15 +84,75 @@ public class PlotSquaredHook extends ProtectionHook {
         onReturn.run();
     }
 
-    public static class ElevatorFlag extends BooleanFlag<ElevatorFlag> {
+    @Override
+    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+        PlotPlayer<?> plotPlayer = this.api.wrapPlayer(player.getUniqueId());
+        if(plotPlayer == null)
+            return false;
+        Plot currentPlot = plotPlayer.getCurrentPlot();
+        if(currentPlot == null || currentPlot.getFlag(nameFlag))
+            return true;
 
-        protected ElevatorFlag(boolean value) {
+        if(currentPlot.getTrusted().contains(player.getUniqueId()))
+            return true;
+
+        if(currentPlot.getMembers().contains(player.getUniqueId()))
+            return true;
+
+        return currentPlot.getOwners().contains(player.getUniqueId());
+    }
+
+    @Override
+    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+        PlotPlayer<?> plotPlayer = this.api.wrapPlayer(player.getUniqueId());
+        if(plotPlayer == null)
+            return false;
+        Plot currentPlot = plotPlayer.getCurrentPlot();
+        if(currentPlot == null || currentPlot.getFlag(settingsFlag))
+            return true;
+
+        if(currentPlot.getTrusted().contains(player.getUniqueId()))
+            return true;
+
+        if(currentPlot.getMembers().contains(player.getUniqueId()))
+            return true;
+
+        return currentPlot.getOwners().contains(player.getUniqueId());
+    }
+
+    public static class ElevatorUseFlag extends BooleanFlag<ElevatorUseFlag> {
+
+        protected ElevatorUseFlag(boolean value) {
             super(value, TranslatableCaption.of("flags.guest_elevators"));
         }
 
         @Override
-        protected ElevatorFlag flagOf(Boolean aBoolean) {
-            return new ElevatorFlag(aBoolean);
+        protected ElevatorUseFlag flagOf(Boolean aBoolean) {
+            return new ElevatorUseFlag(aBoolean);
+        }
+    }
+
+    public static class ElevatorEditNameFlag extends BooleanFlag<ElevatorEditNameFlag> {
+
+        protected ElevatorEditNameFlag(boolean value) {
+            super(value, TranslatableCaption.of("flags.name_elevators"));
+        }
+
+        @Override
+        protected ElevatorEditNameFlag flagOf(Boolean aBoolean) {
+            return new ElevatorEditNameFlag(aBoolean);
+        }
+    }
+
+    public static class ElevatorEditSettingsFlag extends BooleanFlag<ElevatorEditSettingsFlag> {
+
+        protected ElevatorEditSettingsFlag(boolean value) {
+            super(value, TranslatableCaption.of("flags.settings_elevators"));
+        }
+
+        @Override
+        protected ElevatorEditSettingsFlag flagOf(Boolean aBoolean) {
+            return new ElevatorEditSettingsFlag(aBoolean);
         }
     }
 

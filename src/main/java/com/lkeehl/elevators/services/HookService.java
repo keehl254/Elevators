@@ -49,7 +49,7 @@ public class HookService {
         HookService.registerHookIfPluginActive("PlaceholderAPI", PlaceholderAPIHook.class);
         HookService.registerHookIfPluginActive("DecentHolograms", DecentHologramsHook.class);
         HookService.registerHookIfPluginActive("FancyHolograms", FancyHologramsHook.class);
-
+        HookService.registerHookIfPluginActive("SuperiorSkyblock2", SuperiorSkyblock2Hook.class);
     }
 
     public static boolean registerHookIfPluginActive(String pluginName, Class<? extends ElevatorHook> elevatorHookClass) {
@@ -92,6 +92,10 @@ public class HookService {
 
     public static BentoBoxHook getBentoBoxHook() {
         return getHook("BentoBox", BentoBoxHook.class);
+    }
+
+    public static SuperiorSkyblock2Hook getSuperiorSkyblock2Hook() {
+        return getHook("SuperiorSkyblock2", SuperiorSkyblock2Hook.class);
     }
 
     public static PlaceholderAPIHook getPlaceholderAPIHook() {
