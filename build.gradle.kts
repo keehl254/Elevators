@@ -1,5 +1,5 @@
 group = "com.lkeehl.elevators"
-version = "5.0.0-beta.8"
+version = "5.0.0-beta.9"
 description = "Fifth major semantic for the Elevators Spigot Plugin"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
@@ -25,6 +25,7 @@ repositories {
     maven("https://repo.fancyplugins.de/releases/")
     maven("https://repo.spongepowered.org/maven/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://repo.bg-software.com/repository/api/")
     mavenLocal()
     mavenCentral()
 }
@@ -45,6 +46,7 @@ dependencies {
     compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.2"){ exclude(group = "*") }
     compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.2"){ exclude(group = "*") }
     compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("com.bgsoftware:SuperiorSkyblockAPI:2024.4")
 
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
     compileOnly("de.oliver:FancyHolograms:2.0.6")
