@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GriefDefenderHook extends ProtectionHook {
-
+    //TODO: Add in the configs the option for select the minimium rank for edit name and settings
     public GriefDefenderHook() {
         super("GriefDefender");
     }
@@ -57,5 +57,29 @@ public class GriefDefenderHook extends ProtectionHook {
     public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
         this.toggleAllowMemberUse(elevator);
         onReturn.run();
+    }
+
+    @Override
+    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+        ShulkerBox box = elevator.getShulkerBox();
+        final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
+
+        if (claim == null) //The elevator can be in the spawn
+            return false;
+        if(claim.isWilderness())
+            return true;
+        return claim.canUseBlock(elevator.getShulkerBox(), elevator.getLocation(), GriefDefender.getCore().getUser(player.getUniqueId()), TrustTypes.ACCESSOR);
+    }
+
+    @Override
+    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+        ShulkerBox box = elevator.getShulkerBox();
+        final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
+
+        if (claim == null) //The elevator can be in the spawn
+            return false;
+        if(claim.isWilderness())
+            return true;
+        return claim.canUseBlock(elevator.getShulkerBox(), elevator.getLocation(), GriefDefender.getCore().getUser(player.getUniqueId()), TrustTypes.MANAGER);
     }
 }

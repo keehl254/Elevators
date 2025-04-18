@@ -138,6 +138,15 @@ public class InventoryHelper {
     }
 
     public static void openInteractNameMenu(Player player, Elevator elevator) {
+        List<ProtectionHook> hooks = HookService.getProtectionHooks();
+        for(ProtectionHook hook : hooks) {
+            if(!hook.canEditName(player, elevator, true)) {
+                player.closeInventory(InventoryCloseEvent.Reason.CANT_USE);
+                ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
+                ShulkerBoxHelper.playClose(elevator.getShulkerBox());
+                return;
+            }
+        }
         String currentName = DataContainerService.getFloorName(elevator);
         try {
             SignGUIBuilder builder = SignGUI.builder();
@@ -171,6 +180,15 @@ public class InventoryHelper {
     }
 
     public static void openInteractSettingsMenu(Player player, Elevator elevator) {
+        List<ProtectionHook> hooks = HookService.getProtectionHooks();
+        for(ProtectionHook hook : hooks) {
+            if(!hook.canEditSettings(player, elevator, true)) {
+                player.closeInventory(InventoryCloseEvent.Reason.CANT_USE);
+                ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
+                ShulkerBoxHelper.playClose(elevator.getShulkerBox());
+                return;
+            }
+        }
         List<ElevatorSetting<?>> settings = ElevatorSettingService.getElevatorSettings().stream().filter(i -> i.canBeEditedIndividually(elevator)).toList();
 
         int inventorySize = (Math.floorDiv(settings.size() + 8, 9) * 9) + 9;
