@@ -49,7 +49,7 @@ public class ListenerService {
         registerEventExecutor(EntityExplodeEvent.class, EventPriority.NORMAL , WorldEventExecutor::onExplode);
         registerEventExecutor(BlockDispenseEvent.class, EventPriority.NORMAL , WorldEventExecutor::onDispenserPlace);
         registerEventExecutor(BlockDropItemEvent.class, EventPriority.LOWEST , WorldEventExecutor::onBlockBreak);
-        registerEventExecutor(BlockPlaceEvent.class, EventPriority.NORMAL , WorldEventExecutor::onBlockPlace);
+        registerEventExecutor(BlockPlaceEvent.class, EventPriority.HIGHEST , WorldEventExecutor::onBlockPlace);
 
         registerEventExecutor(PlayerJoinEvent.class, EventPriority.NORMAL, EntityEventExecutor::onJoin);
         registerEventExecutor(PlayerToggleSneakEvent.class, EventPriority.NORMAL , EntityEventExecutor::onSneak);
