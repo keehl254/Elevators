@@ -38,4 +38,7 @@ public abstract class ProtectionHook implements ElevatorHook {
 
     public abstract void onProtectionClick(Player player, Elevator elevator, Runnable onReturn);
 
+    public abstract boolean canEditName(Player player, Elevator elevator, boolean sendMessage);
+
+    public abstract boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage);
 }

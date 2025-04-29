@@ -15,16 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RedProtectHook extends ProtectionHook {
-
+    //TODO: Code cleanup
     private final RedProtectAPI redProtect;
 
     private final String flagName = "outsiders-use-elevators";
+    private final String nameFlagName = "edit-name-elevators";
+    private final String settingsFlagName = "edit-settings-elevators";
 
     public RedProtectHook() {
         super("RedProtect");
         this.redProtect = RedProtect.get().getAPI();
 
-        this.redProtect.addFlag("use-elevators", true, false);
+        this.redProtect.addFlag(flagName, true, false);
+        this.redProtect.addFlag(nameFlagName, true, false);
+        this.redProtect.addFlag(settingsFlagName, false, false);
     }
 
     @Override
@@ -33,7 +37,7 @@ public class RedProtectHook extends ProtectionHook {
             return true;
 
         Region region = redProtect.getRegion(elevator.getShulkerBox().getLocation());
-        if(region == null || region.getFlagBool("outsiders-use-elevators"))
+        if(region == null || region.getFlagBool(flagName))
             return true;
 
         if(region.isLeader(player) || region.isAdmin(player) || region.isMember(player) || player.hasPermission("redprotect.flag.bypass." + this.flagName))
@@ -66,5 +70,33 @@ public class RedProtectHook extends ProtectionHook {
     public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
         this.toggleAllowMemberUse(elevator);
         onReturn.run();
+    }
+
+    @Override
+    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+        Region region = redProtect.getRegion(elevator.getShulkerBox().getLocation());
+        if(region == null || region.getFlagBool(nameFlagName))
+            return true;
+
+        if(region.isLeader(player) || region.isAdmin(player) || region.isMember(player) || player.hasPermission("redprotect.flag.bypass." + this.nameFlagName))
+            return true;
+
+        if(sendMessage)
+            player.sendMessage(ChatColor.RED + "You can't interact with this here!");
+        return false;
+    }
+
+    @Override
+    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+        Region region = redProtect.getRegion(elevator.getShulkerBox().getLocation());
+        if(region == null || region.getFlagBool(settingsFlagName))
+            return true;
+
+        if(region.isLeader(player) || region.isAdmin(player) || player.hasPermission("redprotect.flag.bypass." + this.settingsFlagName))
+            return true;
+
+        if(sendMessage)
+            player.sendMessage(ChatColor.RED + "You can't interact with this here!");
+        return false;
     }
 }

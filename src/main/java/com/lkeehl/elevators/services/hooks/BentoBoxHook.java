@@ -20,19 +20,31 @@ import java.util.List;
 import java.util.Locale;
 
 public class BentoBoxHook extends ProtectionHook {
-
-    Flag flag;
+    //TODO: Code cleanup
+    Flag useFlag, editNameFlag, editSettingsFlag;
 
     public BentoBoxHook() {
         super("BentoBox");
 
-        this.flag = (new Flag.Builder("USE_ELEVATOR", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
-        BentoBox.getInstance().getFlagsManager().registerFlag(this.flag);
+        this.useFlag = (new Flag.Builder("USE_ELEVATOR", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
+        BentoBox.getInstance().getFlagsManager().registerFlag(this.useFlag);
+        this.editNameFlag = (new Flag.Builder("EDIT_ELEVATOR_FLOOR_NAME", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
+        BentoBox.getInstance().getFlagsManager().registerFlag(this.editNameFlag);
+        this.editSettingsFlag = (new Flag.Builder("EDIT_ELEVATOR_SETTINGS", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
+        BentoBox.getInstance().getFlagsManager().registerFlag(this.editSettingsFlag);
         for (Locale objLocale : BentoBox.getInstance().getLocalesManager().getAvailableLocales(true)) {
             BentoBoxLocale locale = BentoBox.getInstance().getLocalesManager().getLanguages().get(objLocale);
             if (!locale.contains("protection.flags.USE_ELEVATOR.name")) {
                 locale.set("protection.flags.USE_ELEVATOR.name", "Use elevators");
                 locale.set("protection.flags.USE_ELEVATOR.description", "Toggle elevators");
+            }
+            if(!locale.contains("protection.flags.EDIT_ELEVATOR_FLOOR_NAME.name")) {
+                locale.set("protection.flags.EDIT_ELEVATOR_FLOOR_NAME.name", "Edit Elevator floor name");
+                locale.set("protection.flags.EDIT_ELEVATOR_FLOOR_NAME.description", "Edit the name of the Elevator floor");
+            }
+            if(!locale.contains("protection.flags.EDIT_ELEVATOR_SETTINGS.name")) {
+                locale.set("protection.flags.EDIT_ELEVATOR_SETTINGS.name", "Edit Elevators settings");
+                locale.set("protection.flags.EDIT_ELEVATOR_SETTINGS.description", "Edit the settings of the Elevators");
             }
         }
     }
@@ -54,7 +66,7 @@ public class BentoBoxHook extends ProtectionHook {
 
         User user = BentoBox.getInstance().getPlayers().getUser(player.getUniqueId());
 
-        if(island.isAllowed(user, this.flag))
+        if(island.isAllowed(user, this.useFlag))
             return true;
 
         if(sendMessage)
@@ -85,5 +97,43 @@ public class BentoBoxHook extends ProtectionHook {
     public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
         this.toggleAllowMemberUse(elevator);
         onReturn.run();
+    }
+
+    @Override
+    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+        Location location = elevator.getLocation();
+        Island island = BentoBox.getInstance().getIslands().getIslandAt(location).orElse(null);
+        if (island == null)
+            return true;
+        if (!island.getProtectionBoundingBox().contains(location.getX(), location.getY(), location.getZ()))
+            return true;
+
+        User user = BentoBox.getInstance().getPlayers().getUser(player.getUniqueId());
+
+        if(island.isAllowed(user, this.editNameFlag))
+            return true;
+
+        if(sendMessage)
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(BentoBox.getInstance().getRanksManager().getRank(island.getRank(user))));
+        return false;
+    }
+
+    @Override
+    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+        Location location = elevator.getLocation();
+        Island island = BentoBox.getInstance().getIslands().getIslandAt(location).orElse(null);
+        if (island == null)
+            return true;
+        if (!island.getProtectionBoundingBox().contains(location.getX(), location.getY(), location.getZ()))
+            return true;
+
+        User user = BentoBox.getInstance().getPlayers().getUser(player.getUniqueId());
+
+        if(island.isAllowed(user, this.editSettingsFlag))
+            return true;
+
+        if(sendMessage)
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(BentoBox.getInstance().getRanksManager().getRank(island.getRank(user))));
+        return false;
     }
 }
