@@ -1,6 +1,7 @@
 package com.lkeehl.elevators.services.hooks;
 
 import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI;
+import com.bgsoftware.superiorskyblock.api.events.PluginInitializeEvent;
 import com.bgsoftware.superiorskyblock.api.island.Island;
 import com.bgsoftware.superiorskyblock.api.island.IslandPrivilege;
 import com.lkeehl.elevators.Elevators;
@@ -10,12 +11,14 @@ import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SuperiorSkyblock2Hook extends ProtectionHook {
+public class SuperiorSkyblock2Hook extends ProtectionHook implements Listener {
 
     private static final String USE_ELEVATOR_FLAG = "elevators_use";
     private static final String EDIT_NAME_ELEVATOR_FLAG = "elevators_edit_name";
@@ -26,32 +29,24 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
 
     public SuperiorSkyblock2Hook() {
         super("SuperiorSkyblock2");
-        register();
+        if(!registered) Elevators.getInstance().getServer().getPluginManager().registerEvents(this, Elevators.getInstance());
     }
 
-    public static void register() {
-        if (registered)
-            return;
-
+    @EventHandler
+    public void onSSB2Enable(PluginInitializeEvent e) {
         try {
-            USE_ELEVATOR = IslandPrivilege.getByName(USE_ELEVATOR_FLAG);
-            EDIT_NAME_ELEVATOR = IslandPrivilege.getByName(EDIT_NAME_ELEVATOR_FLAG);
-            EDIT_SETTINGS_ELEVATOR = IslandPrivilege.getByName(EDIT_SETTINGS_ELEVATOR_FLAG);
-        } catch(NullPointerException e) {
             IslandPrivilege.register(USE_ELEVATOR_FLAG);
             IslandPrivilege.register(EDIT_NAME_ELEVATOR_FLAG);
             IslandPrivilege.register(EDIT_SETTINGS_ELEVATOR_FLAG);
-            try {
-                USE_ELEVATOR = IslandPrivilege.getByName(USE_ELEVATOR_FLAG);
-                EDIT_NAME_ELEVATOR = IslandPrivilege.getByName(EDIT_NAME_ELEVATOR_FLAG);
-                EDIT_SETTINGS_ELEVATOR = IslandPrivilege.getByName(EDIT_SETTINGS_ELEVATOR_FLAG);
-            } catch(Exception ex) {
-                Elevators.getElevatorsLogger().severe("Failed to register SuperiorSkyblock Hook - please open a issue on Github");
-                e.printStackTrace();
-                return;
-            }
+            USE_ELEVATOR = IslandPrivilege.getByName(USE_ELEVATOR_FLAG);
+            EDIT_NAME_ELEVATOR = IslandPrivilege.getByName(EDIT_NAME_ELEVATOR_FLAG);
+            EDIT_SETTINGS_ELEVATOR = IslandPrivilege.getByName(EDIT_SETTINGS_ELEVATOR_FLAG);
+            Elevators.getElevatorsLogger().info("Hooked into SuperiorSkyblock2 correctly");
+            registered = true;
+        } catch(Exception ex) {
+            Elevators.getElevatorsLogger().severe("Failed to register SuperiorSkyblock Hook - please open a issue on Github");
+            ex.printStackTrace();
         }
-        registered = true;
     }
 
     @Override

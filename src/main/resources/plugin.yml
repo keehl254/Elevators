@@ -3,7 +3,8 @@ version: 5.0.0
 author: Keehl
 main: com.lkeehl.elevators.Elevators
 api-version: 1.13
-softdepend: [SuperiorSkyblock2,PlaceholderAPI,RedProtect,Vault,HolographicDisplays,GriefPrevention,GriefDefender,CMI,PlotSquared,BentoBox,DecentHolograms,FancyHolograms,ProtocolLib]
+loadbefore: [SuperiorSkyblock2]
+softdepend: [PlaceholderAPI,RedProtect,Vault,HolographicDisplays,GriefPrevention,GriefDefender,CMI,PlotSquared,BentoBox,DecentHolograms,FancyHolograms,ProtocolLib]
 
 commands:
   elevators:

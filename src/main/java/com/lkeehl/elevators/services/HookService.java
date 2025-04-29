@@ -41,23 +41,26 @@ public class HookService {
 
     private static void buildHooks() {
 
-        HookService.registerHookIfPluginActive("GriefPrevention", GriefPreventionHook.class);
-        HookService.registerHookIfPluginActive("GriefDefender", GriefDefenderHook.class);
-        HookService.registerHookIfPluginActive("RedProtect", RedProtectHook.class);
-        HookService.registerHookIfPluginActive("PlotSquared", PlotSquaredHook.class);
-        HookService.registerHookIfPluginActive("BentoBox", BentoBoxHook.class);
-        HookService.registerHookIfPluginActive("PlaceholderAPI", PlaceholderAPIHook.class);
-        HookService.registerHookIfPluginActive("DecentHolograms", DecentHologramsHook.class);
-        HookService.registerHookIfPluginActive("FancyHolograms", FancyHologramsHook.class);
-        HookService.registerHookIfPluginActive("SuperiorSkyblock2", SuperiorSkyblock2Hook.class);
+        HookService.registerHookIfPluginActive("GriefPrevention", false, GriefPreventionHook.class);
+        HookService.registerHookIfPluginActive("GriefDefender", false, GriefDefenderHook.class);
+        HookService.registerHookIfPluginActive("RedProtect", false, RedProtectHook.class);
+        HookService.registerHookIfPluginActive("PlotSquared", false, PlotSquaredHook.class);
+        HookService.registerHookIfPluginActive("BentoBox", false, BentoBoxHook.class);
+        HookService.registerHookIfPluginActive("PlaceholderAPI", false, PlaceholderAPIHook.class);
+        HookService.registerHookIfPluginActive("DecentHolograms", false, DecentHologramsHook.class);
+        HookService.registerHookIfPluginActive("FancyHolograms", false, FancyHologramsHook.class);
+        HookService.registerHookIfPluginActive("SuperiorSkyblock2", true, SuperiorSkyblock2Hook.class);
     }
 
-    public static boolean registerHookIfPluginActive(String pluginName, Class<? extends ElevatorHook> elevatorHookClass) {
+    public static boolean registerHookIfPluginActive(String pluginName, boolean needOnlyLoad, Class<? extends ElevatorHook> elevatorHookClass) {
        if(hookMap.containsKey(pluginName.toUpperCase()))
            return true;
 
-       if(!Bukkit.getPluginManager().isPluginEnabled(pluginName))
-           return false;
+       if(needOnlyLoad) {
+           if(Bukkit.getPluginManager().getPlugin(pluginName) == null) return false;
+       } else {
+           if(!Bukkit.getPluginManager().isPluginEnabled(pluginName)) return false;
+       }
 
         try {
             Constructor<?> hookConstructor = elevatorHookClass.getConstructor();
@@ -117,8 +120,13 @@ public class HookService {
     @SuppressWarnings("unchecked")
     public static <T extends ElevatorHook> T getHook(String hookKey, Class<T> hookClazz) {
         hookKey = hookKey.toUpperCase();
-        if(!hookMap.containsKey(hookKey.toUpperCase()) && !HookService.registerHookIfPluginActive(hookKey, hookClazz))
-            return null;
+        if(!hookMap.containsKey(hookKey.toUpperCase())) {
+            if (hookKey.equals("SUPERIORSKYBLOCK2")) {
+                if(!HookService.registerHookIfPluginActive(hookKey, true, hookClazz)) return null;
+            } else {
+                if(!HookService.registerHookIfPluginActive(hookKey, false, hookClazz)) return null;
+            }
+        }
 
         return (T) hookMap.get(hookKey);
     }
