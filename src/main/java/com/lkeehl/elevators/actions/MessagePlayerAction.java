@@ -24,7 +24,7 @@ public class MessagePlayerAction extends ElevatorAction {
         super(elevatorType, "message-player", "message",messageGrouping);
 
         String desc = "This option controls the message sent to the user of an elevator.";
-        ElevatorActionSetting<String> setting = this.mapSetting(messageGrouping, "Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
+        ElevatorActionSetting<String> setting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
         setting.setupDataStore("message", PersistentDataType.STRING);
         setting.onClick(this::editMessage);
     }

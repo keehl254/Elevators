@@ -27,11 +27,13 @@ public class BentoBoxHook extends ProtectionHook {
         super("BentoBox");
 
         this.useFlag = (new Flag.Builder("USE_ELEVATOR", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
-        BentoBox.getInstance().getFlagsManager().registerFlag(this.useFlag);
         this.editNameFlag = (new Flag.Builder("EDIT_ELEVATOR_FLOOR_NAME", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
-        BentoBox.getInstance().getFlagsManager().registerFlag(this.editNameFlag);
         this.editSettingsFlag = (new Flag.Builder("EDIT_ELEVATOR_SETTINGS", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
+
+        BentoBox.getInstance().getFlagsManager().registerFlag(this.useFlag);
+        BentoBox.getInstance().getFlagsManager().registerFlag(this.editNameFlag);
         BentoBox.getInstance().getFlagsManager().registerFlag(this.editSettingsFlag);
+
         for (Locale objLocale : BentoBox.getInstance().getLocalesManager().getAvailableLocales(true)) {
             BentoBoxLocale locale = BentoBox.getInstance().getLocalesManager().getLanguages().get(objLocale);
             if (!locale.contains("protection.flags.USE_ELEVATOR.name")) {
@@ -54,7 +56,7 @@ public class BentoBoxHook extends ProtectionHook {
     }
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(this.shouldAllowGuestUse(elevator))
+        if(!this.isCheckEnabled(elevator))
             return true;
 
         Location location = elevator.getLocation();
@@ -72,31 +74,6 @@ public class BentoBoxHook extends ProtectionHook {
         if(sendMessage)
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(BentoBox.getInstance().getRanksManager().getRank(island.getRank(user))));
         return false;
-    }
-
-    @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
-        Island island = BentoBox.getInstance().getIslands().getIslandAt(elevator.getLocation()).orElse(null);
-        if (island == null)
-            return null;
-
-        boolean flagEnabled = this.shouldAllowGuestUse(elevator);
-
-        List<String> lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatColor.GRAY + "Controls whether non-members");
-        lore.add(ChatColor.GRAY + "can use this elevator.");
-        lore.add("");
-        lore.add(ChatColor.GRAY + "Status: ");
-        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
-
-        return ItemStackHelper.createItem(ChatColor.GREEN + "" + ChatColor.BOLD + "Bento Box", Material.DIAMOND, 1, lore);
-    }
-
-    @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
-        this.toggleAllowMemberUse(elevator);
-        onReturn.run();
     }
 
     @Override
@@ -135,5 +112,31 @@ public class BentoBoxHook extends ProtectionHook {
         if(sendMessage)
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(BentoBox.getInstance().getRanksManager().getRank(island.getRank(user))));
         return false;
+    }
+
+    @Override
+    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+        Island island = BentoBox.getInstance().getIslands().getIslandAt(elevator.getLocation()).orElse(null);
+        if (island == null)
+            return null;
+
+        boolean flagEnabled = this.isCheckEnabled(elevator);
+
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Controls whether island");
+        lore.add(ChatColor.GRAY + "guests are blocked from");
+        lore.add(ChatColor.GRAY + "using this Elevator.");
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Status: ");
+        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
+
+        return ItemStackHelper.createItem(ChatColor.GREEN + "" + ChatColor.BOLD + "Bento Box", Material.DIAMOND, 1, lore);
+    }
+
+    @Override
+    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+        this.toggleCheckEnabled(elevator);
+        onReturn.run();
     }
 }

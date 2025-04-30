@@ -14,7 +14,7 @@ import java.util.*;
 public class DisplayNameSetting extends ElevatorSetting<String> {
 
     public DisplayNameSetting() {
-        super("Display Name", "This will change the display of newly created elevators. Old elevators will not be affected.", Material.NAME_TAG, ChatColor.GOLD);
+        super("change-display-name","Display Name", "This will change the display of newly created elevators. Old elevators will not be affected.", Material.NAME_TAG, ChatColor.GOLD);
         this.setGetValueGlobal(ElevatorType::getDisplayName);
     }
 

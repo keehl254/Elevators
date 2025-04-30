@@ -28,7 +28,7 @@ public class GriefPreventionHook extends ProtectionHook {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(this.shouldAllowGuestUse(elevator))
+        if(!this.isCheckEnabled(elevator))
             return true;
 
         if(this.griefPrevention == null)
@@ -36,43 +36,17 @@ public class GriefPreventionHook extends ProtectionHook {
 
         PlayerData playerData = this.griefPrevention.dataStore.getPlayerData(player.getUniqueId());
         Claim claim = this.griefPrevention.dataStore.getClaimAt(elevator.getLocation(), false, playerData.lastClaim);
-        if (claim != null) {
-            Supplier<String> message = claim.checkPermission(player, ClaimPermission.Access, null);
-            if(message != null) {
-                if(sendMessage)
-                    player.sendMessage(ChatColor.RED + message.get());
-                return false;
-            }
+        if (claim == null)
+            return true;
+
+        Supplier<String> message = claim.checkPermission(player, ClaimPermission.Access, null);
+        if(message != null) {
+            if(sendMessage)
+                player.sendMessage(ChatColor.RED + message.get());
+            return false;
         }
 
         return true;
-    }
-
-    @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
-        if(this.griefPrevention == null) return null;
-
-        PlayerData playerData = this.griefPrevention.dataStore.getPlayerData(player.getUniqueId());
-        Claim claim = this.griefPrevention.dataStore.getClaimAt(elevator.getLocation(), false, playerData.lastClaim);
-        if(claim == null) return null;
-
-        boolean flagEnabled = this.shouldAllowGuestUse(elevator);
-
-        List<String> lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatColor.GRAY + "Controls whether non-members");
-        lore.add(ChatColor.GRAY + "can use this elevator.");
-        lore.add("");
-        lore.add(ChatColor.GRAY + "Status: ");
-        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
-
-        return ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "Grief Prevention", Material.GOLDEN_SWORD, 1, lore);
-    }
-
-    @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
-        this.toggleAllowMemberUse(elevator);
-        onReturn.run();
     }
 
     @Override
@@ -81,9 +55,12 @@ public class GriefPreventionHook extends ProtectionHook {
             return false;
         PlayerData playerData = this.griefPrevention.dataStore.getPlayerData(player.getUniqueId());
         Claim claim = this.griefPrevention.dataStore.getClaimAt(elevator.getLocation(), false, playerData.lastClaim);
+        if (claim == null)
+            return true;
+
         Supplier<String> message = claim.checkPermission(player, ClaimPermission.Edit, null);
-        if(message != null) {
-            if(sendMessage)
+        if (message != null) {
+            if (sendMessage)
                 player.sendMessage(ChatColor.RED + message.get());
             return false;
         }
@@ -96,12 +73,45 @@ public class GriefPreventionHook extends ProtectionHook {
             return false;
         PlayerData playerData = this.griefPrevention.dataStore.getPlayerData(player.getUniqueId());
         Claim claim = this.griefPrevention.dataStore.getClaimAt(elevator.getLocation(), false, playerData.lastClaim);
+        if(claim == null)
+            return true;
+
         Supplier<String> message = claim.checkPermission(player, ClaimPermission.Manage, null);
-        if(message != null) {
-            if(sendMessage)
+        if (message != null) {
+            if (sendMessage)
                 player.sendMessage(ChatColor.RED + message.get());
             return false;
         }
         return true;
+    }
+
+    @Override
+    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+        if(this.griefPrevention == null)
+            return null;
+
+        PlayerData playerData = this.griefPrevention.dataStore.getPlayerData(player.getUniqueId());
+        Claim claim = this.griefPrevention.dataStore.getClaimAt(elevator.getLocation(), false, playerData.lastClaim);
+        if(claim == null)
+            return null;
+
+        boolean flagEnabled = this.isCheckEnabled(elevator);
+
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Controls whether claim");
+        lore.add(ChatColor.GRAY + "guests are blocked from");
+        lore.add(ChatColor.GRAY + "using this Elevator.");
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Status: ");
+        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
+
+        return ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "Grief Prevention", Material.GOLDEN_SWORD, 1, lore);
+    }
+
+    @Override
+    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+        this.toggleCheckEnabled(elevator);
+        onReturn.run();
     }
 }

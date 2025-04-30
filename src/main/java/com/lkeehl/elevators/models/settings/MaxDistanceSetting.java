@@ -16,7 +16,7 @@ import java.util.List;
 public class MaxDistanceSetting extends ElevatorSetting<Integer> {
 
     public MaxDistanceSetting() {
-        super("Max Distance", "This controls the number of blocks that the origin elevator will search for a destination elevator.", Material.MINECART, ChatColor.DARK_GREEN);
+        super("change-max-distance","Max Distance", "This controls the number of blocks that the origin elevator will search for a destination elevator.", Material.MINECART, ChatColor.DARK_GREEN);
         this.setGetValueGlobal(ElevatorType::getMaxDistanceAllowedBetweenElevators);
     }
 

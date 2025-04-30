@@ -23,10 +23,10 @@ public class TitleAction extends ElevatorAction {
         super(elevatorType, "title", "title", titleGrouping,subTitleGrouping);
 
         String desc = "This option controls the top text that appears in the middle of the screen upon elevator use.";
-        this.mapSetting(titleGrouping, "Title", desc, Material.PAPER, ChatColor.GOLD).onClick(this::editTitle);
+        this.mapSetting(titleGrouping, "title","Title", desc, Material.PAPER, ChatColor.GOLD).onClick(this::editTitle);
 
         desc = "This option controls the bottom text that appears in the middle of the screen upon elevator use.";
-        this.mapSetting(subTitleGrouping, "Sub-Title", desc, Material.NAME_TAG, ChatColor.YELLOW).onClick(this::editSubTitle);
+        this.mapSetting(subTitleGrouping, "subtitle","Sub-Title", desc, Material.NAME_TAG, ChatColor.YELLOW).onClick(this::editSubTitle);
     }
 
     @Override

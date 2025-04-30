@@ -26,12 +26,12 @@ public abstract class ProtectionHook implements ElevatorHook {
         return ConfigService.getRootConfig().protectionHooks.get(this.configKey);
     }
 
-    public boolean shouldAllowGuestUse(Elevator elevator) {
-        return !DataContainerService.getElevatorValue(elevator.getShulkerBox(), this.containerKey, getConfig().blockNonMemberUseDefault);
+    public boolean isCheckEnabled(Elevator elevator) {
+        return DataContainerService.getElevatorValue(elevator.getShulkerBox(), this.containerKey, getConfig().blockNonMemberUseDefault);
     }
 
-    public void toggleAllowMemberUse(Elevator elevator) {
-        boolean currentValue = this.shouldAllowGuestUse(elevator);
+    public void toggleCheckEnabled(Elevator elevator) {
+        boolean currentValue = this.isCheckEnabled(elevator);
         DataContainerService.setElevatorValue(elevator.getShulkerBox(), this.containerKey, !currentValue);
         elevator.getShulkerBox().update();
     }

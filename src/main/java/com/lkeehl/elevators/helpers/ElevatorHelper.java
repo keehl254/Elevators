@@ -158,7 +158,7 @@ public class ElevatorHelper {
             return; // TODO: Message that elevator is temporarily unable to be interacted with.
         }
 
-        if(!HookService.canUseElevator(player, elevator, true))
+        if(!HookService.canEditElevator(player, elevator, true))
             return;
 
         InventoryHelper.openInteractMenu(event.getPlayer(), elevator);

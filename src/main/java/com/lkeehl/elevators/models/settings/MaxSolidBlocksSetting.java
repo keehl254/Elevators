@@ -16,7 +16,7 @@ import java.util.List;
 public class MaxSolidBlocksSetting extends ElevatorSetting<Integer> {
 
     public MaxSolidBlocksSetting() {
-        super("Max Solid Blocks", "This controls the maximum number of solid blocks that can be between an origin and destination elevator.", Material.IRON_BLOCK, ChatColor.RED);
+        super("change-max-solid-blocks","Max Solid Blocks", "This controls the maximum number of solid blocks that can be between an origin and destination elevator.", Material.IRON_BLOCK, ChatColor.RED);
         this.setGetValueGlobal(ElevatorType::getMaxSolidBlocksAllowedBetweenElevators);
     }
 

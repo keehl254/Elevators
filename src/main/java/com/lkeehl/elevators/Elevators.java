@@ -27,8 +27,8 @@ public class Elevators extends JavaPlugin {
         ElevatorRecipeService.init();
         ElevatorActionService.init();
         ObstructionService.init();
-        HookService.init();
         ListenerService.init();
+        HookService.init();
         CommandService.init(this);
 
         this.reloadElevators();
@@ -36,6 +36,7 @@ public class Elevators extends JavaPlugin {
 
     @Override()
     public void onDisable() {
+        HookService.unInitialize();
         ListenerService.unInitialize();
 
         File configFile = new File(this.getDataFolder(), "config.yml");

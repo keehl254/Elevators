@@ -17,7 +17,7 @@ import java.util.List;
 public class MaxStackSizeSetting extends ElevatorSetting<Integer> {
 
     public MaxStackSizeSetting() {
-        super("Max Stack Size", "This controls the maximum stack size of elevator item stacks.", Material.COMPARATOR, ChatColor.YELLOW);
+        super("change-max-stack-size","Max Stack Size", "This controls the maximum stack size of elevator item stacks.", Material.COMPARATOR, ChatColor.YELLOW);
         this.setGetValueGlobal(ElevatorType::getMaxStackSize);
     }
 

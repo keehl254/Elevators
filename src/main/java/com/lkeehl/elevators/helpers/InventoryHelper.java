@@ -92,21 +92,33 @@ public class InventoryHelper {
             ShulkerBoxHelper.playClose(elevator.getShulkerBox());
         });
 
+        boolean canRename = HookService.canRenameElevator(player, elevator, false);
+
         if (protectionHooks.isEmpty()) {
-            display.setItemSimple(11, nameItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractNameMenu));
-            display.setItemSimple(15, settingsItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractSettingsMenu));
+
+            if(canRename) {
+                display.setItemSimple(11, nameItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractNameMenu));
+                display.setItemSimple(15, settingsItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractSettingsMenu));
+            } else {
+                display.setItemSimple(13, settingsItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractSettingsMenu));
+            }
             display.open();
             return;
         }
 
-        display.setItemSimple(10, protectionItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractProtectMenu));
-        display.setItemSimple(13, nameItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractNameMenu));
-        display.setItemSimple(16, settingsItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractSettingsMenu));
+        if(canRename) {
+            display.setItemSimple(10, protectionItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractProtectMenu));
+            display.setItemSimple(13, nameItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractNameMenu));
+            display.setItemSimple(16, settingsItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractSettingsMenu));
+        } else {
+            display.setItemSimple(11, protectionItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractProtectMenu));
+            display.setItemSimple(15, settingsItem, (event, myDisplay) -> openMenuFromDisplay(myDisplay, player, elevator, InventoryHelper::openInteractSettingsMenu));
+        }
 
         if (protectionHooks.size() == 1) {
             ProtectionHook hook = protectionHooks.getFirst();
             ItemStack protectionIcon = hook.createIconForElevator(player, elevator);
-            display.setItemSimple(10, protectionIcon, (event, myDisplay) -> {
+            display.setItemSimple(canRename ? 10 : 11, protectionIcon, (event, myDisplay) -> {
                 myDisplay.stopReturn();
                 hook.onProtectionClick(player, elevator, () -> openInteractMenu(player, elevator));
             });
@@ -138,15 +150,6 @@ public class InventoryHelper {
     }
 
     public static void openInteractNameMenu(Player player, Elevator elevator) {
-        List<ProtectionHook> hooks = HookService.getProtectionHooks();
-        for(ProtectionHook hook : hooks) {
-            if(!hook.canEditName(player, elevator, true)) {
-                player.closeInventory(InventoryCloseEvent.Reason.CANT_USE);
-                ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
-                ShulkerBoxHelper.playClose(elevator.getShulkerBox());
-                return;
-            }
-        }
         String currentName = DataContainerService.getFloorName(elevator);
         try {
             SignGUIBuilder builder = SignGUI.builder();
@@ -180,15 +183,6 @@ public class InventoryHelper {
     }
 
     public static void openInteractSettingsMenu(Player player, Elevator elevator) {
-        List<ProtectionHook> hooks = HookService.getProtectionHooks();
-        for(ProtectionHook hook : hooks) {
-            if(!hook.canEditSettings(player, elevator, true)) {
-                player.closeInventory(InventoryCloseEvent.Reason.CANT_USE);
-                ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
-                ShulkerBoxHelper.playClose(elevator.getShulkerBox());
-                return;
-            }
-        }
         List<ElevatorSetting<?>> settings = ElevatorSettingService.getElevatorSettings().stream().filter(i -> i.canBeEditedIndividually(elevator)).toList();
 
         int inventorySize = (Math.floorDiv(settings.size() + 8, 9) * 9) + 9;

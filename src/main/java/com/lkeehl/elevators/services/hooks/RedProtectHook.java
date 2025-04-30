@@ -33,7 +33,7 @@ public class RedProtectHook extends ProtectionHook {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(this.shouldAllowGuestUse(elevator))
+        if(!this.isCheckEnabled(elevator))
             return true;
 
         Region region = redProtect.getRegion(elevator.getShulkerBox().getLocation());
@@ -46,30 +46,6 @@ public class RedProtectHook extends ProtectionHook {
         if(sendMessage)
             player.sendMessage(ChatColor.RED + "You can't interact with this here!");
         return false;
-    }
-
-    @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
-        Region region = redProtect.getRegion(elevator.getLocation());
-        if(region == null) return null;
-
-        boolean flagEnabled = this.shouldAllowGuestUse(elevator);
-
-        List<String> lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatColor.GRAY + "Controls whether non-members");
-        lore.add(ChatColor.GRAY + "can use this elevator.");
-        lore.add("");
-        lore.add(ChatColor.GRAY + "Status: ");
-        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
-
-        return ItemStackHelper.createItem(ChatColor.RED + "" + ChatColor.BOLD + "Red Protect", Material.RED_DYE, 1, lore);
-    }
-
-    @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
-        this.toggleAllowMemberUse(elevator);
-        onReturn.run();
     }
 
     @Override
@@ -98,5 +74,30 @@ public class RedProtectHook extends ProtectionHook {
         if(sendMessage)
             player.sendMessage(ChatColor.RED + "You can't interact with this here!");
         return false;
+    }
+
+    @Override
+    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+        Region region = redProtect.getRegion(elevator.getLocation());
+        if(region == null) return null;
+
+        boolean flagEnabled = this.isCheckEnabled(elevator);
+
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Controls whether claim");
+        lore.add(ChatColor.GRAY + "guests are blocked from");
+        lore.add(ChatColor.GRAY + "using this Elevator.");
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Status: ");
+        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
+
+        return ItemStackHelper.createItem(ChatColor.RED + "" + ChatColor.BOLD + "Red Protect", Material.RED_DYE, 1, lore);
+    }
+
+    @Override
+    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+        this.toggleCheckEnabled(elevator);
+        onReturn.run();
     }
 }

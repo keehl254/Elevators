@@ -1,19 +1,23 @@
 package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.hooks.ElevatorHook;
 import com.lkeehl.elevators.models.hooks.HologramHook;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import com.lkeehl.elevators.services.hooks.*;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class HookService {
@@ -39,42 +43,74 @@ public class HookService {
         HookService.initialized = true;
     }
 
-    private static void buildHooks() {
+    public static void unInitialize() {
+        hookMap.clear();
 
-        HookService.registerHookIfPluginActive("GriefPrevention", false, GriefPreventionHook.class);
-        HookService.registerHookIfPluginActive("GriefDefender", false, GriefDefenderHook.class);
-        HookService.registerHookIfPluginActive("RedProtect", false, RedProtectHook.class);
-        HookService.registerHookIfPluginActive("PlotSquared", false, PlotSquaredHook.class);
-        HookService.registerHookIfPluginActive("BentoBox", false, BentoBoxHook.class);
-        HookService.registerHookIfPluginActive("PlaceholderAPI", false, PlaceholderAPIHook.class);
-        HookService.registerHookIfPluginActive("DecentHolograms", false, DecentHologramsHook.class);
-        HookService.registerHookIfPluginActive("FancyHolograms", false, FancyHologramsHook.class);
-        HookService.registerHookIfPluginActive("SuperiorSkyblock2", true, SuperiorSkyblock2Hook.class);
+        HookService.initialized = false;
     }
 
-    public static boolean registerHookIfPluginActive(String pluginName, boolean needOnlyLoad, Class<? extends ElevatorHook> elevatorHookClass) {
+    private static void buildHooks() {
+
+        HookService.registerHook("GriefPrevention", GriefPreventionHook.class);
+        HookService.registerHook("GriefDefender", GriefDefenderHook.class);
+        HookService.registerHook("RedProtect", RedProtectHook.class);
+        HookService.registerHook("PlotSquared", PlotSquaredHook.class);
+        HookService.registerHook("BentoBox", BentoBoxHook.class);
+        HookService.registerHook("PlaceholderAPI", PlaceholderAPIHook.class);
+        HookService.registerHook("DecentHolograms", DecentHologramsHook.class);
+        HookService.registerHook("FancyHolograms", FancyHologramsHook.class);
+        HookService.registerHook("SuperiorSkyblock2", SuperiorSkyblock2Hook.class, false);
+
+    }
+
+    public static boolean registerHook(String pluginName, Class<? extends ElevatorHook> elevatorHookClass, boolean requireActive) {
        if(hookMap.containsKey(pluginName.toUpperCase()))
            return true;
 
-       if(needOnlyLoad) {
-           if(Bukkit.getPluginManager().getPlugin(pluginName) == null) return false;
-       } else {
-           if(!Bukkit.getPluginManager().isPluginEnabled(pluginName)) return false;
-       }
+        if(Bukkit.getPluginManager().getPlugin(pluginName) == null)
+            return false;
+       if(requireActive && !Bukkit.getPluginManager().isPluginEnabled(pluginName))
+           return false;
 
         try {
             Constructor<?> hookConstructor = elevatorHookClass.getConstructor();
             hookMap.put(pluginName.toUpperCase(), (ElevatorHook) hookConstructor.newInstance());
             return true;
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            Elevators.getElevatorsLogger().warning("Failed to register hook for \"" + pluginName + "\" due to an inaccessible constructor. The plugin will still function; however, this hook will not work. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues");
-            e.printStackTrace();
+            Elevators.getElevatorsLogger().log(Level.WARNING, "Failed to register hook for \"" + pluginName + "\" due to an inaccessible constructor. The plugin will still function; however, this hook will not work. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues", e);
             return false;
         }
     }
 
+    public static boolean registerHook(String pluginName, Class<? extends ElevatorHook> elevatorHookClass) {
+        return registerHook(pluginName, elevatorHookClass, true);
+    }
+
     public static boolean canUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        return hookMap.values().stream().allMatch(hook -> hook.canPlayerUseElevator(player, elevator, sendMessage));
+        try {
+            return hookMap.values().stream().allMatch(hook -> hook.canPlayerUseElevator(player, elevator, sendMessage));
+        } catch (Exception e) {
+            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to check hooks for use permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+        }
+        return false;
+    }
+
+    public static boolean canEditElevator(Player player, Elevator elevator, boolean sendMessage) {
+        try {
+            return HookService.getProtectionHooks().stream().allMatch(hook -> hook.canEditSettings(player, elevator, sendMessage));
+        } catch (Exception e) {
+            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to check hooks for edit permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+        }
+        return false;
+    }
+
+    public static boolean canRenameElevator(Player player, Elevator elevator, boolean sendMessage) {
+        try {
+            return HookService.getProtectionHooks().stream().allMatch(hook -> hook.canEditName(player, elevator, sendMessage));
+        } catch (Exception e) {
+            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to check hooks for rename permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+        }
+        return false;
     }
 
     public static GriefPreventionHook getGriefPreventionHook() {
@@ -121,11 +157,9 @@ public class HookService {
     public static <T extends ElevatorHook> T getHook(String hookKey, Class<T> hookClazz) {
         hookKey = hookKey.toUpperCase();
         if(!hookMap.containsKey(hookKey.toUpperCase())) {
-            if (hookKey.equals("SUPERIORSKYBLOCK2")) {
-                if(!HookService.registerHookIfPluginActive(hookKey, true, hookClazz)) return null;
-            } else {
-                if(!HookService.registerHookIfPluginActive(hookKey, false, hookClazz)) return null;
-            }
+            HookService.buildHooks(); // No need to check individual hooks here. BuildHooks will not re-register.
+            if(!hookMap.containsKey(hookKey.toUpperCase()))
+                return null;
         }
 
         return (T) hookMap.get(hookKey);

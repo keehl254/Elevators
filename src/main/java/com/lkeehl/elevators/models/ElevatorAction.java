@@ -121,8 +121,8 @@ public abstract class ElevatorAction {
         return grouping.map(elevatorActionGrouping -> elevatorActionGrouping.getMainAlias().equalsIgnoreCase(this.defaultGroupingAlias)).orElse(false);
     }
 
-    protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionGrouping<T> grouping, String settingName, String description, Material icon, ChatColor textColor) {
-        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, description, icon, textColor);
+    protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionGrouping<T> grouping, String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
+        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, settingDisplayName, description, icon, textColor);
         this.settings.put(grouping, setting);
 
         this.initIdentifier();

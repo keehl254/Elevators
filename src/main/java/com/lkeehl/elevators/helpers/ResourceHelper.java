@@ -2,6 +2,8 @@ package com.lkeehl.elevators.helpers;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResourceHelper {
 
@@ -81,6 +83,27 @@ public class ResourceHelper {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static String cleanTrace(Throwable ex) {
+        String jarName = new java.io.File(ResourceHelper.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+
+        List<String> traces = new ArrayList<>();
+        boolean continuation = false;
+        for(StackTraceElement stackTraceElement : ex.getStackTrace()) {
+            if(!stackTraceElement.getClassName().startsWith("com.lkeehl.elevators") || stackTraceElement.getFileName() == null) {
+                continuation = true;
+                continue;
+            }
+            if (continuation) {
+                traces.add("_");
+                continuation = false;
+            }
+
+            traces.add(String.format("%s::%s:%d", stackTraceElement.getFileName().replace(".java",""), stackTraceElement.getMethodName().replace("lambda$", "").replace("$1",""), stackTraceElement.getLineNumber()));
+        }
+
+        return "\t" + ex.getLocalizedMessage() + "\n\t" + String.join(" -> ", traces.reversed());
     }
 
 }

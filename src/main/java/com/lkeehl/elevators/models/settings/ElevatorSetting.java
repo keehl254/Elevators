@@ -23,7 +23,8 @@ import java.util.function.Function;
 
 public class ElevatorSetting<T> {
 
-    private final ItemStack iconTemplate;
+    protected final String settingName;
+    protected final ItemStack iconTemplate;
 
     private Function<ElevatorType, T> getGlobalCurrentValueFunc = this::getCurrentValueGlobal;
     private Function<Elevator, T> getIndividualCurrentValueFunc = null;
@@ -32,12 +33,13 @@ public class ElevatorSetting<T> {
     private QuadConsumer<Player, ElevatorType, Runnable, T> onClickGlobalConsumer;
     private QuadConsumer<Player, Elevator, Runnable, T> onClickIndividualConsumer;
 
-    public ElevatorSetting(String settingName, String description, Material icon, ChatColor textColor) {
+    public ElevatorSetting(String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.addAll(MessageHelper.formatLore(description, ChatColor.GRAY));
 
-        this.iconTemplate = ItemStackHelper.createItem(textColor + "" + ChatColor.BOLD + settingName, icon, 1, lore);
+        this.settingName = settingName;
+        this.iconTemplate = ItemStackHelper.createItem(textColor + "" + ChatColor.BOLD + settingDisplayName, icon, 1, lore);
 
         this.onClickGlobalConsumer = this::onClickGlobal;
         this.onClickIndividualConsumer = this::onClickIndividual;
@@ -58,7 +60,7 @@ public class ElevatorSetting<T> {
     }
 
     public boolean canBeEditedIndividually(Elevator elevator) {
-        return this.getIndividualCurrentValueFunc != null;
+        return this.getIndividualCurrentValueFunc != null && !elevator.getElevatorType().getDisabledSettings().contains(this.settingName);
     }
 
     public ItemStack createIcon(Object value, boolean global) {
@@ -117,12 +119,14 @@ public class ElevatorSetting<T> {
 
     public T getIndividualElevatorValue(Elevator elevator) {
 
-        T value = null;
-        if (this.getIndividualCurrentValueFunc != null)
-            value = this.getIndividualCurrentValueFunc.apply(elevator);
+        if(!elevator.getElevatorType().getDisabledSettings().contains(this.settingName)) {
+            T value = null;
+            if (this.getIndividualCurrentValueFunc != null)
+                value = this.getIndividualCurrentValueFunc.apply(elevator);
 
-        if(value != null)
-            return value;
+            if (value != null)
+                return value;
+        }
 
         return this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType());
     }

@@ -115,6 +115,10 @@ public class ElevatorType extends ConfigElevatorType {
         return this.checkColor;
     }
 
+    public List<String> getDisabledSettings() {
+        return this.disabledSettings;
+    }
+
     public List<ElevatorAction> getActionsUp() {
         return this.actionsUp;
     }

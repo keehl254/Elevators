@@ -10,7 +10,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class CheckColorSetting extends ElevatorSetting<Boolean> {
 
     public CheckColorSetting() {
-        super("Color Check", "If enabled, any destination elevators must be the same color as the origin.", Material.BLUE_DYE, ChatColor.BLUE);
+        super("check-color","Color Check", "If enabled, any destination elevators must be the same color as the origin.", Material.BLUE_DYE, ChatColor.BLUE);
         this.setGetValueGlobal(ElevatorType::shouldValidateSameColor);
         this.setupDataStore("check-color", PersistentDataType.BOOLEAN);
     }

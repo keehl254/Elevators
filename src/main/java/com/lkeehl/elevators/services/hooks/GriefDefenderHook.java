@@ -23,7 +23,7 @@ public class GriefDefenderHook extends ProtectionHook {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(this.shouldAllowGuestUse(elevator))
+        if(!this.isCheckEnabled(elevator))
             return true;
 
         ShulkerBox box = elevator.getShulkerBox();
@@ -33,30 +33,6 @@ public class GriefDefenderHook extends ProtectionHook {
             return true;
 
         return claim.canUseBlock(elevator.getShulkerBox(), elevator.getLocation(), GriefDefender.getCore().getUser(player.getUniqueId()), TrustTypes.ACCESSOR);
-    }
-
-    @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
-        final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
-        if(claim == null || claim.isWilderness()) return null;
-
-        boolean flagEnabled = this.shouldAllowGuestUse(elevator);
-
-        List<String> lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatColor.GRAY + "Controls whether non-members");
-        lore.add(ChatColor.GRAY + "can use this elevator.");
-        lore.add("");
-        lore.add(ChatColor.GRAY + "Status: ");
-        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
-
-        return ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Grief Defender", Material.SHIELD, 1, lore);
-    }
-
-    @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
-        this.toggleAllowMemberUse(elevator);
-        onReturn.run();
     }
 
     @Override
@@ -81,5 +57,30 @@ public class GriefDefenderHook extends ProtectionHook {
         if(claim.isWilderness())
             return true;
         return claim.canUseBlock(elevator.getShulkerBox(), elevator.getLocation(), GriefDefender.getCore().getUser(player.getUniqueId()), TrustTypes.MANAGER);
+    }
+
+    @Override
+    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+        final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
+        if(claim == null || claim.isWilderness()) return null;
+
+        boolean flagEnabled = this.isCheckEnabled(elevator);
+
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Controls whether claim");
+        lore.add(ChatColor.GRAY + "guests are blocked from");
+        lore.add(ChatColor.GRAY + "using this Elevator.");
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Status: ");
+        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
+
+        return ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Grief Defender", Material.SHIELD, 1, lore);
+    }
+
+    @Override
+    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+        this.toggleCheckEnabled(elevator);
+        onReturn.run();
     }
 }

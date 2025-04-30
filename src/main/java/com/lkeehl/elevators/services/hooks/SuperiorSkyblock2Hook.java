@@ -8,17 +8,17 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
+import com.lkeehl.elevators.services.ListenerService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SuperiorSkyblock2Hook extends ProtectionHook implements Listener {
+public class SuperiorSkyblock2Hook extends ProtectionHook {
 
     private static final String USE_ELEVATOR_FLAG = "elevators_use";
     private static final String EDIT_NAME_ELEVATOR_FLAG = "elevators_edit_name";
@@ -29,10 +29,9 @@ public class SuperiorSkyblock2Hook extends ProtectionHook implements Listener {
 
     public SuperiorSkyblock2Hook() {
         super("SuperiorSkyblock2");
-        if(!registered) Elevators.getInstance().getServer().getPluginManager().registerEvents(this, Elevators.getInstance());
+        ListenerService.registerEventExecutor(PluginInitializeEvent.class, EventPriority.NORMAL, this::onSSB2Enable);
     }
 
-    @EventHandler
     public void onSSB2Enable(PluginInitializeEvent e) {
         try {
             IslandPrivilege.register(USE_ELEVATOR_FLAG);
@@ -51,11 +50,13 @@ public class SuperiorSkyblock2Hook extends ProtectionHook implements Listener {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(!registered) return true;
+        if(!registered || !this.isCheckEnabled(elevator))
+            return true;
+
         Island island = SuperiorSkyblockAPI.getIslandAt(elevator.getLocation());
-        if (island != null) {
+        if (island != null)
             return island.hasPermission(SuperiorSkyblockAPI.getPlayer(player.getUniqueId()), USE_ELEVATOR);
-        }
+
         return true;
     }
 
@@ -66,12 +67,13 @@ public class SuperiorSkyblock2Hook extends ProtectionHook implements Listener {
         if(island == null)
             return null;
 
-        boolean flagEnabled = this.shouldAllowGuestUse(elevator);
+        boolean flagEnabled = this.isCheckEnabled(elevator);
 
         List<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatColor.GRAY + "Controls whether non-members");
-        lore.add(ChatColor.GRAY + "can use this elevator.");
+        lore.add(ChatColor.GRAY + "Controls whether island");
+        lore.add(ChatColor.GRAY + "guests are blocked from");
+        lore.add(ChatColor.GRAY + "using this Elevator.");
         lore.add("");
         lore.add(ChatColor.GRAY + "Status: ");
         lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
@@ -81,7 +83,7 @@ public class SuperiorSkyblock2Hook extends ProtectionHook implements Listener {
 
     @Override
     public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
-        this.toggleAllowMemberUse(elevator);
+        this.toggleCheckEnabled(elevator);
         onReturn.run();
     }
 
