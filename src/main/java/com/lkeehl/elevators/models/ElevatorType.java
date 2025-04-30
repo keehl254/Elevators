@@ -7,6 +7,7 @@ import com.lkeehl.elevators.services.configs.ConfigElevatorType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ElevatorType extends ConfigElevatorType {
 
@@ -144,7 +145,6 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-        this.save();
     }
 
     /**
@@ -152,7 +152,6 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setMaxDistanceAllowedBetweenElevators(int maxDistance) {
         this.maxDistance = maxDistance;
-        this.save();
     }
 
     /**
@@ -160,7 +159,6 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setMaxStackSize(int maxStackSize) {
         this.maxStackSize = maxStackSize;
-        this.save();
     }
 
     /**
@@ -169,7 +167,6 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setMaxSolidBlocksAllowedBetweenElevators(int maxSolidBlocks) {
         this.maxSolidBlocks = maxSolidBlocks;
-        this.save();
     }
 
     /**
@@ -177,7 +174,6 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setCheckDestinationElevatorType(boolean checkType) {
         this.classCheck = checkType;
-        this.save();
     }
 
     /**
@@ -187,7 +183,6 @@ public class ElevatorType extends ConfigElevatorType {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public void setElevatorRequiresPermissions(boolean checkPerms) {
         this.checkPerms = checkPerms;
-        this.save();
     }
 
     /**
@@ -195,7 +190,6 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setCanElevatorExplode(boolean canExplode) {
         this.canExplode = canExplode;
-        this.save();
     }
 
     /**
@@ -203,7 +197,6 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setCanDye(boolean supportDying) {
         this.supportDying = supportDying;
-        this.save();
     }
 
     /**
@@ -212,7 +205,6 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setStopsObstructedTeleportation(boolean stopsObstruction) {
         this.stopObstruction = stopsObstruction;
-        this.save();
     }
 
     /**
@@ -220,13 +212,14 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setShouldValidateColor(boolean checkColor) {
         this.checkColor = checkColor;
-        this.save();
     }
 
     //endregion
 
-    public void save() {
-
+    @Override()
+    public void onSave() {
+        this.actions.up = this.getActionsUp().stream().map(ElevatorAction::serialize).toList();
+        this.actions.down = this.getActionsDown().stream().map(ElevatorAction::serialize).toList();
     }
 
     @Override()

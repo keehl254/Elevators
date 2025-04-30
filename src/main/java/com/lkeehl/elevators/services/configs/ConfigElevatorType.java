@@ -67,7 +67,7 @@ public class ConfigElevatorType implements Config {
                 "Custom actions may have their own settings that can be disabled through use of the action key, an underscore, and the setting name.",
                 "Example action setting would be:",
                 "message-player_message, sound_sound, sound_volume, sound_pitch, title_title, title_subtitle"})
-    protected List<String> disabledSettings = List.of("change-holo");
+    protected List<String> disabledSettings = List.of("change-holo","sound_sound");
 
     @Comments({"Define recipes to craft an elevator type. If you do not wish to have any recipes, replace the section",
     "with an empty map by settings recipes to \"{}\". Example:",

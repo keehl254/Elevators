@@ -1,18 +1,23 @@
 package com.lkeehl.elevators.actions;
 
 import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
+import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -28,6 +33,21 @@ public class BossBarAction extends ElevatorAction {
 
     public BossBarAction(ElevatorType elevatorType) {
         super(elevatorType, "boss-bar", "message", barColorGrouping, barStyleGrouping, messageGrouping);
+
+
+        String desc = "This option controls the message shown in the boss bar.";
+        ElevatorActionSetting<String> messageSetting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
+        messageSetting.setupDataStore("message", PersistentDataType.STRING);
+
+        desc = "This option controls the style of the boss bar.";
+        ElevatorActionSetting<BarStyle> styleSetting = this.mapSetting(barStyleGrouping, "style","Style", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
+        styleSetting.setupDataStore("style", PersistentDataType.STRING);
+
+        desc = "This option controls the color of the boss bar.";
+        ElevatorActionSetting<BarColor> colorSetting = this.mapSetting(barColorGrouping, "color","Color", desc, Material.LIGHT_BLUE_DYE, ChatColor.GOLD);
+        colorSetting.setupDataStore("style", PersistentDataType.STRING);
+
+        this.setIcon(ItemStackHelper.createItem(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Boss Bar", Material.DRAGON_HEAD, 1));
     }
 
     @Override

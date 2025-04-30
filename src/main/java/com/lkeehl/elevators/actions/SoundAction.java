@@ -1,6 +1,7 @@
 package com.lkeehl.elevators.actions;
 
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
+import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.*;
 import com.lkeehl.elevators.models.settings.ElevatorSetting;
 import com.lkeehl.elevators.services.ConfigService;
@@ -25,17 +26,20 @@ public class SoundAction extends ElevatorAction {
         super(elevatorType, "sound", "sound", soundGrouping, volumeGrouping, pitchGrouping);
 
         String desc = "This option controls the sound effect that plays upon elevator use.";
-        this.mapSetting(soundGrouping, "sound","Elevator Sound", desc, Material.MUSIC_DISC_CAT, ChatColor.GOLD).onClick(this::editSound);
+        ElevatorActionSetting<Sound> soundSetting = this.mapSetting(soundGrouping, "sound","Elevator Sound", desc, Material.MUSIC_DISC_CAT, ChatColor.GOLD);
+        soundSetting.onClick(this::editSound);
 
         desc = "This option controls the volume at which the elevator sound effect plays.";
-        ElevatorActionSetting<Float> setting = this.mapSetting(volumeGrouping, "volume","Elevator Volume", desc, Material.MUSIC_DISC_5, ChatColor.LIGHT_PURPLE);
-        setting.setupDataStore("sound-volume", PersistentDataType.FLOAT);
-        setting.onClick(this::editVolume);
+        ElevatorActionSetting<Float> volumeSetting = this.mapSetting(volumeGrouping, "volume","Elevator Volume", desc, Material.MUSIC_DISC_5, ChatColor.LIGHT_PURPLE);
+        volumeSetting.setupDataStore("sound-volume", PersistentDataType.STRING);
+        volumeSetting.onClick(this::editVolume);
 
         desc = "This option controls the pitch at which the elevator sound effect plays.";
-        setting = this.mapSetting(pitchGrouping, "pitch","Elevator Pitch", desc, Material.MUSIC_DISC_11, ChatColor.DARK_PURPLE);
-        setting.setupDataStore("sound-pitch", PersistentDataType.FLOAT);
-        setting.onClick(this::editPitch);
+        ElevatorActionSetting<Float> pitchSetting = this.mapSetting(pitchGrouping, "pitch","Elevator Pitch", desc, Material.MUSIC_DISC_11, ChatColor.DARK_PURPLE);
+        pitchSetting.setupDataStore("sound-pitch", PersistentDataType.STRING);
+        pitchSetting.onClick(this::editPitch);
+
+        this.setIcon(ItemStackHelper.createItem(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Sound", Material.NOTE_BLOCK, 1));
     }
 
     @Override

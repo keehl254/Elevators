@@ -1,6 +1,7 @@
 package com.lkeehl.elevators.actions;
 
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
+import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
@@ -27,6 +28,8 @@ public class MessagePlayerAction extends ElevatorAction {
         ElevatorActionSetting<String> setting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
         setting.setupDataStore("message", PersistentDataType.STRING);
         setting.onClick(this::editMessage);
+
+        this.setIcon(ItemStackHelper.createItem(ChatColor.AQUA + "" + ChatColor.BOLD + "Message Player", Material.BOOK, 1));
     }
 
     @Override

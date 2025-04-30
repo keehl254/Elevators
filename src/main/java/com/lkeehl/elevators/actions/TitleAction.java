@@ -1,5 +1,7 @@
 package com.lkeehl.elevators.actions;
 
+import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
+import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
@@ -23,10 +25,14 @@ public class TitleAction extends ElevatorAction {
         super(elevatorType, "title", "title", titleGrouping,subTitleGrouping);
 
         String desc = "This option controls the top text that appears in the middle of the screen upon elevator use.";
-        this.mapSetting(titleGrouping, "title","Title", desc, Material.PAPER, ChatColor.GOLD).onClick(this::editTitle);
+        ElevatorActionSetting<String> titleSetting = this.mapSetting(titleGrouping, "title","Title", desc, Material.PAPER, ChatColor.GOLD);
+        titleSetting.onClick(this::editTitle);
 
         desc = "This option controls the bottom text that appears in the middle of the screen upon elevator use.";
-        this.mapSetting(subTitleGrouping, "subtitle","Sub-Title", desc, Material.NAME_TAG, ChatColor.YELLOW).onClick(this::editSubTitle);
+        ElevatorActionSetting<String> subTitleSetting = this.mapSetting(subTitleGrouping, "subtitle","Sub-Title", desc, Material.NAME_TAG, ChatColor.YELLOW);
+        subTitleSetting.onClick(this::editSubTitle);
+
+        this.setIcon(ItemStackHelper.createItem(ChatColor.GREEN + "" + ChatColor.BOLD + "Title", Material.NAME_TAG, 1));
     }
 
     @Override

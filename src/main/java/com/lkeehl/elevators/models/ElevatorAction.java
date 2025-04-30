@@ -1,10 +1,12 @@
 package com.lkeehl.elevators.models;
 
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
+import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.settings.ElevatorSetting;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -30,7 +32,9 @@ public abstract class ElevatorAction {
 
     private final List<ElevatorActionGrouping<?>> groupings;
 
-    private final Map<ElevatorActionGrouping<?>, ElevatorSetting<?>> settings = new HashMap<>();
+    private final Map<ElevatorActionGrouping<?>, ElevatorActionSetting<?>> settings = new HashMap<>();
+
+    private ItemStack icon;
 
 
     protected ElevatorAction(ElevatorType elevatorType, String key, String defaultGroupingAlias, ElevatorActionGrouping<?>... groupings) {
@@ -40,6 +44,12 @@ public abstract class ElevatorAction {
 
         this.groupings = new ArrayList<>(Arrays.asList(groupings));
         this.groupings.add(keyGrouping);
+
+        this.icon = ItemStackHelper.createItem(key, Material.EGG, 1);
+    }
+
+    protected void setIcon(ItemStack item) {
+        this.icon = item;
     }
 
     public final void initialize(String value) {
@@ -72,6 +82,10 @@ public abstract class ElevatorAction {
         return this.key;
     }
 
+    public ItemStack getIcon() {
+        return this.icon;
+    }
+
     public String serialize() {
         StringBuilder builder = new StringBuilder(this.key + ": ");
 
@@ -94,9 +108,9 @@ public abstract class ElevatorAction {
     protected <T> T getGroupingObject(ElevatorActionGrouping<T> grouping, Elevator elevator) {
 
         if (elevator != null && this.settings.containsKey(grouping)) {
-            ElevatorSetting<T> data = (ElevatorSetting<T>) this.settings.get(grouping);
+            ElevatorActionSetting<T> data = (ElevatorActionSetting<T>) this.settings.get(grouping);
             if (data.canBeEditedIndividually(elevator))
-                return data.getIndividualElevatorValue(elevator);
+                return grouping.getObjectFromString(data.getIndividualElevatorValue(elevator), this);
         }
 
         if (this.groupingData.containsKey(grouping))
@@ -131,6 +145,10 @@ public abstract class ElevatorAction {
 
     public UUID getIdentifier() {
         return this.getGroupingObject(keyGrouping);
+    }
+
+    public List<ElevatorActionSetting<?>> getSettings() {
+        return this.settings.values().stream().toList();
     }
 
     public void initIdentifier() {

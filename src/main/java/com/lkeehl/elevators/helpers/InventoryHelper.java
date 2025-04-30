@@ -1,7 +1,9 @@
 package com.lkeehl.elevators.helpers;
 
 import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
 import com.lkeehl.elevators.models.Elevator;
+import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.settings.ElevatorSetting;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import com.lkeehl.elevators.services.ConfigService;
@@ -182,15 +184,66 @@ public class InventoryHelper {
         }
     }
 
+    private static List<ElevatorAction> getActionsWithSettings(Elevator elevator, boolean up) {
+        List<ElevatorAction> actions = new ArrayList<>(up ? elevator.getElevatorType().getActionsUp() : elevator.getElevatorType().getActionsDown()); // Don't want to alter original list.
+        actions.removeIf(i -> i.getSettings().isEmpty());
+        actions.removeIf(i -> i.getSettings().stream().noneMatch(s -> s.canBeEditedIndividually(elevator)));
+        return actions;
+    }
+
+    public static void openInteractActionSettingsMenu(Player player, Elevator elevator, ElevatorAction action, Runnable onReturn) {
+
+        List<ElevatorActionSetting<?>> settings = new ArrayList<>(action.getSettings());
+        settings.removeIf(i -> !i.canBeEditedIndividually(elevator));
+
+        int inventorySize = (Math.floorDiv(settings.size() + 8, 9) * 9) + 9;
+        Inventory inventory = Bukkit.createInventory(null, inventorySize, "Settings > Actions > Settings");
+
+        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, onReturn);
+        for(int i=0;i< settings.size();i++) {
+            ElevatorActionSetting<?> setting = settings.get(i);
+            display.setItemSimple(i+9, setting.createIcon(setting.getIndividualElevatorValue(elevator), false), (event, myDisplay) -> {
+                myDisplay.stopReturn();
+                setting.clickIndividual(player, elevator, () -> openInteractActionSettingsMenu(player, elevator, action, onReturn));
+            });
+        }
+        display.setReturnButton(0, ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "BACK", Material.ARROW, 1));
+        display.open();
+    }
+
+    public static void openInteractActionsMenu(Player player, Elevator elevator, List<ElevatorAction> actions) {
+
+        int inventorySize = (Math.floorDiv(actions.size() + 8, 9) * 9) + 9;
+        Inventory inventory = Bukkit.createInventory(null, inventorySize, "Elevator > Settings > Actions");
+
+        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> openInteractSettingsMenu(player, elevator));
+        for(int i=0;i< actions.size();i++) {
+            ElevatorAction action = actions.get(i);
+            display.setItemSimple(i+9, action.getIcon(), (event, myDisplay) -> {
+                myDisplay.stopReturn();
+                openInteractActionSettingsMenu(player, elevator, action, () -> openInteractActionsMenu(player, elevator, actions));
+            });
+        }
+        display.setReturnButton(0, ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "BACK", Material.ARROW, 1));
+        display.open();
+    }
+
     public static void openInteractSettingsMenu(Player player, Elevator elevator) {
         List<ElevatorSetting<?>> settings = ElevatorSettingService.getElevatorSettings().stream().filter(i -> i.canBeEditedIndividually(elevator)).toList();
 
-        int inventorySize = (Math.floorDiv(settings.size() + 8, 9) * 9) + 9;
+        int itemAmount = settings.size();
+        List<ElevatorAction> upActions = getActionsWithSettings(elevator, true);
+        List<ElevatorAction> downActions = getActionsWithSettings(elevator, false);
+
+        if(!upActions.isEmpty())
+            itemAmount++;
+        if(!downActions.isEmpty())
+            itemAmount++;
+
+        int inventorySize = (Math.floorDiv(itemAmount + 8, 9) * 9) + 9;
         Inventory inventory = Bukkit.createInventory(null, inventorySize, "Elevator > Settings");
 
-        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> {
-            openInteractMenu(player, elevator);
-        });
+        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> openInteractMenu(player, elevator));
         for(int i=0;i< settings.size();i++) {
             ElevatorSetting<?> setting = settings.get(i);
             display.setItemSimple(i+9, setting.createIcon(setting.getIndividualElevatorValue(elevator), false), (event, myDisplay) -> {
@@ -198,7 +251,23 @@ public class InventoryHelper {
                 setting.clickIndividual(player, elevator, () -> openInteractSettingsMenu(player, elevator));
             });
         }
+
+        if(!downActions.isEmpty()) {
+            display.setItemSimple(inventory.getSize() - 1, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Upwards Actions", Material.SPECTRAL_ARROW, 1), (event, myDisplay) -> {
+                myDisplay.stopReturn();
+                openInteractActionsMenu(player, elevator, downActions);
+            });
+        }
+
+        if(!upActions.isEmpty()) {
+            display.setItemSimple(inventory.getSize() - (downActions.isEmpty() ? 1 : 2), ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Downwards Actions", Material.TIPPED_ARROW, 1), (event, myDisplay) -> {
+                myDisplay.stopReturn();
+                openInteractActionsMenu(player, elevator, upActions);
+            });
+        }
+
         display.setReturnButton(0, ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "BACK", Material.ARROW, 1));
+
         display.open();
     }
 

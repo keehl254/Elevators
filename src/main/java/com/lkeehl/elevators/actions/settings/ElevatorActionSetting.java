@@ -13,7 +13,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.function.Consumer;
 
-public class ElevatorActionSetting<T> extends ElevatorSetting<T> {
+public class ElevatorActionSetting<T> extends ElevatorSetting<String> {
 
     private final ElevatorAction elevatorAction;
     private final ElevatorActionGrouping<T> actionGrouping;
@@ -26,7 +26,7 @@ public class ElevatorActionSetting<T> extends ElevatorSetting<T> {
         this.elevatorAction = action;
         this.actionGrouping = grouping;
 
-        this.setGetValueGlobal(et -> action.getGroupingObject(grouping));
+        this.setGetValueGlobal(et -> grouping.getStringFromObject(action.getGroupingObject(grouping)));
     }
 
     public void onClick(QuadConsumer<Player, Runnable, T, Consumer<T>> setValueGlobalMethod) {
@@ -34,18 +34,18 @@ public class ElevatorActionSetting<T> extends ElevatorSetting<T> {
     }
 
     @Override()
-    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, T currentValue) {
-        this.onClickMethod.accept(player, returnMethod, currentValue, val -> elevatorAction.setGroupingObject(this.actionGrouping, val));
+    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, String currentValue) {
+        this.onClickMethod.accept(player, returnMethod, this.actionGrouping.getObjectFromString(currentValue, this.elevatorAction), val -> elevatorAction.setGroupingObject(this.actionGrouping, val));
     }
 
     @Override()
-    public void onClickIndividual(Player player, Elevator elevator, Runnable returnMethod, T currentValue) {
+    public void onClickIndividual(Player player, Elevator elevator, Runnable returnMethod, String currentValue) {
         this.elevatorAction.initIdentifier();
-        this.onClickMethod.accept(player, returnMethod, currentValue, val -> this.setIndividualElevatorValue(elevator, val));
+        this.onClickMethod.accept(player, returnMethod, this.actionGrouping.getObjectFromString(currentValue, this.elevatorAction), val -> this.setIndividualElevatorValue(elevator, this.actionGrouping.getStringFromObject(val)));
     }
 
     @Override()
-    public ElevatorSetting<T> setupDataStore(String settingKey, PersistentDataType<?, T> dataType) {
+    public ElevatorSetting<String> setupDataStore(String settingKey, PersistentDataType<?, String> dataType) {
         if(this.elevatorAction.getIdentifier() != null) // Should never be null as mapSetting of ElevatorAction initializes the value.
             settingKey = this.elevatorAction.getIdentifier()+"-"+settingKey;
         return super.setupDataStore(settingKey, dataType);
