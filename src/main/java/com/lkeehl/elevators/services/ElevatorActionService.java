@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.services;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.*;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorType;
@@ -37,9 +38,9 @@ public class ElevatorActionService {
 
         registerElevatorAction("effect", EffectAction::new, ChatColor.BLUE.toString(), "Effect", Material.FIREWORK_ROCKET);
 
-        registerElevatorAction("title", TitleAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.ENCHANTED_BOOK);
-        registerElevatorAction("action-bar", ActionBarAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.ENCHANTED_BOOK);
-        registerElevatorAction("boss-bar", BossBarAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.ENCHANTED_BOOK);
+        registerElevatorAction("title", TitleAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.NAME_TAG);
+        registerElevatorAction("action-bar", ActionBarAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.BELL);
+        registerElevatorAction("boss-bar", BossBarAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.DRAGON_HEAD);
 
     }
 
@@ -69,6 +70,7 @@ public class ElevatorActionService {
 
         ElevatorAction action = actionConstructors.get(key).apply(elevatorType);
         action.initialize(actionString);
+        action.setIcon(actionIcons.get(key));
 
         return action;
     }

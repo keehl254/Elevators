@@ -22,23 +22,19 @@ public class MessageAllAction extends ElevatorAction {
 
     public MessageAllAction(ElevatorType elevatorType) {
         super(elevatorType, "message-all","message", messageGrouping);
-
-        String desc = "This option controls the message broadcasted.";
-        ElevatorActionSetting<String> messageSetting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
-        messageSetting.setupDataStore("message", PersistentDataType.STRING);
-
-        this.setIcon(ItemStackHelper.createItem(ChatColor.RED + "" + ChatColor.BOLD + "Message All", Material.ENCHANTED_BOOK, 1));
     }
 
     @Override
     protected void onInitialize(String value) {
-
+        String desc = "This option controls the message broadcasted.";
+        ElevatorActionSetting<String> messageSetting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
+        messageSetting.setupDataStore("message", PersistentDataType.STRING);
     }
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
 
-        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping));
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
         value = MessageHelper.formatColors(value);
 

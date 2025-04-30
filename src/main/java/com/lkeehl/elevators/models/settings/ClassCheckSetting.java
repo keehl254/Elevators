@@ -5,6 +5,7 @@ import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.persistence.PersistentDataType;
 
 public class ClassCheckSetting extends ElevatorSetting<Boolean> {
@@ -16,13 +17,13 @@ public class ClassCheckSetting extends ElevatorSetting<Boolean> {
     }
 
     @Override
-    public void onClickIndividual(Player player, Elevator elevator, Runnable returnMethod, Boolean currentValue) {
+    public void onClickIndividual(Player player, Elevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent, Boolean currentValue) {
         this.setIndividualElevatorValue(elevator, !currentValue);
         returnMethod.run();
     }
 
     @Override
-    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, Boolean currentValue) {
+    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, Boolean currentValue) {
         elevatorType.setCheckDestinationElevatorType(!currentValue);
         returnMethod.run();
     }

@@ -1,10 +1,12 @@
 package com.lkeehl.elevators.util.config.nodes;
 
 import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.util.config.Config;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
 
@@ -81,8 +83,7 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
             try {
                 map.put(childNode.getKey(), childNode.getConfigConverter().createObjectFromNode(childNode));
             } catch (Exception e) {
-                Elevators.getElevatorsLogger().warning("Failed to save config path '" + childNode.getPath() + "'!");
-                e.printStackTrace();
+                Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to save config path \"" + childNode.getPath() + ".\". Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
             }
         }
 

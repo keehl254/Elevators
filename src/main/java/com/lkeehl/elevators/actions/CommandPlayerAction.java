@@ -21,22 +21,18 @@ public class CommandPlayerAction extends ElevatorAction {
 
     public CommandPlayerAction(ElevatorType elevatorType) {
         super(elevatorType, "command-player", "command", commandGrouping);
-
-        String desc = "This option controls the command executed.";
-        ElevatorActionSetting<String> commandSetting = this.mapSetting(commandGrouping, "command","Command", desc, Material.COMMAND_BLOCK, ChatColor.GOLD);
-        commandSetting.setupDataStore("command", PersistentDataType.STRING);
-
-        this.setIcon(ItemStackHelper.createItem(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Player Command", Material.REPEATING_COMMAND_BLOCK, 1));
     }
 
     @Override
     protected void onInitialize(String value) {
-
+        String desc = "This option controls the command executed.";
+        ElevatorActionSetting<String> commandSetting = this.mapSetting(commandGrouping, "command","Command", desc, Material.COMMAND_BLOCK, ChatColor.GOLD);
+        commandSetting.setupDataStore("command", PersistentDataType.STRING);
     }
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
-        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(commandGrouping));
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(commandGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
 
         player.performCommand(value);

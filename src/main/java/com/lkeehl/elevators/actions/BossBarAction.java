@@ -33,8 +33,10 @@ public class BossBarAction extends ElevatorAction {
 
     public BossBarAction(ElevatorType elevatorType) {
         super(elevatorType, "boss-bar", "message", barColorGrouping, barStyleGrouping, messageGrouping);
+    }
 
-
+    @Override
+    protected void onInitialize(String value) {
         String desc = "This option controls the message shown in the boss bar.";
         ElevatorActionSetting<String> messageSetting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
         messageSetting.setupDataStore("message", PersistentDataType.STRING);
@@ -46,13 +48,6 @@ public class BossBarAction extends ElevatorAction {
         desc = "This option controls the color of the boss bar.";
         ElevatorActionSetting<BarColor> colorSetting = this.mapSetting(barColorGrouping, "color","Color", desc, Material.LIGHT_BLUE_DYE, ChatColor.GOLD);
         colorSetting.setupDataStore("style", PersistentDataType.STRING);
-
-        this.setIcon(ItemStackHelper.createItem(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Boss Bar", Material.DRAGON_HEAD, 1));
-    }
-
-    @Override
-    protected void onInitialize(String value) {
-
     }
 
     @Override
@@ -60,7 +55,7 @@ public class BossBarAction extends ElevatorAction {
         /*if (elevator instanceof PremiumElevator && ((PremiumElevator) elevator).getSpeed() > 0.0)
             return;*/
 
-        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping));
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
         value = MessageHelper.formatColors(value);
 

@@ -1,9 +1,12 @@
 package com.lkeehl.elevators.helpers;
 
+import com.lkeehl.elevators.Elevators;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class ResourceHelper {
 
@@ -35,7 +38,7 @@ public class ResourceHelper {
                 resStreamOut.write(buffer, 0, readBytes);
         } catch (Exception ex) {
             if (ex.getMessage() != null)
-                ex.printStackTrace();
+                Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to export resource. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(ex));
         } finally {
             try {
                 if (stream != null)
@@ -43,7 +46,7 @@ public class ResourceHelper {
                 if (resStreamOut != null)
                     resStreamOut.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to close resource stream. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
             }
         }
     }
@@ -72,7 +75,7 @@ public class ResourceHelper {
                 resStreamOut.write(buffer, 0, readBytes);
         } catch (Exception ex) {
             if (ex.getMessage() != null)
-                ex.printStackTrace();
+                Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to export resource. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(ex));
         } finally {
             try {
                 if (stream != null)
@@ -80,7 +83,7 @@ public class ResourceHelper {
                 if (resStreamOut != null)
                     resStreamOut.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to close resource stream. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
             }
         }
     }

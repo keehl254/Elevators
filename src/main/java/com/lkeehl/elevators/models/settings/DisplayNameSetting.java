@@ -7,6 +7,7 @@ import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -19,7 +20,7 @@ public class DisplayNameSetting extends ElevatorSetting<String> {
     }
 
     @Override
-    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, String currentValue) {
+    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue) {
         AnvilGUI.Builder anvilBuilder = new AnvilGUI.Builder();
         anvilBuilder.preventClose();
         anvilBuilder.text(currentValue);

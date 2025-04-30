@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -23,7 +24,10 @@ public class TitleAction extends ElevatorAction {
 
     public TitleAction(ElevatorType elevatorType) {
         super(elevatorType, "title", "title", titleGrouping,subTitleGrouping);
+    }
 
+    @Override
+    protected void onInitialize(String value) {
         String desc = "This option controls the top text that appears in the middle of the screen upon elevator use.";
         ElevatorActionSetting<String> titleSetting = this.mapSetting(titleGrouping, "title","Title", desc, Material.PAPER, ChatColor.GOLD);
         titleSetting.onClick(this::editTitle);
@@ -31,19 +35,12 @@ public class TitleAction extends ElevatorAction {
         desc = "This option controls the bottom text that appears in the middle of the screen upon elevator use.";
         ElevatorActionSetting<String> subTitleSetting = this.mapSetting(subTitleGrouping, "subtitle","Sub-Title", desc, Material.NAME_TAG, ChatColor.YELLOW);
         subTitleSetting.onClick(this::editSubTitle);
-
-        this.setIcon(ItemStackHelper.createItem(ChatColor.GREEN + "" + ChatColor.BOLD + "Title", Material.NAME_TAG, 1));
-    }
-
-    @Override
-    protected void onInitialize(String value) {
-
     }
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
-        String title = formatText(this.getGroupingObject(titleGrouping), eventData, player);
-        String subTitle = formatText(this.getGroupingObject(subTitleGrouping), eventData, player);
+        String title = formatText(this.getGroupingObject(titleGrouping, eventData.getOrigin()), eventData, player);
+        String subTitle = formatText(this.getGroupingObject(subTitleGrouping, eventData.getOrigin()), eventData, player);
 
         player.sendTitle(title, subTitle, 10, 70, 20);
     }
@@ -56,11 +53,11 @@ public class TitleAction extends ElevatorAction {
         return value;
     }
 
-    private void editTitle(Player player, Runnable returnMethod, String currentValue, Consumer<String> setValueMethod) {
+    private void editTitle(Player player, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue, Consumer<String> setValueMethod) {
         returnMethod.run();
     }
 
-    private void editSubTitle(Player player, Runnable returnMethod, String currentValue, Consumer<String> setValueMethod) {
+    private void editSubTitle(Player player, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue, Consumer<String> setValueMethod) {
         returnMethod.run();
     }
 

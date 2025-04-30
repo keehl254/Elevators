@@ -2,6 +2,7 @@ package com.lkeehl.elevators.effects;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ColorHelper;
+import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.hooks.WrappedHologram;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 public class ImageEffect extends ElevatorEffect {
 
@@ -68,8 +70,7 @@ public class ImageEffect extends ElevatorEffect {
 
             height = image.getHeight();
         }catch (IOException e){
-            e.printStackTrace();
-            Elevators.getElevatorsLogger().warning("Error loading image for effect \"" + this.getEffectKey() + "\". Effect disabled.");
+            Elevators.getElevatorsLogger().log(Level.SEVERE, "Error loading image for effect \"" + this.getEffectKey()+"\". Effect disabled. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
         this.height = height;
         this.rgbPattern = rgbPattern;

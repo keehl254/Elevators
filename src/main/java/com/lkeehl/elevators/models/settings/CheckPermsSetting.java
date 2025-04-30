@@ -4,6 +4,7 @@ import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class CheckPermsSetting extends ElevatorSetting<Boolean> {
 
@@ -13,7 +14,7 @@ public class CheckPermsSetting extends ElevatorSetting<Boolean> {
     }
 
     @Override
-    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, Boolean currentValue) {
+    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, Boolean currentValue) {
         elevatorType.setElevatorRequiresPermissions(!currentValue);
         returnMethod.run();
     }

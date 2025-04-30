@@ -1,10 +1,12 @@
 package com.lkeehl.elevators.util.config.nodes;
 
 import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class ClassicConfigNode<T> implements ConfigNode<T> {
 
@@ -41,8 +43,7 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
             this.field.setAccessible(true);
             return (T) field.get(parentNode.getValue());
         } catch (IllegalAccessException e) {
-            Elevators.getElevatorsLogger().warning("There was a problem pulling config data during loading or saving. This is not an issue with your config as much as it is a bug. Please report the follow:");
-            e.printStackTrace();
+            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to load config node data. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
             return null;
         }
     }

@@ -6,6 +6,7 @@ import com.bgsoftware.superiorskyblock.api.island.Island;
 import com.bgsoftware.superiorskyblock.api.island.IslandPrivilege;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
+import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import com.lkeehl.elevators.services.ListenerService;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class SuperiorSkyblock2Hook extends ProtectionHook {
 
@@ -43,8 +45,7 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
             Elevators.getElevatorsLogger().info("Hooked into SuperiorSkyblock2 correctly");
             registered = true;
         } catch(Exception ex) {
-            Elevators.getElevatorsLogger().severe("Failed to register SuperiorSkyblock Hook - please open a issue on Github");
-            ex.printStackTrace();
+            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to register SSB2 hook. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(ex));
         }
     }
 

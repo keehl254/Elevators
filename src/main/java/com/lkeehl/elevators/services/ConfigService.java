@@ -1,5 +1,7 @@
 package com.lkeehl.elevators.services;
 
+import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigEffect;
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public class ConfigService {
 
@@ -33,7 +36,7 @@ public class ConfigService {
             //ConfigService.rootNode.save();
             ConfigConverter.saveConfigToFile(ConfigService.rootNode, configFile);
         } catch (Exception e) {
-            e.printStackTrace();
+            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed while loading config. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
     }
 

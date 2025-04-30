@@ -7,6 +7,7 @@ import com.lkeehl.elevators.services.DataContainerService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class LoreLinesSetting extends ElevatorSetting<List<String>> {
     }
 
     @Override
-    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, List<String> currentValue) {
+    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, List<String> currentValue) {
         // TODO: Open menu for editing lore
         returnMethod.run();
     }

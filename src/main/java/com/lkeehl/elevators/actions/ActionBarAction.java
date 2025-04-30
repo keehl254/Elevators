@@ -22,22 +22,18 @@ public class ActionBarAction extends ElevatorAction {
 
     public ActionBarAction(ElevatorType elevatorType) {
         super(elevatorType, "action-bar", "message", messageGrouping);
-
-        String desc = "This option controls the message shown in the action bar.";
-        ElevatorActionSetting<String> setting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
-        setting.setupDataStore("message", PersistentDataType.STRING);
-
-        this.setIcon(ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "Action Bar", Material.BELL, 1));
     }
 
     @Override
     protected void onInitialize(String value) {
-
+        String desc = "This option controls the message shown in the action bar.";
+        ElevatorActionSetting<String> setting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
+        setting.setupDataStore("message", PersistentDataType.STRING);
     }
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
-        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping));
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
         value = MessageHelper.formatColors(value);
 

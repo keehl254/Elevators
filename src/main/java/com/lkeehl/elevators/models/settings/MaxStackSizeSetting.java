@@ -9,6 +9,7 @@ import de.rapha149.signgui.exception.SignGUIVersionException;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class MaxStackSizeSetting extends ElevatorSetting<Integer> {
     }
 
     @Override
-    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, Integer currentValue) {
+    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, Integer currentValue) {
         SignGUIBuilder builder = null;
         try {
             builder = SignGUI.builder();

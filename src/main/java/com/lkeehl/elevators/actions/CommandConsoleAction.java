@@ -23,22 +23,18 @@ public class CommandConsoleAction extends ElevatorAction {
 
     public CommandConsoleAction(ElevatorType elevatorType) {
         super(elevatorType, "command-console", "command", commandGrouping);
-
-        String desc = "This option controls the command executed.";
-        ElevatorActionSetting<String> commandSetting = this.mapSetting(commandGrouping, "command","Command", desc, Material.COMMAND_BLOCK, ChatColor.GOLD);
-        commandSetting.setupDataStore("command", PersistentDataType.STRING);
-
-        this.setIcon(ItemStackHelper.createItem(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Console Command", Material.COMMAND_BLOCK, 1));
     }
 
     @Override
     protected void onInitialize(String value) {
-
+        String desc = "This option controls the command executed.";
+        ElevatorActionSetting<String> commandSetting = this.mapSetting(commandGrouping, "command","Command", desc, Material.COMMAND_BLOCK, ChatColor.GOLD);
+        commandSetting.setupDataStore("command", PersistentDataType.STRING);
     }
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
-        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(commandGrouping));
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(commandGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
 
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value);

@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.models;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.settings.ElevatorSetting;
@@ -35,6 +36,7 @@ public abstract class ElevatorAction {
     private final Map<ElevatorActionGrouping<?>, ElevatorActionSetting<?>> settings = new HashMap<>();
 
     private ItemStack icon;
+    private boolean initialized = false;
 
 
     protected ElevatorAction(ElevatorType elevatorType, String key, String defaultGroupingAlias, ElevatorActionGrouping<?>... groupings) {
@@ -48,7 +50,7 @@ public abstract class ElevatorAction {
         this.icon = ItemStackHelper.createItem(key, Material.EGG, 1);
     }
 
-    protected void setIcon(ItemStack item) {
+    public void setIcon(ItemStack item) {
         this.icon = item;
     }
 
@@ -71,6 +73,8 @@ public abstract class ElevatorAction {
 
         if (!defaultGroupingSet)
             this.calculateGroupingFromAlias(this.defaultGroupingAlias, value);
+
+        this.initialized = true;
         this.onInitialize(this.value);
     }
 
@@ -108,6 +112,7 @@ public abstract class ElevatorAction {
     protected <T> T getGroupingObject(ElevatorActionGrouping<T> grouping, Elevator elevator) {
 
         if (elevator != null && this.settings.containsKey(grouping)) {
+
             ElevatorActionSetting<T> data = (ElevatorActionSetting<T>) this.settings.get(grouping);
             if (data.canBeEditedIndividually(elevator))
                 return grouping.getObjectFromString(data.getIndividualElevatorValue(elevator), this);
@@ -136,6 +141,10 @@ public abstract class ElevatorAction {
     }
 
     protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionGrouping<T> grouping, String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
+
+        if (!initialized)
+            throw new RuntimeException("Elevator Action Setting mapped prior to initialization. Please move all mapSetting calls to the onInitialize method.");
+
         ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, settingDisplayName, description, icon, textColor);
         this.settings.put(grouping, setting);
 
@@ -153,7 +162,8 @@ public abstract class ElevatorAction {
 
     public void initIdentifier() {
         UUID currentIdent = this.getGroupingObject(keyGrouping);
-        if (currentIdent != null) return;
+        if (currentIdent != null)
+            return;
 
         this.setGroupingObject(keyGrouping, UUID.randomUUID());
     }

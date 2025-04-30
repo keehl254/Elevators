@@ -6,6 +6,7 @@ import com.lkeehl.elevators.services.DataContainerService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -22,13 +23,13 @@ public class HologramLinesSetting extends ElevatorSetting<String[]> {
     }
 
     @Override
-    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, String[] currentValue) {
+    public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, String[] currentValue) {
         // TODO: Open menu for editing holograms
         returnMethod.run();
     }
 
     @Override
-    public void onClickIndividual(Player player, Elevator elevator, Runnable returnMethod, String[] currentValue) {
+    public void onClickIndividual(Player player, Elevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent, String[] currentValue) {
         // TODO: Open menu for editing holograms
         returnMethod.run();
     }

@@ -18,21 +18,18 @@ public class EffectAction extends ElevatorAction {
 
     public EffectAction(ElevatorType elevatorType) {
         super(elevatorType, "effect","name", effectNameGrouping);
-
-        String desc = "This option controls the effect played.";
-        ElevatorActionSetting<String> effectSetting = this.mapSetting(effectNameGrouping, "effect","Effect", desc, Material.CREEPER_HEAD, ChatColor.GOLD);
-        effectSetting.setupDataStore("effect", PersistentDataType.STRING);
-
     }
 
     @Override
     protected void onInitialize(String value) {
-
+        String desc = "This option controls the effect played.";
+        ElevatorActionSetting<String> effectSetting = this.mapSetting(effectNameGrouping, "effect","Effect", desc, Material.CREEPER_HEAD, ChatColor.GOLD);
+        effectSetting.setupDataStore("effect", PersistentDataType.STRING);
     }
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
-        ElevatorEffect effect = ElevatorEffectService.getEffectFromKey(this.getGroupingObject(effectNameGrouping));
+        ElevatorEffect effect = ElevatorEffectService.getEffectFromKey(this.getGroupingObject(effectNameGrouping, eventData.getOrigin()));
         if(effect == null)
             return;
 

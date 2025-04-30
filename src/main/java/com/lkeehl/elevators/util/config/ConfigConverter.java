@@ -1,6 +1,7 @@
 package com.lkeehl.elevators.util.config;
 
 import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.util.config.converter.*;
 import com.lkeehl.elevators.util.config.nodes.ClassicConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigNode;
@@ -23,6 +24,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public abstract class ConfigConverter {
@@ -162,8 +164,7 @@ public abstract class ConfigConverter {
 
             fileWriter.write(writeLines.toString());
         } catch (IOException e) {
-            Elevators.getElevatorsLogger().warning("Could not save YAML!");
-            e.printStackTrace();
+            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed while saving config. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
     }
 

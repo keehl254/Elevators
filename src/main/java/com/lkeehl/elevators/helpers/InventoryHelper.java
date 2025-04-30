@@ -204,7 +204,7 @@ public class InventoryHelper {
             ElevatorActionSetting<?> setting = settings.get(i);
             display.setItemSimple(i+9, setting.createIcon(setting.getIndividualElevatorValue(elevator), false), (event, myDisplay) -> {
                 myDisplay.stopReturn();
-                setting.clickIndividual(player, elevator, () -> openInteractActionSettingsMenu(player, elevator, action, onReturn));
+                setting.clickIndividual(player, elevator, () -> openInteractActionSettingsMenu(player, elevator, action, onReturn), event);
             });
         }
         display.setReturnButton(0, ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "BACK", Material.ARROW, 1));
@@ -248,19 +248,19 @@ public class InventoryHelper {
             ElevatorSetting<?> setting = settings.get(i);
             display.setItemSimple(i+9, setting.createIcon(setting.getIndividualElevatorValue(elevator), false), (event, myDisplay) -> {
                 myDisplay.stopReturn();
-                setting.clickIndividual(player, elevator, () -> openInteractSettingsMenu(player, elevator));
+                setting.clickIndividual(player, elevator, () -> openInteractSettingsMenu(player, elevator), event);
             });
         }
 
         if(!downActions.isEmpty()) {
-            display.setItemSimple(inventory.getSize() - 1, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Upwards Actions", Material.SPECTRAL_ARROW, 1), (event, myDisplay) -> {
+            display.setItemSimple(inventory.getSize() - 1, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Downwards Actions", Material.SPECTRAL_ARROW, 1), (event, myDisplay) -> {
                 myDisplay.stopReturn();
                 openInteractActionsMenu(player, elevator, downActions);
             });
         }
 
         if(!upActions.isEmpty()) {
-            display.setItemSimple(inventory.getSize() - (downActions.isEmpty() ? 1 : 2), ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Downwards Actions", Material.TIPPED_ARROW, 1), (event, myDisplay) -> {
+            display.setItemSimple(inventory.getSize() - (downActions.isEmpty() ? 1 : 2), ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Upwards Actions", Material.TIPPED_ARROW, 1), (event, myDisplay) -> {
                 myDisplay.stopReturn();
                 openInteractActionsMenu(player, elevator, upActions);
             });
