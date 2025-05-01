@@ -77,6 +77,11 @@ public class SimpleDisplay implements Listener {
         }, flags);
     }
 
+    public SimpleDisplay clearActions() {
+        slotDataMap.clear();
+        return this;
+    }
+
     public void close(boolean executeReturn) {
         if(!executeReturn)
             HandlerList.unregisterAll(this);
@@ -167,6 +172,10 @@ public class SimpleDisplay implements Listener {
 
     public void setCache(String key, Object value) {
         this.cache.put(key, value);
+    }
+
+    public Inventory getInventory() {
+        return this.inventory;
     }
 
     public enum DisplayClickResult {

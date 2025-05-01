@@ -216,5 +216,20 @@ public class MessageHelper {
         return text;
     }
 
+    public static String fixEnum(String input) {
+        input = input.toLowerCase();
+        String[] words = input.split("_");
+
+        StringBuilder result = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                String formattedWord = word.substring(0, 1).toUpperCase() + word.substring(1);
+                result.append(formattedWord).append(" ");
+            }
+        }
+
+        return result.toString();
+    }
+
 
 }

@@ -1,132 +1,143 @@
 # Don't Mess With. Deals with config conversion
-version: "5.0.0"
-
-# Back-end options
-
-## This option controls whether the plugin will check for plugin updates upon startup or every four hours.
-## Players with the update permission will receive a message if one is available.
+version: 5.0.0
+# This option controls whether the plugin will check for plugin updates upon startup or every four hours.
+# Players with the update permission will receive a message if one is available.
 updateCheckerEnabled: true
-
-# Locale change. All messages support color codes.
-
-locale:
-  cantCreateMessage: "&b&lELEVATORS&f You do not have permission to create this Elevator!"
-  cantDyeMessage: "&b&lELEVATORS&f You do not have permission to dye this Elevator!"
-  cantUseMessage: "&b&lELEVATORS&f You do not have permission to use this Elevator!"
-  cantGiveMessage: "&b&lELEVATORS&f You do not have permission to give Elevators!"
-  cantReloadMessage: "&b&lELEVATORS&f You do not have permission to reload Elevators!"
-  cantAdministrateMessage: '&b&lELEVATORS&f You do not have permission to administrate Elevators!'
-  givenElevatorMessage: "&b&lELEVATORS&f You have been given an Elevator!"
-  notEnoughRoomGiveMessage: "&b&lELEVATORS&f You do not have enough space in your inventory! The Elevator is on the ground in front of you!"
-  notEnoughMoneyMessage: "&b&lELEVATORS&f You need %left% to use this elevator!"
-  moneyTakenMessage: "&b&lELEVATORS&f %amount% has been taken from your account!"
-  worldDisabledMessage: '&b&lELEVATORS&f Elevators have been disabled in this world!'
-  elevatorGiveName: '&b&lELEVATORS&f Enter a new name for this elevator in the chat.'
-  elevatorNowProtected: '&b&lELEVATORS&f The elevator can now only be used by trusted players.'
-  elevatorNowUnprotected: '&b&lELEVATORS&f The elevator can now be used by anyone.'
-  actionEnterCommand: '&b&lELEVATORS&f Enter a command into the chat for the action.'
-  actionMessageCommand: '&b&lELEVATORS&f Enter a message into the chat for the action.'
-  actionEnterSound: '&b&lELEVATORS&f Enter a bukkit sound name into the chat for the action.'
-  actionEnterPitch: '&b&lELEVATORS&f Enter a pitch between 0 and 2 for the action.'
-  actionEnterVolume: '&b&lELEVATORS&f Enter a volume between 0 and 10 for the action.'
-  actionEnterActionBar: '&b&lELEVATORS&f Enter a message to appear in the action bar for the action.'
-  actionEnterTitle: '&b&lELEVATORS&f Enter a message to appear in the title for the action.'
-  actionEnterSubTitle: '&b&lELEVATORS&f Enter a message to appear in the subtitle for the action. Leave blank or type "null" to provide no subtitle.'
-  actionBossBarStyle: '&b&lELEVATORS&f Scroll through your inventory to change the appearance of the bar. Punch the air or a block to select the style.'
-  actionBossBarMessage: '&b&lELEVATORS&f Enter a message into the chat for the action.'
-  actionBossBarOnlyOne: '&b&lELEVATORS&f You may only have one bossbar action per direction.'
-
-# Global Configuration
-
-## Forces the elevator to face upwards upon placement. Just looks better
-playEffectOnNext: false
+# effectDestination controls which elevator the effects and elevators sounds will play at. Options are:
+# Origin
+# Destination
+# Both
+effectDestination: ORIGIN
+# Dictates which elevator the player needs permission from to teleport.Options are:
+# Origin
+# Destination
+# Both
+permissionMode: BOTH
+# This option controls whether elevators should always face upwards.
 forceFacingUpwards: true
-
-#Disabled Worlds
-##Lists worlds that elevators should not work in.
-disabled-worlds:
-  - 'example_world'
-
-# Effects
-
+# This configuration section will automatically populate as supported protection plugins are detected.
+# "allowCustomization" will determine whether a player can toggle the hook check on and off individually for an elevator.
+# "blockNonMemberUseDefault" sets the default state for the individual elevators protection. If marked as true, only trusted / members or those with bypass perms will be able to use the elevator.
+protectionHooks:
+  GriefPrevention:
+    allowCustomization: true
+    blockNonMemberUseDefault: true
+# Locale change. All messages support color codes.
+locale:
+  cantCreateMessage: '&b&lELEVATORS&f You do not have permission to create this Elevator!'
+  cantDyeMessage: '&b&lELEVATORS&f You do not have permission to dye this Elevator!'
+  cantUseMessage: '&b&lELEVATORS&f You do not have permission to use this Elevator!'
+  cantGiveMessage: '&b&lELEVATORS&f You do not have permission to give Elevators!'
+  cantAdministrateMessage: '&b&lELEVATORS&f You do not have permission to administrate
+    Elevators!'
+  cantReloadMessage: '&b&lELEVATORS&f You do not have permission to reload Elevators!'
+  notEnoughRoomGiveMessage: '&b&lELEVATORS&f You do not have enough space in your
+    inventory! The Elevator is on the ground in front of you!'
+  givenElevatorMessage: '&b&lELEVATORS&f You have been given an Elevator!'
+  worldDisabledMessage: '&b&lELEVATORS&f Elevators have been disabled in this world!'
+  elevatorNowProtected: '&b&lELEVATORS&f The elevator can now only be used by trusted
+    players.'
+  elevatorNowUnprotected: '&b&lELEVATORS&f The elevator can now be used by anyone.'
+  chatInputBackOut: '&7Type "cancel" to back out of chat input.'
+  chatInputBackOutAllowReset: '&7Type "cancel" to back out of chat input or type "reset"
+    to reset.'
+  enterFloorName: '&c&lELEVATORS&f Enter a new floor name into the chat.'
+# If this option is enabled, elevators will only work with trusted users in claims by default. Elevators can be changed individually to allow visitors by trusted members.
+claimProtectionDefault: true
+# If this option is enabled, elevators will be able to be placed using dispensers. Keep in mind that this can be used to bypass the elevator placement permission.
+allowElevatorDispense: false
+# Elevators cannot be used in the world names listed below.
+disabledWorlds:
+  - example_world
 effects:
   creeper:
-    file: "Creeper.png"
+    # The image file that the effect will try to recreate.
+    file: Creeper.png
+    # Scales down the effect to be a percentage of original images width and height.
     scale: 50
+    # Controls how long the effect will be present before disappearing.
     duration: 1.0
+    # Elevators can use particles to create the effect (heavy on potato computers), or can hook into Holograms.
     useHolo: true
-    background: "#FFFFFF"
-    
-# Elevator Classifications
-
+    # Any color of this hex found in the image file will be made transparent.
+    background: '#FFFFFF'
 elevators:
-  default:
-    ## The item display name of the elevator:
-    displayName: "Elevator"
-    ## The maximum distance an elevator will search for the receiving end. Set to -1 to disable:
+  DEFAULT:
+    # The item display name of the elevator.
+    displayName: Elevator
+    usePermission: elevators.use.default
+    dyePermission: elevators.dye.default
+    # The maximum distance an elevator will search for the receiving end. Set to -1 to disable.
     maxDistance: 20
-    ## The maximum amount of solid blocks that can be between the sending and receiving elevator:
+    # The maximum amount of solid blocks that can be between the sending and receiving elevator.
     maxSolidBlocks: -1
-    ## The maximum stack size of elevators
+    # The maximum stack size of elevators.
     maxStackSize: 16
-    costUp: 0.0
-    costDown: 0.0
+    # This option will require both a destination and origin elevator to be of the same type.
     classCheck: true
-    ## This option will stop the use of elevators if the receiving elevator has a blocked path
+    # This option will stop the use of elevators if the receiving elevator has a blocked path.
     stopObstruction: true
-    ## This option controls whether the shulker will support dye colors besides the default:
-    coloredOutput: true
-    ## Whether the elevator will allow teleportation to an elevator of a different color:
+    # If this option is disabled, players will not be able to dye elevators different colors.
+    supportDying: true
+    # Whether the elevator will allow teleportation to an elevator of a different color.
     checkColor: true
-    ## If enabled, this will require the player to have the 'use' permission for the elevator:
+    # If enabled, this will require the player to have the 'use' permission for the elevator.
     checkPerms: true
-    ## This config option controls whether elevators should be able to explode from TNT or mobs:
+    # This config option controls whether elevators should be able to to explode from TNT or mobs.
     canExplode: false
-    ## This option sets the default color of the elevator. This is really only useful if 'coloredOutput' is false:
-    defaultColor: "WHITE"
-    holo: []
-    ## Allows the addition of a lore to the shulkerbox.
-    ## This can be useful both to look great or to create support for plugins with lore blacklists.
-    lore: []
-
-    ## Define actions that can be run on elevator usage.
-    ## Available actions are:
-    ### command-console
-    ### command-player
-    ### message-player
-    ### message-all
-    ### sound
-
-    ## If you do not wish to use actions on use, you can either delete the actions section
-    ## or set the "up" and "down" values to an empty array with "[]" such as shown with the "down" value. PlaceholderAPI is supported.
-
+    # Allows the addition of a hologram that appears above elevators of this type.
+    hologramLines: []
+    # Allows the addition of a lore to the item stack.
+    # This can be useful both to look great or to create support for plugins with lore blacklists.
+    loreLines: []
+    # Define actions that can be run on elevator usage.
+    # Default actions are:
+    # action-bar, boss-bar, command-console
+    # command-player, message-all, message-player
+    # sound, title, effect, cost
+    #
+    # If you do not wish to use actions on use, you can either delete the actions section
+    # or set the "up" and "down" values to an empty array with "[]". PlaceholderAPI is supported.
+    # Some default effects are: "arrow","helix", "sparkles"
+    #
+    # IF AN IDENTIFIER KEY HAS BEEN GENERATED, DO NOT MESS WITH IT OR INDIVIDUAL ELEVATOR DATA MAY BE LOST.
     actions:
       up:
-        - "sound: ENTITY_BLAZE_SHOOT pitch=2.0 volume=1.0"
+        - 'sound: pitch=2.0 identifier=37c523f1-ee9d-468d-a869-d4c70a524725 volume=1.0
+        sound=ENTITY_BLAZE_SHOOT'
       down:
-        - "sound: ENTITY_BLAZE_SHOOT pitch=2.0 volume=1.0"
-
-          ## Elevators supports the addition of multiple recipes for elevator creation.
-          ## To add another recipe, copy the data of "classic" and rename it to something unique.
-          ### amount changes the amount of elevators made from the recipe
-          ### permission will define the permission node required to use the elevator if "checkPerms" is true.
-          ### coloredCrafting adds support for changing the elevator color in the recipe based on ingredients. F.E. Blue wool will make a blue elevator.
-
-          ### The materials and recipe options are maps. In 'materials', you define what a character in 'recipe' should represent.
-          ### By default, 'recipe' shows a single enderpearl surrounded by white_wool. (Wool is colorable, so if coloredCrafting is enabled, it doesn't matter
-          ### what color of wool is chosen here, so long as it is an existing material)
-          ### List of colorable blocks: Shulker boxes, concrete, concrete powder, wool, beds, banners, carpet, dyes, stained glass (and panes).
-
+        - 'sound: pitch=2.0 identifier=c9b78d0d-f3a0-4e11-911b-2ea5461e275e volume=1.0
+        sound=ENTITY_BLAZE_SHOOT'
+    # Define elevator settings that should not be customizable by users.
+    # Example settings are:
+    # can-explode, check-color, check-perms, check-type, change-holo, stop-obstruction
+    #
+    # Custom actions may have their own settings that can be disabled through use of the action key, an forward-slash, and the setting name.
+    # Example action setting would be:
+    # message-player/message, sound/sound, sound/volume, sound/pitch, title/title, title/subtitle
+    disabledSettings:
+      - change-holo
+      - sound/sound
+    # Define recipes to craft an elevator type. If you do not wish to have any recipes, replace the section
+    # with an empty map by settings recipes to "{}". Example:
+    # recipes: {}
     recipes:
       classic:
         amount: 1
-        permission: "elevators.craft.default.classic"
-        coloredCrafting: true
+        # If "supportMultiColorMaterials" is disabled, this permission will allow crafting as is. If "supportMultiColorMaterials" is enabled, a wildcard or dyecolor needs to be appended to this permission for proper checking.
+        craftPermission: elevators.craft.default
+        # This option controls the elevator output color if "supportMultiColorOutput" is disabled.
+        defaultOutputColor: RED
+        # If this option is disabled, all variations of this recipe will be of the "defaultOutputColor".
+        supportMultiColorOutput: true
+        # If this option is enabled, multiple variations of this recipe will be created for each dyed color.
+        supportMultiColorMaterials: true
+        # Create a shaped recipe using unique characters here and map these characters to materials in the "material" config option.
+        recipe:
+          - www
+          - wew
+          - www
+        # Map characters to their materials. If "supportMultiColorMaterials" is enabled, dye colors in materials such as "white" in "white_wool" will be substituted for different dye colors.
         materials:
           w: white_wool
           e: ender_pearl
-        recipe:
-          - "www"
-          - "wew"
-          - "www"
-        

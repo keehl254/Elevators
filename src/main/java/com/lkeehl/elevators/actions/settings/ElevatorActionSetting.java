@@ -23,7 +23,7 @@ public class ElevatorActionSetting<T> extends ElevatorSetting<String> {
     private PentaConsumer<Player, Runnable, InventoryClickEvent, T, Consumer<T>> onClickMethod;
 
     public ElevatorActionSetting(ElevatorAction action, ElevatorActionGrouping<T> grouping, String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
-        super(action.getKey()+"_"+settingName, settingDisplayName, description, icon, textColor);
+        super(action.getKey()+"/"+settingName, settingDisplayName, description, icon, textColor);
 
         this.elevatorAction = action;
         this.actionGrouping = grouping;
