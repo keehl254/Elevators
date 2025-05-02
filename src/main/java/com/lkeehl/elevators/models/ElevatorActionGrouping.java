@@ -33,14 +33,15 @@ public class ElevatorActionGrouping<T> {
         groupingAliases.addAll(Arrays.stream(aliases).map(String::toLowerCase).toList());
 
         this.groupingAliases = groupingAliases;
-        this.conversionErrorMessage = "An invalid value was provided for action %s on elevator type '%s'. Defaulting to '%s'";
+        this.conversionErrorMessage = "An invalid value was provided for action %s '%s' on elevator type '%s'. Defaulting to '%s'";
     }
 
     public T getObjectFromString(String value, ElevatorAction action) {
         try {
             return this.conversionFunction.apply(value);
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().warning(String.format(this.conversionErrorMessage, action.getKey(), action.getElevatorType().getTypeKey(), this.defaultObject.toString()));
+            Elevators.getElevatorsLogger().info(value);
+            Elevators.getElevatorsLogger().warning(String.format(this.conversionErrorMessage, action.getKey(), this.getMainAlias(), action.getElevatorType().getTypeKey(), this.defaultObject.toString()));
             return this.defaultObject;
         }
     }

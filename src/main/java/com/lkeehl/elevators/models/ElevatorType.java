@@ -1,13 +1,11 @@
 package com.lkeehl.elevators.models;
 
 import com.lkeehl.elevators.services.ElevatorActionService;
-import com.lkeehl.elevators.services.ElevatorRecipeService;
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class ElevatorType extends ConfigElevatorType {
 

@@ -1,13 +1,11 @@
 package com.lkeehl.elevators.effects;
 
 import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.util.ExecutionMode;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +14,7 @@ import java.util.Objects;
 public class ArrowEffect extends ElevatorEffect {
 
     public ArrowEffect() {
-        super("ARROW");
+        super("ARROW", ItemStackHelper.createItem("Arrow", Material.TIPPED_ARROW, 1));
     }
 
     @Override

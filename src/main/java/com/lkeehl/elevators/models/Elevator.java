@@ -2,14 +2,13 @@ package com.lkeehl.elevators.models;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 
 public class Elevator {
 
-    private ShulkerBox shulkerBox;
+    private final ShulkerBox shulkerBox;
 
-    private ElevatorType elevatorType;
+    private final ElevatorType elevatorType;
 
     public Elevator(ShulkerBox shulkerBox, ElevatorType elevatorType) {
         this.shulkerBox = shulkerBox;

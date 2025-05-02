@@ -4,7 +4,6 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigEffect;
-import com.lkeehl.elevators.services.configs.ConfigElevatorType;
 import com.lkeehl.elevators.services.configs.ConfigLocale;
 import com.lkeehl.elevators.services.configs.ConfigRoot;
 import com.lkeehl.elevators.util.config.ConfigConverter;

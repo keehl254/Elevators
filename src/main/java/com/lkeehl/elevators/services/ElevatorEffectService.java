@@ -4,7 +4,6 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.effects.ArrowEffect;
 import com.lkeehl.elevators.effects.HelixEffect;
 import com.lkeehl.elevators.effects.ImageEffect;
-import com.lkeehl.elevators.effects.NoEffect;
 import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.services.configs.ConfigEffect;
@@ -12,6 +11,7 @@ import com.lkeehl.elevators.services.configs.ConfigRoot;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ElevatorEffectService {
@@ -35,7 +35,6 @@ public class ElevatorEffectService {
         File effectDirectory = new File(Elevators.getConfigDirectory(), "effects");
         ResourceHelper.exportResource(Elevators.getInstance(), "Creeper.png", new File(effectDirectory, "Creeper.png"), false);
 
-        elevatorEffects.put("NONE", new NoEffect());
         elevatorEffects.put("ARROW", new ArrowEffect());
         elevatorEffects.put("HELIX", new HelixEffect());
         // elevatorEffects.put("SPARKLES", new SparklesEffect());
@@ -62,6 +61,10 @@ public class ElevatorEffectService {
             return elevatorEffects.get("NONE");
 
         return elevatorEffects.get(effectKey);
+    }
+
+    public static List<ElevatorEffect> getEffects() {
+        return elevatorEffects.values().stream().toList();
     }
 
 }

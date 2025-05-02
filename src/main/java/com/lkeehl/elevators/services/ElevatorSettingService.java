@@ -1,6 +1,5 @@
 package com.lkeehl.elevators.services;
 
-import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.settings.*;

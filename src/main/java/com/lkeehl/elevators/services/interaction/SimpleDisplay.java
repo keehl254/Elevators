@@ -8,9 +8,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,7 +26,7 @@ public class SimpleDisplay implements Listener {
     private final Player player;
     private final Inventory inventory;
     private final DisplayClickResult defaultClickResult;
-    private final Runnable returnRunnable;
+    private Runnable returnRunnable;
 
     private boolean blockReturn = false;
 
@@ -109,6 +107,11 @@ public class SimpleDisplay implements Listener {
         this.initialFlags = initialFlags;
         this.initialOnClick = onClick;
 
+        return this;
+    }
+
+    public SimpleDisplay onReturn(Runnable onReturn) {
+        this.returnRunnable = onReturn;
         return this;
     }
 

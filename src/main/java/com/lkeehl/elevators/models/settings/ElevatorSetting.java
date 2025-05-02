@@ -1,6 +1,5 @@
 package com.lkeehl.elevators.models.settings;
 
-import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.Elevator;
@@ -82,7 +81,7 @@ public class ElevatorSetting<T> {
         if(value instanceof Boolean boolVal)
             lore.add(boolVal ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
         else
-            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + value);
+            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + MessageHelper.formatColors(value.toString()));
 
         if(!this.actions.isEmpty()) {
             lore.add("");

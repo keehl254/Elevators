@@ -1,6 +1,7 @@
 package com.lkeehl.elevators.effects;
 
 import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.util.ExecutionMode;
@@ -11,7 +12,7 @@ import java.util.Objects;
 public class HelixEffect extends ElevatorEffect {
 
     public HelixEffect() {
-        super("HELIX");
+        super("HELIX", ItemStackHelper.createItem("Helix", Material.HOPPER, 1));
     }
 
     @Override

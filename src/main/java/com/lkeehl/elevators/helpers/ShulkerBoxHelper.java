@@ -1,12 +1,9 @@
 package com.lkeehl.elevators.helpers;
 
-import io.papermc.paper.event.block.BlockPreDispenseEvent;
-import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.block.data.Directional;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 

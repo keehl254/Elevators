@@ -3,19 +3,14 @@ package com.lkeehl.elevators.services.interaction;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.services.ConfigService;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SimpleInput implements Listener {

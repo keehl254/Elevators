@@ -1,16 +1,14 @@
 package com.lkeehl.elevators.models;
 
-import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
-import com.lkeehl.elevators.models.settings.ElevatorSetting;
+import com.lkeehl.elevators.services.interaction.SimpleDisplay;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -167,6 +165,9 @@ public abstract class ElevatorAction {
 
         this.setGroupingObject(keyGrouping, UUID.randomUUID());
     }
+
+    public void onStartEditing(Player player, SimpleDisplay display, Elevator elevator) {}
+    public void onStopEditing(Player player, SimpleDisplay display, Elevator elevator) {}
 
     protected abstract void onInitialize(String value);
 

@@ -1,19 +1,21 @@
 package com.lkeehl.elevators.actions;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
-import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.interaction.SimpleInput;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
-import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class CommandPlayerAction extends ElevatorAction {
 
@@ -27,7 +29,7 @@ public class CommandPlayerAction extends ElevatorAction {
     protected void onInitialize(String value) {
         String desc = "This option controls the command executed.";
         ElevatorActionSetting<String> commandSetting = this.mapSetting(commandGrouping, "command","Command", desc, Material.COMMAND_BLOCK, ChatColor.GOLD);
-        commandSetting.setupDataStore("command", PersistentDataType.STRING);
+        commandSetting.onClick(this::editCommand);
     }
 
     @Override
@@ -36,6 +38,20 @@ public class CommandPlayerAction extends ElevatorAction {
         value = MessageHelper.formatPlaceholders(player, value);
 
         player.performCommand(value);
+    }
+
+    private void editCommand(Player player, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue, Consumer<String> setValueMethod) {
+        player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
+
+        SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
+        input.onComplete(message -> {
+            setValueMethod.accept(message);
+            returnMethod.run();
+            return SimpleInput.SimpleInputResult.STOP;
+        });
+        input.onCancel(returnMethod);
+        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterCommand);
+        input.start();
     }
 
 }

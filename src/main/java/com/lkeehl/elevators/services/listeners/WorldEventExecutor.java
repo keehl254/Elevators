@@ -1,6 +1,5 @@
 package com.lkeehl.elevators.services.listeners;
 
-import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
@@ -21,8 +20,6 @@ import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.entity.Item;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;

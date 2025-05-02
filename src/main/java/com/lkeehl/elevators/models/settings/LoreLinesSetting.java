@@ -1,16 +1,11 @@
 package com.lkeehl.elevators.models.settings;
 
-import com.lkeehl.elevators.helpers.ItemStackHelper;
-import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.DataContainerService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LoreLinesSetting extends ElevatorSetting<List<String>> {

@@ -2,8 +2,10 @@ package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.*;
+import com.lkeehl.elevators.events.ElevatorRegisterActionsEvent;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorType;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -38,16 +40,24 @@ public class ElevatorActionService {
 
         registerElevatorAction("effect", EffectAction::new, ChatColor.BLUE.toString(), "Effect", Material.FIREWORK_ROCKET);
 
-        registerElevatorAction("title", TitleAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.NAME_TAG);
-        registerElevatorAction("action-bar", ActionBarAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.BELL);
-        registerElevatorAction("boss-bar", BossBarAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.DRAGON_HEAD);
+        registerElevatorAction("title", TitleAction::new, ChatColor.RED.toString(), "Title", Material.NAME_TAG);
+        registerElevatorAction("action-bar", ActionBarAction::new, ChatColor.RED.toString(), "Action Bar", Material.BELL);
+        registerElevatorAction("boss-bar", BossBarAction::new, ChatColor.RED.toString(), "Boss Bar", Material.DRAGON_HEAD);
 
+        Bukkit.getPluginManager().callEvent(new ElevatorRegisterActionsEvent());
     }
 
     public static void registerElevatorAction(String key, Function<ElevatorType, ElevatorAction> actionConstructor, ItemStack icon) {
         key = key.toLowerCase().trim();
         actionIcons.put(key, icon);
         actionConstructors.put(key, actionConstructor);
+
+        if(!Elevators.getInstance().isInitialized())
+            return;
+
+        for(ElevatorType type : ElevatorTypeService.getExistingElevatorTypes()) {
+            type.onLoad();
+        }
     }
 
     public static void registerElevatorAction(String key, Function<ElevatorType, ElevatorAction> actionConstructor, String chatColor,  String displayName, Material itemType) {

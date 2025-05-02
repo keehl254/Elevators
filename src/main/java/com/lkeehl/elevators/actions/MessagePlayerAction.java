@@ -1,21 +1,21 @@
 package com.lkeehl.elevators.actions;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
-import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.interaction.SimpleInput;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class MessagePlayerAction extends ElevatorAction {
@@ -44,7 +44,17 @@ public class MessagePlayerAction extends ElevatorAction {
     }
 
     private void editMessage(Player player, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue, Consumer<String> setValueMethod) {
-        returnMethod.run();
+        player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
+
+        SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
+        input.onComplete(message -> {
+            setValueMethod.accept(message);
+            returnMethod.run();
+            return SimpleInput.SimpleInputResult.STOP;
+        });
+        input.onCancel(returnMethod);
+        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterMessage);
+        input.start();
     }
 
 }

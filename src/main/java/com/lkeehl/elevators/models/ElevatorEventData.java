@@ -1,8 +1,5 @@
 package com.lkeehl.elevators.models;
 
-import com.lkeehl.elevators.helpers.ElevatorHelper;
-import org.bukkit.block.ShulkerBox;
-
 public class ElevatorEventData {
 
 

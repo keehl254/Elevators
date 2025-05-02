@@ -2,9 +2,7 @@ package com.lkeehl.elevators.services.hooks;
 
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.hooks.ElevatorHook;
-import com.lkeehl.elevators.models.ElevatorType;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

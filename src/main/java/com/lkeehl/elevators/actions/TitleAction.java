@@ -1,18 +1,24 @@
 package com.lkeehl.elevators.actions;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
+import com.lkeehl.elevators.helpers.InventoryHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.interaction.SimpleInput;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -54,11 +60,31 @@ public class TitleAction extends ElevatorAction {
     }
 
     private void editTitle(Player player, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue, Consumer<String> setValueMethod) {
-        returnMethod.run();
+        player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
+
+        SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
+        input.onComplete(message -> {
+            setValueMethod.accept(message);
+            returnMethod.run();
+            return SimpleInput.SimpleInputResult.STOP;
+        });
+        input.onCancel(returnMethod);
+        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterTitle);
+        input.start();
     }
 
     private void editSubTitle(Player player, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue, Consumer<String> setValueMethod) {
-        returnMethod.run();
+        player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
+
+        SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
+        input.onComplete(message -> {
+            setValueMethod.accept(message);
+            returnMethod.run();
+            return SimpleInput.SimpleInputResult.STOP;
+        });
+        input.onCancel(returnMethod);
+        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterSubtitle);
+        input.start();
     }
 
 }

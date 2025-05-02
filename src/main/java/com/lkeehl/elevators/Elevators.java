@@ -14,6 +14,8 @@ public class Elevators extends JavaPlugin {
     private static Elevators instance;
     private static FoliaLib foliaLib;
 
+    private boolean initialized = false;
+
     @Override()
     public void onEnable() {
         instance = this;
@@ -23,15 +25,16 @@ public class Elevators extends JavaPlugin {
         ElevatorSettingService.init();
         ElevatorVersionService.init();
         ElevatorEffectService.init();
+        ElevatorActionService.init();
         ElevatorTypeService.init();
         ElevatorRecipeService.init();
-        ElevatorActionService.init();
         ObstructionService.init();
         ListenerService.init();
         HookService.init();
         CommandService.init(this);
 
         this.reloadElevators();
+        this.initialized = true;
     }
 
     @Override()
@@ -41,6 +44,7 @@ public class Elevators extends JavaPlugin {
 
         File configFile = new File(this.getDataFolder(), "config.yml");
         ConfigService.saveConfig(configFile);
+        this.initialized = false;
     }
 
     public void reloadElevators() {
@@ -91,4 +95,7 @@ public class Elevators extends JavaPlugin {
 
     }
 
+    public boolean isInitialized() {
+        return initialized;
+    }
 }

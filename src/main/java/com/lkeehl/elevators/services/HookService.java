@@ -7,10 +7,8 @@ import com.lkeehl.elevators.models.hooks.ElevatorHook;
 import com.lkeehl.elevators.models.hooks.HologramHook;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import com.lkeehl.elevators.services.hooks.*;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

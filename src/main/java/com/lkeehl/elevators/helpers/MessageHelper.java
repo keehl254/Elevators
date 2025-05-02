@@ -96,7 +96,8 @@ public class MessageHelper {
         MessageHelper.sendFormattedMessage(sender, message);
     }
 
-    public static void sendFormattedMessage(CommandSender sender, String message) {
+    public static void sendFormattedMessage(CommandSender sender, String message, Object... items) {
+        message = String.format(message, items);
         message = formatPlaceholders(sender, message);
         message = formatColors(message);
 

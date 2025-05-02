@@ -1,9 +1,7 @@
 package com.lkeehl.elevators.models.hooks;
 
 import com.lkeehl.elevators.models.Elevator;
-import com.lkeehl.elevators.models.ElevatorType;
 import org.bukkit.Location;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

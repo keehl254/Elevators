@@ -2,6 +2,8 @@ package com.lkeehl.elevators.effects;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ColorHelper;
+import com.lkeehl.elevators.helpers.ItemStackHelper;
+import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.models.ElevatorEventData;
@@ -29,7 +31,7 @@ public class ImageEffect extends ElevatorEffect {
     private final int height;
 
     public ImageEffect(String imageEffectKey, File file, int scale, float duration, boolean useHolo, String hexBackgroundColor) {
-        super(imageEffectKey);
+        super(imageEffectKey, imageEffectKey.equalsIgnoreCase("creeper") ? ItemStackHelper.createItem("Creeper", Material.CREEPER_HEAD, 1) : null);
 
         scale = Math.max(0, Math.min(100, scale));
         int backgroundRGB = ColorHelper.getRGBFromHex(hexBackgroundColor);

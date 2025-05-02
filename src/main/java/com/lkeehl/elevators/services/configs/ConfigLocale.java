@@ -1,7 +1,6 @@
 package com.lkeehl.elevators.services.configs;
 
 import com.lkeehl.elevators.util.config.Config;
-import org.bukkit.ChatColor;
 
 public class ConfigLocale implements Config {
 
@@ -34,6 +33,14 @@ public class ConfigLocale implements Config {
     public String chatInputBackOutAllowReset = "&7Type \"cancel\" to back out of chat input or type \"reset\" to reset.";
 
     public String enterFloorName = prefix + "Enter a new floor name into the chat.";
+
+    public String enterTitle = prefix + "Enter a new title into the chat.";
+
+    public String enterSubtitle = prefix + "Enter a new subtitle into the chat.";
+
+    public String enterMessage = prefix + "Enter a new message into the chat.";
+
+    public String enterCommand = prefix + "Enter a new command into the chat.";
 
 
 

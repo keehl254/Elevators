@@ -16,8 +16,6 @@ import de.rapha149.signgui.SignGUI;
 import de.rapha149.signgui.SignGUIAction;
 import de.rapha149.signgui.SignGUIBuilder;
 import de.rapha149.signgui.exception.SignGUIVersionException;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -197,9 +195,15 @@ public class InventoryHelper {
         settings.removeIf(i -> !i.canBeEditedIndividually(elevator));
 
         int inventorySize = (Math.floorDiv(settings.size() + 8, 9) * 9) + 9;
-        Inventory inventory = Bukkit.createInventory(null, inventorySize, "Settings > Actions > Settings");
+        Inventory inventory = Bukkit.createInventory(null, inventorySize, "Settings > Actions > Action");
 
-        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, onReturn);
+        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory);
+        action.onStartEditing(player, display, elevator);
+        display.onReturn(() -> {
+            action.onStopEditing(player, display, elevator);
+            onReturn.run();
+        });
+
         for(int i=0;i< settings.size();i++) {
             ElevatorActionSetting<?> setting = settings.get(i);
             display.setItemSimple(i+9, setting.createIcon(setting.getIndividualElevatorValue(elevator), false), (event, myDisplay) -> {

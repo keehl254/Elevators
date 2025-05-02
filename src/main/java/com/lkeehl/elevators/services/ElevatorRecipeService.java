@@ -1,6 +1,5 @@
 package com.lkeehl.elevators.services;
 
-import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.MCVersionHelper;
 import com.lkeehl.elevators.models.ElevatorRecipeGroup;
 import com.lkeehl.elevators.models.ElevatorType;

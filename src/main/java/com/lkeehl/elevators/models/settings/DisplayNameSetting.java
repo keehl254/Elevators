@@ -1,14 +1,12 @@
 package com.lkeehl.elevators.models.settings;
 
 import com.lkeehl.elevators.Elevators;
-import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.ElevatorType;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
