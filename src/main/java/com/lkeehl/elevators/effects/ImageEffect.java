@@ -12,6 +12,7 @@ import com.lkeehl.elevators.services.HookService;
 import com.lkeehl.elevators.util.ExecutionMode;
 import org.bukkit.Color;
 import org.bukkit.*;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -45,13 +46,7 @@ public class ImageEffect extends ElevatorEffect {
         try {
             BufferedImage image = ImageIO.read(file);
 
-            Dimension scaledDimension = new Dimension((scale * image.getWidth()) / 100, (scale * image.getHeight()) / 100);
-            if (scaledDimension.getWidth() < scaledDimension.getHeight() && scaledDimension.getWidth() < 16)
-                scaledDimension.setSize(16, (scaledDimension.getHeight() * 16) / scaledDimension.getWidth());
-            else if (scaledDimension.getHeight() < 16)
-                scaledDimension.setSize((scaledDimension.getWidth() * 16) / scaledDimension.getHeight(), 16);
-
-            BufferedImage scaledImage = new BufferedImage((int) scaledDimension.getWidth(), (int) scaledDimension.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage scaledImage = getBufferedImage(scale, image);
             Graphics2D g2d = scaledImage.createGraphics();
             g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -76,6 +71,16 @@ public class ImageEffect extends ElevatorEffect {
         }
         this.height = height;
         this.rgbPattern = rgbPattern;
+    }
+
+    private static @NotNull BufferedImage getBufferedImage(int scale, BufferedImage image) {
+        Dimension scaledDimension = new Dimension((scale * image.getWidth()) / 100, (scale * image.getHeight()) / 100);
+        if (scaledDimension.getWidth() < scaledDimension.getHeight() && scaledDimension.getWidth() < 16)
+            scaledDimension.setSize(16, (scaledDimension.getHeight() * 16) / scaledDimension.getWidth());
+        else if (scaledDimension.getHeight() < 16)
+            scaledDimension.setSize((scaledDimension.getWidth() * 16) / scaledDimension.getHeight(), 16);
+
+        return new BufferedImage((int) scaledDimension.getWidth(), (int) scaledDimension.getHeight(), BufferedImage.TYPE_INT_ARGB);
     }
 
     private void playHoloEffect(Location location) {

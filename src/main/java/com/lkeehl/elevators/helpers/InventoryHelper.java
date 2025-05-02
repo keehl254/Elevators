@@ -196,6 +196,7 @@ public class InventoryHelper {
 
         int inventorySize = (Math.floorDiv(settings.size() + 8, 9) * 9) + 9;
         Inventory inventory = Bukkit.createInventory(null, inventorySize, "Settings > Actions > Action");
+        InventoryHelper.fillEmptySlotsWithPanes(inventory, elevator.getDyeColor());
 
         SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory);
         action.onStartEditing(player, display, elevator);
@@ -219,6 +220,7 @@ public class InventoryHelper {
 
         int inventorySize = (Math.floorDiv(actions.size() + 8, 9) * 9) + 9;
         Inventory inventory = Bukkit.createInventory(null, inventorySize, "Elevator > Settings > Actions");
+        InventoryHelper.fillEmptySlotsWithPanes(inventory, elevator.getDyeColor());
 
         SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> openInteractSettingsMenu(player, elevator));
         for(int i=0;i< actions.size();i++) {
@@ -246,6 +248,7 @@ public class InventoryHelper {
 
         int inventorySize = (Math.floorDiv(itemAmount + 8, 9) * 9) + 9;
         Inventory inventory = Bukkit.createInventory(null, inventorySize, "Elevator > Settings");
+        InventoryHelper.fillEmptySlotsWithPanes(inventory, elevator.getDyeColor());
 
         SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> openInteractMenu(player, elevator));
         for(int i=0;i< settings.size();i++) {

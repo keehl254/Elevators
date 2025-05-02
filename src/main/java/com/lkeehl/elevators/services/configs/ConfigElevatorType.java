@@ -39,7 +39,7 @@ public class ConfigElevatorType implements Config {
     @Comments("If enabled, this will require the player to have the 'use' permission for the elevator.")
     protected boolean checkPerms = true;
 
-    @Comments("This config option controls whether elevators should be able to to explode from TNT or mobs.")
+    @Comments("This config option controls whether elevators should be able to explode from TNT or mobs.")
     protected boolean canExplode = false;
 
     @Comments("Allows the addition of a hologram that appears above elevators of this type.")
@@ -64,10 +64,10 @@ public class ConfigElevatorType implements Config {
                 "Available settings are:",
                 "can-explode, check-color, check-perms, check-type, change-holo, stop-obstruction",
                 "",
-                "Custom actions may have their own settings that can be disabled through use of the action key, an forward-slash, and the setting name.",
+                "Custom actions may have their own settings that can be disabled through use of the action key, a forward-slash, and the setting name.",
                 "Available action settings are:",
-                "message-player/message, sound/sound, sound/volume, sound/pitch, title/title, title/subtitle, "})
-    protected List<String> disabledSettings = List.of("change-holo","sound/sound");
+                "message-player/message, sound/sound, sound/volume, sound/pitch, title/title, title/subtitle, action-bar/message, boss-bar/message, effect/effect"})
+    protected List<String> disabledSettings = List.of("change-holo","sound/sound","action-bar/message","boss-bar/message","message-player/message","title/title","title/subtitle","effect/effect");
 
     @Comments({"Define recipes to craft an elevator type. If you do not wish to have any recipes, replace the section",
     "with an empty map by settings recipes to \"{}\". Example:",

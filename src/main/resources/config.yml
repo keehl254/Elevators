@@ -42,6 +42,10 @@ locale:
   chatInputBackOutAllowReset: '&7Type "cancel" to back out of chat input or type "reset"
     to reset.'
   enterFloorName: '&c&lELEVATORS&f Enter a new floor name into the chat.'
+  enterTitle: '&c&lELEVATORS&f Enter a new title into the chat.'
+  enterSubtitle: '&c&lELEVATORS&f Enter a new subtitle into the chat.'
+  enterMessage: '&c&lELEVATORS&f Enter a new message into the chat.'
+  enterCommand: '&c&lELEVATORS&f Enter a new command into the chat.'
 # If this option is enabled, elevators will only work with trusted users in claims by default. Elevators can be changed individually to allow visitors by trusted members.
 claimProtectionDefault: true
 # If this option is enabled, elevators will be able to be placed using dispensers. Keep in mind that this can be used to bypass the elevator placement permission.
@@ -83,7 +87,7 @@ elevators:
     checkColor: true
     # If enabled, this will require the player to have the 'use' permission for the elevator.
     checkPerms: true
-    # This config option controls whether elevators should be able to to explode from TNT or mobs.
+    # This config option controls whether elevators should be able to explode from TNT or mobs.
     canExplode: false
     # Allows the addition of a hologram that appears above elevators of this type.
     hologramLines: []
@@ -103,18 +107,18 @@ elevators:
     # IF AN IDENTIFIER KEY HAS BEEN GENERATED, DO NOT MESS WITH IT OR INDIVIDUAL ELEVATOR DATA MAY BE LOST.
     actions:
       up:
-        - 'sound: pitch=2.0 identifier=37c523f1-ee9d-468d-a869-d4c70a524725 volume=1.0
-        sound=ENTITY_BLAZE_SHOOT'
+        - 'sound: sound=ENTITY_BLAZE_SHOOT volume=1.0 identifier=37c523f1-ee9d-468d-a869-d4c70a524725
+        pitch=2.0'
       down:
-        - 'sound: pitch=2.0 identifier=c9b78d0d-f3a0-4e11-911b-2ea5461e275e volume=1.0
-        sound=ENTITY_BLAZE_SHOOT'
+        - 'sound: sound=ENTITY_BLAZE_SHOOT volume=1.0 identifier=c9b78d0d-f3a0-4e11-911b-2ea5461e275e
+        pitch=2.0'
     # Define elevator settings that should not be customizable by users.
-    # Example settings are:
+    # Available settings are:
     # can-explode, check-color, check-perms, check-type, change-holo, stop-obstruction
     #
-    # Custom actions may have their own settings that can be disabled through use of the action key, an forward-slash, and the setting name.
-    # Example action setting would be:
-    # message-player/message, sound/sound, sound/volume, sound/pitch, title/title, title/subtitle
+    # Custom actions may have their own settings that can be disabled through use of the action key, a forward-slash, and the setting name.
+    # Available action settings are:
+    # message-player/message, sound/sound, sound/volume, sound/pitch, title/title, title/subtitle, action-bar/message, boss-bar/message, effect/effect
     disabledSettings:
       - change-holo
       - sound/sound
@@ -124,7 +128,7 @@ elevators:
     recipes:
       classic:
         amount: 1
-        # If "supportMultiColorMaterials" is disabled, this permission will allow crafting as is. If "supportMultiColorMaterials" is enabled, a wildcard or dyecolor needs to be appended to this permission for proper checking.
+        # If "supportMultiColorMaterials" is disabled, this permission will allow crafting as is. If "supportMultiColorMaterials" is enabled, a wildcard or dye-color needs to be appended to this permission for proper checking.
         craftPermission: elevators.craft.default
         # This option controls the elevator output color if "supportMultiColorOutput" is disabled.
         defaultOutputColor: RED

@@ -12,7 +12,7 @@ public class ConfigRecipe implements Config {
 
     public int amount = 1;
 
-    @Comments("If \"supportMultiColorMaterials\" is disabled, this permission will allow crafting as is. If \"supportMultiColorMaterials\" is enabled, a wildcard or dyecolor needs to be appended to this permission for proper checking.")
+    @Comments("If \"supportMultiColorMaterials\" is disabled, this permission will allow crafting as is. If \"supportMultiColorMaterials\" is enabled, a wildcard or dye-color needs to be appended to this permission for proper checking.")
     protected String craftPermission = "elevators.craft.default";
 
     @Comments("This option controls the elevator output color if \"supportMultiColorOutput\" is disabled.")
