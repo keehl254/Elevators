@@ -17,7 +17,7 @@ permissionMode: BOTH
 forceFacingUpwards: true
 # This configuration section will automatically populate as supported protection plugins are detected.
 # "allowCustomization" will determine whether a player can toggle the hook check on and off individually for an elevator.
-# "blockNonMemberUseDefault" sets the default state for the individual elevators protection. If marked as true, only trusted / members or those with bypass perms will be able to use the elevator.
+# "blockNonMemberUseDefault" sets the default state for the individual elevator's protection. If marked as true, only trusted / members or those with bypass perms will be able to use the elevator.
 protectionHooks:
   GriefPrevention:
     allowCustomization: true
@@ -107,11 +107,9 @@ elevators:
     # IF AN IDENTIFIER KEY HAS BEEN GENERATED, DO NOT MESS WITH IT OR INDIVIDUAL ELEVATOR DATA MAY BE LOST.
     actions:
       up:
-        - 'sound: sound=ENTITY_BLAZE_SHOOT volume=1.0 identifier=37c523f1-ee9d-468d-a869-d4c70a524725
-        pitch=2.0'
+        - 'sound: volume=1.0 sound=ENTITY_BLAZE_SHOOT pitch=2.0'
       down:
-        - 'sound: sound=ENTITY_BLAZE_SHOOT volume=1.0 identifier=c9b78d0d-f3a0-4e11-911b-2ea5461e275e
-        pitch=2.0'
+        - 'sound: volume=1.0 sound=ENTITY_BLAZE_SHOOT pitch=2.0'
     # Define elevator settings that should not be customizable by users.
     # Available settings are:
     # can-explode, check-color, check-perms, check-type, change-holo, stop-obstruction
@@ -122,6 +120,12 @@ elevators:
     disabledSettings:
       - change-holo
       - sound/sound
+      - action-bar/message
+      - boss-bar/message
+      - message-player/message
+      - title/title
+      - title/subtitle
+      - effect/effect
     # Define recipes to craft an elevator type. If you do not wish to have any recipes, replace the section
     # with an empty map by settings recipes to "{}". Example:
     # recipes: {}
