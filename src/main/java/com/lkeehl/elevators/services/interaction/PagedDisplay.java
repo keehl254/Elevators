@@ -104,14 +104,16 @@ public class PagedDisplay<T> {
             display.setItemSimple(i+9, icon, (event, myDisplay) -> this.onClickTriConsumer.accept(item, event, this));
         }
 
-        int inventorySize = this.display.getInventory().getSize();
-        display.setItemSimple(inventorySize - 7, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Previous Page", Material.TIPPED_ARROW, 1), (event, myDisplay) ->
-                this.loadPage(clampedPageIndex - 1)
-        );
-        display.getInventory().setItem(inventorySize - 5, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + String.format("Page %d of %d", clampedPageIndex+1, maxPage+1), Material.NETHER_STAR, 1));
-        display.setItemSimple(inventorySize - 3, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Next Page", Material.SPECTRAL_ARROW, 1), (event, myDisplay) ->
-                this.loadPage(clampedPageIndex + 1)
-        );
+        if (this.itemsPerPage < 45) {
+            int inventorySize = this.display.getInventory().getSize();
+            display.setItemSimple(inventorySize - 7, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Previous Page", Material.TIPPED_ARROW, 1), (event, myDisplay) ->
+                    this.loadPage(clampedPageIndex - 1)
+            );
+            display.getInventory().setItem(inventorySize - 5, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + String.format("Page %d of %d", clampedPageIndex + 1, maxPage + 1), Material.NETHER_STAR, 1));
+            display.setItemSimple(inventorySize - 3, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Next Page", Material.SPECTRAL_ARROW, 1), (event, myDisplay) ->
+                    this.loadPage(clampedPageIndex + 1)
+            );
+        }
 
         display.setReturnButton(0, ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "BACK", Material.ARROW, 1));
     }

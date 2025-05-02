@@ -54,7 +54,7 @@ effects:
     # The image file that the effect will try to recreate.
     file: Creeper.png
     # Scales down the effect to be a percentage of original images width and height.
-    scale: 50
+    scale: 1
     # Controls how long the effect will be present before disappearing.
     duration: 1.0
     # Elevators can use particles to create the effect (heavy on potato computers), or can hook into Holograms.
