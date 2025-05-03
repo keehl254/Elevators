@@ -1,6 +1,7 @@
 package com.lkeehl.elevators.services.commands;
 
 import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ElevatorGUIHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorType;
@@ -108,11 +109,10 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
             MessageHelper.sendCantAdministrateMessage(sender, null);
             return;
         }
-        if (!(sender instanceof Player))
+        if (!(sender instanceof Player player))
             Elevators.getElevatorsLogger().warning("This command can only be executed by players!");
-        /*TODO: Setup menu
         else
-            InventoryUtil.openElevatorAdmin((Player) sender, this.elevators);*/
+            ElevatorGUIHelper.openAdminMenu(player);
     }
 
     private void onCommand(CommandSender sender, String give) {

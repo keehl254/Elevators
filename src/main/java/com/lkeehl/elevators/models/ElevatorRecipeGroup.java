@@ -77,6 +77,10 @@ public class ElevatorRecipeGroup extends ConfigRecipe {
         return this.recipeList.stream().map(i -> i.namespacedKey).collect(Collectors.toList());
     }
 
+    public DyeColor getDefaultOutputColor() {
+        return this.defaultOutputColor;
+    }
+
     private void addRecipe(String permission, DyeColor dyeColor) {
 
         NamespacedKey namespacedKey = DataContainerService.createKey(dyeColor.toString() + "_" + this.elevatorType.getTypeKey() + "_" + this.recipeKey + "_ELEVATOR");

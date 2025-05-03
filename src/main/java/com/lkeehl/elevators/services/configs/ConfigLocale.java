@@ -32,6 +32,8 @@ public class ConfigLocale implements Config {
 
     public String chatInputBackOutAllowReset = "&7Type \"cancel\" to back out of chat input or type \"reset\" to reset.";
 
+    public String enterDisplayName = prefix + "Enter a new display name into the chat.";
+
     public String enterFloorName = prefix + "Enter a new floor name into the chat.";
 
     public String enterTitle = prefix + "Enter a new title into the chat.";
@@ -39,6 +41,10 @@ public class ConfigLocale implements Config {
     public String enterSubtitle = prefix + "Enter a new subtitle into the chat.";
 
     public String enterMessage = prefix + "Enter a new message into the chat.";
+
+    public String enterElevatorKey = prefix + "Enter a new elevator key into the chat.";
+
+    public String nonUniqueElevatorKey = prefix + "The elevator key must be unique.";
 
     public String enterCommand = prefix + "Enter a new command into the chat.";
 

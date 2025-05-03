@@ -63,11 +63,22 @@ public class ElevatorTypeService {
     }
 
     public static void registerElevatorType(ElevatorType elevatorType) {
-        ConfigService.getElevatorTypeConfigs().put(elevatorType.getTypeKey(), elevatorType);
+        ConfigService.getElevatorTypeConfigs().put(elevatorType.getTypeKey().toUpperCase(), elevatorType);
+        reloadElevatorsFromConfig(ConfigService.getRootConfig());
+    }
+
+    public static ElevatorType createElevatorType(String typeKey) {
+        typeKey = typeKey.toUpperCase();
+        ElevatorType type = new ElevatorType();
+        ConfigService.getElevatorTypeConfigs().put(typeKey, type);
+        reloadElevatorsFromConfig(ConfigService.getRootConfig());
+
+        return type;
     }
 
     public static void unregisterElevatorType(ElevatorType elevatorType) {
         ConfigService.getElevatorTypeConfigs().remove(elevatorType.getTypeKey());
+        reloadElevatorsFromConfig(ConfigService.getRootConfig());
     }
 
 }

@@ -181,6 +181,10 @@ public class SimpleDisplay implements Listener {
         return this.inventory;
     }
 
+    public boolean hasReturn() {
+        return this.returnRunnable != null;
+    }
+
     public enum DisplayClickResult {
         CANCEL,
         ALLOW,

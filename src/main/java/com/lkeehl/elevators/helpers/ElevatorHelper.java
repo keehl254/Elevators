@@ -161,7 +161,7 @@ public class ElevatorHelper {
         if(!HookService.canEditElevator(player, elevator, true))
             return;
 
-        InventoryHelper.openInteractMenu(event.getPlayer(), elevator);
+        ElevatorGUIHelper.openInteractMenu(event.getPlayer(), elevator);
     }
 
     public static void onElevatorPlace(Elevator belevator) {

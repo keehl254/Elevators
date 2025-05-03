@@ -1,14 +1,12 @@
 package com.lkeehl.elevators.models.settings;
 
-import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ElevatorGUIHelper;
 import com.lkeehl.elevators.models.ElevatorType;
-import net.wesjd.anvilgui.AnvilGUI;
+import com.lkeehl.elevators.services.ConfigService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
-import java.util.*;
 
 public class DisplayNameSetting extends ElevatorSetting<String> {
 
@@ -19,20 +17,9 @@ public class DisplayNameSetting extends ElevatorSetting<String> {
 
     @Override
     public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue) {
-        AnvilGUI.Builder anvilBuilder = new AnvilGUI.Builder();
-        anvilBuilder.preventClose();
-        anvilBuilder.text(currentValue);
-        anvilBuilder.title("Enter new display name.");
-        anvilBuilder.plugin(Elevators.getInstance());
-        anvilBuilder.onClose(state -> {
-            elevatorType.setDisplayName(state.getText());
+        ElevatorGUIHelper.tryOpenAnvil(player, value -> true, result -> {
+            elevatorType.setDisplayName(result);
             returnMethod.run();
-        });
-        anvilBuilder.onClick((slot, state) -> {
-           if (slot != AnvilGUI.Slot.OUTPUT)
-               return Collections.emptyList();
-           return List.of(AnvilGUI.ResponseAction.close());
-        });
-        anvilBuilder.open(player);
+        }, returnMethod, ConfigService.getRootConfig().locale.enterDisplayName, true, currentValue, "Enter new display name.");
     }
 }

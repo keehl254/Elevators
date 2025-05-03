@@ -212,6 +212,21 @@ public class ElevatorType extends ConfigElevatorType {
         this.checkColor = checkColor;
     }
 
+    /**
+     * Set the lines that should appear over an elevator of this type.
+     */
+    public void setHologramLines(List<String> holoLines) {
+        this.hologramLines = holoLines;
+        // TODO: Update hologram
+    }
+
+    /**
+     * Set the lines that should appear in an itemstack of this type.
+     */
+    public void setLore(List<String> loreLines) {
+        this.loreLines = loreLines;
+    }
+
     //endregion
 
     @Override()

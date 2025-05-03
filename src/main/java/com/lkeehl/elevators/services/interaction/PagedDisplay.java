@@ -11,41 +11,48 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class PagedDisplay<T> {
 
+    private final int startIndex;
     private final int itemsPerPage;
     private final SimpleDisplay display;
     private final List<T> items;
 
     private Function<T, ItemStack> createItemFunction = (item) -> null;
     private TriConsumer<T, InventoryClickEvent, PagedDisplay<T>> onClickTriConsumer = (item, event, display) -> {};
+    private BiConsumer<PagedDisplay<T>, Integer> onPageLoadConsumer = (display, page) -> {};
 
-    public PagedDisplay(JavaPlugin plugin, Player player, List<T> items) {
+    public PagedDisplay(JavaPlugin plugin, Player player, Collection<T> items) {
         this(plugin, player, items,null);
     }
 
-    public PagedDisplay(JavaPlugin plugin, Player player, List<T> items, String inventoryTitle) {
+    public PagedDisplay(JavaPlugin plugin, Player player, Collection<T> items, String inventoryTitle) {
         this(plugin, player, items, inventoryTitle, null);
     }
 
-    public PagedDisplay(JavaPlugin plugin, Player player, List<T> items, String inventoryTitle, Runnable returnRunnable) {
+    public PagedDisplay(JavaPlugin plugin, Player player, Collection<T> items, String inventoryTitle, Runnable returnRunnable) {
         this(plugin, player, items, inventoryTitle, returnRunnable, SimpleDisplay.DisplayClickResult.CANCEL);
     }
 
-    public PagedDisplay(JavaPlugin plugin, Player player, List<T> items, String inventoryTitle, Runnable returnRunnable, SimpleDisplay.DisplayClickResult defaultClickResult) {
+    public PagedDisplay(JavaPlugin plugin, Player player, Collection<T> items, String inventoryTitle, Runnable returnRunnable, SimpleDisplay.DisplayClickResult defaultClickResult) {
 
-        this.items = items;
+        this.items = new ArrayList<>(items);
 
-        int inventorySize = 9;
-        if(items.size() >= 45) {
+        this.startIndex = returnRunnable != null ? 9 : 0;
+
+        int inventorySize;
+        if(items.size() >= 54 - this.startIndex) {
             inventorySize = 54;
-            this.itemsPerPage = 36;
+            this.itemsPerPage = 45 - this.startIndex;
         } else {
-            inventorySize = (Math.floorDiv(items.size() + 8, 9) * 9) + 9;
-            this.itemsPerPage = 45;
+            inventorySize = (Math.floorDiv(items.size() + 8, 9) * 9) + this.startIndex;
+            this.itemsPerPage = 54 - this.startIndex;
         }
 
         Inventory inventory = Bukkit.createInventory(null, inventorySize, inventoryTitle);
@@ -64,8 +71,17 @@ public class PagedDisplay<T> {
         return this;
     }
 
+    public PagedDisplay<T> onLoad(BiConsumer<PagedDisplay<T>, Integer> onPageLoadConsumer) {
+        this.onPageLoadConsumer = onPageLoadConsumer;
+        return this;
+    }
+
     public int getMaxPage() {
         return this.items.size() / itemsPerPage;
+    }
+
+    public SimpleDisplay getDisplay() {
+        return this.display;
     }
 
     public void stopReturn() {
@@ -101,7 +117,7 @@ public class PagedDisplay<T> {
             if(icon == null)
                 continue;
 
-            display.setItemSimple(i+9, icon, (event, myDisplay) -> this.onClickTriConsumer.accept(item, event, this));
+            display.setItemSimple(i + this.startIndex, icon, (event, myDisplay) -> this.onClickTriConsumer.accept(item, event, this));
         }
 
         if (this.itemsPerPage < 45) {
@@ -115,7 +131,10 @@ public class PagedDisplay<T> {
             );
         }
 
-        display.setReturnButton(0, ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "BACK", Material.ARROW, 1));
+        if(this.display.hasReturn())
+            display.setReturnButton(0, ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "BACK", Material.ARROW, 1));
+
+        this.onPageLoadConsumer.accept(this, clampedPageIndex);
     }
 
 }
