@@ -65,9 +65,9 @@ import java.util.stream.IntStream;
 
                     final String finalInput = input;
                     if(validationFunction.apply(finalInput)) {
-                        return List.of(SignGUIAction.displayNewLines(lines));
-                    } else {
                         return List.of(SignGUIAction.run(() -> Elevators.getFoliaLib().getScheduler().runNextTick((task) -> resultConsumer.accept(finalInput))));
+                    } else {
+                        return List.of(SignGUIAction.displayNewLines(lines));
                     }
                 });
 
