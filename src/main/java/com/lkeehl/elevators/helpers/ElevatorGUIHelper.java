@@ -98,35 +98,43 @@ import java.util.stream.IntStream;
     }
 
     public static void tryOpenAnvil(Player player, Function<String, Boolean> validationFunction, Consumer<String> resultConsumer, Runnable onCancel, String inputMessage, boolean allowReset, String defaultText, String title) {
+        /*
+        Anvil GUI is cool; however, there is no way to tell if the API supports the current game version.
+        I will put this back when they fix this.
+
         if(anvilEnabled){
-            Function<String, String> cleanText = result -> {
-                if (allowReset && (result.isEmpty() || result.equalsIgnoreCase("reset")))
-                    result = null;
+            try {
+                Function<String, String> cleanText = result -> {
+                    if (allowReset && (result.isEmpty() || result.equalsIgnoreCase("reset")))
+                        result = null;
 
-                return result;
-            };
+                    return result;
+                };
 
-            AnvilGUI.Builder anvilBuilder = new AnvilGUI.Builder();
-            anvilBuilder.preventClose();
-            anvilBuilder.text(defaultText);
-            anvilBuilder.title(title);
-            anvilBuilder.plugin(Elevators.getInstance());
-            anvilBuilder.onClose(state -> resultConsumer.accept(cleanText.apply(state.getText())));
-            anvilBuilder.onClick((slot, state) -> {
-                if (slot != AnvilGUI.Slot.OUTPUT)
-                    return Collections.emptyList();
+                AnvilGUI.Builder anvilBuilder = new AnvilGUI.Builder();
+                anvilBuilder.preventClose();
+                anvilBuilder.text(defaultText);
+                anvilBuilder.title(title);
+                anvilBuilder.plugin(Elevators.getInstance());
+                anvilBuilder.onClose(state -> resultConsumer.accept(cleanText.apply(state.getText())));
+                anvilBuilder.onClick((slot, state) -> {
+                    if (slot != AnvilGUI.Slot.OUTPUT)
+                        return Collections.emptyList();
 
-                String result = cleanText.apply(state.getText());
-                if(validationFunction.apply(result))
-                    return List.of(AnvilGUI.ResponseAction.close());
+                    String result = cleanText.apply(state.getText());
+                    if (validationFunction.apply(result))
+                        return List.of(AnvilGUI.ResponseAction.close());
 
-                return List.of(AnvilGUI.ResponseAction.replaceInputText(defaultText));
-            });
+                    return List.of(AnvilGUI.ResponseAction.replaceInputText(defaultText));
+                });
 
-            player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
-            anvilBuilder.open(player);
-            return;
-        }
+                player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
+                anvilBuilder.open(player);
+                return;
+            } catch (Exception ex) {
+                anvilEnabled = false;
+            }
+        }*/
 
         player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
 

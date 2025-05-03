@@ -18,7 +18,7 @@ public class DisplayNameSetting extends ElevatorSetting<String> {
     @Override
     public void onClickGlobal(Player player, ElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue) {
         ElevatorGUIHelper.tryOpenAnvil(player, value -> true, result -> {
-            elevatorType.setDisplayName(result);
+            elevatorType.setDisplayName(result != null ? result : currentValue);
             returnMethod.run();
         }, returnMethod, ConfigService.getRootConfig().locale.enterDisplayName, true, currentValue, "Enter new display name.");
     }

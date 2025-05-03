@@ -56,7 +56,7 @@ dependencies {
     compileOnly("net.kyori:adventure-platform-bukkit:4.3.0")
 
     implementation("de.rapha149.signgui:signgui:2.5.0")
-    implementation("net.wesjd:anvilgui:1.10.0-SNAPSHOT")
+    implementation("net.wesjd:anvilgui:1.10.5-SNAPSHOT")
     implementation("com.github.technicallycoded:FoliaLib:main-SNAPSHOT")
 
 }
