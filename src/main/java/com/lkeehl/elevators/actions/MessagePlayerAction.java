@@ -7,7 +7,7 @@ import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.interaction.SimpleInput;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -53,7 +53,7 @@ public class MessagePlayerAction extends ElevatorAction {
             return SimpleInput.SimpleInputResult.STOP;
         });
         input.onCancel(returnMethod);
-        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterMessage);
+        MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.enterMessage);
         input.start();
     }
 

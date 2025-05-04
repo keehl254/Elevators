@@ -2,9 +2,9 @@ package com.lkeehl.elevators.effects;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
+import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.models.ElevatorEventData;
-import com.lkeehl.elevators.util.ExecutionMode;
 import org.bukkit.*;
 
 import java.util.Objects;
@@ -15,10 +15,11 @@ public class HelixEffect extends ElevatorEffect {
         super("HELIX", ItemStackHelper.createItem("Helix", Material.HOPPER, 1));
     }
 
+    @SuppressWarnings("CodeBlock2Expr")
     @Override
-    public void playEffect(ElevatorEventData teleportResult, ExecutionMode executionMode) {
-        Location locClone = this.getEffectLocation(teleportResult, executionMode).getBlock().getLocation();
-        Color particleColor = this.getParticleColor(teleportResult);
+    public void playEffect(ElevatorEventData teleportResult, Elevator elevator) {
+        Location locClone = this.getEffectLocation(elevator).getBlock().getLocation();
+        Color particleColor = this.getParticleColor(elevator);
 
         World world = locClone.getWorld();
 

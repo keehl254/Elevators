@@ -3,7 +3,7 @@ package com.lkeehl.elevators.services.versions;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import com.lkeehl.elevators.services.ElevatorVersionService;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
@@ -39,7 +39,7 @@ public class ElevatorsV2 extends ElevatorVersionService.ElevatorVersion {
             return null;
         ElevatorType elevatorType = getClassFromBoxName(hidden.split(":")[1]);
         if(elevatorType != null)
-            DataContainerService.setElevatorKey(itemStack, elevatorType);
+            ElevatorDataContainerService.setElevatorKey(itemStack, elevatorType);
         return elevatorType;
     }
 
@@ -78,8 +78,8 @@ public class ElevatorsV2 extends ElevatorVersionService.ElevatorVersion {
     @Override
     public ShulkerBox convertToLaterVersion(ShulkerBox box) {
         ElevatorType elevatorType = getElevatorType(box);
-        box = DataContainerService.updateTypeKeyOnElevator(box,elevatorType);
-        box = DataContainerService.updateBox(box, elevatorType);
+        box = ElevatorDataContainerService.updateTypeKeyOnElevator(box,elevatorType);
+        box = ElevatorDataContainerService.updateBox(box, elevatorType);
         return box;
     }
 

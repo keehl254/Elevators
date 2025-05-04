@@ -1,6 +1,6 @@
 package com.lkeehl.elevators.helpers;
 
-import com.lkeehl.elevators.services.HookService;
+import com.lkeehl.elevators.services.ElevatorHookService;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
@@ -53,7 +53,7 @@ public class MCVersionHelper {
         return currentVersionID >= shulkerOpenCloseUseAPI;
     }
 
-    public static boolean doesVersionSupportPaperCollectEffect() { return HookService.isServerRunningPaper() && currentVersionID >= paperCollectItemEffect; }
+    public static boolean doesVersionSupportPaperCollectEffect() { return ElevatorHookService.isServerRunningPaper() && currentVersionID >= paperCollectItemEffect; }
 
     public static boolean doesVersionSupportRemoveRecipe() { return currentVersionID >= supportRemoveRecipe; }
 
@@ -65,8 +65,8 @@ public class MCVersionHelper {
 
     public static int getVersionID(String key) {
         Matcher matcher = majorMinorPatchPattern.matcher(key.toUpperCase());
-        byte major = 0;
-        byte minor = 0;
+        byte major;
+        byte minor;
         byte patch = 0;
         if(matcher.find()) {
             major = Byte.parseByte(matcher.group(1));

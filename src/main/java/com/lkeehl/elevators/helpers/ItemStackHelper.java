@@ -5,7 +5,7 @@ import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.settings.DisplayNameSetting;
 import com.lkeehl.elevators.models.settings.LoreLinesSetting;
 import com.lkeehl.elevators.models.settings.MaxStackSizeSetting;
-import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import com.lkeehl.elevators.services.ElevatorSettingService;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -79,7 +79,7 @@ public class ItemStackHelper {
 
         itemStack.setItemMeta(meta);
 
-        DataContainerService.setElevatorKey(itemStack, elevatorType);
+        ElevatorDataContainerService.setElevatorKey(itemStack, elevatorType);
 
         return itemStack;
     }
@@ -89,7 +89,7 @@ public class ItemStackHelper {
         ItemStack itemStack = createItemStackFromElevatorType(elevator.getElevatorType(), DyeColor.WHITE);
         itemStack.setType(elevator.getShulkerBox().getType());
 
-        DataContainerService.dumpDataFromShulkerBoxIntoItem(elevator.getShulkerBox(), itemStack);
+        ElevatorDataContainerService.dumpDataFromShulkerBoxIntoItem(elevator.getShulkerBox(), itemStack);
 
         return itemStack;
     }
@@ -99,7 +99,7 @@ public class ItemStackHelper {
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(item);
         if (elevatorType == null)
             return;
-        DataContainerService.updateItemStackFromV2(item, elevatorType);
+        ElevatorDataContainerService.updateItemStackFromV2(item, elevatorType);
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {

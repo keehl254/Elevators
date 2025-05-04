@@ -5,7 +5,7 @@ import com.lkeehl.elevators.helpers.ElevatorGUIHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.interaction.PagedDisplay;
 import com.lkeehl.elevators.services.interaction.SimpleInput;
 import org.bukkit.ChatColor;
@@ -46,7 +46,7 @@ public class LoreLinesSetting extends ElevatorSetting<List<String>> {
             return SimpleInput.SimpleInputResult.STOP;
         });
         input.onCancel(() -> completeConsumer.accept(currentValue));
-        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterMessage);
+        MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.enterMessage);
         input.start();
     }
 
@@ -143,12 +143,12 @@ public class LoreLinesSetting extends ElevatorSetting<List<String>> {
             lore.addAll(Objects.requireNonNull(templateMeta.getLore()));
 
         lore.add("");
-        if (loreLines.size() == 0) {
-            lore.add(ChatColor.GRAY + "Current Value: " + ChatColor.GOLD + "" + ChatColor.BOLD + "None");
+        if (loreLines.isEmpty()) {
+            lore.add(ChatColor.GRAY + "Current Value: " + ChatColor.GOLD + ChatColor.BOLD + "None");
         } else {
             lore.add(ChatColor.GRAY + "Current Value: ");
             for (String line : loreLines)
-                lore.add("\t" + ChatColor.GOLD + "" + MessageHelper.formatColors(line));
+                lore.add("\t" + ChatColor.GOLD + MessageHelper.formatColors(line));
         }
 
         ItemStack icon = this.iconTemplate.clone();

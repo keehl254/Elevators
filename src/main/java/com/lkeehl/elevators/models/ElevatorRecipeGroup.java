@@ -2,7 +2,7 @@ package com.lkeehl.elevators.models;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
-import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import com.lkeehl.elevators.services.configs.ConfigRecipe;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
@@ -83,7 +83,7 @@ public class ElevatorRecipeGroup extends ConfigRecipe {
 
     private void addRecipe(String permission, DyeColor dyeColor) {
 
-        NamespacedKey namespacedKey = DataContainerService.createKey(dyeColor.toString() + "_" + this.elevatorType.getTypeKey() + "_" + this.recipeKey + "_ELEVATOR");
+        NamespacedKey namespacedKey = ElevatorDataContainerService.createKey(dyeColor.toString() + "_" + this.elevatorType.getTypeKey() + "_" + this.recipeKey + "_ELEVATOR");
 
         DyeColor elevatorColor = this.supportMultiColorOutput ? dyeColor : this.defaultOutputColor;
 

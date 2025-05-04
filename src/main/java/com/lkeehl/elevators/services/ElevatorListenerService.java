@@ -20,19 +20,21 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class ListenerService {
+public class ElevatorListenerService {
 
     private static boolean initialized = false;
 
     private static Listener listener;
 
     public static void init() {
-        if(ListenerService.initialized)
+        if(ElevatorListenerService.initialized)
             return;
 
         listener = new Listener() {};
@@ -50,13 +52,15 @@ public class ListenerService {
         registerEventExecutor(BlockDispenseEvent.class, EventPriority.NORMAL , WorldEventExecutor::onDispenserPlace);
         registerEventExecutor(BlockDropItemEvent.class, EventPriority.LOWEST , WorldEventExecutor::onBlockBreak);
         registerEventExecutor(BlockPlaceEvent.class, EventPriority.HIGHEST , WorldEventExecutor::onBlockPlace);
+        registerEventExecutor(ChunkLoadEvent.class, EventPriority.MONITOR, WorldEventExecutor::onChunkLoad);
+        registerEventExecutor(ChunkUnloadEvent.class, EventPriority.MONITOR, WorldEventExecutor::onChunkUnload);
 
         registerEventExecutor(PlayerJoinEvent.class, EventPriority.NORMAL, EntityEventExecutor::onJoin);
         registerEventExecutor(PlayerToggleSneakEvent.class, EventPriority.NORMAL , EntityEventExecutor::onSneak);
         registerEventExecutor(EntityPickupItemEvent.class, EventPriority.NORMAL , EntityEventExecutor::onPickup);
         registerEventExecutor(PlayerInteractEvent.class, EventPriority.NORMAL, EntityEventExecutor::onRightClick);
 
-        if(HookService.isServerRunningPaper()) {
+        if(ElevatorHookService.isServerRunningPaper()) {
             registerEventExecutor(com.destroystokyo.paper.event.player.PlayerJumpEvent.class, EventPriority.NORMAL, PaperEventExecutor::onJump, false);
             registerEventExecutor(InventoryMoveItemEvent.class, EventPriority.LOWEST , PaperEventExecutor::onHopperTake);
         }else {
@@ -88,14 +92,14 @@ public class ListenerService {
             }
         }
 
-        ListenerService.initialized = true;
+        ElevatorListenerService.initialized = true;
     }
 
     public static void unInitialize() {
-        if(ListenerService.listener != null)
-            HandlerList.unregisterAll(ListenerService.listener);
+        if(ElevatorListenerService.listener != null)
+            HandlerList.unregisterAll(ElevatorListenerService.listener);
 
-        ListenerService.initialized = false;
+        ElevatorListenerService.initialized = false;
     }
 
     @SuppressWarnings({"unchecked"})

@@ -15,7 +15,6 @@ import de.rapha149.signgui.SignGUI;
 import de.rapha149.signgui.SignGUIAction;
 import de.rapha149.signgui.SignGUIBuilder;
 import de.rapha149.signgui.exception.SignGUIVersionException;
-import net.wesjd.anvilgui.AnvilGUI;
 import net.wesjd.anvilgui.version.VersionMatcher;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -314,7 +313,7 @@ import java.util.stream.IntStream;
             }
 
             if(ElevatorTypeService.getElevatorType(result) != null) {
-                MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.nonUniqueElevatorKey);
+                MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.nonUniqueElevatorKey);
                 return SimpleInput.SimpleInputResult.CONTINUE;
             }
 
@@ -322,7 +321,7 @@ import java.util.stream.IntStream;
             return SimpleInput.SimpleInputResult.STOP;
         });
         input.onCancel(() -> openAdminMenu(player));
-        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterMessage);
+        MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.enterMessage);
         input.start();
     }
 
@@ -378,20 +377,20 @@ import java.util.stream.IntStream;
         List<String> nameLore = new ArrayList<>();
         nameLore.add("");
         nameLore.add(ChatColor.GRAY + "Current Value: ");
-        nameLore.add(ChatColor.GOLD + "" + ChatColor.BOLD + DataContainerService.getFloorName(elevator));
+        nameLore.add(ChatColor.GOLD + "" + ChatColor.BOLD + ElevatorDataContainerService.getFloorName(elevator));
 
         ItemStack protectionItem = ItemStackHelper.createItem(ChatColor.RED + "" + ChatColor.BOLD + "Protection", Material.DIAMOND_SWORD, 1);
         ItemStack nameItem = ItemStackHelper.createItem(ChatColor.YELLOW + "" + ChatColor.BOLD + "Floor Name", Material.NAME_TAG, 1, nameLore);
         ItemStack settingsItem = ItemStackHelper.createItem(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Settings", Material.SEA_LANTERN, 1);
 
-        List<ProtectionHook> protectionHooks = HookService.getProtectionHooks().stream().filter(i -> i.getConfig().allowCustomization).filter(i -> i.createIconForElevator(player, elevator) != null).toList();
+        List<ProtectionHook> protectionHooks = ElevatorHookService.getProtectionHooks().stream().filter(i -> i.getConfig().allowCustomization).filter(i -> i.createIconForElevator(player, elevator) != null).toList();
 
         SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> {
             ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
             ShulkerBoxHelper.playClose(elevator.getShulkerBox());
         });
 
-        boolean canRename = HookService.canRenameElevator(player, elevator, false);
+        boolean canRename = ElevatorHookService.canRenameElevator(player, elevator, false);
 
         if (protectionHooks.isEmpty()) {
 
@@ -428,7 +427,7 @@ import java.util.stream.IntStream;
 
     public static void openInteractProtectMenu(Player player, Elevator elevator) {
 
-        List<ProtectionHook> protectionHooks = HookService.getProtectionHooks().stream().filter(i -> i.getConfig().allowCustomization).filter(i -> i.createIconForElevator(player, elevator) != null).toList();
+        List<ProtectionHook> protectionHooks = ElevatorHookService.getProtectionHooks().stream().filter(i -> i.getConfig().allowCustomization).filter(i -> i.createIconForElevator(player, elevator) != null).toList();
 
         Inventory inventory = ElevatorGUIHelper.createInventoryWithMinSlots(protectionHooks.size() + 9, "Elevator > Protection");
         ElevatorGUIHelper.fillEmptySlotsWithPanes(inventory, elevator.getDyeColor());
@@ -449,14 +448,14 @@ import java.util.stream.IntStream;
     }
 
     public static void openInteractNameMenu(Player player, Elevator elevator) {
-        String currentName = DataContainerService.getFloorName(elevator);
+        String currentName = ElevatorDataContainerService.getFloorName(elevator);
 
         tryOpenSign(player, value -> true, result -> {
-            DataContainerService.setFloorName(elevator, result);
+            ElevatorDataContainerService.setFloorName(elevator, result);
             ElevatorGUIHelper.openInteractMenu(player, elevator);
         },() -> {
             ElevatorGUIHelper.openInteractMenu(player, elevator);
-        },ConfigService.getRootConfig().locale.enterFloorName, true, currentName, ChatColor.BOLD + "^^^^^^^^", "Enter floor", "name above");
+        }, ElevatorConfigService.getRootConfig().locale.enterFloorName, true, currentName, ChatColor.BOLD + "^^^^^^^^", "Enter floor", "name above");
     }
 
     private static List<ElevatorAction> getActionsWithSettings(Elevator elevator, boolean up) {

@@ -3,10 +3,7 @@ package com.lkeehl.elevators.helpers;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.*;
 import com.lkeehl.elevators.models.settings.*;
-import com.lkeehl.elevators.services.ElevatorSettingService;
-import com.lkeehl.elevators.services.ElevatorVersionService;
-import com.lkeehl.elevators.services.HookService;
-import com.lkeehl.elevators.services.ObstructionService;
+import com.lkeehl.elevators.services.*;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -137,7 +134,7 @@ public class ElevatorHelper {
             if(!stopsObstruction || ignoreObstructionCheck)
                 return new ElevatorEventData(elevator, tempElevator, direction, 0.0D);
 
-            double addition = player != null ? ObstructionService.getHitBoxAddition(tempBlock.getRelative(BlockFace.UP), player) : 0.0;
+            double addition = player != null ? ElevatorObstructionService.getHitBoxAddition(tempBlock.getRelative(BlockFace.UP), player) : 0.0;
             if (addition >= 0)
                 return new ElevatorEventData(elevator, tempElevator, direction, Math.abs(addition));
         } while(tempLocation.getBlockY() != endPointY);
@@ -154,11 +151,12 @@ public class ElevatorHelper {
     }
 
     public static void onElevatorInteract(Player player, PlayerInteractEvent event, Elevator elevator) {
-        if(isElevatorDisabled(elevator.getShulkerBox())) {
+        if(isElevatorDisabled(elevator.getShulkerBox()))
             return; // TODO: Message that elevator is temporarily unable to be interacted with.
-        }
 
-        if(!HookService.canEditElevator(player, elevator, true))
+        ElevatorHologramService.updateElevatorHologram(elevator);
+
+        if(!ElevatorHookService.canEditElevator(player, elevator, true))
             return;
 
         ElevatorGUIHelper.openInteractMenu(event.getPlayer(), elevator);
@@ -169,7 +167,6 @@ public class ElevatorHelper {
     }
 
     public static void onElevatorUse(Player player, ElevatorEventData elevatorEventData) {
-        ElevatorEffect effect;
         List<ElevatorAction> actions;
         if(elevatorEventData.getDirection() == 1)
             actions =  elevatorEventData.getOrigin().getElevatorType().getActionsUp();
@@ -186,7 +183,7 @@ public class ElevatorHelper {
     public static boolean hasOrAddPlayerCoolDown(Player player, String key) {
         key = "elevator-cooldown-"+key;
         if(player.hasMetadata(key)) {
-            MetadataValue value = player.getMetadata(key).get(0);
+            MetadataValue value = player.getMetadata(key).getFirst();
             long lastTime = value.asLong();
             if(System.currentTimeMillis() - lastTime < 1000)
                 return true;

@@ -18,9 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("ConstantConditions")
-public class DataContainerService {
+public class ElevatorDataContainerService {
 
-    private static Map<String, Map.Entry<NamespacedKey, PersistentDataType<?,?>>> keyMap = new HashMap<>();
+    private static final Map<String, Map.Entry<NamespacedKey, PersistentDataType<?,?>>> keyMap = new HashMap<>();
 
     private static boolean initialized = false;
 
@@ -34,27 +34,27 @@ public class DataContainerService {
     public static StringArrayPersistentDataType stringArrayPersistentDataType = new StringArrayPersistentDataType();
 
     public static void init(Elevators elevators) {
-        if(DataContainerService.initialized)
+        if(ElevatorDataContainerService.initialized)
             return;
 
-        DataContainerService.elevatorsInstance = elevators;
+        ElevatorDataContainerService.elevatorsInstance = elevators;
 
-        DataContainerService.typeKey = getKeyFromKey("elevator-type", PersistentDataType.STRING);
-        DataContainerService.protectionKey = getKeyFromKey("supports-protection", PersistentDataType.BYTE);
-        DataContainerService.nameKey = getKeyFromKey("floor-name", PersistentDataType.STRING);
-        DataContainerService.instanceKey = new NamespacedKey(elevators, "instance-key");
+        ElevatorDataContainerService.typeKey = getKeyFromKey("elevator-type", PersistentDataType.STRING);
+        ElevatorDataContainerService.protectionKey = getKeyFromKey("supports-protection", PersistentDataType.BYTE);
+        ElevatorDataContainerService.nameKey = getKeyFromKey("floor-name", PersistentDataType.STRING);
+        ElevatorDataContainerService.instanceKey = new NamespacedKey(elevators, "instance-key");
 
-        DataContainerService.initialized = true;
+        ElevatorDataContainerService.initialized = true;
     }
 
     public static NamespacedKey createKey(String key) {
-        return new NamespacedKey(DataContainerService.elevatorsInstance, key);
+        return new NamespacedKey(ElevatorDataContainerService.elevatorsInstance, key);
     }
 
     public static NamespacedKey getKeyFromKey(String keyKey, PersistentDataType<?,?> dataType) { // keyKey, do you love me? Are you riding?
         keyKey = keyKey.toLowerCase();
         if(!keyMap.containsKey(keyKey))
-            keyMap.put(keyKey, new AbstractMap.SimpleEntry<>(DataContainerService.createKey(keyKey), dataType));
+            keyMap.put(keyKey, new AbstractMap.SimpleEntry<>(ElevatorDataContainerService.createKey(keyKey), dataType));
 
         return keyMap.get(keyKey).getKey();
     }
@@ -105,8 +105,8 @@ public class DataContainerService {
         if (meta != null) {
             tagContainer = meta.getPersistentDataContainer();
 
-            if (tagContainer.has(DataContainerService.typeKey, PersistentDataType.STRING))
-                return tagContainer.get(DataContainerService.typeKey, PersistentDataType.STRING);
+            if (tagContainer.has(ElevatorDataContainerService.typeKey, PersistentDataType.STRING))
+                return tagContainer.get(ElevatorDataContainerService.typeKey, PersistentDataType.STRING);
         }
         return null;
     }
@@ -114,8 +114,8 @@ public class DataContainerService {
     public static String getElevatorKey(ShulkerBox box) {
         PersistentDataContainer tagContainer = box.getPersistentDataContainer();
 
-        if (tagContainer.has(DataContainerService.typeKey, PersistentDataType.STRING))
-            return tagContainer.get(DataContainerService.typeKey, PersistentDataType.STRING);
+        if (tagContainer.has(ElevatorDataContainerService.typeKey, PersistentDataType.STRING))
+            return tagContainer.get(ElevatorDataContainerService.typeKey, PersistentDataType.STRING);
         return null;
     }
 
@@ -144,10 +144,10 @@ public class DataContainerService {
     public static boolean shouldElevatorBeGPProtected(ShulkerBox box) {
         PersistentDataContainer tagContainer = box.getPersistentDataContainer();
 
-        if (tagContainer.has(DataContainerService.protectionKey, PersistentDataType.BYTE))
-            return tagContainer.get(DataContainerService.protectionKey, PersistentDataType.BYTE) == 1;
+        if (tagContainer.has(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE))
+            return tagContainer.get(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE) == 1;
         else
-            tagContainer.set(DataContainerService.protectionKey, PersistentDataType.BYTE, (byte) (ConfigService.getRootConfig().claimProtectionDefault ? 1 : 0));
+            tagContainer.set(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE, (byte) (ElevatorConfigService.getRootConfig().claimProtectionDefault ? 1 : 0));
         return true;
     }
 
@@ -155,24 +155,24 @@ public class DataContainerService {
         PersistentDataContainer tagContainer = box.getPersistentDataContainer();
         byte current;
 
-        if (tagContainer.has(DataContainerService.protectionKey, PersistentDataType.BYTE))
-            current = tagContainer.get(DataContainerService.protectionKey, PersistentDataType.BYTE);
+        if (tagContainer.has(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE))
+            current = tagContainer.get(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE);
         else
-            current = (byte) (ConfigService.getRootConfig().claimProtectionDefault ? 1 : 0);
+            current = (byte) (ElevatorConfigService.getRootConfig().claimProtectionDefault ? 1 : 0);
 
-        tagContainer.set(DataContainerService.protectionKey, PersistentDataType.BYTE, current == 1 ? 0 : (byte) 1);
+        tagContainer.set(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE, current == 1 ? 0 : (byte) 1);
         return true;
     }
 
     public static void setElevatorKey(ItemStack item, ElevatorType type) {
         ItemMeta meta = item.getItemMeta();
         if (meta != null)
-            meta.getPersistentDataContainer().set(DataContainerService.typeKey, PersistentDataType.STRING, type.getTypeKey());
+            meta.getPersistentDataContainer().set(ElevatorDataContainerService.typeKey, PersistentDataType.STRING, type.getTypeKey());
         item.setItemMeta(meta);
     }
 
     public static ShulkerBox updateTypeKeyOnElevator(ShulkerBox box, ElevatorType type) {
-        box.getPersistentDataContainer().set(DataContainerService.typeKey, PersistentDataType.STRING, type.getTypeKey());
+        box.getPersistentDataContainer().set(ElevatorDataContainerService.typeKey, PersistentDataType.STRING, type.getTypeKey());
         box.update();
 
         return box;
@@ -181,7 +181,7 @@ public class DataContainerService {
     public static ShulkerBox updateBox(ShulkerBox box, ElevatorType type) {
         box.update(true);
 
-        return DataContainerService.updateTypeKeyOnElevator(box, type);
+        return ElevatorDataContainerService.updateTypeKeyOnElevator(box, type);
     }
 
     public static void updateItemStackFromV2(ItemStack item, ElevatorType type) {
@@ -196,15 +196,15 @@ public class DataContainerService {
                 meta.setDisplayName(name);
             }
         }
-        meta.getPersistentDataContainer().set(DataContainerService.typeKey, PersistentDataType.STRING, type.getTypeKey());
+        meta.getPersistentDataContainer().set(ElevatorDataContainerService.typeKey, PersistentDataType.STRING, type.getTypeKey());
         item.setItemMeta(meta);
     }
 
     public static String getFloorName(Elevator elevator) {
         PersistentDataContainer tagContainer = elevator.getShulkerBox().getPersistentDataContainer();
 
-        if (tagContainer.has(DataContainerService.nameKey, PersistentDataType.STRING))
-            return tagContainer.get(DataContainerService.nameKey, PersistentDataType.STRING);
+        if (tagContainer.has(ElevatorDataContainerService.nameKey, PersistentDataType.STRING))
+            return tagContainer.get(ElevatorDataContainerService.nameKey, PersistentDataType.STRING);
         else
             return "Floor #" + ElevatorHelper.getFloorNumberOrCount(elevator, true);
     }
@@ -212,9 +212,9 @@ public class DataContainerService {
     public static void setFloorName(Elevator elevator, String name) {
         PersistentDataContainer tagContainer = elevator.getShulkerBox().getPersistentDataContainer();
         if (name == null)
-            tagContainer.remove(DataContainerService.nameKey);
+            tagContainer.remove(ElevatorDataContainerService.nameKey);
         else
-            tagContainer.set(DataContainerService.nameKey, PersistentDataType.STRING, name);
+            tagContainer.set(ElevatorDataContainerService.nameKey, PersistentDataType.STRING, name);
         elevator.getShulkerBox().update(true);
     }
 

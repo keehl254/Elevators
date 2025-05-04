@@ -3,13 +3,12 @@ package com.lkeehl.elevators.effects;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ColorHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
-import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.helpers.ResourceHelper;
+import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorEffect;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.hooks.WrappedHologram;
-import com.lkeehl.elevators.services.HookService;
-import com.lkeehl.elevators.util.ExecutionMode;
+import com.lkeehl.elevators.services.ElevatorHologramService;
 import org.bukkit.Color;
 import org.bukkit.*;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +18,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 public class ImageEffect extends ElevatorEffect {
@@ -38,7 +38,7 @@ public class ImageEffect extends ElevatorEffect {
         int backgroundRGB = ColorHelper.getRGBFromHex(hexBackgroundColor);
 
         this.duration = duration;
-        this.useHolo = useHolo && HookService.getHologramHook() != null;
+        this.useHolo = useHolo && ElevatorHologramService.canUseHolograms();
 
         int height = 0;
         int[][] rgbPattern = new int[][]{};
@@ -83,17 +83,22 @@ public class ImageEffect extends ElevatorEffect {
         return new BufferedImage((int) scaledDimension.getWidth(), (int) scaledDimension.getHeight(), BufferedImage.TYPE_INT_ARGB);
     }
 
-    private void playHoloEffect(Location location) {
+    private void playHoloEffect(Elevator elevator) {
         try {
             String[] lines = new String[this.height];
-            for(int[] rgbPattern : rgbPattern) {
+            for(int[] rgbPattern : this.rgbPattern) {
                 for (int y = 0; y < rgbPattern.length; y++)
                     lines[y] = (lines[y] != null ? lines[y] : "") + (rgbPattern[y] == 0 ? ChatColor.BOLD + " " + ChatColor.RESET + " " : ColorHelper.getChatStringFromColor(rgbPattern[y]) + "█");
             }
 
-            WrappedHologram hologram = HookService.getHologramHook().createHologram(location, 0.0, lines);
-            if (hologram != null)
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Elevators.getInstance(), hologram::delete, (long) (duration * 20));
+            WrappedHologram hologram = ElevatorHologramService.getElevatorHologram(elevator);
+            if(hologram == null)
+                return;
+
+            hologram.setLines(Arrays.asList(lines));
+            hologram.teleportTo(elevator.getLocation().clone().add(0.5, (hologram.getHeight() + 1.5) / 2, 0.5));
+
+            Elevators.getFoliaLib().getScheduler().runAtLocationLater(elevator.getLocation(), () -> ElevatorHologramService.updateElevatorHologram(elevator), (long) (this.duration * 20));
         } catch (Exception e) {
             Elevators.getElevatorsLogger().warning("Effect \"" + this.getEffectKey() + "\" is too wide to use holographic displays. Max width is 150");
         }
@@ -106,24 +111,28 @@ public class ImageEffect extends ElevatorEffect {
         double size = this.rgbPattern.length * 0.2;
         double offset = ((size * 4.5) / 2.0) * 0.2;
         location.add(-0.5, this.height * 0.2, -0.5);
-        for (int time = 0; time < duration * 20; time++) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Elevators.getInstance(), () -> {
+        for (int time = 0; time < this.duration * 20; time++) {
+            Elevators.getFoliaLib().getScheduler().runAtLocationLater(location, () -> {
                 for (int side = 0; side < 4; side++) {
                     for (int x = 0; x < this.rgbPattern.length; x++) {
                         for (int y = 0; y < this.rgbPattern[x].length; y++) {
+                            int colorARGB = this.rgbPattern[x][y];
+                            if(colorARGB == 0)
+                                continue;
+
                             int tempX = (this.rgbPattern.length - 1) - x;
                             Location locClone = location.clone();
                             if (side == 0) {
                                 locClone.add((tempX * 0.2) - (offset - 0.5), -(y * 0.2), -offset);
                             } else if (side == 1) {
-                                 locClone.add((x * 0.2) - (offset - 0.5), -(y * 0.2), (offset + 1.0));
+                                locClone.add((x * 0.2) - (offset - 0.5), -(y * 0.2), (offset + 1.0));
                             } else if (side == 2) {
                                 locClone.subtract(offset, (y * 0.2), (offset - 0.5) - (x * 0.2));
                             } else {
                                 locClone.add((offset + 1.0), -(y * 0.2), (tempX * 0.2) - (offset - 0.5));
                             }
 
-                            location.getWorld().spawnParticle(Particle.DUST, locClone, 1, 0, 0, 0, 1, new Particle.DustOptions(Color.fromARGB(this.rgbPattern[x][y]), 1));
+                            location.getWorld().spawnParticle(Particle.DUST, locClone, 1, 0, 0, 0, 1, new Particle.DustOptions(Color.fromARGB(colorARGB), 1));
                         }
                     }
                 }
@@ -132,14 +141,13 @@ public class ImageEffect extends ElevatorEffect {
     }
 
     @Override
-    public void playEffect(ElevatorEventData teleportResult, ExecutionMode executionMode) {
+    public void playEffect(ElevatorEventData teleportResult, Elevator elevator) {
         if(this.height <= 0)
             return;
 
-        Location location = this.getEffectLocation(teleportResult, executionMode).add(0.5, 0.5, 0.5);
-
+        Location location = this.getEffectLocation(elevator).add(0.5, 0.5, 0.5);
         if(this.useHolo)
-            this.playHoloEffect(location);
+            this.playHoloEffect(elevator);
         else
             this.playParticleEffect(location);
 

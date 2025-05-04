@@ -7,7 +7,7 @@ import com.lkeehl.elevators.models.ElevatorAction;
 import com.lkeehl.elevators.models.ElevatorActionGrouping;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.interaction.SimpleInput;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -63,7 +63,7 @@ public class TitleAction extends ElevatorAction {
             return SimpleInput.SimpleInputResult.STOP;
         });
         input.onCancel(returnMethod);
-        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterTitle);
+        MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.enterTitle);
         input.start();
     }
 
@@ -77,7 +77,7 @@ public class TitleAction extends ElevatorAction {
             return SimpleInput.SimpleInputResult.STOP;
         });
         input.onCancel(returnMethod);
-        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterSubtitle);
+        MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.enterSubtitle);
         input.start();
     }
 

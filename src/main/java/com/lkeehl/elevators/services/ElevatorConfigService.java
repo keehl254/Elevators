@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-public class ConfigService {
+public class ElevatorConfigService {
 
     private static ConfigRootNode<ConfigRoot> rootNode;
 
@@ -29,47 +29,47 @@ public class ConfigService {
         boolean configCurrentlyExists = configFile.exists();
 
         try {
-            ConfigService.rootNode = ConfigConverter.createNodeForConfig(new ConfigRoot(), configFile);
-            configLoadCallbacks.forEach(i -> i.accept(ConfigService.rootNode.getConfig()));
+            ElevatorConfigService.rootNode = ConfigConverter.createNodeForConfig(new ConfigRoot(), configFile);
+            configLoadCallbacks.forEach(i -> i.accept(ElevatorConfigService.rootNode.getConfig()));
 
             //ConfigService.rootNode.save();
-            ConfigConverter.saveConfigToFile(ConfigService.rootNode, configFile);
+            ConfigConverter.saveConfigToFile(ElevatorConfigService.rootNode, configFile);
         } catch (Exception e) {
             Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed while loading config. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
     }
 
     public static void saveConfig(File configFile) {
-        ConfigConverter.saveConfigToFile(ConfigService.rootNode, configFile);
+        ConfigConverter.saveConfigToFile(ElevatorConfigService.rootNode, configFile);
     }
 
     public static void addConfigCallback(Consumer<ConfigRoot> callback) {
-        ConfigService.configLoadCallbacks.add(callback);
-        if(ConfigService.rootNode != null)
-            callback.accept(ConfigService.rootNode.getConfig());
+        ElevatorConfigService.configLoadCallbacks.add(callback);
+        if(ElevatorConfigService.rootNode != null)
+            callback.accept(ElevatorConfigService.rootNode.getConfig());
     }
 
     public static ConfigRoot getRootConfig() {
-        return ConfigService.rootNode.getConfig();
+        return ElevatorConfigService.rootNode.getConfig();
     }
 
     public static ConfigLocale getDefaultLocaleConfig() {
-        if(ConfigService.defaultLocaleConfig == null)
-            ConfigService.defaultLocaleConfig = new ConfigLocale();
+        if(ElevatorConfigService.defaultLocaleConfig == null)
+            ElevatorConfigService.defaultLocaleConfig = new ConfigLocale();
 
-        return ConfigService.defaultLocaleConfig;
+        return ElevatorConfigService.defaultLocaleConfig;
     }
 
     public static Map<String, ConfigEffect> getEffectConfigs() {
-        return ConfigService.getRootConfig().effects;
+        return ElevatorConfigService.getRootConfig().effects;
     }
 
     public static Map<String, ElevatorType> getElevatorTypeConfigs() {
-        return ConfigService.getRootConfig().elevators;
+        return ElevatorConfigService.getRootConfig().elevators;
     }
 
     public static boolean isWorldDisabled(World world) {
-        return ConfigService.getRootConfig().disabledWorlds.stream().anyMatch(i -> i.equalsIgnoreCase(world.getName()));
+        return ElevatorConfigService.getRootConfig().disabledWorlds.stream().anyMatch(i -> i.equalsIgnoreCase(world.getName()));
     }
 
 }

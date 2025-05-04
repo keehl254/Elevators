@@ -2,9 +2,9 @@ package com.lkeehl.elevators.helpers;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.models.ElevatorEventData;
-import com.lkeehl.elevators.services.ConfigService;
-import com.lkeehl.elevators.services.DataContainerService;
-import com.lkeehl.elevators.services.HookService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
+import com.lkeehl.elevators.services.ElevatorDataContainerService;
+import com.lkeehl.elevators.services.ElevatorHookService;
 import com.lkeehl.elevators.services.configs.ConfigLocale;
 import com.lkeehl.elevators.services.hooks.PlaceholderAPIHook;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -87,8 +87,8 @@ public class MessageHelper {
     }
 
     public static void sendFormattedLocale(CommandSender sender, Function<ConfigLocale, String> messageFunc, ElevatorEventData elevatorEventData) {
-        String message = messageFunc.apply(ConfigService.getRootConfig().locale);
-        String defaultMessage = messageFunc.apply(ConfigService.getDefaultLocaleConfig());
+        String message = messageFunc.apply(ElevatorConfigService.getRootConfig().locale);
+        String defaultMessage = messageFunc.apply(ElevatorConfigService.getDefaultLocaleConfig());
 
         message = message == null ? defaultMessage : message;
         message = formatElevatorPlaceholders(sender, elevatorEventData, message);
@@ -127,7 +127,7 @@ public class MessageHelper {
                 message = message.replace("%elevators_top_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getDestination(), false)+"");
 
             if (message.contains("%elevators_new_floor_name%"))
-                message = message.replace("%elevators_new_floor_name%", DataContainerService.getFloorName(searchResult.getDestination()));
+                message = message.replace("%elevators_new_floor_name%", ElevatorDataContainerService.getFloorName(searchResult.getDestination()));
 
         }
         if(searchResult.getOrigin() != null && searchResult.getOrigin().getShulkerBox() != null) {
@@ -139,7 +139,7 @@ public class MessageHelper {
                 message = message.replace("%elevators_top_floor%", ElevatorHelper.getFloorNumberOrCount(searchResult.getOrigin(), false)+"");
 
             if (message.contains("%elevators_old_floor_name%"))
-                message = message.replace("%elevators_old_floor_name%", DataContainerService.getFloorName(searchResult.getOrigin()));
+                message = message.replace("%elevators_old_floor_name%", ElevatorDataContainerService.getFloorName(searchResult.getOrigin()));
 
         }
 
@@ -156,8 +156,8 @@ public class MessageHelper {
         String[] words = message.split(" ");
         messages.add(ChatColor.WHITE + words[0]);
         for (int i = 1; i < words.length; i++) {
-            if ((messages.get(messages.size() - 1) + " " + words[i]).length() <= 30)
-                messages.set(messages.size() - 1, messages.get(messages.size() - 1) + " " + words[i]);
+            if ((messages.getLast() + " " + words[i]).length() <= 30)
+                messages.set(messages.size() - 1, messages.getLast() + " " + words[i]);
             else
                 messages.add(defaultColor + words[i]);
         }
@@ -175,7 +175,7 @@ public class MessageHelper {
         if(!(sender instanceof Player player))
             return message;
 
-        PlaceholderAPIHook hook = HookService.getPlaceholderAPIHook();
+        PlaceholderAPIHook hook = ElevatorHookService.getPlaceholderAPIHook();
         if(hook == null)
             return message;
 

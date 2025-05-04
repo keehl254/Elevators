@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class HookService {
+public class ElevatorHookService {
 
     private static boolean initialized = false;
 
@@ -27,10 +27,10 @@ public class HookService {
     private static boolean isPaper = false;
 
     public static void init() {
-        if(HookService.initialized)
+        if(ElevatorHookService.initialized)
             return;
 
-        HookService.buildHooks();
+        ElevatorHookService.buildHooks();
 
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig");
@@ -38,26 +38,26 @@ public class HookService {
         } catch (ClassNotFoundException ignored) {
         }
 
-        HookService.initialized = true;
+        ElevatorHookService.initialized = true;
     }
 
     public static void unInitialize() {
         hookMap.clear();
 
-        HookService.initialized = false;
+        ElevatorHookService.initialized = false;
     }
 
     private static void buildHooks() {
 
-        HookService.registerHook("GriefPrevention", GriefPreventionHook.class);
-        HookService.registerHook("GriefDefender", GriefDefenderHook.class);
-        HookService.registerHook("RedProtect", RedProtectHook.class);
-        HookService.registerHook("PlotSquared", PlotSquaredHook.class);
-        HookService.registerHook("BentoBox", BentoBoxHook.class);
-        HookService.registerHook("PlaceholderAPI", PlaceholderAPIHook.class);
-        HookService.registerHook("DecentHolograms", DecentHologramsHook.class);
-        HookService.registerHook("FancyHolograms", FancyHologramsHook.class);
-        HookService.registerHook("SuperiorSkyblock2", SuperiorSkyblock2Hook.class, false);
+        ElevatorHookService.registerHook("GriefPrevention", GriefPreventionHook.class);
+        ElevatorHookService.registerHook("GriefDefender", GriefDefenderHook.class);
+        ElevatorHookService.registerHook("RedProtect", RedProtectHook.class);
+        ElevatorHookService.registerHook("PlotSquared", PlotSquaredHook.class);
+        ElevatorHookService.registerHook("BentoBox", BentoBoxHook.class);
+        ElevatorHookService.registerHook("PlaceholderAPI", PlaceholderAPIHook.class);
+        ElevatorHookService.registerHook("DecentHolograms", DecentHologramsHook.class);
+        ElevatorHookService.registerHook("FancyHolograms", FancyHologramsHook.class);
+        ElevatorHookService.registerHook("SuperiorSkyblock2", SuperiorSkyblock2Hook.class, false);
 
     }
 
@@ -73,6 +73,7 @@ public class HookService {
         try {
             Constructor<?> hookConstructor = elevatorHookClass.getConstructor();
             hookMap.put(pluginName.toUpperCase(), (ElevatorHook) hookConstructor.newInstance());
+            Elevators.getElevatorsLogger().info("Hooked into " + pluginName);
             return true;
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             Elevators.getElevatorsLogger().log(Level.WARNING, "Failed to register hook for \"" + pluginName + "\" due to an inaccessible constructor. The plugin will still function; however, this hook will not work. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues", e);
@@ -95,7 +96,7 @@ public class HookService {
 
     public static boolean canEditElevator(Player player, Elevator elevator, boolean sendMessage) {
         try {
-            return HookService.getProtectionHooks().stream().allMatch(hook -> hook.canEditSettings(player, elevator, sendMessage));
+            return ElevatorHookService.getProtectionHooks().stream().allMatch(hook -> hook.canEditSettings(player, elevator, sendMessage));
         } catch (Exception e) {
             Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to check hooks for edit permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
@@ -104,7 +105,7 @@ public class HookService {
 
     public static boolean canRenameElevator(Player player, Elevator elevator, boolean sendMessage) {
         try {
-            return HookService.getProtectionHooks().stream().allMatch(hook -> hook.canEditName(player, elevator, sendMessage));
+            return ElevatorHookService.getProtectionHooks().stream().allMatch(hook -> hook.canEditName(player, elevator, sendMessage));
         } catch (Exception e) {
             Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to check hooks for rename permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
@@ -139,7 +140,8 @@ public class HookService {
         return getHook("PlaceholderAPI", PlaceholderAPIHook.class);
     }
 
-    public static HologramHook<?> getHologramHook() {
+    // Protected because we want all hologram alterations to be done through HologramService
+    protected static HologramHook<?> getHologramHook() {
         HologramHook<?> hook = getHook("DecentHolograms", DecentHologramsHook.class);
         if(hook == null)
             hook = getHook("FancyHolograms", FancyHologramsHook.class);
@@ -155,7 +157,7 @@ public class HookService {
     public static <T extends ElevatorHook> T getHook(String hookKey, Class<T> hookClazz) {
         hookKey = hookKey.toUpperCase();
         if(!hookMap.containsKey(hookKey.toUpperCase())) {
-            HookService.buildHooks(); // No need to check individual hooks here. BuildHooks will not re-register.
+            ElevatorHookService.buildHooks(); // No need to check individual hooks here. BuildHooks will not re-register.
             if(!hookMap.containsKey(hookKey.toUpperCase()))
                 return null;
         }

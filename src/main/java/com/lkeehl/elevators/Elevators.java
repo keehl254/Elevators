@@ -21,17 +21,18 @@ public class Elevators extends JavaPlugin {
         instance = this;
         foliaLib = new FoliaLib(this);
 
-        DataContainerService.init(this);
+        ElevatorDataContainerService.init(this);
         ElevatorSettingService.init();
         ElevatorVersionService.init();
         ElevatorEffectService.init();
         ElevatorActionService.init();
         ElevatorTypeService.init();
         ElevatorRecipeService.init();
-        ObstructionService.init();
-        ListenerService.init();
-        HookService.init();
-        CommandService.init(this);
+        ElevatorObstructionService.init();
+        ElevatorListenerService.init();
+        ElevatorHookService.init();
+        ElevatorHologramService.init();
+        ElevatorCommandService.init(this);
 
         this.reloadElevators();
         this.initialized = true;
@@ -39,12 +40,17 @@ public class Elevators extends JavaPlugin {
 
     @Override()
     public void onDisable() {
-        HookService.unInitialize();
-        ListenerService.unInitialize();
+        ElevatorHookService.unInitialize();
+        ElevatorListenerService.unInitialize();
+        ElevatorHologramService.onDisable();
 
-        File configFile = new File(this.getDataFolder(), "config.yml");
-        ConfigService.saveConfig(configFile);
+        this.saveConfig();
         this.initialized = false;
+    }
+
+    public void saveConfig() {
+        File configFile = new File(this.getDataFolder(), "config.yml");
+        ElevatorConfigService.saveConfig(configFile);
     }
 
     public void reloadElevators() {
@@ -52,7 +58,7 @@ public class Elevators extends JavaPlugin {
         File configFile = new File(this.getDataFolder(), "config.yml");
         this.saveDefaultConfig();
 
-        ConfigService.loadConfig(configFile);
+        ElevatorConfigService.loadConfig(configFile);
     }
 
     public static Elevators getInstance() { // I consider it bad practice to rely on a static instance, so I am prioritizing using getPlugin.
@@ -71,8 +77,6 @@ public class Elevators extends JavaPlugin {
         File configDirectory;
         if(plugin == null) {
             plugin = Bukkit.getPluginManager().getPlugins()[0];
-            if(plugin == null)
-                return null;
             configDirectory = new File(plugin.getDataFolder().getParent(),"Elevators");
         }else
             configDirectory = plugin.getDataFolder();
@@ -96,6 +100,6 @@ public class Elevators extends JavaPlugin {
     }
 
     public boolean isInitialized() {
-        return initialized;
+        return this.initialized;
     }
 }

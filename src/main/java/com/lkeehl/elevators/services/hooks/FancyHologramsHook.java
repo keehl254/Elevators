@@ -13,24 +13,25 @@ import org.bukkit.Location;
 import org.bukkit.entity.Display;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHologramWrapper> {
 
     private final Map<String, FancyHologramsHook.FancyHologramWrapper> holograms = new HashMap<>();
 
     @Override
-    public FancyHologramWrapper createHologram(Location location, double raise, String... lines) {
+    public FancyHologramWrapper createHologram(Location location, Consumer<WrappedHologram> deleteConsumer, double raise, String... lines) {
 
         UUID uuid;
         do {
             uuid = UUID.randomUUID();
-        } while(holograms.containsKey(uuid.toString()));
+        } while(this.holograms.containsKey(uuid.toString()));
 
         location = location.clone().add(0, raise, 0);
 
-        FancyHologramsHook.FancyHologramWrapper hologram = new FancyHologramsHook.FancyHologramWrapper(uuid.toString(), location, lines);
+        FancyHologramsHook.FancyHologramWrapper hologram = new FancyHologramsHook.FancyHologramWrapper(uuid.toString(), location, deleteConsumer, lines);
 
-        holograms.put(uuid.toString(), hologram);
+        this.holograms.put(uuid.toString(), hologram);
 
         return hologram;
     }
@@ -43,10 +44,10 @@ public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHol
     public class FancyHologramWrapper extends WrappedHologram {
 
         private final Hologram hologram;
-        public FancyHologramWrapper(String name, Location location, String... lines) {
-            super(location);
+        public FancyHologramWrapper(String name, Location elevatorLocation, Consumer<WrappedHologram> deleteConsumer, String... lines) {
+            super(elevatorLocation, deleteConsumer);
 
-            DisplayHologramData displayData = DisplayHologramData.getDefault(location);
+            DisplayHologramData displayData = DisplayHologramData.getDefault(elevatorLocation.clone());
             displayData.setBillboard(Display.Billboard.FIXED);
 
             TextHologramData textData = TextHologramData.getDefault(name);
@@ -64,7 +65,16 @@ public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHol
             data.setText(hologramText);
 
             this.hologram.updateHologram();
-            hologram.refreshHologram(Bukkit.getOnlinePlayers());
+            this.hologram.refreshHologram(Bukkit.getOnlinePlayers());
+        }
+
+        @Override
+        public void setLines(List<String> text) {
+            TextHologramData data = (TextHologramData) this.hologram.getData().getTypeData();
+            data.setText(text);
+
+            this.hologram.updateHologram();
+            this.hologram.refreshHologram(Bukkit.getOnlinePlayers());
         }
 
         @Override
@@ -73,7 +83,7 @@ public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHol
             data.setText(new ArrayList<>());
 
             this.hologram.updateHologram();
-            hologram.refreshHologram(Bukkit.getOnlinePlayers());
+            this.hologram.refreshHologram(Bukkit.getOnlinePlayers());
         }
 
         @Override
@@ -85,11 +95,11 @@ public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHol
         public void teleportTo(Location location) {
             this.hologram.getData().getDisplayData().setLocation(location);
             this.hologram.updateHologram();
-            hologram.refreshHologram(Bukkit.getOnlinePlayers());
+            this.hologram.refreshHologram(Bukkit.getOnlinePlayers());
         }
 
         @Override
-        public void delete() {
+        public void onDelete() {
             this.hologram.deleteHologram();
             FancyHologramsHook.this.holograms.remove(this.hologram.getData().getName());
         }

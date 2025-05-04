@@ -2,7 +2,7 @@ package com.lkeehl.elevators.services.interaction;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.MessageHelper;
-import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -49,9 +49,9 @@ public class SimpleInput implements Listener {
 
     public void start() {
         if(this.allowReset)
-            MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.chatInputBackOutAllowReset);
+            MessageHelper.sendFormattedMessage(this.player, ElevatorConfigService.getRootConfig().locale.chatInputBackOutAllowReset);
         else
-            MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.chatInputBackOut);
+            MessageHelper.sendFormattedMessage(this.player, ElevatorConfigService.getRootConfig().locale.chatInputBackOut);
 
         Bukkit.getPluginManager().registerEvents(this, this.plugin);
     }

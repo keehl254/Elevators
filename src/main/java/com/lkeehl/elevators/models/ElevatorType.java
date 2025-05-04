@@ -1,7 +1,15 @@
 package com.lkeehl.elevators.models;
 
+import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.services.ElevatorActionService;
+import com.lkeehl.elevators.services.ElevatorHologramService;
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.ShulkerBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +20,8 @@ public class ElevatorType extends ConfigElevatorType {
     //region properties
     private transient String elevatorTypeKey;
 
-    private transient final List<ElevatorAction> actionsUp = new ArrayList<>();
-    private transient final List<ElevatorAction> actionsDown = new ArrayList<>();
+    private final transient List<ElevatorAction> actionsUp = new ArrayList<>();
+    private final transient List<ElevatorAction> actionsDown = new ArrayList<>();
 
     //endregion
 
@@ -143,6 +151,8 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+
+        Elevators.getInstance().saveConfig();
     }
 
     /**
@@ -150,6 +160,8 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setMaxDistanceAllowedBetweenElevators(int maxDistance) {
         this.maxDistance = maxDistance;
+
+        Elevators.getInstance().saveConfig();
     }
 
     /**
@@ -157,6 +169,8 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setMaxStackSize(int maxStackSize) {
         this.maxStackSize = maxStackSize;
+
+        Elevators.getInstance().saveConfig();
     }
 
     /**
@@ -165,6 +179,8 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setMaxSolidBlocksAllowedBetweenElevators(int maxSolidBlocks) {
         this.maxSolidBlocks = maxSolidBlocks;
+
+        Elevators.getInstance().saveConfig();
     }
 
     /**
@@ -172,6 +188,8 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setCheckDestinationElevatorType(boolean checkType) {
         this.classCheck = checkType;
+
+        Elevators.getInstance().saveConfig();
     }
 
     /**
@@ -181,6 +199,8 @@ public class ElevatorType extends ConfigElevatorType {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public void setElevatorRequiresPermissions(boolean checkPerms) {
         this.checkPerms = checkPerms;
+
+        Elevators.getInstance().saveConfig();
     }
 
     /**
@@ -188,6 +208,8 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setCanElevatorExplode(boolean canExplode) {
         this.canExplode = canExplode;
+
+        Elevators.getInstance().saveConfig();
     }
 
     /**
@@ -195,6 +217,8 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setCanDye(boolean supportDying) {
         this.supportDying = supportDying;
+
+        Elevators.getInstance().saveConfig();
     }
 
     /**
@@ -203,6 +227,8 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setStopsObstructedTeleportation(boolean stopsObstruction) {
         this.stopObstruction = stopsObstruction;
+
+        Elevators.getInstance().saveConfig();
     }
 
     /**
@@ -210,14 +236,50 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setShouldValidateColor(boolean checkColor) {
         this.checkColor = checkColor;
+
+        Elevators.getInstance().saveConfig();
     }
 
     /**
      * Set the lines that should appear over an elevator of this type.
      */
     public void setHologramLines(List<String> holoLines) {
+        boolean checkCreate = this.hologramLines.isEmpty();
         this.hologramLines = holoLines;
-        // TODO: Update hologram
+
+        Elevators.getInstance().saveConfig();
+
+        if(!ElevatorHologramService.canUseHolograms())
+            return;
+
+        this.updateAllHolograms(checkCreate);
+    }
+
+    public void updateAllHolograms(boolean chunkCheck) {
+
+        // Run this later so that we don't hold up admin or interact menus.
+        Elevators.getFoliaLib().getScheduler().runNextTick(task -> ElevatorHologramService.updateHologramsOfElevatorType(this));
+
+        if(!chunkCheck)
+            return;
+
+        // Oof, this is a lot of nesting. Hate that, but don't want to extract to a method.
+        Elevators.getFoliaLib().getScheduler().runNextTick(task -> {
+            for(World world : Bukkit.getWorlds()) {
+                for(Chunk chunk : world.getLoadedChunks()) {
+                    for (BlockState state : chunk.getTileEntities()) {
+                        if(!(state instanceof ShulkerBox box))
+                            continue;
+
+                        ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
+                        if(elevatorType == null)
+                            continue;
+
+                        ElevatorHologramService.updateElevatorHologram(new Elevator(box, elevatorType));
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -225,6 +287,8 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setLore(List<String> loreLines) {
         this.loreLines = loreLines;
+
+        Elevators.getInstance().saveConfig();
     }
 
     //endregion

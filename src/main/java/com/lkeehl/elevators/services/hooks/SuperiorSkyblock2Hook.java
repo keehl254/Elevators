@@ -9,7 +9,7 @@ import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
-import com.lkeehl.elevators.services.ListenerService;
+import com.lkeehl.elevators.services.ElevatorListenerService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
 
     public SuperiorSkyblock2Hook() {
         super("SuperiorSkyblock2");
-        ListenerService.registerEventExecutor(PluginInitializeEvent.class, EventPriority.NORMAL, this::onSSB2Enable);
+        ElevatorListenerService.registerEventExecutor(PluginInitializeEvent.class, EventPriority.NORMAL, this::onSSB2Enable);
     }
 
     public void onSSB2Enable(PluginInitializeEvent e) {

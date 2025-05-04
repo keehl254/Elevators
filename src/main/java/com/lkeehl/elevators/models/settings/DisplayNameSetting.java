@@ -2,7 +2,7 @@ package com.lkeehl.elevators.models.settings;
 
 import com.lkeehl.elevators.helpers.ElevatorGUIHelper;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,6 +20,6 @@ public class DisplayNameSetting extends ElevatorSetting<String> {
         ElevatorGUIHelper.tryOpenAnvil(player, value -> true, result -> {
             elevatorType.setDisplayName(result != null ? result : currentValue);
             returnMethod.run();
-        }, returnMethod, ConfigService.getRootConfig().locale.enterDisplayName, true, currentValue, "Enter new display name.");
+        }, returnMethod, ElevatorConfigService.getRootConfig().locale.enterDisplayName, true, currentValue, "Enter new display name.");
     }
 }

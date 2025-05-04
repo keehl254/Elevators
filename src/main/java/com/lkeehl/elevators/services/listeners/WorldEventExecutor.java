@@ -8,18 +8,22 @@ import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.settings.CanExplodeSetting;
-import com.lkeehl.elevators.services.ConfigService;
-import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
+import com.lkeehl.elevators.services.ElevatorDataContainerService;
+import com.lkeehl.elevators.services.ElevatorHologramService;
 import com.lkeehl.elevators.services.ElevatorSettingService;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.entity.Item;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -58,7 +62,7 @@ public class WorldEventExecutor {
         if (elevatorType == null) return;
         if (!event.getBlock().getType().equals(Material.DISPENSER)) return;
 
-        if(!ConfigService.getRootConfig().allowElevatorDispense) {
+        if(!ElevatorConfigService.getRootConfig().allowElevatorDispense) {
             event.setCancelled(true);
             ShulkerBoxHelper.fakeDispense(event.getBlock(), event.getItem());
             return;
@@ -69,10 +73,10 @@ public class WorldEventExecutor {
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Elevators")), () -> {
             if (!(relative.getState() instanceof ShulkerBox box)) return;
 
-            DataContainerService.updateTypeKeyOnElevator(box, elevatorType);
-            DataContainerService.dumpDataFromItemIntoShulkerBox(box, event.getItem());
+            ElevatorDataContainerService.updateTypeKeyOnElevator(box, elevatorType);
+            ElevatorDataContainerService.dumpDataFromItemIntoShulkerBox(box, event.getItem());
             ElevatorHelper.onElevatorPlace(new Elevator(box,elevatorType));
-            if (ConfigService.getRootConfig().forceFacingUpwards)
+            if (ElevatorConfigService.getRootConfig().forceFacingUpwards)
                 ShulkerBoxHelper.setFacingUp(box);
         });
     }
@@ -83,7 +87,9 @@ public class WorldEventExecutor {
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box, false);
         if (elevatorType == null) return;
 
-        ItemStack newElevatorItem = ItemStackHelper.createItemStackFromElevator(new Elevator(box, elevatorType));
+        Elevator elevator = new Elevator(box, elevatorType);
+        ElevatorHologramService.deleteHologram(elevator);
+        ItemStack newElevatorItem = ItemStackHelper.createItemStackFromElevator(elevator);
 
         Optional<Item> defaultItem = event.getItems().stream().filter(i -> !ItemStackHelper.isNotShulkerBox(i.getItemStack().getType())).findAny();
         if(defaultItem.isEmpty()) return;
@@ -101,7 +107,7 @@ public class WorldEventExecutor {
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(item);
         if (elevatorType == null) return;
 
-        if (ConfigService.isWorldDisabled(event.getBlock().getWorld())) {
+        if (ElevatorConfigService.isWorldDisabled(event.getBlock().getWorld())) {
             event.setCancelled(true);
             MessageHelper.sendWorldDisabledMessage(event.getPlayer(), new ElevatorEventData(elevatorType));
             return;
@@ -110,11 +116,36 @@ public class WorldEventExecutor {
         if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE))
             item.setAmount(count - 1);
 
-        ShulkerBox box = DataContainerService.updateTypeKeyOnElevator((ShulkerBox) event.getBlockPlaced().getState(), elevatorType);
-        ElevatorHelper.onElevatorPlace(new Elevator(box, elevatorType));
 
-        if (ConfigService.getRootConfig().forceFacingUpwards)
+        ShulkerBox box = ElevatorDataContainerService.updateTypeKeyOnElevator((ShulkerBox) event.getBlockPlaced().getState(), elevatorType);
+        Elevator elevator = new Elevator(box, elevatorType);
+        ElevatorHelper.onElevatorPlace(elevator);
+
+        if (ElevatorConfigService.getRootConfig().forceFacingUpwards)
             ShulkerBoxHelper.setFacingUp(box);
+
+        ElevatorHologramService.updateElevatorHologram(elevator);
+    }
+
+
+    public static void onChunkLoad(ChunkLoadEvent event) {
+        if(!ElevatorHologramService.canUseHolograms())
+            return;
+        for (BlockState state : event.getChunk().getTileEntities()) {
+            if(!(state instanceof ShulkerBox box))
+                continue;
+            ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
+            if(elevatorType == null)
+                continue;
+            ElevatorHologramService.updateElevatorHologram(new Elevator(box, elevatorType));
+        }
+    }
+
+    public static void onChunkUnload(ChunkUnloadEvent event) {
+        if(!ElevatorHologramService.canUseHolograms())
+            return;
+
+        ElevatorHologramService.deleteHologramsInChunk(event.getChunk());
     }
 
 }

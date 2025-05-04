@@ -1,23 +1,19 @@
 package com.lkeehl.elevators.models.settings;
 
 import com.lkeehl.elevators.Elevators;
-import com.lkeehl.elevators.helpers.ColorHelper;
 import com.lkeehl.elevators.helpers.ElevatorGUIHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.ConfigService;
-import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
+import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import com.lkeehl.elevators.services.interaction.PagedDisplay;
-import com.lkeehl.elevators.services.interaction.SimpleDisplay;
 import com.lkeehl.elevators.services.interaction.SimpleInput;
 import org.bukkit.*;
-import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -32,7 +28,7 @@ public class HologramLinesSetting extends ElevatorSetting<String[]> {
     public HologramLinesSetting() {
         super("change-holo", "Hologram Lines", "Click to alter the hologram lines that appear above the elevator.", Material.PAPER, ChatColor.YELLOW);
         this.setGetValueGlobal(e -> e.getHolographicLines().toArray(new String[]{}));
-        this.setupDataStore("hologram-lines", DataContainerService.stringArrayPersistentDataType);
+        this.setupDataStore("hologram-lines", ElevatorDataContainerService.stringArrayPersistentDataType);
     }
 
     private void addLine(Player player, String[] currentValue, Consumer<String[]> completeConsumer) {
@@ -51,7 +47,7 @@ public class HologramLinesSetting extends ElevatorSetting<String[]> {
             return SimpleInput.SimpleInputResult.STOP;
         });
         input.onCancel(() -> completeConsumer.accept(currentValue));
-        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterMessage);
+        MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.enterMessage);
         input.start();
     }
 
@@ -151,11 +147,11 @@ public class HologramLinesSetting extends ElevatorSetting<String[]> {
 
         lore.add("");
         if (loreLines.length == 0) {
-            lore.add(ChatColor.GRAY + "Current Value: " + ChatColor.GOLD + "" + ChatColor.BOLD + "None");
+            lore.add(ChatColor.GRAY + "Current Value: " + ChatColor.GOLD + ChatColor.BOLD + "None");
         } else {
             lore.add(ChatColor.GRAY + "Current Value: ");
             for (String line : loreLines)
-                lore.add("\t" + ChatColor.GOLD + "" + MessageHelper.formatColors(line));
+                lore.add("\t" + ChatColor.GOLD + MessageHelper.formatColors(line));
         }
 
         ItemStack icon = this.iconTemplate.clone();

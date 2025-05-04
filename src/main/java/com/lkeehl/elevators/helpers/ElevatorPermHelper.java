@@ -6,9 +6,9 @@ import com.lkeehl.elevators.models.ElevatorRecipeGroup;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.settings.CheckPermsSetting;
 import com.lkeehl.elevators.models.settings.SupportDyingSetting;
-import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.ElevatorSettingService;
-import com.lkeehl.elevators.services.HookService;
+import com.lkeehl.elevators.services.ElevatorHookService;
 import com.lkeehl.elevators.util.ExecutionMode;
 import org.bukkit.DyeColor;
 import org.bukkit.Keyed;
@@ -56,7 +56,7 @@ public class ElevatorPermHelper {
             if (!hasPermission.get())
                 return;
 
-            if (!HookService.canUseElevator(player, elevator, false)) {
+            if (!ElevatorHookService.canUseElevator(player, elevator, false)) {
                 hasPermission.set(false);
                 return;
             }
@@ -76,7 +76,7 @@ public class ElevatorPermHelper {
             hasPermission.set(player.hasPermission(elevator.getElevatorType().getUsePermission() + "." + elevator.getDyeColor()));
         };
 
-        ExecutionMode.executeConsumerWithMode(ConfigService.getRootConfig().permissionMode, i -> i == ExecutionMode.DESTINATION ? elevatorEventData.getDestination() : elevatorEventData.getOrigin(), checkPermission);
+        ExecutionMode.executeConsumerWithMode(ElevatorConfigService.getRootConfig().permissionMode, i -> i == ExecutionMode.DESTINATION ? elevatorEventData.getDestination() : elevatorEventData.getOrigin(), checkPermission);
 
         return hasPermission.get();
     }

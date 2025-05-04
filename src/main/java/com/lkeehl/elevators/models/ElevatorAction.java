@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.models;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.services.interaction.SimpleDisplay;
@@ -126,6 +127,8 @@ public abstract class ElevatorAction {
             this.groupingData.remove(grouping);
         else
             this.groupingData.put(grouping, value);
+
+        Elevators.getInstance().saveConfig();
     }
 
     private boolean calculateGroupingFromAlias(String groupingAlias, String groupingValue) {
@@ -140,7 +143,7 @@ public abstract class ElevatorAction {
 
     protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionGrouping<T> grouping, String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
 
-        if (!initialized)
+        if (!this.initialized)
             throw new RuntimeException("Elevator Action Setting mapped prior to initialization. Please move all mapSetting calls to the onInitialize method.");
 
         ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, settingDisplayName, description, icon, textColor);

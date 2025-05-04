@@ -15,13 +15,13 @@ public class ElevatorTypeService {
         if(ElevatorTypeService.initialized)
             return;
 
-        ConfigService.addConfigCallback(ElevatorTypeService::reloadElevatorsFromConfig);
+        ElevatorConfigService.addConfigCallback(ElevatorTypeService::reloadElevatorsFromConfig);
 
         ElevatorTypeService.initialized = true;
     }
 
     private static void reloadElevatorsFromConfig(ConfigRoot config) {
-        Map<String, ElevatorType> elevatorTypes = ConfigService.getElevatorTypeConfigs();
+        Map<String, ElevatorType> elevatorTypes = ElevatorConfigService.getElevatorTypeConfigs();
         List<String> elevatorsToFix = new ArrayList<>();
         for(String elevatorKey : elevatorTypes.keySet()) {
             if(!elevatorKey.equals(elevatorKey.toUpperCase()))
@@ -43,7 +43,7 @@ public class ElevatorTypeService {
     }
 
     public static ElevatorType getElevatorType(String name) {
-        return ConfigService.getElevatorTypeConfigs().getOrDefault(name.toUpperCase(), null);
+        return ElevatorConfigService.getElevatorTypeConfigs().getOrDefault(name.toUpperCase(), null);
     }
 
     public static ElevatorType getDefaultElevatorType() {
@@ -51,34 +51,34 @@ public class ElevatorTypeService {
     }
 
     public static boolean doesElevatorTypeExist(String name) {
-        return ConfigService.getElevatorTypeConfigs().containsKey(name.toUpperCase());
+        return ElevatorConfigService.getElevatorTypeConfigs().containsKey(name.toUpperCase());
     }
 
     public static Collection<ElevatorType> getExistingElevatorTypes() {
-        return ConfigService.getElevatorTypeConfigs().values();
+        return ElevatorConfigService.getElevatorTypeConfigs().values();
     }
 
     public static Set<String> getExistingElevatorKeys() {
-        return ConfigService.getElevatorTypeConfigs().keySet();
+        return ElevatorConfigService.getElevatorTypeConfigs().keySet();
     }
 
     public static void registerElevatorType(ElevatorType elevatorType) {
-        ConfigService.getElevatorTypeConfigs().put(elevatorType.getTypeKey().toUpperCase(), elevatorType);
-        reloadElevatorsFromConfig(ConfigService.getRootConfig());
+        ElevatorConfigService.getElevatorTypeConfigs().put(elevatorType.getTypeKey().toUpperCase(), elevatorType);
+        reloadElevatorsFromConfig(ElevatorConfigService.getRootConfig());
     }
 
     public static ElevatorType createElevatorType(String typeKey) {
         typeKey = typeKey.toUpperCase();
         ElevatorType type = new ElevatorType();
-        ConfigService.getElevatorTypeConfigs().put(typeKey, type);
-        reloadElevatorsFromConfig(ConfigService.getRootConfig());
+        ElevatorConfigService.getElevatorTypeConfigs().put(typeKey, type);
+        reloadElevatorsFromConfig(ElevatorConfigService.getRootConfig());
 
         return type;
     }
 
     public static void unregisterElevatorType(ElevatorType elevatorType) {
-        ConfigService.getElevatorTypeConfigs().remove(elevatorType.getTypeKey());
-        reloadElevatorsFromConfig(ConfigService.getRootConfig());
+        ElevatorConfigService.getElevatorTypeConfigs().remove(elevatorType.getTypeKey());
+        reloadElevatorsFromConfig(ElevatorConfigService.getRootConfig());
     }
 
 }

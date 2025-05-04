@@ -7,7 +7,7 @@ import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.*;
-import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.interaction.SimpleDisplay;
 import com.lkeehl.elevators.services.interaction.SimpleInput;
 import org.bukkit.Bukkit;
@@ -185,7 +185,7 @@ public class BossBarAction extends ElevatorAction {
             return SimpleInput.SimpleInputResult.STOP;
         });
         input.onCancel(returnMethod);
-        MessageHelper.sendFormattedMessage(player, ConfigService.getRootConfig().locale.enterMessage);
+        MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.enterMessage);
         input.start();
     }
 

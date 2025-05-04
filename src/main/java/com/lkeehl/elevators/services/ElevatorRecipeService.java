@@ -23,7 +23,7 @@ public class ElevatorRecipeService {
         if(ElevatorRecipeService.initialized)
             return;
 
-        ConfigService.addConfigCallback(ElevatorRecipeService::registerRecipes);
+        ElevatorConfigService.addConfigCallback(ElevatorRecipeService::registerRecipes);
 
         ElevatorRecipeService.initialized = true;
     }

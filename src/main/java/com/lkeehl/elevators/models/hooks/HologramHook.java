@@ -5,13 +5,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.function.Consumer;
+
 public abstract class HologramHook<HOLO extends WrappedHologram> implements ElevatorHook {
 
-    public HOLO createHologram(Location location, String... lines) {
-        return createHologram(location,0.0,lines);
+    public HOLO createHologram(Location location, Consumer<WrappedHologram> deleteConsumer, String... lines) {
+        return createHologram(location,deleteConsumer, 0.0,lines);
     }
 
-    public abstract HOLO createHologram(Location location, double raise, String... lines);
+    public abstract HOLO createHologram(Location location, Consumer<WrappedHologram> deleteConsumer, double raise, String... lines);
 
 
     public abstract void clearAll();

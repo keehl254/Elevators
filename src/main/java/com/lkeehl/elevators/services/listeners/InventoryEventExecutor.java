@@ -6,7 +6,7 @@ import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.settings.DisplayNameSetting;
 import com.lkeehl.elevators.models.settings.LoreLinesSetting;
 import com.lkeehl.elevators.models.settings.MaxStackSizeSetting;
-import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import com.lkeehl.elevators.services.ElevatorSettingService;
 import org.bukkit.DyeColor;
 import org.bukkit.Keyed;
@@ -120,7 +120,7 @@ public class InventoryEventExecutor {
         if (result.getType().isAir() || ItemStackHelper.isNotShulkerBox(result.getType()))
             return;
         ItemStack newElevator = new ItemStack(result.getType(), result.getAmount());
-        DataContainerService.dumpDataFromItemIntoItem(item, newElevator);
+        ElevatorDataContainerService.dumpDataFromItemIntoItem(item, newElevator);
 
         ItemMeta meta = newElevator.getItemMeta();
         if (meta != null && result.getItemMeta() != null && result.getItemMeta().hasDisplayName())

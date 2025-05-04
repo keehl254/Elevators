@@ -10,9 +10,9 @@ import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.settings.DisplayNameSetting;
 import com.lkeehl.elevators.models.settings.LoreLinesSetting;
-import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.ElevatorSettingService;
-import com.lkeehl.elevators.services.HookService;
+import com.lkeehl.elevators.services.ElevatorHookService;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,14 +31,14 @@ public class PaperEventExecutor {
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
         if (elevatorType == null) return;
 
-        if (ConfigService.isWorldDisabled(e.getPlayer().getWorld())) {
+        if (ElevatorConfigService.isWorldDisabled(e.getPlayer().getWorld())) {
             if (ElevatorHelper.hasOrAddPlayerCoolDown(e.getPlayer(), "message"))
                 MessageHelper.sendWorldDisabledMessage(e.getPlayer(), new ElevatorEventData(elevatorType));
             return;
         }
 
         Elevator elevator = new Elevator(box, elevatorType);
-        if(!HookService.canUseElevator(e.getPlayer(), elevator, true))
+        if(!ElevatorHookService.canUseElevator(e.getPlayer(), elevator, true))
             return;
 
         ElevatorEventData closest = ElevatorHelper.findDestinationElevator(e.getPlayer(), elevator, (byte) 1);

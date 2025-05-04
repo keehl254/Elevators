@@ -24,7 +24,7 @@ public class ElevatorEffectService {
         if(ElevatorEffectService.initialized)
             return;
 
-        ConfigService.addConfigCallback(ElevatorEffectService::loadEffects);
+        ElevatorConfigService.addConfigCallback(ElevatorEffectService::loadEffects);
 
         ElevatorEffectService.initialized = true;
     }
@@ -39,7 +39,7 @@ public class ElevatorEffectService {
         elevatorEffects.put("HELIX", new HelixEffect());
         // elevatorEffects.put("SPARKLES", new SparklesEffect());
 
-        Map<String, ConfigEffect> effectConfigs = ConfigService.getEffectConfigs();
+        Map<String, ConfigEffect> effectConfigs = ElevatorConfigService.getEffectConfigs();
         for(String elevatorEffectKey : effectConfigs.keySet()) {
             ConfigEffect effectConfig = effectConfigs.get(elevatorEffectKey);
             elevatorEffectKey = elevatorEffectKey.toUpperCase();

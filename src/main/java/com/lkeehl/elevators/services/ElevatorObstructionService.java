@@ -20,17 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ObstructionService {
+public class ElevatorObstructionService {
 
     private final static List<Material> nonObstructiveMaterials = new ArrayList<>();
 
     private static boolean initialized = false;
 
     public static void init() {
-        if (ObstructionService.initialized)
+        if (ElevatorObstructionService.initialized)
             return;
 
-        ConfigService.addConfigCallback(i -> ObstructionService.loadNonObstructiveMaterials());
+        ElevatorConfigService.addConfigCallback(i -> ElevatorObstructionService.loadNonObstructiveMaterials());
 
         initialized = true;
     }
@@ -82,7 +82,7 @@ public class ObstructionService {
     public static boolean isBlockObstructed(Block block, int height) {
         Location testObstruction = block.getLocation();
         for (int i = 0; i < height; i++) {
-            if (ObstructionService.isObstructive(testObstruction.add(0.0D, 1.0D, 0.0D).getBlock().getType()))
+            if (ElevatorObstructionService.isObstructive(testObstruction.add(0.0D, 1.0D, 0.0D).getBlock().getType()))
                 return true;
         }
 
@@ -92,7 +92,7 @@ public class ObstructionService {
     public static double getHitBoxAddition(Block block, Player player) {
 
         if (!MCVersionHelper.doesVersionSupportBlockBoundingBoxes())
-            return ObstructionService.isBlockObstructed(block, 2) ? -1 : 0;
+            return ElevatorObstructionService.isBlockObstructed(block, 2) ? -1 : 0;
 
         Location location = player.getLocation();
         double newX = location.getX() < 0 ? 1.0 + location.getX() % 1 : location.getX() % 1;

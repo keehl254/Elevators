@@ -2,26 +2,22 @@ package com.lkeehl.elevators.actions;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
-import com.lkeehl.elevators.helpers.ColorHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.*;
-import com.lkeehl.elevators.models.settings.ElevatorSetting;
-import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.interaction.PagedDisplay;
 import com.lkeehl.elevators.util.ExecutionMode;
 import org.bukkit.*;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class SoundAction extends ElevatorAction {
@@ -59,7 +55,7 @@ public class SoundAction extends ElevatorAction {
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
         Consumer<ShulkerBox> soundConsumer = box -> box.getWorld().playSound(box.getLocation(), this.getGroupingObject(soundGrouping, eventData.getOrigin()), this.getGroupingObject(volumeGrouping, eventData.getOrigin()), this.getGroupingObject(pitchGrouping, eventData.getOrigin()));
-        ExecutionMode.executeConsumerWithMode(ConfigService.getRootConfig().effectDestination, i-> i == ExecutionMode.DESTINATION ? eventData.getDestination().getShulkerBox() : eventData.getOrigin().getShulkerBox(), soundConsumer);
+        ExecutionMode.executeConsumerWithMode(ElevatorConfigService.getRootConfig().effectDestination, i-> i == ExecutionMode.DESTINATION ? eventData.getDestination().getShulkerBox() : eventData.getOrigin().getShulkerBox(), soundConsumer);
     }
 
     private void editVolume(Player player, Runnable returnMethod, InventoryClickEvent clickEvent, float currentValue, Consumer<Float> setValueMethod) {

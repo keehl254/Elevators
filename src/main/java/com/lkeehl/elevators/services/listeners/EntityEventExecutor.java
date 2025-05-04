@@ -6,10 +6,10 @@ import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.settings.MaxStackSizeSetting;
-import com.lkeehl.elevators.services.ConfigService;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.ElevatorRecipeService;
 import com.lkeehl.elevators.services.ElevatorSettingService;
-import com.lkeehl.elevators.services.HookService;
+import com.lkeehl.elevators.services.ElevatorHookService;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.Statistic;
@@ -50,14 +50,14 @@ public class EntityEventExecutor {
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
         if (elevatorType == null) return;
 
-        if (ConfigService.isWorldDisabled(event.getPlayer().getWorld())) {
+        if (ElevatorConfigService.isWorldDisabled(event.getPlayer().getWorld())) {
             if (ElevatorHelper.hasOrAddPlayerCoolDown(event.getPlayer(), "message"))
                 MessageHelper.sendWorldDisabledMessage(event.getPlayer(), new ElevatorEventData(elevatorType));
             return;
         }
 
         Elevator elevator = new Elevator(box, elevatorType);
-        if(!HookService.canUseElevator(event.getPlayer(), elevator, true))
+        if(!ElevatorHookService.canUseElevator(event.getPlayer(), elevator, true))
             return;
 
         ElevatorEventData closest = ElevatorHelper.findDestinationElevator(event.getPlayer(), elevator, (byte) 1);
@@ -85,13 +85,13 @@ public class EntityEventExecutor {
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
         if (elevatorType == null) return;
 
-        if (ConfigService.isWorldDisabled(event.getPlayer().getWorld())) {
+        if (ElevatorConfigService.isWorldDisabled(event.getPlayer().getWorld())) {
             MessageHelper.sendWorldDisabledMessage(event.getPlayer(), new ElevatorEventData(elevatorType));
             return;
         }
 
         Elevator elevator = new Elevator(box, elevatorType);
-        if(!HookService.canUseElevator(event.getPlayer(), elevator, true))
+        if(!ElevatorHookService.canUseElevator(event.getPlayer(), elevator, true))
             return;
 
         ElevatorEventData closest = ElevatorHelper.findDestinationElevator(event.getPlayer(), elevator, (byte) -1);

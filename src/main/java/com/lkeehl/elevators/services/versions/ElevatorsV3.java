@@ -3,7 +3,7 @@ package com.lkeehl.elevators.services.versions;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.ElevatorVersionService;
-import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
@@ -14,12 +14,12 @@ public class ElevatorsV3 extends ElevatorVersionService.ElevatorVersion {
     public ElevatorType getElevatorType(ItemStack itemStack) {
         if (ItemStackHelper.isNotShulkerBox(itemStack.getType()))
             return null;
-        return getClassFromBoxName(DataContainerService.getElevatorKey(itemStack));
+        return getClassFromBoxName(ElevatorDataContainerService.getElevatorKey(itemStack));
     }
 
     @Override
     public ElevatorType getElevatorType(ShulkerBox box) {
-        return getClassFromBoxName(DataContainerService.getElevatorKey(box));
+        return getClassFromBoxName(ElevatorDataContainerService.getElevatorKey(box));
     }
 
     @Override

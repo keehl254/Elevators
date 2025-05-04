@@ -4,7 +4,7 @@ import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.DataContainerService;
+import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import com.lkeehl.elevators.util.PentaConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,7 +31,7 @@ public class ElevatorSetting<T> {
     private PentaConsumer<Player, ElevatorType, Runnable, InventoryClickEvent, T> onClickGlobalConsumer;
     private PentaConsumer<Player, Elevator, Runnable, InventoryClickEvent, T> onClickIndividualConsumer;
 
-    private Map<String, String> actions = new HashMap<>();
+    private final Map<String, String> actions = new HashMap<>();
 
     public ElevatorSetting(String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
         List<String> lore = new ArrayList<>();
@@ -51,13 +51,13 @@ public class ElevatorSetting<T> {
     }
 
     public ElevatorSetting<T> setupDataStore(String settingKey, PersistentDataType<?, T> dataType) {
-        NamespacedKey containerKey = DataContainerService.getKeyFromKey("per-ele-" + settingKey, dataType);
+        NamespacedKey containerKey = ElevatorDataContainerService.getKeyFromKey("per-ele-" + settingKey, dataType);
 
-        this.getIndividualCurrentValueFunc = elevator -> DataContainerService.getElevatorValue(elevator.getShulkerBox(), containerKey, getGlobalCurrentValueFunc.apply(elevator.getElevatorType()));
+        this.getIndividualCurrentValueFunc = elevator -> ElevatorDataContainerService.getElevatorValue(elevator.getShulkerBox(), containerKey, this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType()));
         this.setIndividualCurrentValueFunc = (elevator, value) -> {
             if(value == this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType())) // Store as little data as possible. Remove from data-container if default.
                 value = null;
-            DataContainerService.setElevatorValue(elevator.getShulkerBox(), containerKey, value);
+            ElevatorDataContainerService.setElevatorValue(elevator.getShulkerBox(), containerKey, value);
             elevator.getShulkerBox().update();
         };
 
@@ -85,9 +85,9 @@ public class ElevatorSetting<T> {
 
         if(!this.actions.isEmpty()) {
             lore.add("");
-            this.actions.forEach( (action, description) -> {
-                lore.add(ChatColor.GOLD + "" + ChatColor.BOLD+action+": " + ChatColor.GRAY+description);
-            });
+            this.actions.forEach( (action, description) ->
+                    lore.add(ChatColor.GOLD + "" + ChatColor.BOLD+action+": " + ChatColor.GRAY+description)
+            );
         }
 
         ItemStack icon = this.iconTemplate.clone();

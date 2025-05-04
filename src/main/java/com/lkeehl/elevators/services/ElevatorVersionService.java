@@ -55,7 +55,7 @@ public class ElevatorVersionService {
         if(updateBlock) {
             ShulkerBox newBox = result.getValue().apply(box);
             newBox = ShulkerBoxHelper.clearContents(newBox);
-            if (ConfigService.getRootConfig().forceFacingUpwards)
+            if (ElevatorConfigService.getRootConfig().forceFacingUpwards)
                 ShulkerBoxHelper.setFacingUp(newBox);
         }
         return result.getKey();

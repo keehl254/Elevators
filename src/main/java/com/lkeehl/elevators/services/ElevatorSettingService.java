@@ -3,6 +3,7 @@ package com.lkeehl.elevators.services;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.settings.*;
+import com.lkeehl.elevators.services.configs.ConfigRoot;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -12,29 +13,32 @@ public class ElevatorSettingService {
 
     private static boolean initialized = false;
 
-    private static Map<Class<? extends ElevatorSetting<?>>, ElevatorSetting<?>> settingsMap = new HashMap<>();
+    private static final Map<Class<? extends ElevatorSetting<?>>, ElevatorSetting<?>> settingsMap = new HashMap<>();
 
     public static void init() {
         if(ElevatorSettingService.initialized)
             return;
 
-        //ConfigService.addConfigCallback(ElevatorSettingService::reloadElevatorsFromConfig);
+        ElevatorConfigService.addConfigCallback(ElevatorSettingService::registerDefaultSettings);
 
-        settingsMap.put(CanExplodeSetting.class, new CanExplodeSetting());
+        ElevatorSettingService.initialized = true;
+    }
+
+    private static void registerDefaultSettings(ConfigRoot config) {
+        settingsMap.clear();
+
         addSetting(CanExplodeSetting.class);
         addSetting(CheckColorSetting.class);
         addSetting(CheckPermsSetting.class);
         addSetting(ClassCheckSetting.class);
         addSetting(DisplayNameSetting.class);
-        addSetting(HologramLinesSetting.class);
         addSetting(LoreLinesSetting.class);
         addSetting(MaxDistanceSetting.class);
         addSetting(MaxSolidBlocksSetting.class);
         addSetting(MaxStackSizeSetting.class);
         addSetting(StopObstructionSetting.class);
         addSetting(SupportDyingSetting.class);
-
-        ElevatorSettingService.initialized = true;
+        addSetting(HologramLinesSetting.class);
     }
 
     public static void addSetting(Class<? extends ElevatorSetting<?>> settingsClass) {
