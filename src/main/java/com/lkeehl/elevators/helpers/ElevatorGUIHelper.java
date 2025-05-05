@@ -15,7 +15,9 @@ import de.rapha149.signgui.SignGUI;
 import de.rapha149.signgui.SignGUIAction;
 import de.rapha149.signgui.SignGUIBuilder;
 import de.rapha149.signgui.exception.SignGUIVersionException;
+import net.wesjd.anvilgui.AnvilGUI;
 import net.wesjd.anvilgui.version.VersionMatcher;
+import net.wesjd.anvilgui.version.VersionWrapper;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,6 +26,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -37,18 +41,35 @@ import java.util.stream.IntStream;
 
     static {
         try {
-            (new VersionMatcher()).match();
-            anvilEnabled = true;
-        }catch (Exception ex){
-            anvilEnabled = false;
-        }
-        try {
             SignGUI.builder();
             signEnabled = true;
         } catch (SignGUIVersionException e) {
             signEnabled = false;
         }
 
+        anvilEnabled = true;
+        try {
+            VersionWrapper wrapper = (new VersionMatcher()).match();
+            Method toNMSMethod = wrapper.getClass().getDeclaredMethod("sendPacketCloseWindow", Player.class, int.class);
+            toNMSMethod.setAccessible(true);
+
+            try {
+                toNMSMethod.invoke(wrapper, null, -1);
+            } catch(InvocationTargetException ite) {
+                if(ite.getTargetException() instanceof NoClassDefFoundError) {
+                    anvilEnabled = false;
+                    Elevators.getElevatorsLogger().warning("AnvilAPI is not up-to-date. Using backup chat input system.");
+                } else if(!(ite.getTargetException() instanceof  NullPointerException)) {// NPE will occur if the AnvilGUI is up-to-date.
+                    Elevators.getElevatorsLogger().warning(ite.getTargetException().toString());
+                    anvilEnabled = false;
+                }
+            }
+
+        } catch (Exception ex) {
+            Elevators.getElevatorsLogger().warning("AnvilAPI is not up-to-date. Using backup chat input system.");
+            Elevators.getElevatorsLogger().warning(ex.toString());
+            anvilEnabled = false;
+        }
 
     }
 
@@ -97,9 +118,9 @@ import java.util.stream.IntStream;
     }
 
     public static void tryOpenAnvil(Player player, Function<String, Boolean> validationFunction, Consumer<String> resultConsumer, Runnable onCancel, String inputMessage, boolean allowReset, String defaultText, String title) {
-        /*
-        Anvil GUI is cool; however, there is no way to tell if the API supports the current game version.
-        I will put this back when they fix this.
+
+        // Anvil GUI is cool; however, there is no way to tell if the API supports the current game version.
+        // I will put this back when they fix this.
 
         if(anvilEnabled){
             try {
@@ -133,7 +154,7 @@ import java.util.stream.IntStream;
             } catch (Exception ex) {
                 anvilEnabled = false;
             }
-        }*/
+        }
 
         player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
 
