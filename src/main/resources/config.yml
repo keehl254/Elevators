@@ -105,11 +105,10 @@ elevators:
     # Some default effects are: "arrow","helix", "sparkles"
     #
     # IF AN IDENTIFIER KEY HAS BEEN GENERATED, DO NOT MESS WITH IT OR INDIVIDUAL ELEVATOR DATA MAY BE LOST.
+    # Currently not working for 1.21.1! E.g. 'sound: volume=1.0 sound=ENTITY_BLAZE_SHOOT pitch=2.0'
     actions:
-      up:
-        - 'sound: volume=1.0 sound=ENTITY_BLAZE_SHOOT pitch=2.0'
-      down:
-        - 'sound: volume=1.0 sound=ENTITY_BLAZE_SHOOT pitch=2.0'
+      up: []
+      down: []
     # Define elevator settings that should not be customizable by users.
     # Available settings are:
     # can-explode, check-color, check-perms, check-type, change-holo, stop-obstruction
