@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.models.hooks;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.models.Elevator;
@@ -49,10 +50,15 @@ public abstract class WrappedHologram {
     }
 
     public void update() {
+
+        if(!this.getElevatorLocation().getChunk().isLoaded())
+            return;
+
         ElevatorHologramService.updateElevatorHologram(this.getElevator());
     }
 
     public final void delete() {
+        // Elevators.getElevatorsLogger().warning("Deleting hologram at " + this.elevatorLocation.getBlockX() + " " + this.elevatorLocation.getBlockY() + " " + this.elevatorLocation.getBlockZ());
         this.onDelete();
         this.deleteConsumer.accept(this);
     }

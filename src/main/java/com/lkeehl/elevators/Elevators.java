@@ -59,6 +59,7 @@ public class Elevators extends JavaPlugin {
         this.saveDefaultConfig();
 
         ElevatorConfigService.loadConfig(configFile);
+        this.saveConfig();
     }
 
     public static Elevators getInstance() { // I consider it bad practice to rely on a static instance, so I am prioritizing using getPlugin.

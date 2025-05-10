@@ -53,6 +53,10 @@ public class ElevatorConfigService {
         return ElevatorConfigService.rootNode.getConfig();
     }
 
+    public static boolean isConfigLoaded() {
+        return ElevatorConfigService.rootNode != null;
+    }
+
     public static ConfigLocale getDefaultLocaleConfig() {
         if(ElevatorConfigService.defaultLocaleConfig == null)
             ElevatorConfigService.defaultLocaleConfig = new ConfigLocale();

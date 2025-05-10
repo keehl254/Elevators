@@ -1,6 +1,7 @@
 package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
@@ -9,6 +10,8 @@ import com.lkeehl.elevators.services.configs.ConfigRoot;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.ShulkerBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +27,8 @@ public class ElevatorHologramService {
 
     private static final Map<Location, WrappedHologram> elevatorHolograms = new HashMap<>();
     private static final Map<ElevatorType, List<WrappedHologram>> elevatorTypeHolograms = new HashMap<>();
+
+    private static final List<Long> ignoreLoadChunks = new ArrayList<>();
 
     private static WrappedTask task;
     private static int currentIndex = 0;
@@ -42,7 +47,7 @@ public class ElevatorHologramService {
             holograms.get(currentIndex).update();
             currentIndex++;
 
-        }, 1,1);
+        }, 5,5);
 
         ElevatorHologramService.initialized = true;
     }
@@ -102,7 +107,29 @@ public class ElevatorHologramService {
         hologram.delete();
     }
 
+    public static void loadHologramsInChunk(Chunk chunk) {
+        long chunkKey = (long)chunk.getX() & 4294967295L | ((long)chunk.getZ() & 4294967295L) << 32;
+
+         if(ignoreLoadChunks.contains(chunkKey)) {
+             ignoreLoadChunks.remove(chunkKey);
+             return;
+         }
+
+        for (BlockState state : chunk.getTileEntities()) {
+            if(!(state instanceof ShulkerBox box))
+                continue;
+            ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
+            if(elevatorType == null)
+                continue;
+            ElevatorHologramService.updateElevatorHologram(new Elevator(box, elevatorType));
+        }
+    }
+
     public static void deleteHologramsInChunk(Chunk chunk) {
+
+        /* Temporarily disabled while working out how to delete holograms without also reloading the chunk.
+
+        Elevators.getElevatorsLogger().warning("Chunk unloaded. Starting to remove holograms in chunk.");
         long chunkKey = (long)chunk.getX() & 4294967295L | ((long)chunk.getZ() & 4294967295L) << 32;
 
         List<WrappedHologram> toDelete = new ArrayList<>();
@@ -116,7 +143,9 @@ public class ElevatorHologramService {
                 toDelete.add(elevatorHolograms.get(location));
 
         }
+        ignoreLoadChunks.add(chunkKey);
         toDelete.forEach(WrappedHologram::delete);
+         */
     }
 
     public static void updateElevatorHologram(Elevator elevator) {

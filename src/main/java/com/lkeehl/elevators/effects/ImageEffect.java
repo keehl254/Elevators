@@ -132,7 +132,7 @@ public class ImageEffect extends ElevatorEffect {
                                 locClone.add((offset + 1.0), -(y * 0.2), (tempX * 0.2) - (offset - 0.5));
                             }
 
-                            location.getWorld().spawnParticle(Particle.DUST, locClone, 1, 0, 0, 0, 1, new Particle.DustOptions(Color.fromARGB(colorARGB), 1));
+                            location.getWorld().spawnParticle(Particle.REDSTONE, locClone, 1, 0, 0, 0, 1, new Particle.DustOptions(Color.fromARGB(colorARGB), 1));
                         }
                     }
                 }

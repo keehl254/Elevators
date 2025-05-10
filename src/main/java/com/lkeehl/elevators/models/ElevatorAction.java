@@ -3,6 +3,7 @@ package com.lkeehl.elevators.models;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
+import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.interaction.SimpleDisplay;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -128,7 +129,8 @@ public abstract class ElevatorAction {
         else
             this.groupingData.put(grouping, value);
 
-        Elevators.getInstance().saveConfig();
+        if(ElevatorConfigService.isConfigLoaded())
+            Elevators.getInstance().saveConfig();
     }
 
     private boolean calculateGroupingFromAlias(String groupingAlias, String groupingValue) {

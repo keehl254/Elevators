@@ -131,14 +131,8 @@ public class WorldEventExecutor {
     public static void onChunkLoad(ChunkLoadEvent event) {
         if(!ElevatorHologramService.canUseHolograms())
             return;
-        for (BlockState state : event.getChunk().getTileEntities()) {
-            if(!(state instanceof ShulkerBox box))
-                continue;
-            ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
-            if(elevatorType == null)
-                continue;
-            ElevatorHologramService.updateElevatorHologram(new Elevator(box, elevatorType));
-        }
+
+        ElevatorHologramService.loadHologramsInChunk(event.getChunk());
     }
 
     public static void onChunkUnload(ChunkUnloadEvent event) {

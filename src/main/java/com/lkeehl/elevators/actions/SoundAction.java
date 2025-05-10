@@ -14,15 +14,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class SoundAction extends ElevatorAction {
 
-    private static final ElevatorActionGrouping<Sound> soundGrouping = new ElevatorActionGrouping<>(Sound.ENTITY_BLAZE_SHOOT, Sound::valueOf, "sound", "s");
+    private static final ElevatorActionGrouping<Sound> soundGrouping = new ElevatorActionGrouping<>(Sound.ENTITY_BLAZE_SHOOT, SoundAction::getSoundFromString , "sound", "s");
     private static final ElevatorActionGrouping<Float> volumeGrouping = new ElevatorActionGrouping<>(1.0F, Float::parseFloat, "volume","vol","v");
     private static final ElevatorActionGrouping<Float> pitchGrouping = new ElevatorActionGrouping<>(1.0F, Float::parseFloat, "pitch","p");
 
@@ -94,6 +93,23 @@ public class SoundAction extends ElevatorAction {
         });
         display.open();
 
+    }
+
+    private static Sound getSoundFromString(String soundKey) {
+        soundKey = soundKey.toUpperCase();
+
+        Class<Sound> clazz = Sound.class;
+        if(clazz.isEnum()) {
+            return Sound.valueOf(soundKey);
+        } else {
+            try {
+                Method valueOfMethod = clazz.getDeclaredMethod("valueOf", String.class);
+                valueOfMethod.setAccessible(true);
+                return (Sound) valueOfMethod.invoke(null, soundKey);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignore) {
+            }
+        }
+        return null;
     }
 
 }

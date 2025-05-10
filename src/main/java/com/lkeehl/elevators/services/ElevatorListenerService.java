@@ -53,7 +53,7 @@ public class ElevatorListenerService {
         registerEventExecutor(BlockDropItemEvent.class, EventPriority.LOWEST , WorldEventExecutor::onBlockBreak);
         registerEventExecutor(BlockPlaceEvent.class, EventPriority.HIGHEST , WorldEventExecutor::onBlockPlace);
         registerEventExecutor(ChunkLoadEvent.class, EventPriority.MONITOR, WorldEventExecutor::onChunkLoad);
-        registerEventExecutor(ChunkUnloadEvent.class, EventPriority.MONITOR, WorldEventExecutor::onChunkUnload);
+        registerEventExecutor(ChunkUnloadEvent.class, EventPriority.HIGHEST, WorldEventExecutor::onChunkUnload);
 
         registerEventExecutor(PlayerJoinEvent.class, EventPriority.NORMAL, EntityEventExecutor::onJoin);
         registerEventExecutor(PlayerToggleSneakEvent.class, EventPriority.NORMAL , EntityEventExecutor::onSneak);

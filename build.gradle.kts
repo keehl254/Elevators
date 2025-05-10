@@ -34,8 +34,8 @@ dependencies {
     compileOnly(platform("com.intellectualsites.bom:bom-newest:1.32"))
     compileOnly("org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.700")
 
-    //compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.14-R0.1-SNAPSHOT")
+    //compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     //compileOnly("org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT") // The full Spigot server with no shadowing. Requires mavenLocal.
 
     compileOnly("com.github.TechFortress:GriefPrevention:16.18")
