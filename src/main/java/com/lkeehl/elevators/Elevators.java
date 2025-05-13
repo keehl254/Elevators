@@ -1,5 +1,6 @@
 package com.lkeehl.elevators;
 
+import com.lkeehl.elevators.models.hooks.ElevatorHook;
 import com.lkeehl.elevators.services.*;
 import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
@@ -29,8 +30,9 @@ public class Elevators extends JavaPlugin {
         ElevatorTypeService.init();
         ElevatorRecipeService.init();
         ElevatorObstructionService.init();
-        ElevatorHookService.init();
+        ElevatorHookService.initPaperDetection();
         ElevatorListenerService.init();
+        ElevatorHookService.init();
         ElevatorHologramService.init();
         ElevatorCommandService.init(this);
 

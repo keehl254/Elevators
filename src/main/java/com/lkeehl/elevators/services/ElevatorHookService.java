@@ -32,12 +32,14 @@ public class ElevatorHookService {
 
         ElevatorHookService.buildHooks();
 
+        ElevatorHookService.initialized = true;
+    }
+
+    public static void initPaperDetection() {
         if (hasClass("com.destroystokyo.paper.PaperConfig")
                 || hasClass("io.papermc.paper.configuration.Configuration")) {
             isPaper = true;
         }
-
-        ElevatorHookService.initialized = true;
     }
 
     // Taken from PaperLib
