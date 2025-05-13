@@ -32,13 +32,22 @@ public class ElevatorHookService {
 
         ElevatorHookService.buildHooks();
 
-        try {
-            Class.forName("com.destroystokyo.paper.PaperConfig");
+        if (hasClass("com.destroystokyo.paper.PaperConfig")
+                || hasClass("io.papermc.paper.configuration.Configuration")) {
             isPaper = true;
-        } catch (ClassNotFoundException ignored) {
         }
 
         ElevatorHookService.initialized = true;
+    }
+
+    // Taken from PaperLib
+    private static boolean hasClass(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     public static void unInitialize() {

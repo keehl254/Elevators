@@ -1,19 +1,18 @@
 package com.lkeehl.elevators.models;
 
 import com.lkeehl.elevators.Elevators;
-import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.services.ElevatorActionService;
 import com.lkeehl.elevators.services.ElevatorHologramService;
 import com.lkeehl.elevators.services.configs.ConfigElevatorType;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.ShulkerBox;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.lkeehl.elevators.services.ElevatorHologramService.updateElevatorHologramsInChunk;
 
 public class ElevatorType extends ConfigElevatorType {
 
@@ -265,18 +264,9 @@ public class ElevatorType extends ConfigElevatorType {
 
         // Oof, this is a lot of nesting. Hate that, but don't want to extract to a method.
         Elevators.getFoliaLib().getScheduler().runNextTick(task -> {
-            for(World world : Bukkit.getWorlds()) {
-                for(Chunk chunk : world.getLoadedChunks()) {
-                    for (BlockState state : chunk.getTileEntities()) {
-                        if(!(state instanceof ShulkerBox box))
-                            continue;
-
-                        ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
-                        if(elevatorType == null)
-                            continue;
-
-                        ElevatorHologramService.updateElevatorHologram(new Elevator(box, elevatorType));
-                    }
+            for (World world : Bukkit.getWorlds()) {
+                for (Chunk chunk : world.getLoadedChunks()) {
+                    updateElevatorHologramsInChunk(chunk);
                 }
             }
         });
