@@ -24,8 +24,6 @@ public class ElevatorHookService {
 
     private static final Map<String, ElevatorHook> hookMap = new HashMap<>();
 
-    private static boolean isPaper = false;
-
     public static void init() {
         if(ElevatorHookService.initialized)
             return;
@@ -33,23 +31,6 @@ public class ElevatorHookService {
         ElevatorHookService.buildHooks();
 
         ElevatorHookService.initialized = true;
-    }
-
-    public static void initPaperDetection() {
-        if (hasClass("com.destroystokyo.paper.PaperConfig")
-                || hasClass("io.papermc.paper.configuration.Configuration")) {
-            isPaper = true;
-        }
-    }
-
-    // Taken from PaperLib
-    private static boolean hasClass(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
     }
 
     public static void unInitialize() {
@@ -161,7 +142,7 @@ public class ElevatorHookService {
     }
 
     public static boolean isServerRunningPaper() {
-        return isPaper;
+        return Elevators.getFoliaLib().isPaper();
     }
 
     @SuppressWarnings("unchecked")

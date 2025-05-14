@@ -30,7 +30,6 @@ public class Elevators extends JavaPlugin {
         ElevatorTypeService.init();
         ElevatorRecipeService.init();
         ElevatorObstructionService.init();
-        ElevatorHookService.initPaperDetection();
         ElevatorListenerService.init();
         ElevatorHookService.init();
         ElevatorHologramService.init();
