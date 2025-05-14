@@ -9,6 +9,7 @@ import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import com.lkeehl.elevators.services.ElevatorSettingService;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +24,7 @@ public class ItemStackHelper {
     private static final Pattern dyeColorPattern = Pattern.compile("(?:LIGHT_)?.+?(?=_)");
 
     public static boolean isNotShulkerBox(Material type) {
-        return !type.toString().endsWith("SHULKER_BOX");
+        return !Tag.SHULKER_BOXES.isTagged(type);
     }
 
     public static DyeColor getDyeColorFromMaterial(Material material) {

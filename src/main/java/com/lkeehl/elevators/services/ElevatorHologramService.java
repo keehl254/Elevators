@@ -10,6 +10,7 @@ import com.lkeehl.elevators.services.configs.ConfigRoot;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Tag;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 
 public class ElevatorHologramService {
 
@@ -70,7 +72,6 @@ public class ElevatorHologramService {
             WrappedHologram hologram = elevatorHolograms.get(location);
             if(!location.getChunk().isLoaded())
                 hologram.delete();
-
         }
     }
 
@@ -115,14 +116,7 @@ public class ElevatorHologramService {
              return;
          }
 
-        for (BlockState state : chunk.getTileEntities()) {
-            if(!(state instanceof ShulkerBox box))
-                continue;
-            ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
-            if(elevatorType == null)
-                continue;
-            ElevatorHologramService.updateElevatorHologram(new Elevator(box, elevatorType));
-        }
+        updateElevatorHologramsInChunk(chunk);
     }
 
     public static void deleteHologramsInChunk(Chunk chunk) {
@@ -172,6 +166,23 @@ public class ElevatorHologramService {
         hologram.setLines(hologramLines);
         hologram.teleportTo(elevator.getLocation().clone().add(0.5, 1.5 + (hologram.getHeight()) / 2, 0.5));
 
+    }
+
+    public static void updateElevatorHologramsInChunk(Chunk chunk) {
+        Collection<BlockState> tileEntities;
+        if (ElevatorHookService.isServerRunningPaper())
+            tileEntities = chunk.getTileEntities(block -> Tag.SHULKER_BOXES.isTagged(block.getType()), false);
+        else
+            tileEntities = List.of(chunk.getTileEntities());
+
+        for (BlockState state : tileEntities) {
+            if (!(state instanceof ShulkerBox box)) continue;
+
+            ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
+            if(elevatorType == null) continue;
+
+            ElevatorHologramService.updateElevatorHologram(new Elevator(box, elevatorType));
+        }
     }
 
     public static void updateHologramsOfElevatorType(ElevatorType elevatorType) {

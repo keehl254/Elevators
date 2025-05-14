@@ -1,5 +1,6 @@
 package com.lkeehl.elevators;
 
+import com.lkeehl.elevators.models.hooks.ElevatorHook;
 import com.lkeehl.elevators.services.*;
 import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
