@@ -1,6 +1,8 @@
 package com.lkeehl.elevators.services.versions;
 
+import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
+import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.ElevatorTypeService;
 import com.lkeehl.elevators.services.ElevatorVersionService;
@@ -85,9 +87,10 @@ public class ElevatorsV1 extends ElevatorVersionService.ElevatorVersion {
 
     @Override
     public ElevatorType getElevatorType(Block block) {
-        if (!(block.getState() instanceof ShulkerBox))
+        ShulkerBox box = ShulkerBoxHelper.getShulkerBox(block);
+        if(box == null)
             return null;
-        return getElevatorType((ShulkerBox) block.getState());
+        return getElevatorType(box);
     }
 
     @Override

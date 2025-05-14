@@ -45,7 +45,9 @@ public class EntityEventExecutor {
         if (((Math.ceil((event.getTo().getY() - event.getFrom().getY()) * 10000.0) / 10000.0) % 0.0625) == 0) return;
 
         Block block = event.getPlayer().getLocation().subtract(0, 1, 0).getBlock();
-        if (!(block.getState() instanceof ShulkerBox box)) return;
+        ShulkerBox box = ShulkerBoxHelper.getShulkerBox(block);
+        if(box == null)
+            return;
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
         if (elevatorType == null) return;
@@ -80,7 +82,9 @@ public class EntityEventExecutor {
         if (!event.isSneaking()) return;
 
         Block block = event.getPlayer().getLocation().getBlock().getLocation().subtract(0, 1, 0).getBlock();
-        if (!(block.getState() instanceof ShulkerBox box)) return;
+        ShulkerBox box = ShulkerBoxHelper.getShulkerBox(block);
+        if(box == null)
+            return;
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
         if (elevatorType == null) return;
@@ -114,7 +118,10 @@ public class EntityEventExecutor {
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
         if (event.isBlockInHand() && event.getPlayer().isSneaking()) return;
         if (event.getClickedBlock() == null) return;
-        if (!(event.getClickedBlock().getState() instanceof ShulkerBox box)) return;
+
+        ShulkerBox box = ShulkerBoxHelper.getShulkerBox(event.getClickedBlock());
+        if(box == null)
+            return;
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
         if (elevatorType == null) return;

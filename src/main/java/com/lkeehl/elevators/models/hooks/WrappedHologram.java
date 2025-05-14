@@ -3,6 +3,7 @@ package com.lkeehl.elevators.models.hooks;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
+import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.ElevatorHologramService;
@@ -39,9 +40,9 @@ public abstract class WrappedHologram {
 
     public Elevator getElevator() {
         Block block = this.elevatorLocation.getBlock();
-        if(ItemStackHelper.isNotShulkerBox(block.getType()))
+        ShulkerBox box = ShulkerBoxHelper.getShulkerBox(block);
+        if(box == null)
             return null;
-        ShulkerBox box = (ShulkerBox) block.getState();
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
         if(elevatorType == null)
             return null;

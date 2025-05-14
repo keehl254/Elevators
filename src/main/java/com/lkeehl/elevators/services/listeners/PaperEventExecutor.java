@@ -5,6 +5,7 @@ import com.lkeehl.elevators.events.ElevatorUseEvent;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.ElevatorPermHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
+import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
@@ -26,7 +27,9 @@ public class PaperEventExecutor {
 
     public static void onJump(PlayerJumpEvent e) {
         Block block = e.getPlayer().getLocation().subtract(0, 1, 0).getBlock();
-        if (!(block.getState() instanceof ShulkerBox box)) return;
+        ShulkerBox box = ShulkerBoxHelper.getShulkerBox(block);
+        if(box == null)
+            return;
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
         if (elevatorType == null) return;

@@ -115,11 +115,10 @@ public class ElevatorHelper {
             if (tempBlock.getType().isSolid())
                 solidBlocks++;
 
-            BlockState tempBlockState = tempBlock.getState();
-            if(!ShulkerBoxHelper.isShulkerBox(tempBlockState))
+            ShulkerBox tempShulkerBox = ShulkerBoxHelper.getShulkerBox(tempBlock);
+            if(tempShulkerBox == null)
                 continue;
 
-            ShulkerBox tempShulkerBox = (ShulkerBox) tempBlockState;
             ElevatorType tempElevatorType = ElevatorHelper.getElevatorType(tempShulkerBox, false);
             Elevator tempElevator = new Elevator(tempShulkerBox, tempElevatorType);
             if(tempElevatorType == null || (checksClass && !elevator.getElevatorType().equals(tempElevatorType)))

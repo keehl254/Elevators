@@ -119,7 +119,7 @@ public abstract class ConfigConverter {
                     depth = depth + 2;
                 } else {
                     if (line.startsWith(new String(new char[depth - 2]).replace("\0", " ")))
-                        keyChain.remove(keyChain.size() - 1);
+                        keyChain.removeLast();
                     else {
                         //Check how much spaces are infront of the line
                         int spaces = 0;

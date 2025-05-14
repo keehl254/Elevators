@@ -26,6 +26,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,10 +44,12 @@ public class WorldEventExecutor {
     }
 
     public static void onExplode(EntityExplodeEvent event) {
-        for (int i = 0; i < event.blockList().size(); i++) {
+        for (int i = 0; i < new ArrayList<>(event.blockList()).size(); i++) {
             Block block = event.blockList().get(i);
-            if (!(block.getState() instanceof ShulkerBox shulkerBox))
+            ShulkerBox shulkerBox = ShulkerBoxHelper.getShulkerBox(block);
+            if(shulkerBox == null)
                 continue;
+
             ElevatorType elevatorType = ElevatorHelper.getElevatorType(shulkerBox);
             if(elevatorType == null) continue;
 
@@ -71,7 +74,9 @@ public class WorldEventExecutor {
         Dispenser dispenser = (Dispenser) event.getBlock().getBlockData();
         Block relative = event.getBlock().getRelative(dispenser.getFacing());
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Elevators")), () -> {
-            if (!(relative.getState() instanceof ShulkerBox box)) return;
+            ShulkerBox box = ShulkerBoxHelper.getShulkerBox(relative);
+            if(box == null)
+                return;
 
             ElevatorDataContainerService.updateTypeKeyOnElevator(box, elevatorType);
             ElevatorDataContainerService.dumpDataFromItemIntoShulkerBox(box, event.getItem());
@@ -117,7 +122,10 @@ public class WorldEventExecutor {
             item.setAmount(count - 1);
 
 
-        ShulkerBox box = ElevatorDataContainerService.updateTypeKeyOnElevator((ShulkerBox) event.getBlockPlaced().getState(), elevatorType);
+        ShulkerBox box = ShulkerBoxHelper.getShulkerBox(event.getBlockPlaced());
+        if(box == null)
+            return;
+        box = ElevatorDataContainerService.updateTypeKeyOnElevator(box, elevatorType);
         Elevator elevator = new Elevator(box, elevatorType);
         ElevatorHelper.onElevatorPlace(elevator);
 

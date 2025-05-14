@@ -64,7 +64,7 @@ public class ElevatorVersionService {
     public static ElevatorType getElevatorType(Block block) {
         if(ItemStackHelper.isNotShulkerBox(block.getType()))
             return null;
-        return getElevatorType((ShulkerBox) block.getState(), true);
+        return getElevatorType(ShulkerBoxHelper.getShulkerBox(block), true);
     }
 
     public abstract static class ElevatorVersion {
