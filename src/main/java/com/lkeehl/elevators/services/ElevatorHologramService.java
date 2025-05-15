@@ -176,10 +176,12 @@ public class ElevatorHologramService {
             tileEntities = List.of(chunk.getTileEntities());
 
         for (BlockState state : tileEntities) {
-            if (!(state instanceof ShulkerBox box)) continue;
+            if (!(state instanceof ShulkerBox box))
+                continue;
 
             ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
-            if(elevatorType == null) continue;
+            if(elevatorType == null)
+                continue;
 
             ElevatorHologramService.updateElevatorHologram(new Elevator(box, elevatorType));
         }

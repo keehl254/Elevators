@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.services;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
 import com.lkeehl.elevators.models.ElevatorType;
@@ -23,7 +24,7 @@ public class ElevatorVersionService {
     private static boolean initialized = false;
 
     public static void init() {
-        if(ElevatorVersionService.initialized)
+        if (ElevatorVersionService.initialized)
             return;
 
         versions.add(new ElevatorsV3());
@@ -52,7 +53,7 @@ public class ElevatorVersionService {
         if (result.getKey() == null)
             return null;
 
-        if(updateBlock) {
+        if (updateBlock) {
             ShulkerBox newBox = result.getValue().apply(box);
             newBox = ShulkerBoxHelper.clearContents(newBox);
             if (ElevatorConfigService.getRootConfig().forceFacingUpwards)
@@ -62,7 +63,7 @@ public class ElevatorVersionService {
     }
 
     public static ElevatorType getElevatorType(Block block) {
-        if(ItemStackHelper.isNotShulkerBox(block.getType()))
+        if (ItemStackHelper.isNotShulkerBox(block.getType()))
             return null;
         return getElevatorType(ShulkerBoxHelper.getShulkerBox(block), true);
     }
