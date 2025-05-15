@@ -16,7 +16,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.entity.Item;
@@ -44,17 +43,24 @@ public class WorldEventExecutor {
     }
 
     public static void onExplode(EntityExplodeEvent event) {
-        for (int i = 0; i < new ArrayList<>(event.blockList()).size(); i++) {
-            Block block = event.blockList().get(i);
+        for (Block block : new ArrayList<>(event.blockList())) {
+
             ShulkerBox shulkerBox = ShulkerBoxHelper.getShulkerBox(block);
-            if(shulkerBox == null)
-                continue;
+            if(shulkerBox == null) continue;
 
             ElevatorType elevatorType = ElevatorHelper.getElevatorType(shulkerBox);
-            if(elevatorType == null) continue;
+            if (elevatorType == null) continue;
 
-            if (ElevatorSettingService.getSettingValue(new Elevator(shulkerBox, elevatorType), CanExplodeSetting.class))
-                event.blockList().remove(block);
+            Elevator elevator = new Elevator(shulkerBox, elevatorType);
+
+            event.blockList().remove(block); // Custom handling of drops later
+
+            if (ElevatorSettingService.getSettingValue(elevator, CanExplodeSetting.class)) {
+                ItemStack newElevatorItem = ItemStackHelper.createItemStackFromElevator(elevator);
+                block.setType(Material.AIR);
+                block.getWorld().dropItemNaturally(block.getLocation(), newElevatorItem);
+                ElevatorHologramService.deleteHologram(elevator);
+            }
         }
     }
 
