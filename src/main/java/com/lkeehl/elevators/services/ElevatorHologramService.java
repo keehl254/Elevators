@@ -106,6 +106,8 @@ public class ElevatorHologramService {
             return;
 
         hologram.delete();
+        elevatorHolograms.remove(elevator.getLocation());
+        holograms.remove(hologram);
     }
 
     public static void loadHologramsInChunk(Chunk chunk) {
