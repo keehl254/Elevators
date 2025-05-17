@@ -11,6 +11,7 @@ import com.lkeehl.elevators.services.ElevatorSettingService;
 import org.bukkit.DyeColor;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
+import org.bukkit.Location;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;
@@ -93,12 +94,14 @@ public class InventoryEventExecutor {
             meta.setLore(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class)));
             event.getItem().setItemMeta(meta);
         }
-        if (event.getSource().getType() == InventoryType.SHULKER_BOX && event.getSource().getHolder() instanceof ShulkerBox fromBox) {
-            if (ElevatorHelper.isElevator(fromBox))
+        Location src = event.getSource().getLocation();
+        if (event.getSource().getType() == InventoryType.SHULKER_BOX && src != null && !ItemStackHelper.isNotShulkerBox(src.getBlock().getType())) {
+            if (ElevatorHelper.isElevator(src.getBlock()))
                 event.setCancelled(true);
         }
-        if (event.getDestination().getType() == InventoryType.SHULKER_BOX && event.getDestination().getHolder() instanceof ShulkerBox toBox) {
-            if (ElevatorHelper.isElevator(toBox))
+        Location dst = event.getDestination().getLocation();
+        if (event.getDestination().getType() == InventoryType.SHULKER_BOX && dst != null && !ItemStackHelper.isNotShulkerBox(dst.getBlock().getType())) {
+            if (ElevatorHelper.isElevator(dst.getBlock()))
                 event.setCancelled(true);
         }
     }
