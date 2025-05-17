@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.lkeehl.elevators.services.ElevatorHologramService.updateElevatorHologramsInChunk;
+import static com.lkeehl.elevators.services.ElevatorHologramService.updateHologramsInChunk;
 
 public class ElevatorType extends ConfigElevatorType {
 
@@ -266,7 +266,7 @@ public class ElevatorType extends ConfigElevatorType {
         Elevators.getFoliaLib().getScheduler().runNextTick(task -> {
             for (World world : Bukkit.getWorlds()) {
                 for (Chunk chunk : world.getLoadedChunks()) {
-                    updateElevatorHologramsInChunk(chunk);
+                    updateHologramsInChunk(chunk);
                 }
             }
         });

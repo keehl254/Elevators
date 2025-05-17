@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.services.listeners;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.MessageHelper;
@@ -12,11 +13,9 @@ import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import com.lkeehl.elevators.services.ElevatorHologramService;
 import com.lkeehl.elevators.services.ElevatorSettingService;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.entity.Item;
@@ -27,7 +26,6 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Optional;
 
 public class WorldEventExecutor {
@@ -47,11 +45,11 @@ public class WorldEventExecutor {
         for (int i = 0; i < new ArrayList<>(event.blockList()).size(); i++) {
             Block block = event.blockList().get(i);
             ShulkerBox shulkerBox = ShulkerBoxHelper.getShulkerBox(block);
-            if(shulkerBox == null)
+            if (shulkerBox == null)
                 continue;
 
             ElevatorType elevatorType = ElevatorHelper.getElevatorType(shulkerBox);
-            if(elevatorType == null) continue;
+            if (elevatorType == null) continue;
 
             if (ElevatorSettingService.getSettingValue(new Elevator(shulkerBox, elevatorType), CanExplodeSetting.class))
                 event.blockList().remove(block);
@@ -65,7 +63,7 @@ public class WorldEventExecutor {
         if (elevatorType == null) return;
         if (!event.getBlock().getType().equals(Material.DISPENSER)) return;
 
-        if(!ElevatorConfigService.getRootConfig().allowElevatorDispense) {
+        if (!ElevatorConfigService.getRootConfig().allowElevatorDispense) {
             event.setCancelled(true);
             ShulkerBoxHelper.fakeDispense(event.getBlock(), event.getItem());
             return;
@@ -73,14 +71,14 @@ public class WorldEventExecutor {
 
         Dispenser dispenser = (Dispenser) event.getBlock().getBlockData();
         Block relative = event.getBlock().getRelative(dispenser.getFacing());
-        Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Elevators")), () -> {
+        Elevators.getFoliaLib().getScheduler().runAtLocation(relative.getLocation(), task -> {
             ShulkerBox box = ShulkerBoxHelper.getShulkerBox(relative);
-            if(box == null)
+            if (box == null)
                 return;
 
             ElevatorDataContainerService.updateTypeKeyOnElevator(box, elevatorType);
             ElevatorDataContainerService.dumpDataFromItemIntoShulkerBox(box, event.getItem());
-            ElevatorHelper.onElevatorPlace(new Elevator(box,elevatorType));
+            ElevatorHelper.onElevatorPlace(new Elevator(box, elevatorType));
             if (ElevatorConfigService.getRootConfig().forceFacingUpwards)
                 ShulkerBoxHelper.setFacingUp(box);
         });
@@ -97,7 +95,7 @@ public class WorldEventExecutor {
         ItemStack newElevatorItem = ItemStackHelper.createItemStackFromElevator(elevator);
 
         Optional<Item> defaultItem = event.getItems().stream().filter(i -> !ItemStackHelper.isNotShulkerBox(i.getItemStack().getType())).findAny();
-        if(defaultItem.isEmpty()) return;
+        if (defaultItem.isEmpty()) return;
 
         defaultItem.get().setItemStack(newElevatorItem);
     }
@@ -123,7 +121,7 @@ public class WorldEventExecutor {
 
 
         ShulkerBox box = ShulkerBoxHelper.getShulkerBox(event.getBlockPlaced());
-        if(box == null)
+        if (box == null)
             return;
         box = ElevatorDataContainerService.updateTypeKeyOnElevator(box, elevatorType);
         Elevator elevator = new Elevator(box, elevatorType);
@@ -137,14 +135,14 @@ public class WorldEventExecutor {
 
 
     public static void onChunkLoad(ChunkLoadEvent event) {
-        if(!ElevatorHologramService.canUseHolograms())
+        if (!ElevatorHologramService.canUseHolograms())
             return;
 
-        ElevatorHologramService.loadHologramsInChunk(event.getChunk());
+        ElevatorHologramService.updateHologramsInChunk(event.getChunk());
     }
 
     public static void onChunkUnload(ChunkUnloadEvent event) {
-        if(!ElevatorHologramService.canUseHolograms())
+        if (!ElevatorHologramService.canUseHolograms())
             return;
 
         ElevatorHologramService.deleteHologramsInChunk(event.getChunk());

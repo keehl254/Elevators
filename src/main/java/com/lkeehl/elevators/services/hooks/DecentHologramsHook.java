@@ -1,5 +1,7 @@
 package com.lkeehl.elevators.services.hooks;
 
+import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.hooks.HologramHook;
 import com.lkeehl.elevators.models.hooks.WrappedHologram;
 import eu.decentsoftware.holograms.api.DHAPI;
@@ -15,16 +17,14 @@ public class DecentHologramsHook extends HologramHook<DecentHologramsHook.Decent
     private final Map<String, DecentHologramWrapper> holograms = new HashMap<>();
 
     @Override
-    public DecentHologramWrapper createHologram(Location location, Consumer<WrappedHologram> deleteConsumer, double raise, String... lines) {
+    public DecentHologramWrapper createHologram(Elevator elevator, Consumer<WrappedHologram> deleteConsumer, String... lines) {
 
         UUID uuid;
         do {
             uuid = UUID.randomUUID();
         } while(this.holograms.containsKey(uuid.toString()));
 
-        location = location.clone().add(0, raise, 0);
-
-        DecentHologramWrapper hologram = new DecentHologramWrapper(uuid.toString(), location, deleteConsumer);
+        DecentHologramWrapper hologram = new DecentHologramWrapper(uuid.toString(), elevator, deleteConsumer);
         Arrays.stream(lines).forEach(hologram::addLine);
 
         this.holograms.put(uuid.toString(), hologram);
@@ -37,14 +37,24 @@ public class DecentHologramsHook extends HologramHook<DecentHologramsHook.Decent
         this.holograms.values().forEach(DecentHologramWrapper::delete);
     }
 
+    @Override
+    public Collection<DecentHologramWrapper> getHolograms() {
+        return this.holograms.values();
+    }
+
+    @Override
+    public DecentHologramWrapper getHologram(String uuid) {
+        return this.holograms.get(uuid);
+    }
+
     public class DecentHologramWrapper extends WrappedHologram {
 
         private final Hologram hologram;
 
-        public DecentHologramWrapper(String name, Location elevatorLocation, Consumer<WrappedHologram> deleteConsumer) {
-            super(elevatorLocation, deleteConsumer);
+        public DecentHologramWrapper(String uuid, Elevator elevator, Consumer<WrappedHologram> deleteConsumer) {
+            super(uuid, elevator, deleteConsumer);
 
-            this.hologram = DHAPI.createHologram(name, elevatorLocation.clone());
+            this.hologram = DHAPI.createHologram(uuid, elevator.getLocation().clone());
             this.hologram.setDownOrigin(true);
             this.hologram.realignLines();
         }
@@ -79,7 +89,7 @@ public class DecentHologramsHook extends HologramHook<DecentHologramsHook.Decent
         @Override
         public void onDelete() {
             this.hologram.delete();
-            DecentHologramsHook.this.holograms.remove(this.hologram.getName());
+            DecentHologramsHook.this.holograms.remove(this.getUUID());
         }
     }
 

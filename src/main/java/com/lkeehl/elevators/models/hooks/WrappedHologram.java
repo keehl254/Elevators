@@ -1,12 +1,11 @@
 package com.lkeehl.elevators.models.hooks;
 
-import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ElevatorHelper;
-import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.helpers.ShulkerBoxHelper;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.services.ElevatorHologramService;
+import com.lkeehl.elevators.services.ElevatorTypeService;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
@@ -16,11 +15,15 @@ import java.util.function.Consumer;
 
 public abstract class WrappedHologram {
 
+    private final String uuid;
     private final Location elevatorLocation;
+    private final String elevatorTypeKey;
     private final Consumer<WrappedHologram> deleteConsumer;
 
-    public WrappedHologram(Location location, Consumer<WrappedHologram> deleteConsumer) {
-        this.elevatorLocation = location;
+    public WrappedHologram(String uuid, Elevator elevator, Consumer<WrappedHologram> deleteConsumer) {
+        this.uuid = uuid;
+        this.elevatorLocation = elevator.getLocation();
+        this.elevatorTypeKey = elevator.getElevatorType().getTypeKey(); // Store Elevator Type Key to account for a config reload.
         this.deleteConsumer = deleteConsumer;
     }
 
@@ -34,8 +37,16 @@ public abstract class WrappedHologram {
 
     public abstract void teleportTo(Location location);
 
+    public String getUUID() {
+        return this.uuid;
+    }
+
     public Location getElevatorLocation() {
         return this.elevatorLocation;
+    }
+
+    public ElevatorType getElevatorType() {
+        return ElevatorTypeService.getElevatorType(this.elevatorTypeKey);
     }
 
     public Elevator getElevator() {
@@ -55,11 +66,16 @@ public abstract class WrappedHologram {
         if(!this.getElevatorLocation().getChunk().isLoaded())
             return;
 
+        Elevator elevator = this.getElevator();
+        if(elevator == null) {
+            this.delete();
+            return;
+        }
+
         ElevatorHologramService.updateElevatorHologram(this.getElevator());
     }
 
     public final void delete() {
-        // Elevators.getElevatorsLogger().warning("Deleting hologram at " + this.elevatorLocation.getBlockX() + " " + this.elevatorLocation.getBlockY() + " " + this.elevatorLocation.getBlockZ());
         this.onDelete();
         this.deleteConsumer.accept(this);
     }

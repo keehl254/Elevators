@@ -34,41 +34,46 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-@SuppressWarnings("deprecation") public class ElevatorGUIHelper {
+@SuppressWarnings("deprecation")
+public class ElevatorGUIHelper {
 
     private static boolean anvilEnabled;
     private static boolean signEnabled;
 
     static {
-        try {
-            SignGUI.builder();
-            signEnabled = true;
-        } catch (SignGUIVersionException e) {
-            signEnabled = false;
-        }
 
-        anvilEnabled = true;
-        try {
-            VersionWrapper wrapper = (new VersionMatcher()).match();
-            Method toNMSMethod = wrapper.getClass().getDeclaredMethod("sendPacketCloseWindow", Player.class, int.class);
-            toNMSMethod.setAccessible(true);
-
+        // AnvilGUI and SignGUI do not support Folia.
+        if(!Elevators.getFoliaLib().isFolia()) {
             try {
-                toNMSMethod.invoke(wrapper, null, -1);
-            } catch(InvocationTargetException ite) {
-                if(ite.getTargetException() instanceof NoClassDefFoundError) {
-                    anvilEnabled = false;
-                    Elevators.getElevatorsLogger().warning("AnvilAPI is not up-to-date. Using backup chat input system.");
-                } else if(!(ite.getTargetException() instanceof  NullPointerException)) {// NPE will occur if the AnvilGUI is up-to-date.
-                    Elevators.getElevatorsLogger().warning(ite.getTargetException().toString());
-                    anvilEnabled = false;
-                }
+                SignGUI.builder();
+                signEnabled = true;
+            } catch (SignGUIVersionException e) {
+                signEnabled = false;
             }
 
-        } catch (Exception ex) {
-            Elevators.getElevatorsLogger().warning("AnvilAPI is not up-to-date. Using backup chat input system.");
-            Elevators.getElevatorsLogger().warning(ex.toString());
-            anvilEnabled = false;
+            anvilEnabled = true;
+            try {
+                VersionWrapper wrapper = (new VersionMatcher()).match();
+                Method toNMSMethod = wrapper.getClass().getDeclaredMethod("sendPacketCloseWindow", Player.class, int.class);
+                toNMSMethod.setAccessible(true);
+
+                try {
+                    toNMSMethod.invoke(wrapper, null, -1);
+                } catch (InvocationTargetException ite) {
+                    if (ite.getTargetException() instanceof NoClassDefFoundError) {
+                        anvilEnabled = false;
+                        Elevators.getElevatorsLogger().warning("AnvilAPI is not up-to-date. Using backup chat input system.");
+                    } else if (!(ite.getTargetException() instanceof NullPointerException)) {// NPE will occur if the AnvilGUI is up-to-date.
+                        Elevators.getElevatorsLogger().warning(ite.getTargetException().toString());
+                        anvilEnabled = false;
+                    }
+                }
+
+            } catch (Exception ex) {
+                Elevators.getElevatorsLogger().warning("AnvilAPI is not up-to-date. Using backup chat input system.");
+                Elevators.getElevatorsLogger().warning(ex.toString());
+                anvilEnabled = false;
+            }
         }
 
     }

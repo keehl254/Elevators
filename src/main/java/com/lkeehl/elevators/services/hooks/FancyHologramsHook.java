@@ -1,13 +1,14 @@
 package com.lkeehl.elevators.services.hooks;
 
+import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.hooks.HologramHook;
 import com.lkeehl.elevators.models.hooks.WrappedHologram;
 import de.oliver.fancyholograms.api.FancyHologramsPlugin;
-import de.oliver.fancyholograms.api.Hologram;
-import de.oliver.fancyholograms.api.HologramType;
 import de.oliver.fancyholograms.api.data.DisplayHologramData;
 import de.oliver.fancyholograms.api.data.HologramData;
 import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.hologram.HologramType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Display;
@@ -20,16 +21,14 @@ public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHol
     private final Map<String, FancyHologramsHook.FancyHologramWrapper> holograms = new HashMap<>();
 
     @Override
-    public FancyHologramWrapper createHologram(Location location, Consumer<WrappedHologram> deleteConsumer, double raise, String... lines) {
+    public FancyHologramWrapper createHologram(Elevator elevator, Consumer<WrappedHologram> deleteConsumer, String... lines) {
 
         UUID uuid;
         do {
             uuid = UUID.randomUUID();
         } while(this.holograms.containsKey(uuid.toString()));
 
-        location = location.clone().add(0, raise, 0);
-
-        FancyHologramsHook.FancyHologramWrapper hologram = new FancyHologramsHook.FancyHologramWrapper(uuid.toString(), location, deleteConsumer, lines);
+        FancyHologramsHook.FancyHologramWrapper hologram = new FancyHologramsHook.FancyHologramWrapper(uuid.toString(), elevator, deleteConsumer, lines);
 
         this.holograms.put(uuid.toString(), hologram);
 
@@ -41,67 +40,74 @@ public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHol
         this.holograms.values().forEach(FancyHologramsHook.FancyHologramWrapper::delete);
     }
 
+    @Override
+    public Collection<FancyHologramWrapper> getHolograms() {
+        return this.holograms.values();
+    }
+
+    @Override
+    public FancyHologramWrapper getHologram(String uuid) {
+        return this.holograms.get(uuid);
+    }
+
     public class FancyHologramWrapper extends WrappedHologram {
 
         private final Hologram hologram;
-        public FancyHologramWrapper(String name, Location elevatorLocation, Consumer<WrappedHologram> deleteConsumer, String... lines) {
-            super(elevatorLocation, deleteConsumer);
+        public FancyHologramWrapper(String uuid, Elevator elevator, Consumer<WrappedHologram> deleteConsumer, String... lines) {
+            super(uuid, elevator, deleteConsumer);
 
-            DisplayHologramData displayData = DisplayHologramData.getDefault(elevatorLocation.clone());
-            displayData.setBillboard(Display.Billboard.FIXED);
-
-            TextHologramData textData = TextHologramData.getDefault(name);
+            TextHologramData textData = new TextHologramData(uuid, elevator.getLocation().clone());
             Arrays.stream(lines).forEach(textData::addLine);
 
-            HologramData hologramData = new HologramData(name, displayData, HologramType.TEXT, textData);
-            this.hologram = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
+            textData.setBillboard(Display.Billboard.CENTER);
+            textData.setPersistent(false);
+
+            this.hologram = FancyHologramsPlugin.get().getHologramManager().create(textData);
+            FancyHologramsPlugin.get().getHologramManager().addHologram(this.hologram);
+
         }
 
         @Override
         public void addLine(String text) {
-            TextHologramData data = (TextHologramData) this.hologram.getData().getTypeData();
+            TextHologramData data = (TextHologramData) this.hologram.getData();
             List<String> hologramText = new ArrayList<>(data.getText());
             hologramText.add(text);
             data.setText(hologramText);
 
-            this.hologram.updateHologram();
-            this.hologram.refreshHologram(Bukkit.getOnlinePlayers());
+            this.hologram.queueUpdate();
         }
 
         @Override
         public void setLines(List<String> text) {
-            TextHologramData data = (TextHologramData) this.hologram.getData().getTypeData();
+            TextHologramData data = (TextHologramData) this.hologram.getData();
             data.setText(text);
 
-            this.hologram.updateHologram();
-            this.hologram.refreshHologram(Bukkit.getOnlinePlayers());
+            this.hologram.queueUpdate();
         }
 
         @Override
         public void clearLines() {
-            TextHologramData data = (TextHologramData) this.hologram.getData().getTypeData();
+            TextHologramData data = (TextHologramData) this.hologram.getData();
             data.setText(new ArrayList<>());
 
-            this.hologram.updateHologram();
-            this.hologram.refreshHologram(Bukkit.getOnlinePlayers());
+            this.hologram.queueUpdate();
         }
 
         @Override
         public double getHeight() {
-            return this.hologram.getData().getDisplayData().getScale().y(); //.getScale().y; // I know this isn't really how this works >_>
+            return ((TextHologramData)this.hologram.getData()).getScale().y();
         }
 
         @Override
         public void teleportTo(Location location) {
-            this.hologram.getData().getDisplayData().setLocation(location);
-            this.hologram.updateHologram();
-            this.hologram.refreshHologram(Bukkit.getOnlinePlayers());
+            this.hologram.getData().setLocation(location);
+            this.hologram.queueUpdate();
         }
 
         @Override
         public void onDelete() {
-            this.hologram.deleteHologram();
-            FancyHologramsHook.this.holograms.remove(this.hologram.getData().getName());
+            FancyHologramsPlugin.get().getHologramManager().removeHologram(this.hologram);
+            FancyHologramsHook.this.holograms.remove(this.getUUID());
         }
     }
 

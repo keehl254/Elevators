@@ -22,7 +22,7 @@ repositories {
     maven("https://repo.glaremasters.me/repository/bloodshot/")
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     maven("https://jitpack.io/")
-    maven("https://repo.fancyplugins.de/releases/")
+    maven("https://repo.fancyinnovations.com/releases")
     maven("https://repo.spongepowered.org/maven/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.bg-software.com/repository/api/")
@@ -49,7 +49,7 @@ dependencies {
     compileOnly("com.bgsoftware:SuperiorSkyblockAPI:2024.4")
 
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
-    compileOnly("de.oliver:FancyHolograms:2.0.6")
+    compileOnly("de.oliver:FancyHolograms:2.4.2")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
     compileOnly("net.kyori:adventure-api:4.14.0")

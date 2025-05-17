@@ -63,7 +63,7 @@ public class SimpleInput implements Listener {
 
         event.setCancelled(true);
 
-        Bukkit.getScheduler().runTask(Elevators.getInstance(), () -> {
+        Elevators.getFoliaLib().getScheduler().runNextTick(task -> {
             String message = event.getMessage();
             if (message.equalsIgnoreCase("cancel")) {
                 this.stop(true);
