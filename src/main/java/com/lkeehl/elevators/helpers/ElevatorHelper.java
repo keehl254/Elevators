@@ -176,7 +176,7 @@ public class ElevatorHelper {
 
         Location teleportLocation = player.getLocation();
         teleportLocation.setY(elevatorEventData.getDestination().getLocation().getBlockY() + elevatorEventData.getStandOnAddition() + 1.0);
-        player.teleport(teleportLocation);
+        Elevators.getFoliaLib().getScheduler().teleportAsync(player, teleportLocation);
     }
 
     public static boolean hasOrAddPlayerCoolDown(Player player, String key) {

@@ -77,7 +77,7 @@ public class BossBarAction extends ElevatorAction {
         String finalValue = value;
         Runnable onRemove = this.displayMessage(player,eventData.getOrigin(), () -> finalValue, progress);
 
-        Elevators.getFoliaLib().getScheduler().runLater(onRemove, 30);
+        Elevators.getFoliaLib().getScheduler().runAtEntityLater(player, onRemove, 30);
     }
 
     public static BossBar getPlayerBar(Player player, BossBarAction action, Elevator elevator) {

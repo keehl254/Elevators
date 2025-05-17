@@ -164,7 +164,7 @@ public class SimpleDisplay implements Listener {
         if(this.returnRunnable == null) return;
         if(this.blockReturn) return;
 
-        Elevators.getFoliaLib().getScheduler().runLater(this.returnRunnable, 1L);
+        Elevators.getFoliaLib().getScheduler().runAtEntityLater(event.getPlayer(), this.returnRunnable, 1L);
     }
 
     public <T> T getOrDefaultCache(String key, T defaultT) {

@@ -63,7 +63,7 @@ public class SimpleInput implements Listener {
 
         event.setCancelled(true);
 
-        Elevators.getFoliaLib().getScheduler().runNextTick(task -> {
+        Elevators.getFoliaLib().getScheduler().runAtEntity(event.getPlayer(), task -> {
             String message = event.getMessage();
             if (message.equalsIgnoreCase("cancel")) {
                 this.stop(true);

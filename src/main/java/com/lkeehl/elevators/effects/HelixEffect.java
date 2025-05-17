@@ -31,7 +31,7 @@ public class HelixEffect extends ElevatorEffect {
 
             int tempI = i;
 
-            Elevators.getFoliaLib().getScheduler().runLater(task -> {
+            Elevators.getFoliaLib().getScheduler().runAtLocationLater(elevator.getLocation(), task -> {
                     Objects.requireNonNull(world).spawnParticle(Particle.REDSTONE, locClone.add(x, y, z), 1, 0, 0, 0, 1, new Particle.DustOptions(particleColor, ((2000-tempI)*2F)/2000.0F));
             }, i  / 50L);
         }

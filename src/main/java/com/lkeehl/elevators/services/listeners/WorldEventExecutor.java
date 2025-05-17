@@ -60,7 +60,7 @@ public class WorldEventExecutor {
             if (ElevatorSettingService.getSettingValue(elevator, CanExplodeSetting.class)) {
                 final ItemStack newItem = ItemStackHelper.createItemStackFromElevator(elevator);
                 final Location location = block.getLocation();
-                Elevators.getFoliaLib().getScheduler().runNextTick(task -> {
+                Elevators.getFoliaLib().getScheduler().runAtLocation(location, task -> {
                     location.getBlock().setType(Material.AIR);
                     location.getWorld().dropItemNaturally(location, newItem);
                 });
