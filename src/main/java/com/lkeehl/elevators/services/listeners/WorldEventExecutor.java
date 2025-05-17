@@ -14,6 +14,7 @@ import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import com.lkeehl.elevators.services.ElevatorHologramService;
 import com.lkeehl.elevators.services.ElevatorSettingService;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
@@ -49,10 +50,21 @@ public class WorldEventExecutor {
                 continue;
 
             ElevatorType elevatorType = ElevatorHelper.getElevatorType(shulkerBox);
-            if (elevatorType == null) continue;
+            if (elevatorType == null)
+                continue;
 
-            if (ElevatorSettingService.getSettingValue(new Elevator(shulkerBox, elevatorType), CanExplodeSetting.class))
-                event.blockList().remove(block);
+            Elevator elevator = new Elevator(shulkerBox, elevatorType);
+
+            event.blockList().remove(block);
+
+            if (ElevatorSettingService.getSettingValue(elevator, CanExplodeSetting.class)) {
+                final ItemStack newItem = ItemStackHelper.createItemStackFromElevator(elevator);
+                final Location location = block.getLocation();
+                Elevators.getFoliaLib().getScheduler().runNextTick(task -> {
+                    location.getBlock().setType(Material.AIR);
+                    location.getWorld().dropItemNaturally(location, newItem);
+                });
+            }
         }
     }
 
