@@ -20,7 +20,6 @@ public class Elevator {
         return this.shulkerBox;
     }
 
-    @Deprecated()
     public ElevatorType getElevatorType() {
         return this.elevatorType;
     }
