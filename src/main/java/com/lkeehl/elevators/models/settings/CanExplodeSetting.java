@@ -18,7 +18,7 @@ public class CanExplodeSetting extends ElevatorSetting<Boolean> {
 
     @Override
     public boolean canBeEditedIndividually(Elevator elevator) {
-        return super.canBeEditedIndividually(elevator) && !elevator.getElevatorType().canElevatorExplode();
+        return super.canBeEditedIndividually(elevator) && !elevator.getElevatorType(false).canElevatorExplode();
     }
 
     @Override

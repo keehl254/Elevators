@@ -29,8 +29,6 @@ public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, ConfigRoot>
         locale.notEnoughRoomGiveMessage = currentConfig.notEnoughRoomGiveMessage;
         locale.givenElevatorMessage = currentConfig.givenElevatorMessage;
         locale.worldDisabledMessage = currentConfig.worldDisabledMessage;
-        locale.elevatorNowProtected = currentConfig.elevatorNowProtected;
-        locale.elevatorNowUnprotected = currentConfig.elevatorNowUnprotected;
 
         newConfig.locale = locale;
 

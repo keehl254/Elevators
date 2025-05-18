@@ -4,6 +4,7 @@ import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.models.ElevatorAction;
+import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.models.settings.ElevatorSetting;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
@@ -236,7 +237,12 @@ public class ElevatorGUIHelper {
         newMethod.accept(player, elevator);
     }
 
-    public static void openAdminActionSettingsMenu(Player player, ElevatorType elevatorType, ElevatorAction action, Runnable onReturn) {
+    public static void openAdminActionSettingsMenu(Player player, ElevatorType tempElevatorType, ElevatorAction action, Runnable onReturn) {
+        final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
+        if(elevatorType == null) {
+            player.closeInventory();
+            return;
+        }
 
         List<ElevatorActionSetting<?>> settings = new ArrayList<>(action.getSettings());
 
@@ -261,7 +267,12 @@ public class ElevatorGUIHelper {
         display.open();
     }
 
-    public static void openAdminActionsMenu(Player player, ElevatorType elevatorType, List<ElevatorAction> actions) {
+    public static void openAdminActionsMenu(Player player, ElevatorType tempElevatorType, List<ElevatorAction> actions) {
+        final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
+        if(elevatorType == null) {
+            player.closeInventory();
+            return;
+        }
 
         int inventorySize = (Math.floorDiv(actions.size() + 8, 9) * 9) + 9;
         Inventory inventory = Bukkit.createInventory(null, inventorySize, "Admin > Settings > Actions");
@@ -281,7 +292,13 @@ public class ElevatorGUIHelper {
         display.open();
     }
 
-    public static void openAdminSettingsMenu(Player player, ElevatorType elevatorType) {
+    public static void openAdminSettingsMenu(Player player, ElevatorType tempElevatorType) {
+        final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
+        if(elevatorType == null) {
+            player.closeInventory();
+            return;
+        }
+
         List<ElevatorSetting<?>> settings = ElevatorSettingService.getElevatorSettings();
 
         int itemAmount = settings.size() + 2;
@@ -319,7 +336,13 @@ public class ElevatorGUIHelper {
         display.open();
     }
 
-    public static void openDeleteElevatorTypeMenu(Player player, ElevatorType elevatorType) {
+    public static void openDeleteElevatorTypeMenu(Player player, ElevatorType tempElevatorType) {
+        final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
+        if(elevatorType == null) {
+            player.closeInventory();
+            return;
+        }
+
         openConfirmMenu(player, confirmed -> {
             if(confirmed)
                 ElevatorTypeService.unregisterElevatorType(elevatorType);
@@ -393,6 +416,17 @@ public class ElevatorGUIHelper {
     }
 
     public static void openInteractMenu(Player player, Elevator elevator) {
+        if(!elevator.isValid()) {
+            MessageHelper.sendElevatorChangedMessage(player, new ElevatorEventData(elevator, elevator, (byte) 1, 0));
+            if(elevator.getShulkerBox() != null && ElevatorHelper.isElevatorDisabled(elevator.getShulkerBox())) {
+                ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
+                ShulkerBoxHelper.playClose(elevator.getShulkerBox());
+            }
+
+            player.closeInventory();
+            return;
+        }
+
         Inventory inventory = Bukkit.createInventory(null, 27, "Elevator");
 
         ElevatorHelper.setElevatorDisabled(elevator.getShulkerBox());
@@ -452,6 +486,10 @@ public class ElevatorGUIHelper {
     }
 
     public static void openInteractProtectMenu(Player player, Elevator elevator) {
+        if(!elevator.isValid()) {
+            openInteractMenu(player, elevator);
+            return;
+        }
 
         List<ProtectionHook> protectionHooks = ElevatorHookService.getProtectionHooks().stream().filter(i -> i.getConfig().allowCustomization).filter(i -> i.createIconForElevator(player, elevator) != null).toList();
 
@@ -474,6 +512,11 @@ public class ElevatorGUIHelper {
     }
 
     public static void openInteractNameMenu(Player player, Elevator elevator) {
+        if(!elevator.isValid()) {
+            openInteractMenu(player, elevator);
+            return;
+        }
+
         String currentName = ElevatorDataContainerService.getFloorName(elevator);
 
         tryOpenSign(player, value -> true, result -> {
@@ -485,13 +528,17 @@ public class ElevatorGUIHelper {
     }
 
     private static List<ElevatorAction> getActionsWithSettings(Elevator elevator, boolean up) {
-        List<ElevatorAction> actions = new ArrayList<>(up ? elevator.getElevatorType().getActionsUp() : elevator.getElevatorType().getActionsDown()); // Don't want to alter original list.
+        List<ElevatorAction> actions = new ArrayList<>(up ? elevator.getElevatorType(false).getActionsUp() : elevator.getElevatorType(false).getActionsDown()); // Don't want to alter original list.
         actions.removeIf(i -> i.getSettings().isEmpty());
         actions.removeIf(i -> i.getSettings().stream().noneMatch(s -> s.canBeEditedIndividually(elevator)));
         return actions;
     }
 
     public static void openInteractActionSettingsMenu(Player player, Elevator elevator, ElevatorAction action, Runnable onReturn) {
+        if(!elevator.isValid()) {
+            onReturn.run();
+            return;
+        }
 
         List<ElevatorActionSetting<?>> settings = new ArrayList<>(action.getSettings());
         settings.removeIf(i -> !i.canBeEditedIndividually(elevator));
@@ -519,6 +566,10 @@ public class ElevatorGUIHelper {
     }
 
     public static void openInteractActionsMenu(Player player, Elevator elevator, List<ElevatorAction> actions) {
+        if(!elevator.isValid()) {
+            openInteractSettingsMenu(player, elevator);
+            return;
+        }
 
         int inventorySize = (Math.floorDiv(actions.size() + 8, 9) * 9) + 9;
         Inventory inventory = Bukkit.createInventory(null, inventorySize, "Elevator > Settings > Actions");
@@ -537,6 +588,11 @@ public class ElevatorGUIHelper {
     }
 
     public static void openInteractSettingsMenu(Player player, Elevator elevator) {
+        if(!elevator.isValid()) {
+            openInteractMenu(player, elevator);
+            return;
+        }
+
         List<ElevatorSetting<?>> settings = ElevatorSettingService.getElevatorSettings().stream().filter(i -> i.canBeEditedIndividually(elevator)).toList();
 
         int itemAmount = settings.size();

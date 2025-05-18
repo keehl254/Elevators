@@ -78,12 +78,8 @@ public class MessageHelper {
         MessageHelper.sendFormattedLocale(player, i -> i.worldDisabledMessage, elevatorEventData);
     }
 
-    public static void sendElevatorNowProtectedMessage(Player player, ElevatorEventData elevatorEventData) {
-        MessageHelper.sendFormattedLocale(player, i -> i.elevatorNowProtected, elevatorEventData);
-    }
-
-    public static void sendElevatorNowUnprotectedMessage(Player player, ElevatorEventData elevatorEventData) {
-        MessageHelper.sendFormattedLocale(player, i -> i.elevatorNowUnprotected, elevatorEventData);
+    public static void sendElevatorChangedMessage(Player player, ElevatorEventData elevatorEventData) {
+        MessageHelper.sendFormattedLocale(player, i -> i.elevatorChangedKickedOut, elevatorEventData);
     }
 
     public static void sendFormattedLocale(CommandSender sender, Function<ConfigLocale, String> messageFunc, ElevatorEventData elevatorEventData) {

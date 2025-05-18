@@ -53,9 +53,9 @@ public class ElevatorSetting<T> {
     public ElevatorSetting<T> setupDataStore(String settingKey, PersistentDataType<?, T> dataType) {
         NamespacedKey containerKey = ElevatorDataContainerService.getKeyFromKey("per-ele-" + settingKey, dataType);
 
-        this.getIndividualCurrentValueFunc = elevator -> ElevatorDataContainerService.getElevatorValue(elevator.getShulkerBox(), containerKey, this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType()));
+        this.getIndividualCurrentValueFunc = elevator -> ElevatorDataContainerService.getElevatorValue(elevator.getShulkerBox(), containerKey, this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType(false)));
         this.setIndividualCurrentValueFunc = (elevator, value) -> {
-            if(value == this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType())) // Store as little data as possible. Remove from data-container if default.
+            if(value == this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType(false))) // Store as little data as possible. Remove from data-container if default.
                 value = null;
             ElevatorDataContainerService.setElevatorValue(elevator.getShulkerBox(), containerKey, value);
             elevator.getShulkerBox().update();
@@ -65,7 +65,7 @@ public class ElevatorSetting<T> {
     }
 
     public boolean canBeEditedIndividually(Elevator elevator) {
-        return this.getIndividualCurrentValueFunc != null && !elevator.getElevatorType().getDisabledSettings().contains(this.settingName);
+        return this.getIndividualCurrentValueFunc != null && !elevator.getElevatorType(false).getDisabledSettings().contains(this.settingName);
     }
 
     public ItemStack createIcon(Object value, boolean global) {
@@ -131,7 +131,7 @@ public class ElevatorSetting<T> {
 
     public T getIndividualElevatorValue(Elevator elevator) {
 
-        if(!elevator.getElevatorType().getDisabledSettings().contains(this.settingName)) {
+        if(!elevator.getElevatorType(false).getDisabledSettings().contains(this.settingName)) {
             T value = null;
             if (this.getIndividualCurrentValueFunc != null)
                 value = this.getIndividualCurrentValueFunc.apply(elevator);
@@ -140,7 +140,7 @@ public class ElevatorSetting<T> {
                 return value;
         }
 
-        return this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType());
+        return this.getGlobalCurrentValueFunc.apply(elevator.getElevatorType(false));
     }
 
     public void setIndividualElevatorValue(Elevator elevator, T value) {
