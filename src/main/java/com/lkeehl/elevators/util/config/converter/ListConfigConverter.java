@@ -21,7 +21,7 @@ public class ListConfigConverter extends ConfigConverter {
         if (field != null) {
             ParameterizedType genericType = (field.getGenericType() instanceof ParameterizedType) ? (ParameterizedType) field.getGenericType() : null;
             if (genericType != null) {
-                genericClazz = genericType.getClass();
+                genericClazz = this.getClass().getClassLoader().loadClass(genericType.getActualTypeArguments()[0].getTypeName());
                 converter = ConfigConverter.getConverter(genericClazz);
             }
         }

@@ -5,7 +5,7 @@ import com.lkeehl.elevators.models.ElevatorEventData;
 import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.ElevatorDataContainerService;
 import com.lkeehl.elevators.services.ElevatorHookService;
-import com.lkeehl.elevators.services.configs.ConfigLocale;
+import com.lkeehl.elevators.services.configs.versions.configv5.ConfigLocale;
 import com.lkeehl.elevators.services.hooks.PlaceholderAPIHook;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;

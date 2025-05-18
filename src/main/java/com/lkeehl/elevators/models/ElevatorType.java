@@ -3,7 +3,7 @@ package com.lkeehl.elevators.models;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.services.ElevatorActionService;
 import com.lkeehl.elevators.services.ElevatorHologramService;
-import com.lkeehl.elevators.services.configs.ConfigElevatorType;
+import com.lkeehl.elevators.services.configs.versions.configv5.ConfigElevatorType;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;

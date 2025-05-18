@@ -55,7 +55,7 @@ public abstract class ConfigConverter {
         yamlRepresenter.setPropertyUtils(new PropertyUtils() {
             @Override
             protected Set<Property> createPropertySet(Class<?> type, BeanAccess bAccess) {
-                return getPropertiesMap(type, bAccess).values().stream().sequential().filter(prop -> prop.isReadable() && (isAllowReadOnlyProperties() || prop.isWritable())).collect(Collectors.toCollection(LinkedHashSet::new));
+                return getPropertiesMap(type, bAccess).values().stream().filter(prop -> prop.isReadable() && (isAllowReadOnlyProperties() || prop.isWritable())).collect(Collectors.toCollection(LinkedHashSet::new));
             }
         });
 
@@ -79,14 +79,7 @@ public abstract class ConfigConverter {
         }
     }
 
-    public static <T extends Config> ConfigRootNode<T> createNodeForConfig(T config, InputStream inputStream) throws Exception {
-        Map<?, ?> yamlData;
-        try (InputStreamReader fileReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-            yamlData = yaml.load(fileReader);
-        } catch (IOException | ClassCastException | YAMLException e) {
-            throw new Exception("Could not load YML", e);
-        }
-
+    public static <T extends Config> ConfigRootNode<T> createNodeForConfigData(T config, Map<?, ?> yamlData) throws Exception {
         Optional<ConfigConverter> optConverter = converters.stream().filter(i -> i.supports(config.getClass())).findAny();
         if (optConverter.isEmpty())
             return null;
@@ -102,11 +95,21 @@ public abstract class ConfigConverter {
         return null;
     }
 
+    public static <T extends Config> ConfigRootNode<T> createNodeForConfig(T config, InputStream inputStream) throws Exception {
+        Map<?, ?> yamlData;
+        try (InputStreamReader fileReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+            yamlData = yaml.load(fileReader);
+        } catch (IOException | ClassCastException | YAMLException e) {
+            throw new Exception("Could not load YML", e);
+        }
+        return createNodeForConfigData(config, yamlData);
+    }
+
     public static <T extends Config> ConfigRootNode<T> createNodeForConfig(T config, File file) throws Exception {
         return createNodeForConfig(config, new FileInputStream(file));
     }
 
-    public static void saveConfigToFile(ConfigRootNode<?> node, File file) {
+    public static boolean saveConfigToFile(ConfigRootNode<?> node, File file) {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
 
             int depth = 0;
@@ -163,8 +166,10 @@ public abstract class ConfigConverter {
             }
 
             fileWriter.write(writeLines.toString());
+            return true;
         } catch (IOException e) {
             Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed while saving config. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+            return false;
         }
     }
 
@@ -187,6 +192,7 @@ public abstract class ConfigConverter {
             if (converter.supports(type))
                 return converter;
         }
+        Elevators.getElevatorsLogger().warning("Failed to find config converter for type: " + type.getName());
         return null;
     }
 

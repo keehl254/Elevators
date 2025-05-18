@@ -46,8 +46,6 @@ locale:
   enterSubtitle: '&c&lELEVATORS&f Enter a new subtitle into the chat.'
   enterMessage: '&c&lELEVATORS&f Enter a new message into the chat.'
   enterCommand: '&c&lELEVATORS&f Enter a new command into the chat.'
-# If this option is enabled, elevators will only work with trusted users in claims by default. Elevators can be changed individually to allow visitors by trusted members.
-claimProtectionDefault: true
 # If this option is enabled, elevators will be able to be placed using dispensers. Keep in mind that this can be used to bypass the elevator placement permission.
 allowElevatorDispense: false
 # Elevators cannot be used in the world names listed below.

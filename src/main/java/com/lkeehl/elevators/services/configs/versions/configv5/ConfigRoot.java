@@ -1,4 +1,4 @@
-package com.lkeehl.elevators.services.configs;
+package com.lkeehl.elevators.services.configs.versions.configv5;
 
 import com.lkeehl.elevators.models.ElevatorType;
 import com.lkeehl.elevators.util.ExecutionMode;
@@ -35,9 +35,6 @@ public class ConfigRoot implements Config {
     @Comments("Locale change. All messages support color codes.")
     public ConfigLocale locale;
 
-    @Comments("If this option is enabled, elevators will only work with trusted users in claims by default. Elevators can be changed individually to allow visitors by trusted members.")
-    public boolean claimProtectionDefault = true;
-
     @Comments("If this option is enabled, elevators will be able to be placed using dispensers. Keep in mind that this can be used to bypass the elevator placement permission.")
     public boolean allowElevatorDispense = false;
 
@@ -47,5 +44,11 @@ public class ConfigRoot implements Config {
     public Map<String, ConfigEffect> effects;
 
     public Map<String, ElevatorType> elevators;
+
+
+    @Override
+    public void onLoad() {
+
+    }
 
 }

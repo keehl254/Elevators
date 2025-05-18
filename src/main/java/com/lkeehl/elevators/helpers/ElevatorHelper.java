@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -89,12 +88,12 @@ public class ElevatorHelper {
 
     public static ElevatorEventData findDestinationElevator(Player player, Location origin, Elevator elevator, byte direction, boolean ignoreSolidBlockCheck, boolean ignoreDistanceCheck, boolean ignoreObstructionCheck) {
         direction = (byte) (direction > 0 ? 1 : -1);
-        if(direction == -1 && origin.getBlockY() == MCVersionHelper.getWorldMinHeight(origin.getWorld()))
+        if(direction == -1 && origin.getBlockY() == VersionHelper.getWorldMinHeight(origin.getWorld()))
             return null;
 
         World world = origin.getWorld();
 
-        int worldMinHeight = MCVersionHelper.getWorldMinHeight(world);
+        int worldMinHeight = VersionHelper.getWorldMinHeight(world);
         int maxDistance = ElevatorSettingService.getSettingValue(elevator, MaxDistanceSetting.class);
         if(maxDistance == -1 || ignoreDistanceCheck)
             maxDistance = Short.MAX_VALUE;

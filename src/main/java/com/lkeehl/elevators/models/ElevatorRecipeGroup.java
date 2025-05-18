@@ -3,7 +3,7 @@ package com.lkeehl.elevators.models;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.services.ElevatorDataContainerService;
-import com.lkeehl.elevators.services.configs.ConfigRecipe;
+import com.lkeehl.elevators.services.configs.versions.configv5.ConfigRecipe;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;

@@ -71,7 +71,7 @@ public class PrimitiveConfigConverter extends ConfigConverter {
     @Override
     public boolean supports(Class<?> type) {
         return switch (type.getSimpleName().toLowerCase()) {
-            case "boolean", "char", "byte", "short", "int", "long", "float", "double","string" -> true;
+            case "boolean", "char", "byte", "short", "int", "long", "float", "double","string", "integer" -> true;
             default -> false;
         };
     }

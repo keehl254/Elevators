@@ -1,9 +1,7 @@
 package com.lkeehl.elevators.util.config.converter;
 
-import com.lkeehl.elevators.util.config.BlankConfig;
-import com.lkeehl.elevators.util.config.Comments;
-import com.lkeehl.elevators.util.config.Config;
-import com.lkeehl.elevators.util.config.ConfigConverter;
+import com.lkeehl.elevators.Elevators;
+import com.lkeehl.elevators.util.config.*;
 import com.lkeehl.elevators.util.config.nodes.ConfigNode;
 
 import javax.annotation.Nullable;
@@ -52,7 +50,9 @@ public class ConfigConfigConverter extends ConfigConverter {
             if (!childField.trySetAccessible())
                 continue;
 
-            String path = childField.getName();
+
+            ConfigFieldName fieldName = childField.getAnnotation(ConfigFieldName.class);
+            String path = fieldName != null ? fieldName.value() : childField.getName();
 
             Object obj = childField.get(myNode.getValue());
             if (obj == null) {
@@ -63,10 +63,13 @@ public class ConfigConfigConverter extends ConfigConverter {
                         obj = new HashMap<>();
                     else if (Set.class.isAssignableFrom(childField.getType()))
                         obj = new HashSet<>();
+                    else if (List.class.isAssignableFrom(childField.getType()))
+                        obj = new ArrayList<>();
                     else if (childField.isEnumConstant())
                         obj = childField.getType().getEnumConstants()[0];
-                    else
+                    else {
                         continue;
+                    }
                 }
             }
             obj = parentNode.getRoot().getObjectAtPath(myNode.getChildPath(path), obj);

@@ -1,7 +1,7 @@
 package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.configs.ConfigRoot;
+import com.lkeehl.elevators.services.configs.versions.configv5.ConfigRoot;
 
 import java.util.*;
 

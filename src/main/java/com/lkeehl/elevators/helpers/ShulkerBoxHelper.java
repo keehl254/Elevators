@@ -1,6 +1,5 @@
 package com.lkeehl.elevators.helpers;
 
-import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.services.ElevatorHookService;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,7 +23,7 @@ public class ShulkerBoxHelper {
 
     @SuppressWarnings("deprecation")
     public static void setFacingUp(ShulkerBox box) {
-        if (MCVersionHelper.doesVersionSupportShulkerFacingAPI() && box.getBlockData() instanceof Directional directionalData) {
+        if (VersionHelper.doesVersionSupportShulkerFacingAPI() && box.getBlockData() instanceof Directional directionalData) {
             directionalData.setFacing(BlockFace.UP);
             box.setBlockData(directionalData);
         } else {
@@ -59,12 +58,12 @@ public class ShulkerBoxHelper {
     }
 
     public static void playClose(ShulkerBox box) {
-        if (MCVersionHelper.doesVersionSupportOpenCloseAPI())
+        if (VersionHelper.doesVersionSupportOpenCloseAPI())
             box.close();
     }
 
     public static void playOpen(ShulkerBox box) {
-        if (MCVersionHelper.doesVersionSupportOpenCloseAPI())
+        if (VersionHelper.doesVersionSupportOpenCloseAPI())
             box.open();
     }
 

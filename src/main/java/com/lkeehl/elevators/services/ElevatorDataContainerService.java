@@ -141,29 +141,6 @@ public class ElevatorDataContainerService {
         dataContainer.set(keyData.getKey(), dataType, value);
     }
 
-    public static boolean shouldElevatorBeGPProtected(ShulkerBox box) {
-        PersistentDataContainer tagContainer = box.getPersistentDataContainer();
-
-        if (tagContainer.has(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE))
-            return tagContainer.get(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE) == 1;
-        else
-            tagContainer.set(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE, (byte) (ElevatorConfigService.getRootConfig().claimProtectionDefault ? 1 : 0));
-        return true;
-    }
-
-    public static boolean toggleGPProtectionOnElevator(ShulkerBox box) {
-        PersistentDataContainer tagContainer = box.getPersistentDataContainer();
-        byte current;
-
-        if (tagContainer.has(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE))
-            current = tagContainer.get(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE);
-        else
-            current = (byte) (ElevatorConfigService.getRootConfig().claimProtectionDefault ? 1 : 0);
-
-        tagContainer.set(ElevatorDataContainerService.protectionKey, PersistentDataType.BYTE, current == 1 ? 0 : (byte) 1);
-        return true;
-    }
-
     public static void setElevatorKey(ItemStack item, ElevatorType type) {
         ItemMeta meta = item.getItemMeta();
         if (meta != null)

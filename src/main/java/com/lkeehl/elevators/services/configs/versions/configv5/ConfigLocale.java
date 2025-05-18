@@ -1,4 +1,4 @@
-package com.lkeehl.elevators.services.configs;
+package com.lkeehl.elevators.services.configs.versions.configv5;
 
 import com.lkeehl.elevators.util.config.Config;
 

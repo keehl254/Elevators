@@ -6,8 +6,8 @@ import com.lkeehl.elevators.effects.HelixEffect;
 import com.lkeehl.elevators.effects.ImageEffect;
 import com.lkeehl.elevators.helpers.ResourceHelper;
 import com.lkeehl.elevators.models.ElevatorEffect;
-import com.lkeehl.elevators.services.configs.ConfigEffect;
-import com.lkeehl.elevators.services.configs.ConfigRoot;
+import com.lkeehl.elevators.services.configs.versions.configv5.ConfigEffect;
+import com.lkeehl.elevators.services.configs.versions.configv5.ConfigRoot;
 
 import java.io.File;
 import java.util.HashMap;

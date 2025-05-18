@@ -3,7 +3,7 @@ package com.lkeehl.elevators.models.hooks;
 import com.lkeehl.elevators.models.Elevator;
 import com.lkeehl.elevators.services.ElevatorConfigService;
 import com.lkeehl.elevators.services.ElevatorDataContainerService;
-import com.lkeehl.elevators.services.configs.ConfigHookData;
+import com.lkeehl.elevators.services.configs.versions.configv5.ConfigHookData;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
@@ -34,6 +34,10 @@ public abstract class ProtectionHook implements ElevatorHook {
         boolean currentValue = this.isCheckEnabled(elevator);
         ElevatorDataContainerService.setElevatorValue(elevator.getShulkerBox(), this.containerKey, !currentValue);
         elevator.getShulkerBox().update();
+    }
+
+    public String getConfigKey() {
+        return this.configKey;
     }
 
     public abstract void onProtectionClick(Player player, Elevator elevator, Runnable onReturn);

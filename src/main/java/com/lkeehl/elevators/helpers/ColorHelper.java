@@ -32,7 +32,7 @@ public class ColorHelper {
     }
 
     public static String getChatStringFromColor(int rgb) {
-        if(!MCVersionHelper.doesVersionSupportHex())
+        if(!VersionHelper.doesVersionSupportHex())
             return ChatColor.values()[((byte[]) colorModel.getDataElements(rgb, null))[0]].toString();
 
         String hex = String.format("%02x%02x%02x", (rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
@@ -45,7 +45,7 @@ public class ColorHelper {
     }
 
     public static String getColor(String hex) {
-        if(!MCVersionHelper.doesVersionSupportHex())
+        if(!VersionHelper.doesVersionSupportHex())
             return nearestColor(hex).toString();
         StringBuilder code = new StringBuilder("§x");
         char[] var2 = hex.toCharArray();

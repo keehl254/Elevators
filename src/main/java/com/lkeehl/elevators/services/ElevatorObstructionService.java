@@ -1,7 +1,7 @@
 package com.lkeehl.elevators.services;
 
 import com.lkeehl.elevators.Elevators;
-import com.lkeehl.elevators.helpers.MCVersionHelper;
+import com.lkeehl.elevators.helpers.VersionHelper;
 import com.lkeehl.elevators.helpers.ResourceHelper;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,7 +40,7 @@ public class ElevatorObstructionService {
 
         List<String> lines = null;
         try {
-            if (!MCVersionHelper.doesVersionSupportBlockBoundingBoxes()) {
+            if (!VersionHelper.doesVersionSupportBlockBoundingBoxes()) {
                 File nonObstructiveMaterialsFile = new File(Elevators.getConfigDirectory(), "nonobstructiveMaterials.txt");
 
                 ResourceHelper.exportResource(Elevators.getInstance(), "nonobstructiveMaterials.txt", nonObstructiveMaterialsFile, false);
@@ -91,7 +91,7 @@ public class ElevatorObstructionService {
 
     public static double getHitBoxAddition(Block block, Player player) {
 
-        if (!MCVersionHelper.doesVersionSupportBlockBoundingBoxes())
+        if (!VersionHelper.doesVersionSupportBlockBoundingBoxes())
             return ElevatorObstructionService.isBlockObstructed(block, 2) ? -1 : 0;
 
         Location location = player.getLocation();

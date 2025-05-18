@@ -1,9 +1,9 @@
 package com.lkeehl.elevators.services;
 
-import com.lkeehl.elevators.helpers.MCVersionHelper;
+import com.lkeehl.elevators.helpers.VersionHelper;
 import com.lkeehl.elevators.models.ElevatorRecipeGroup;
 import com.lkeehl.elevators.models.ElevatorType;
-import com.lkeehl.elevators.services.configs.ConfigRoot;
+import com.lkeehl.elevators.services.configs.versions.configv5.ConfigRoot;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -46,7 +46,7 @@ public class ElevatorRecipeService {
 
         ElevatorRecipeService.elevatorRecipeGroupMap.clear();
 
-        if(MCVersionHelper.doesVersionSupportRemoveRecipe())
+        if(VersionHelper.doesVersionSupportRemoveRecipe())
             recipesToUnlearn.forEach(Bukkit.getServer()::removeRecipe);
 
         Bukkit.getOnlinePlayers().forEach(i -> i.undiscoverRecipes(recipesToUnlearn));

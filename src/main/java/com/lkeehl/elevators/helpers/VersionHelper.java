@@ -7,7 +7,7 @@ import org.bukkit.World;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MCVersionHelper {
+public class VersionHelper {
 
     private static final Pattern majorMinorPatchPattern = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)");
     private static final Pattern majorMinorPattern = Pattern.compile("^(\\d+)\\.(\\d+)");
