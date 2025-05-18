@@ -51,8 +51,8 @@ public class V4_0_2ConfigVersion extends ConfigVersion<V4ConfigRoot, V4_0_2Confi
 
         // Add our sound actions.
         if(currentConfig.playSound) {
-            actions.up.add(String.format("sound: %s volume=%f pitch=%f", currentConfig.sound, currentConfig.volume, currentConfig.pitch));
-            actions.down.add(String.format("sound: %s volume=%f pitch=%f", currentConfig.sound, currentConfig.volume, currentConfig.pitch));
+            actions.up.add(String.format("sound: %s volume=%f pitch=%f global=%b", currentConfig.sound, currentConfig.volume, currentConfig.pitch, currentConfig.worldSounds));
+            actions.down.add(String.format("sound: %s volume=%f pitch=%f global=%b", currentConfig.sound, currentConfig.volume, currentConfig.pitch, currentConfig.worldSounds));
         }
 
         // Add our command actions

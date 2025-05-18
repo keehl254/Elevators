@@ -1,5 +1,7 @@
 package com.lkeehl.elevators.models;
 
+import com.lkeehl.elevators.util.ExecutionMode;
+
 public class ElevatorEventData {
 
 
@@ -29,6 +31,10 @@ public class ElevatorEventData {
 
     public double getStandOnAddition() {
         return this.standOnAddition;
+    }
+
+    public Elevator getElevatorFromExecutionMode(ExecutionMode executionMode) {
+        return executionMode == ExecutionMode.DESTINATION ? this.getDestination() : this.getOrigin();
     }
 
 }

@@ -52,6 +52,7 @@ public class ElevatorPermHelper {
 
         AtomicBoolean hasPermission = new AtomicBoolean(true);
 
+        // Never set hasPermission to true in this, as we need to account for this checkPermission consumable running with BOTH execution mode.
         Consumer<Elevator> checkPermission = elevator -> {
             if (!hasPermission.get())
                 return;
@@ -61,22 +62,15 @@ public class ElevatorPermHelper {
                 return;
             }
 
-            //TODO: Check per-elevator settings.
-
-            if (!ElevatorSettingService.getSettingValue(elevator, CheckPermsSetting.class)) {
-                hasPermission.set(true);
+            boolean shouldCheckSettings = ElevatorSettingService.getSettingValue(elevator, CheckPermsSetting.class);
+            if (!shouldCheckSettings || player.hasPermission(elevator.getElevatorType().getUsePermission() + ".*"))
                 return;
-            }
 
-            if (player.hasPermission(elevator.getElevatorType().getUsePermission() + ".*")) {
-                hasPermission.set(true);
-                return;
-            }
-
-            hasPermission.set(player.hasPermission(elevator.getElevatorType().getUsePermission() + "." + elevator.getDyeColor()));
+            if(!player.hasPermission(elevator.getElevatorType().getUsePermission() + "." + elevator.getDyeColor()))
+                hasPermission.set(false);
         };
 
-        ExecutionMode.executeConsumerWithMode(ElevatorConfigService.getRootConfig().permissionMode, i -> i == ExecutionMode.DESTINATION ? elevatorEventData.getDestination() : elevatorEventData.getOrigin(), checkPermission);
+        ExecutionMode.executeConsumerWithMode(ElevatorConfigService.getRootConfig().permissionMode, elevatorEventData::getElevatorFromExecutionMode, checkPermission);
 
         return hasPermission.get();
     }

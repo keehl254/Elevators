@@ -13,6 +13,7 @@ public enum ExecutionMode {
         switch (mode) {
             case BOTH:
                 execConsumer.accept(modeConverter.apply(ExecutionMode.ORIGIN));
+                execConsumer.accept(modeConverter.apply(ExecutionMode.DESTINATION));
             case DESTINATION:
                 execConsumer.accept(modeConverter.apply(ExecutionMode.DESTINATION));
                 break;

@@ -24,6 +24,7 @@ public class SoundAction extends ElevatorAction {
     private static final ElevatorActionGrouping<Sound> soundGrouping = new ElevatorActionGrouping<>(Sound.ENTITY_BLAZE_SHOOT, SoundAction::getSoundFromString , "sound", "s");
     private static final ElevatorActionGrouping<Float> volumeGrouping = new ElevatorActionGrouping<>(1.0F, Float::parseFloat, "volume","vol","v");
     private static final ElevatorActionGrouping<Float> pitchGrouping = new ElevatorActionGrouping<>(1.0F, Float::parseFloat, "pitch","p");
+    private static final ElevatorActionGrouping<Boolean> globalGrouping = new ElevatorActionGrouping<>(true, Boolean::parseBoolean, "global","g","worldsounds","ws","w");
 
     public SoundAction(ElevatorType elevatorType) {
         super(elevatorType, "sound", "sound", soundGrouping, volumeGrouping, pitchGrouping);
@@ -35,6 +36,11 @@ public class SoundAction extends ElevatorAction {
         ElevatorActionSetting<Sound> soundSetting = this.mapSetting(soundGrouping, "sound","Elevator Sound", desc, Material.MUSIC_DISC_CAT, ChatColor.GOLD);
         soundSetting.setupDataStore("sound-sound", PersistentDataType.STRING);
         soundSetting.onClick(this::editSound);
+
+        desc = "This option controls whether the elevator sound is only played to the elevator user or to everyone nearby.";
+        ElevatorActionSetting<Boolean> globalSetting = this.mapSetting(globalGrouping, "global","Elevator Global Sounds", desc, Material.MUSIC_DISC_CHIRP, ChatColor.BLUE);
+        globalSetting.setupDataStore("sound-global", PersistentDataType.STRING);
+        globalSetting.onClick(this::editGlobal);
 
         desc = "This option controls the volume at which the elevator sound effect plays.";
         ElevatorActionSetting<Float> volumeSetting = this.mapSetting(volumeGrouping, "volume","Elevator Volume", desc, Material.MUSIC_DISC_5, ChatColor.LIGHT_PURPLE);
@@ -53,8 +59,25 @@ public class SoundAction extends ElevatorAction {
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
-        Consumer<ShulkerBox> soundConsumer = box -> box.getWorld().playSound(box.getLocation(), this.getGroupingObject(soundGrouping, eventData.getOrigin()), this.getGroupingObject(volumeGrouping, eventData.getOrigin()), this.getGroupingObject(pitchGrouping, eventData.getOrigin()));
-        ExecutionMode.executeConsumerWithMode(ElevatorConfigService.getRootConfig().effectDestination, i-> i == ExecutionMode.DESTINATION ? eventData.getDestination().getShulkerBox() : eventData.getOrigin().getShulkerBox(), soundConsumer);
+        Consumer<Elevator> soundConsumer = elevator -> {
+            ShulkerBox box = elevator.getShulkerBox();
+
+            Sound sound = this.getGroupingObject(soundGrouping, eventData.getOrigin());
+            float volume = this.getGroupingObject(volumeGrouping, eventData.getOrigin());
+            float pitch = this.getGroupingObject(pitchGrouping, eventData.getOrigin());
+
+            if(this.getGroupingObject(globalGrouping, eventData.getOrigin()))
+                player.playSound(box.getLocation(), sound, volume, pitch);
+            else
+                box.getWorld().playSound(box.getLocation(), sound, volume, pitch);
+
+        };
+        ExecutionMode.executeConsumerWithMode(ElevatorConfigService.getRootConfig().effectDestination, eventData::getElevatorFromExecutionMode, soundConsumer);
+    }
+
+    private void editGlobal(Player player, Runnable returnMethod, InventoryClickEvent clickEvent, boolean currentValue, Consumer<Boolean> setValueMethod) {
+        setValueMethod.accept(!currentValue);
+        returnMethod.run();
     }
 
     private void editVolume(Player player, Runnable returnMethod, InventoryClickEvent clickEvent, float currentValue, Consumer<Float> setValueMethod) {

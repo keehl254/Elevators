@@ -50,17 +50,7 @@ public abstract class ElevatorEffect {
 
     public void playEffect(ElevatorEventData teleportResult) {
         ExecutionMode executionMode = ElevatorConfigService.getRootConfig().effectDestination;
-
-        List<Elevator> effectElevators;
-        if(executionMode == ExecutionMode.BOTH)
-            effectElevators = List.of(teleportResult.getDestination(), teleportResult.getOrigin());
-        else if(executionMode == ExecutionMode.ORIGIN)
-            effectElevators = List.of(teleportResult.getOrigin());
-        else
-            effectElevators = List.of(teleportResult.getDestination());
-
-        for(Elevator elevator : effectElevators)
-            this.playEffect(teleportResult, elevator);
+        ExecutionMode.executeConsumerWithMode(executionMode, teleportResult::getElevatorFromExecutionMode, elevator -> this.playEffect(teleportResult, elevator));
     }
 
 }
