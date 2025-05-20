@@ -23,12 +23,14 @@ public class ElevatorRecipeService {
         if(ElevatorRecipeService.initialized)
             return;
 
-        ElevatorConfigService.addConfigCallback(ElevatorRecipeService::registerRecipes);
+        ElevatorConfigService.addConfigCallback(root -> refreshRecipes());
 
         ElevatorRecipeService.initialized = true;
     }
 
-    private static void registerRecipes(ConfigRoot root) {
+    public static void refreshRecipes() {
+
+        ConfigRoot root = ElevatorConfigService.getRootConfig();
 
         Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
 

@@ -26,6 +26,7 @@ public class SimpleDisplay implements Listener {
     private final Player player;
     private final Inventory inventory;
     private final DisplayClickResult defaultClickResult;
+    private final DisplayClickResult outOfMenuDefaultClickResult;
     private Runnable returnRunnable;
 
     private boolean blockReturn = false;
@@ -46,16 +47,21 @@ public class SimpleDisplay implements Listener {
     }
 
     public SimpleDisplay(JavaPlugin plugin, Player player, Inventory inventory, Runnable returnRunnable, DisplayClickResult defaultClickResult) {
+        this(plugin, player, inventory, returnRunnable, defaultClickResult, DisplayClickResult.CANCEL);
+    }
+
+    public SimpleDisplay(JavaPlugin plugin, Player player, Inventory inventory, Runnable returnRunnable, DisplayClickResult defaultClickResult, DisplayClickResult outOfMenuDefaultClickResult) {
         this.plugin = plugin;
         this.player = player;
         this.inventory = inventory;
         this.defaultClickResult = defaultClickResult;
+        this.outOfMenuDefaultClickResult = outOfMenuDefaultClickResult;
         this.returnRunnable = returnRunnable;
     }
 
     public SimpleDisplay setItem(int index, ItemStack itemstack, BiFunction<InventoryClickEvent, SimpleDisplay, DisplayClickResult> onClick, DisplayClickFlag... flags) {
-        slotDataMap.remove(index);
-        slotDataMap.put(index, new DisplaySlotData(index, itemstack, flags, onClick));
+        this.slotDataMap.remove(index);
+        this.slotDataMap.put(index, new DisplaySlotData(index, itemstack, flags, onClick));
 
         this.inventory.setItem(index, itemstack);
         return this;
@@ -76,18 +82,18 @@ public class SimpleDisplay implements Listener {
     }
 
     public SimpleDisplay clearActions() {
-        slotDataMap.clear();
+        this.slotDataMap.clear();
         return this;
     }
 
     public void close(boolean executeReturn) {
         if(!executeReturn)
             HandlerList.unregisterAll(this);
-        player.closeInventory();
+        this.player.closeInventory();
     }
 
     public void open() {
-        player.openInventory(inventory);
+        this.player.openInventory(this.inventory);
         Bukkit.getPluginManager().registerEvents(this, this.plugin);
     }
 
@@ -122,7 +128,7 @@ public class SimpleDisplay implements Listener {
 
         int clickedSlot = event.getSlot();
 
-        if (!slotDataMap.containsKey(clickedSlot))
+        if (!this.slotDataMap.containsKey(clickedSlot))
             return DisplayClickResult.DEFAULT;
 
         DisplaySlotData slotData = this.slotDataMap.get(clickedSlot);
@@ -151,7 +157,9 @@ public class SimpleDisplay implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory() != this.inventory) return;
 
-        DisplayClickResult clickResult = DisplayClickResult.combineResults(this.defaultClickResult, this.validateSlotClicks(event), this.validateInitialClick(event));
+        DisplayClickResult defaultResult = event.getClickedInventory() == event.getWhoClicked().getInventory() ? this.outOfMenuDefaultClickResult : this.defaultClickResult;
+
+        DisplayClickResult clickResult = DisplayClickResult.combineResults(defaultResult, this.validateSlotClicks(event), this.validateInitialClick(event));
         event.setCancelled(clickResult == DisplayClickResult.CANCEL);
     }
 
@@ -209,7 +217,7 @@ public class SimpleDisplay implements Listener {
         }
 
         public boolean isValid(InventoryClickEvent event) {
-            return validationFunction.apply(event);
+            return this.validationFunction.apply(event);
         }
 
         public static boolean isValid(InventoryClickEvent event, DisplayClickFlag... flags) {

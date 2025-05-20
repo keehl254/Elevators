@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.util.config.converter;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 import com.lkeehl.elevators.util.config.nodes.ClassicConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigNode;
@@ -37,7 +38,7 @@ public class PrimitiveConfigConverter extends ConfigConverter {
     }
 
     public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
-        return node.getValue();
+        return createObjectFromValue(node.getValue());
     }
 
     @Override
@@ -62,8 +63,10 @@ public class PrimitiveConfigConverter extends ConfigConverter {
                 return object instanceof Integer ? object : Integer.valueOf(object.toString());
             case "long":
                 return object instanceof Long ? object : Long.valueOf(object.toString());
-            case "char":
+            case "character":
                 return (object instanceof Character) ? object : ((String) object).charAt(0);
+            case "string":
+                return object.toString();
         }
         return object.toString();
     }
@@ -71,7 +74,7 @@ public class PrimitiveConfigConverter extends ConfigConverter {
     @Override
     public boolean supports(Class<?> type) {
         return switch (type.getSimpleName().toLowerCase()) {
-            case "boolean", "char", "byte", "short", "int", "long", "float", "double","string", "integer" -> true;
+            case "boolean", "character", "byte", "short", "int", "long", "float", "double","string", "integer" -> true;
             default -> false;
         };
     }

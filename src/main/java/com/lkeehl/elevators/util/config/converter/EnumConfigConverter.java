@@ -31,8 +31,8 @@ public class EnumConfigConverter extends ConfigConverter {
         return createNodeWithData(parentNode, key, object, field);
     }
 
-    public Object createObjectFromNode(ConfigNode<?> node) {
-        return node.getValue().toString();
+    public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
+        return createObjectFromValue(node.getValue());
     }
 
     @Override

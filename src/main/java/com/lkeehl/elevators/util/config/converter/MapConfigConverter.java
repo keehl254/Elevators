@@ -22,8 +22,9 @@ public class MapConfigConverter extends ConfigConverter {
         Class<?> valueClazz = null;
         Class<?> keyClazz = null;
         if (field != null) {
+            keyClazz = Elevators.getInstance().getClass().getClassLoader().loadClass(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0].getTypeName());
+            valueClazz = Elevators.getInstance().getClass().getClassLoader().loadClass(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[1].getTypeName());
             Type valueType = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[1];
-            keyClazz = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             Class<?> containerParam;
             if (valueType instanceof ParameterizedType parameterizedType) {
                 containerParam = (Class<?>) parameterizedType.getRawType();
@@ -37,31 +38,31 @@ public class MapConfigConverter extends ConfigConverter {
             valueClazz = containerParam;
         }
 
-        if(object instanceof Map<?,?>) {
+        if (object instanceof Map<?, ?>) {
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) object).entrySet()) {
-                if (entry.getValue() == null) continue;
-                Class<?> clazz = entry.getValue().getClass();
+                if (entry.getValue() == null)
+                    continue;
 
                 ConfigNode<?> childNode;
 
                 if (valueConverter != null)
-                    childNode = valueConverter.createNodeFromFieldAndObject(myNode, valueClazz == null ? clazz : valueClazz, entry.getKey().toString(), entry.getValue(), null);
+                    childNode = valueConverter.createNodeFromFieldAndObject(myNode, valueClazz, entry.getKey().toString(), entry.getValue(), null);
                 else
                     childNode = this.createNodeWithData(myNode, entry.getKey().toString(), entry.getValue(), null);
 
                 Object keyObj = null;
-                if(keyClazz.isEnum()) {
+                if (keyClazz.isEnum()) {
                     Optional<?> objectOpt = Arrays.stream(keyClazz.getEnumConstants()).filter(i -> i.toString().equalsIgnoreCase(entry.getKey().toString())).findFirst();
-                    if(objectOpt.isPresent())
+                    if (objectOpt.isPresent())
                         keyObj = objectOpt.get();
                 }
-                if(keyObj == null)
+                if (keyObj == null)
                     keyObj = PrimitiveConfigConverter.createPrimitiveFromObj(keyClazz, entry.getKey());
 
                 myNode.getChildren().add(childNode);
                 mapObj.put(keyObj, childNode.getValue());
             }
-        } else if(!(object instanceof ArrayList<?>)) {
+        } else if (!(object instanceof ArrayList<?>)) {
             Elevators.getElevatorsLogger().warning("An invalid value was entered for key: " + key + ". Expected Map or Empty Array.");
         }
 
@@ -89,7 +90,7 @@ public class MapConfigConverter extends ConfigConverter {
     @Override
     public Object createObjectFromValue(Object mapObj) throws Exception {
 
-        if(!(mapObj instanceof Map<?,?> map))
+        if (!(mapObj instanceof Map<?, ?> map))
             return new HashMap<>();
 
         LinkedHashMap<Object, Object> newMap = new LinkedHashMap<>();

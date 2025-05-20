@@ -2,16 +2,15 @@ package com.lkeehl.elevators.helpers;
 
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.actions.settings.ElevatorActionSetting;
-import com.lkeehl.elevators.models.Elevator;
-import com.lkeehl.elevators.models.ElevatorAction;
-import com.lkeehl.elevators.models.ElevatorEventData;
-import com.lkeehl.elevators.models.ElevatorType;
+import com.lkeehl.elevators.models.*;
 import com.lkeehl.elevators.models.settings.ElevatorSetting;
 import com.lkeehl.elevators.models.hooks.ProtectionHook;
 import com.lkeehl.elevators.services.*;
+import com.lkeehl.elevators.services.configs.versions.configv5.ConfigRecipe;
 import com.lkeehl.elevators.services.interaction.PagedDisplay;
 import com.lkeehl.elevators.services.interaction.SimpleDisplay;
 import com.lkeehl.elevators.services.interaction.SimpleInput;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.rapha149.signgui.SignGUI;
 import de.rapha149.signgui.SignGUIAction;
 import de.rapha149.signgui.SignGUIBuilder;
@@ -30,9 +29,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.*;
 import java.util.stream.IntStream;
 
 @SuppressWarnings("deprecation")
@@ -44,7 +42,7 @@ public class ElevatorGUIHelper {
     static {
 
         // AnvilGUI and SignGUI do not support Folia.
-        if(!Elevators.getFoliaLib().isFolia()) {
+        if (!Elevators.getFoliaLib().isFolia()) {
             try {
                 SignGUI.builder();
                 signEnabled = true;
@@ -80,7 +78,7 @@ public class ElevatorGUIHelper {
     }
 
     public static void tryOpenSign(Player player, Function<String, Boolean> validationFunction, Consumer<String> resultConsumer, Runnable onCancel, String inputMessage, boolean allowReset, String... lines) {
-        if(signEnabled){
+        if (signEnabled) {
             try {
                 SignGUIBuilder builder = SignGUI.builder();
                 builder.setLines(lines);
@@ -90,7 +88,7 @@ public class ElevatorGUIHelper {
                         input = null;
 
                     final String finalInput = input;
-                    if(validationFunction.apply(finalInput)) {
+                    if (validationFunction.apply(finalInput)) {
                         return List.of(SignGUIAction.runSync(Elevators.getInstance(), () -> resultConsumer.accept(finalInput)));
                     } else {
                         return List.of(SignGUIAction.displayNewLines(lines));
@@ -108,11 +106,11 @@ public class ElevatorGUIHelper {
         player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
 
         SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
-        if(allowReset)
+        if (allowReset)
             input.allowReset();
 
         input.onComplete(result -> {
-            if(validationFunction.apply(result)) {
+            if (validationFunction.apply(result)) {
                 resultConsumer.accept(result);
                 return SimpleInput.SimpleInputResult.STOP;
             }
@@ -128,7 +126,7 @@ public class ElevatorGUIHelper {
         // Anvil GUI is cool; however, there is no way to tell if the API supports the current game version.
         // I will put this back when they fix this.
 
-        if(anvilEnabled){
+        if (anvilEnabled) {
             try {
                 Function<String, String> cleanText = result -> {
                     if (allowReset && (result.isEmpty() || result.equalsIgnoreCase("reset")))
@@ -165,11 +163,11 @@ public class ElevatorGUIHelper {
         player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
 
         SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
-        if(allowReset)
+        if (allowReset)
             input.allowReset();
 
         input.onComplete(result -> {
-            if(validationFunction.apply(result)) {
+            if (validationFunction.apply(result)) {
                 resultConsumer.accept(result);
                 return SimpleInput.SimpleInputResult.STOP;
             }
@@ -185,7 +183,7 @@ public class ElevatorGUIHelper {
         Inventory inventory = Bukkit.createInventory(null, 54, "Are you sure?");
 
         BiConsumer<InventoryClickEvent, SimpleDisplay> confirmConsumer = (event, myDisplay) -> {
-            if(event.getCurrentItem() == null)
+            if (event.getCurrentItem() == null)
                 return;
             myDisplay.stopReturn();
             onConfirm.accept(event.getCurrentItem().getType() == Material.LIME_WOOL);
@@ -195,6 +193,18 @@ public class ElevatorGUIHelper {
         for (int i = 0; i < 54; i++)
             display.setItemSimple(i, (i % 9) < 4 ? ItemStackHelper.createItem("Accept", Material.LIME_WOOL, 1) : ((i % 9) > 4 ? ItemStackHelper.createItem("Deny", Material.RED_WOOL, 1) : null), confirmConsumer);
 
+        display.open();
+    }
+
+    public static void openChooseDyeColorMenu(Player player, String title, Consumer<DyeColor> returnMethod, Runnable onCancel) {
+        PagedDisplay<DyeColor> display = new PagedDisplay<>(Elevators.getInstance(), player, Arrays.asList(DyeColor.values()), title, onCancel);
+        display.onCreateItem(dyeColor ->
+                ItemStackHelper.createItem(ColorHelper.getChatStringFromColor(dyeColor.getColor().asRGB()) + ChatColor.BOLD + dyeColor.name(), ItemStackHelper.getVariant(Material.BLACK_DYE, dyeColor), 1)
+        );
+        display.onClick((dyeColor, event, myDisplay) -> {
+            display.stopReturn();
+            returnMethod.accept(dyeColor);
+        });
         display.open();
     }
 
@@ -220,6 +230,37 @@ public class ElevatorGUIHelper {
         return objectMap;
     }
 
+    public static <T> ItemStack createValueButton(ItemStack template, T value, Function<T, String> serializeMethod, Map<String, String> actions) {
+        List<String> lore = new ArrayList<>();
+
+        ItemMeta templateMeta = template.getItemMeta();
+        if (templateMeta.hasLore())
+            lore.addAll(Objects.requireNonNull(templateMeta.getLore()));
+
+        lore.add("");
+        lore.add(ChatColor.GRAY + "Current Value: ");
+        if (value instanceof Boolean boolValue)
+            lore.add(boolValue ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED"));
+        else
+            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + serializeMethod.apply(value));
+
+        if (!actions.isEmpty()) {
+            lore.add("");
+            actions.forEach((action, description) -> lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + action + ": " + ChatColor.GRAY + description));
+        }
+
+        ItemStack icon = template.clone();
+        ItemMeta iconMeta = icon.getItemMeta();
+        iconMeta.setLore(lore);
+        icon.setItemMeta(iconMeta);
+
+        return icon;
+    }
+
+    public static ItemStack createBooleanButton(ItemStack template, boolean value, Map<String, String> actions) {
+        return createValueButton(template, value, boolValue -> boolValue ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED"), actions);
+    }
+
     private static Inventory createInventoryWithMinSlots(int minSlots, String title) {
         int inventorySize = minSlots + (9 - minSlots % 9);
         if (minSlots % 9 == 0)
@@ -239,7 +280,7 @@ public class ElevatorGUIHelper {
 
     public static void openAdminActionSettingsMenu(Player player, ElevatorType tempElevatorType, ElevatorAction action, Runnable onReturn) {
         final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
-        if(elevatorType == null) {
+        if (elevatorType == null) {
             player.closeInventory();
             return;
         }
@@ -269,7 +310,7 @@ public class ElevatorGUIHelper {
 
     public static void openAdminActionsMenu(Player player, ElevatorType tempElevatorType, List<ElevatorAction> actions) {
         final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
-        if(elevatorType == null) {
+        if (elevatorType == null) {
             player.closeInventory();
             return;
         }
@@ -292,16 +333,311 @@ public class ElevatorGUIHelper {
         display.open();
     }
 
+    public static void openSaveRecipeMenu(Player player, ElevatorType elevatorType, ElevatorRecipeGroup recipeGroup) {
+        Runnable onReturn = () -> openAdminEditRecipesMenu(player, elevatorType);
+        if (recipeGroup.getRecipeKey() != null) {
+            elevatorType.getRecipeMap().put(recipeGroup.getRecipeKey(), recipeGroup);
+            onReturn.run();
+            ElevatorRecipeService.refreshRecipes();
+            return;
+        }
+
+        ElevatorGUIHelper.tryOpenAnvil(player, value -> {
+            if (elevatorType.getRecipeMap().containsKey(value.toUpperCase())) {
+                MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.nonUniqueRecipeName);
+                return false;
+            }
+            return true;
+        }, result -> {
+            recipeGroup.setKey(result.toUpperCase());
+            elevatorType.getRecipeMap().put(result.toUpperCase(), recipeGroup);
+            onReturn.run();
+            ElevatorRecipeService.refreshRecipes();
+        }, onReturn, ElevatorConfigService.getRootConfig().locale.enterRecipeName, false, "", "Enter recipe name.");
+
+    }
+
+    public static void openEditRecipePermissionMenu(Player player, ElevatorType elevatorType, ElevatorRecipeGroup recipeGroup) {
+        player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
+
+        SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
+        input.allowReset();
+
+        input.onComplete(result -> {
+
+            if (result == null)
+                result = "elevators.craft." + elevatorType.getTypeKey();
+
+            ConfigRecipe.setCraftPermission(recipeGroup, result);
+            openAdminEditElevatorRecipeMenu(player, elevatorType, recipeGroup);
+            return SimpleInput.SimpleInputResult.STOP;
+        });
+        input.onCancel(() -> openAdminEditElevatorRecipeMenu(player, elevatorType, recipeGroup));
+        MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.enterRecipePermission);
+        input.start();
+
+    }
+
+    // Elevators most complicated menu.
+    public static void openAdminEditElevatorRecipeMenu(Player player, ElevatorType elevatorType, ElevatorRecipeGroup currentRecipeGroup) {
+        Inventory inventory = Bukkit.createInventory(null, 54, "Settings > Recipes > Recipe");
+
+        ElevatorRecipeGroup tempRecipe = new ElevatorRecipeGroup();
+        if (currentRecipeGroup != null) {
+            ConfigRecipe.setAmount(tempRecipe, currentRecipeGroup.amount);
+            ConfigRecipe.setCraftPermission(tempRecipe, currentRecipeGroup.getCraftPermission());
+            ConfigRecipe.setDefaultOutputColor(tempRecipe, currentRecipeGroup.getDefaultOutputColor());
+            ConfigRecipe.setMultiColorOutput(tempRecipe, currentRecipeGroup.supportMultiColorOutput());
+            ConfigRecipe.setMultiColorMaterials(tempRecipe, currentRecipeGroup.supportMultiColorMaterials());
+            ConfigRecipe.setRecipe(tempRecipe, currentRecipeGroup.getRecipe());
+            ConfigRecipe.setMaterials(tempRecipe, currentRecipeGroup.getMaterialMap());
+            tempRecipe.setKey(currentRecipeGroup.getRecipeKey());
+        }
+
+        Runnable saveToTemp = () -> {
+            Map<Material, Character> materialCharacterMap = new HashMap<>();
+            Map<Character, Material> newMaterialMap = new HashMap<>();
+            String[] recipe = new String[]{"","",""};
+
+            ItemStack[] items = new ItemStack[]{
+                    inventory.getItem(10),
+                    inventory.getItem(11),
+                    inventory.getItem(12),
+                    inventory.getItem(19),
+                    inventory.getItem(20),
+                    inventory.getItem(21),
+                    inventory.getItem(28),
+                    inventory.getItem(29),
+                    inventory.getItem(30)
+            };
+
+            char newChar = 'A'; // Can only really go up to I, so not a problem doing it this way.
+            for (int i = 0; i < 9; i++) {
+
+                ItemStack item = items[i];
+                char character = ' ';
+                if (item != null) {
+
+                    // Prefer the starting char of the item if possible.
+                    char chosenChar = item.getType().getKey().value().toLowerCase().charAt(0);
+                    if (!materialCharacterMap.containsKey(item.getType())) {
+                        if(newMaterialMap.containsKey(chosenChar))
+                            chosenChar = newChar++;
+
+                        materialCharacterMap.put(item.getType(), chosenChar);
+                    }
+
+                    character = materialCharacterMap.get(item.getType());
+                    newMaterialMap.put(character, item.getType());
+                }
+
+                int recipeRow = i / 3;
+                recipe[recipeRow] += character;
+            }
+
+            ConfigRecipe.setMaterials(tempRecipe, newMaterialMap);
+            ConfigRecipe.setRecipe(tempRecipe, Arrays.asList(recipe));
+        };
+
+        AtomicInteger dyeColorIndex = new AtomicInteger(0);
+        WrappedTask colorTask = Elevators.getFoliaLib().getScheduler().runTimer(() -> {
+            DyeColor color = null;
+            if(!ConfigRecipe.supportsMultiColorOutput(tempRecipe)) {
+                color = ConfigRecipe.getDefaultOutputColor(tempRecipe);
+            } else if(!ConfigRecipe.supportsMultiColorMaterials(tempRecipe)) {
+                for(String line : ConfigRecipe.getRecipe(tempRecipe)) {
+                    for(char character : line.toCharArray()) {
+                        DyeColor tempColor = ItemStackHelper.getDyeColorFromMaterial(ConfigRecipe.getMaterials(tempRecipe).getOrDefault(character, Material.AIR));
+                        if(tempColor == null)
+                            continue;
+
+                        if(color != null && tempColor != color) {
+                            color = ConfigRecipe.getDefaultOutputColor(tempRecipe); // Multiple colorable materials in recipe. Cannot determine output color.
+                            break;
+                        }
+                        color = tempColor;
+                    }
+                }
+            } else
+                color = DyeColor.values()[dyeColorIndex.get()];
+
+            ItemStack elevatorItemStack = ItemStackHelper.createItemStackFromElevatorType(elevatorType, color);
+            elevatorItemStack.setAmount(ConfigRecipe.getAmount(tempRecipe));
+
+            inventory.setItem(25, elevatorItemStack);
+            dyeColorIndex.set(dyeColorIndex.incrementAndGet() % DyeColor.values().length);
+        }, 20, 20);
+
+        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> {
+            colorTask.cancel();
+            openAdminEditRecipesMenu(player, elevatorType);
+        }, SimpleDisplay.DisplayClickResult.CANCEL, SimpleDisplay.DisplayClickResult.ALLOW);
+        fillEmptySlotsWithPanes(inventory, DyeColor.BLACK);
+
+        Material[] materials = new Material[9];
+
+        for (int i = 0; i < 3; i++) {
+            if (ConfigRecipe.getRecipe(tempRecipe).size() <= i)
+                continue;
+
+            String line = ConfigRecipe.getRecipe(tempRecipe).get(i);
+            materials[(i * 3)] = ConfigRecipe.getMaterials(tempRecipe).getOrDefault((!line.isEmpty() ? line.charAt(0) : ' '), null);
+            materials[(i * 3) + 1] = ConfigRecipe.getMaterials(tempRecipe).getOrDefault((line.length() > 1 ? line.charAt(1) : ' '), null);
+            materials[(i * 3) + 2] = ConfigRecipe.getMaterials(tempRecipe).getOrDefault((line.length() > 2 ? line.charAt(2) : ' '), null);
+        }
+
+        for (int i = 0; i < materials.length; i++) {
+            Material type = materials[i];
+
+            int col = i % 3;
+            int row = i / 3;
+
+            int slot = 10 + (row * 9) + col;
+
+            ItemStack item = new ItemStack(type == null ? Material.AIR : type);
+            BiFunction<InventoryClickEvent, SimpleDisplay, SimpleDisplay.DisplayClickResult> onClick = (event, myDisplay) -> SimpleDisplay.DisplayClickResult.ALLOW;
+
+            display.setItem(slot, item, onClick);
+        }
+
+        ItemStack permissionTemplate = ItemStackHelper.createItem(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Craft Permission", Material.CHAIN_COMMAND_BLOCK, 1, Arrays.asList("",
+                ChatColor.GRAY + "Current Value: ",
+                ChatColor.GOLD + ConfigRecipe.getCraftPermission(tempRecipe))
+        );
+        ItemStack outputColorTemplate = ItemStackHelper.createItem(
+                ColorHelper.getChatStringFromColor(ConfigRecipe.getDefaultOutputColor(tempRecipe).getColor().asRGB()) + ChatColor.BOLD + "Change Default Output Color",
+                ItemStackHelper.getVariant(Material.BLACK_DYE, ConfigRecipe.getDefaultOutputColor(tempRecipe)),
+                1
+        );
+        ItemStack multiColorMaterialTemplate = ItemStackHelper.createItem(ChatColor.GREEN + "" + ChatColor.BOLD + "Multi-Color Materials", Material.FIREWORK_STAR, 1);
+        ItemStack multiColorOutputTemplate = ItemStackHelper.createItem(ChatColor.GREEN + "" + ChatColor.BOLD + "Multi-Color Output", Material.FIREWORK_ROCKET, 1);
+
+        ItemStack amountTemplate = ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "Quantity", Material.EXPERIENCE_BOTTLE, 1);
+        Function<Integer, ItemStack> createAmountIcon = amount -> createValueButton(amountTemplate, amount, Object::toString, Map.of("Left Click", "Increase Quantity", "Right Click", "Decrease Quantity"));
+        Supplier<ItemStack> createMultiColorMaterialIcon = () -> createBooleanButton(multiColorMaterialTemplate, ConfigRecipe.supportsMultiColorMaterials(tempRecipe), Map.of("Left Click", "Toggle"));
+        Supplier<ItemStack> createMultiColorOutputIcon = () -> createBooleanButton(multiColorOutputTemplate, ConfigRecipe.supportsMultiColorOutput(tempRecipe), Map.of("Left Click", "Toggle"));
+
+        display.setReturnButton(45, ItemStackHelper.createItem(ChatColor.RED + "" + ChatColor.BOLD + "CANCEL", Material.BARRIER, 1));
+        display.setItemSimple(47, permissionTemplate, (event, myDisplay) -> {
+            saveToTemp.run();
+            colorTask.cancel();
+            display.stopReturn();
+            openEditRecipePermissionMenu(player, elevatorType, tempRecipe);
+        });
+
+        display.setItemSimple(48, createAmountIcon.apply(ConfigRecipe.getAmount(tempRecipe)), (event, myDisplay) -> {
+            int newValue = ConfigRecipe.getAmount(tempRecipe) + (event.isLeftClick() ? 1 : -1);
+            newValue = Math.clamp(newValue, 1, elevatorType.getMaxStackSize());
+            ConfigRecipe.setAmount(tempRecipe, newValue);
+            inventory.setItem(48, createAmountIcon.apply(newValue));
+        });
+
+        display.setItemSimple(49, createValueButton(outputColorTemplate, ConfigRecipe.getDefaultOutputColor(tempRecipe), DyeColor::name, Map.of("Left Click", "Change Color")), (event, myDisplay) -> {
+            saveToTemp.run();
+            colorTask.cancel();
+            display.stopReturn();
+            openChooseDyeColorMenu(player, "Recipes > Recipe > Color", color -> {
+                ConfigRecipe.setDefaultOutputColor(tempRecipe, color);
+
+                openAdminEditElevatorRecipeMenu(player, elevatorType, tempRecipe);
+            }, () -> openAdminEditElevatorRecipeMenu(player, elevatorType, tempRecipe));
+        });
+
+        display.setItemSimple(50, createMultiColorMaterialIcon.get(), (event, myDisplay) -> {
+            ConfigRecipe.setMultiColorMaterials(tempRecipe, !ConfigRecipe.supportsMultiColorMaterials(tempRecipe));
+            inventory.setItem(50, createMultiColorMaterialIcon.get());
+        });
+
+        display.setItemSimple(51, createMultiColorOutputIcon.get(), (event, myDisplay) -> {
+            ConfigRecipe.setMultiColorOutput(tempRecipe, !ConfigRecipe.supportsMultiColorOutput(tempRecipe));
+            inventory.setItem(51, createMultiColorOutputIcon.get());
+        });
+
+        display.setItemSimple(53, ItemStackHelper.createItem(ChatColor.GREEN + "" + ChatColor.BOLD + "SAVE", Material.ARROW, 1), (event, myDisplay) -> {
+            saveToTemp.run();
+            colorTask.cancel();
+            display.stopReturn();
+            openSaveRecipeMenu(player, elevatorType, tempRecipe);
+        });
+
+        display.open();
+    }
+
+    public static void openAdminDeleteElevatorRecipe(Player player, ElevatorType tempElevatorType, ElevatorRecipeGroup recipeGroup) {
+        final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
+        if (elevatorType == null) {
+            player.closeInventory();
+            return;
+        }
+
+        openConfirmMenu(player, confirmed -> {
+            if (confirmed) {
+                elevatorType.getRecipeMap().remove(recipeGroup.getRecipeKey());
+                ElevatorRecipeService.refreshRecipes();
+            }
+
+            openAdminEditRecipesMenu(player, elevatorType);
+        });
+    }
+
+    public static void openAdminEditRecipesMenu(Player player, ElevatorType tempElevatorType) {
+        final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
+        if (elevatorType == null) {
+            player.closeInventory();
+            return;
+        }
+
+        PagedDisplay<ElevatorRecipeGroup> display = new PagedDisplay<>(Elevators.getInstance(), player, elevatorType.getRecipeGroups(), "Admin > Settings > Recipes", () -> openAdminSettingsMenu(player, elevatorType));
+        display.onCreateItem(recipeGroup -> {
+
+            DyeColor color = DyeColor.getByWoolData((byte) (Math.abs(recipeGroup.getRecipeKey().hashCode()) % 16));
+            if (!recipeGroup.supportMultiColorOutput() || color == null)
+                color = recipeGroup.getDefaultOutputColor();
+
+            String chatColor = ColorHelper.getChatStringFromColor(color.getColor().asRGB());
+
+            ItemStack icon = ItemStackHelper.createItem(chatColor + ChatColor.BOLD + recipeGroup.getRecipeKey(), ItemStackHelper.getVariant(Material.RED_SHULKER_BOX, color), recipeGroup.amount);
+            ItemMeta meta = icon.getItemMeta();
+            assert meta != null;
+
+            List<String> lore = meta.getLore() == null ? new ArrayList<>() : meta.getLore();
+            lore.add("");
+            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Edit Recipe");
+            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Shift Click: " + ChatColor.GRAY + "Delete Recipe");
+            meta.setLore(lore);
+            icon.setItemMeta(meta);
+
+            return icon;
+        });
+        display.onClick((item, event, myDisplay) -> {
+            myDisplay.stopReturn();
+            if (event.isShiftClick())
+                openAdminDeleteElevatorRecipe(player, elevatorType, item);
+            else
+                openAdminEditElevatorRecipeMenu(player, elevatorType, item);
+        });
+
+        display.onLoad((tempDisplay, page) -> {
+            int addRecipeIndex = display.getDisplay().getInventory().getSize() - 1;
+            display.getDisplay().setItemSimple(addRecipeIndex, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Add Recipe", Material.NETHER_STAR, 1), (event, myDisplay) -> {
+                myDisplay.stopReturn();
+                openAdminEditElevatorRecipeMenu(player, elevatorType, null);
+            });
+        });
+
+        display.open();
+    }
+
     public static void openAdminSettingsMenu(Player player, ElevatorType tempElevatorType) {
         final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
-        if(elevatorType == null) {
+        if (elevatorType == null) {
             player.closeInventory();
             return;
         }
 
         List<ElevatorSetting<?>> settings = ElevatorSettingService.getElevatorSettings();
 
-        int itemAmount = settings.size() + 2;
+        int itemAmount = settings.size() + 3;
         List<ElevatorAction> upActions = elevatorType.getActionsUp();
         List<ElevatorAction> downActions = elevatorType.getActionsDown();
 
@@ -316,6 +652,11 @@ public class ElevatorGUIHelper {
                 setting.clickGlobal(player, elevatorType, () -> openAdminSettingsMenu(player, elevatorType), event);
             });
         }
+
+        display.setItemSimple(inventory.getSize() - 3, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Recipes", Material.MAP, 1), (event, myDisplay) -> {
+            myDisplay.stopReturn();
+            openAdminEditRecipesMenu(player, elevatorType);
+        });
 
         if (!downActions.isEmpty()) {
             display.setItemSimple(inventory.getSize() - 1, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Downwards Actions", Material.SPECTRAL_ARROW, 1), (event, myDisplay) -> {
@@ -336,15 +677,15 @@ public class ElevatorGUIHelper {
         display.open();
     }
 
-    public static void openDeleteElevatorTypeMenu(Player player, ElevatorType tempElevatorType) {
+    public static void openAdminDeleteElevatorTypeMenu(Player player, ElevatorType tempElevatorType) {
         final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
-        if(elevatorType == null) {
+        if (elevatorType == null) {
             player.closeInventory();
             return;
         }
 
         openConfirmMenu(player, confirmed -> {
-            if(confirmed)
+            if (confirmed)
                 ElevatorTypeService.unregisterElevatorType(elevatorType);
 
             openAdminMenu(player);
@@ -356,12 +697,12 @@ public class ElevatorGUIHelper {
 
         SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
         input.onComplete(result -> {
-            if(result == null) {
+            if (result == null) {
                 openAdminMenu(player);
                 return SimpleInput.SimpleInputResult.STOP;
             }
 
-            if(ElevatorTypeService.getElevatorType(result) != null) {
+            if (ElevatorTypeService.getElevatorType(result) != null) {
                 MessageHelper.sendFormattedMessage(player, ElevatorConfigService.getRootConfig().locale.nonUniqueElevatorKey);
                 return SimpleInput.SimpleInputResult.CONTINUE;
             }
@@ -398,7 +739,7 @@ public class ElevatorGUIHelper {
         display.onClick((item, event, myDisplay) -> {
             myDisplay.stopReturn();
             if (event.isShiftClick())
-                openDeleteElevatorTypeMenu(player, item);
+                openAdminDeleteElevatorTypeMenu(player, item);
             else
                 openAdminSettingsMenu(player, item);
         });
@@ -416,9 +757,9 @@ public class ElevatorGUIHelper {
     }
 
     public static void openInteractMenu(Player player, Elevator elevator) {
-        if(!elevator.isValid()) {
+        if (!elevator.isValid()) {
             MessageHelper.sendElevatorChangedMessage(player, new ElevatorEventData(elevator, elevator, (byte) 1, 0));
-            if(elevator.getShulkerBox() != null && ElevatorHelper.isElevatorDisabled(elevator.getShulkerBox())) {
+            if (elevator.getShulkerBox() != null && ElevatorHelper.isElevatorDisabled(elevator.getShulkerBox())) {
                 ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
                 ShulkerBoxHelper.playClose(elevator.getShulkerBox());
             }
@@ -486,7 +827,7 @@ public class ElevatorGUIHelper {
     }
 
     public static void openInteractProtectMenu(Player player, Elevator elevator) {
-        if(!elevator.isValid()) {
+        if (!elevator.isValid()) {
             openInteractMenu(player, elevator);
             return;
         }
@@ -512,30 +853,32 @@ public class ElevatorGUIHelper {
     }
 
     public static void openInteractNameMenu(Player player, Elevator elevator) {
-        if(!elevator.isValid()) {
+        if (!elevator.isValid()) {
             openInteractMenu(player, elevator);
             return;
         }
 
         String currentName = ElevatorDataContainerService.getFloorName(elevator);
 
-        tryOpenSign(player, value -> true, result -> {
-            ElevatorDataContainerService.setFloorName(elevator, result);
-            ElevatorGUIHelper.openInteractMenu(player, elevator);
-        },() -> {
-            ElevatorGUIHelper.openInteractMenu(player, elevator);
-        }, ElevatorConfigService.getRootConfig().locale.enterFloorName, true, currentName, ChatColor.BOLD + "^^^^^^^^", "Enter floor", "name above");
+        tryOpenSign(player, value -> true,
+                result -> {
+                    ElevatorDataContainerService.setFloorName(elevator, result);
+                    ElevatorGUIHelper.openInteractMenu(player, elevator);
+                },
+                () -> ElevatorGUIHelper.openInteractMenu(player, elevator),
+                ElevatorConfigService.getRootConfig().locale.enterFloorName, true, currentName, ChatColor.BOLD + "^^^^^^^^", "Enter floor", "name above"
+        );
     }
 
     private static List<ElevatorAction> getActionsWithSettings(Elevator elevator, boolean up) {
-        List<ElevatorAction> actions = new ArrayList<>(up ? elevator.getElevatorType(false).getActionsUp() : elevator.getElevatorType(false).getActionsDown()); // Don't want to alter original list.
+        List<ElevatorAction> actions = new ArrayList<>(up ? elevator.getElevatorType(false).getActionsUp() : elevator.getElevatorType(false).getActionsDown()); // Don't want to alter the original list.
         actions.removeIf(i -> i.getSettings().isEmpty());
         actions.removeIf(i -> i.getSettings().stream().noneMatch(s -> s.canBeEditedIndividually(elevator)));
         return actions;
     }
 
     public static void openInteractActionSettingsMenu(Player player, Elevator elevator, ElevatorAction action, Runnable onReturn) {
-        if(!elevator.isValid()) {
+        if (!elevator.isValid()) {
             onReturn.run();
             return;
         }
@@ -566,7 +909,7 @@ public class ElevatorGUIHelper {
     }
 
     public static void openInteractActionsMenu(Player player, Elevator elevator, List<ElevatorAction> actions) {
-        if(!elevator.isValid()) {
+        if (!elevator.isValid()) {
             openInteractSettingsMenu(player, elevator);
             return;
         }
@@ -588,7 +931,7 @@ public class ElevatorGUIHelper {
     }
 
     public static void openInteractSettingsMenu(Player player, Elevator elevator) {
-        if(!elevator.isValid()) {
+        if (!elevator.isValid()) {
             openInteractMenu(player, elevator);
             return;
         }

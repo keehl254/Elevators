@@ -32,6 +32,10 @@ public class ConfigLocale implements Config {
 
     public String enterDisplayName = this.prefix + "Enter a new display name into the chat.";
 
+    public String enterRecipeName = this.prefix + "Enter a new recipe name into the chat.";
+
+    public String enterRecipePermission = this.prefix + "Enter the new recipe permission node into the chat.";
+
     public String enterFloorName = this.prefix + "Enter a new floor name into the chat.";
 
     public String enterTitle = this.prefix + "Enter a new title into the chat.";
@@ -43,6 +47,8 @@ public class ConfigLocale implements Config {
     public String enterElevatorKey = this.prefix + "Enter a new elevator key into the chat.";
 
     public String nonUniqueElevatorKey = this.prefix + "The elevator key must be unique.";
+
+    public String nonUniqueRecipeName = this.prefix + "The elevator recipe key must be unique for this elevator type.";
 
     public String enterCommand = this.prefix + "Enter a new command into the chat.";
 

@@ -7,6 +7,7 @@ import com.lkeehl.elevators.util.config.nodes.ClassicConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigRootNode;
 import com.lkeehl.elevators.util.config.nodes.DirectConfigNode;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlRepresenter;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -41,6 +42,7 @@ public abstract class ConfigConverter {
             addConverter(MapConfigConverter.class);
             addConverter(ArrayConfigConverter.class);
             addConverter(SetConfigConverter.class);
+            addConverter(MaterialConfigConverter.class);
             addConverter(EnumConfigConverter.class);
         } catch (Exception e) {
             throw new IllegalStateException(e);

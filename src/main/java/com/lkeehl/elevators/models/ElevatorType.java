@@ -8,9 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.lkeehl.elevators.services.ElevatorHologramService.updateHologramsInChunk;
 
@@ -134,6 +132,10 @@ public class ElevatorType extends ConfigElevatorType {
     }
 
     public List<ElevatorRecipeGroup> getRecipeGroups() { return new ArrayList<>(this.recipes.values()); }
+
+    public Map<String, ElevatorRecipeGroup> getRecipeMap() {
+        return this.recipes;
+    }
 
     public List<String> getHolographicLines() {
         return this.hologramLines;
@@ -293,6 +295,17 @@ public class ElevatorType extends ConfigElevatorType {
     public void onLoad() {
         this.getActionsUp().addAll(this.actions.up.stream().map(i -> ElevatorActionService.createActionFromString(this, i)).filter(Objects::nonNull).toList());
         this.getActionsDown().addAll(this.actions.down.stream().map(i -> ElevatorActionService.createActionFromString(this, i)).filter(Objects::nonNull).toList());
+
+        // Enforce uppercase recipe keys.
+
+        Map<String, ElevatorRecipeGroup> newRecipes = new HashMap<>();
+        for(String key : this.recipes.keySet()) {
+            ElevatorRecipeGroup recipeGroup = this.recipes.get(key);
+            newRecipes.put(key.toUpperCase(), recipeGroup);
+            recipeGroup.setKey(key.toUpperCase());
+        }
+
+        this.recipes = newRecipes;
     }
 
     @Override()

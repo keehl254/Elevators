@@ -1,5 +1,6 @@
 package com.lkeehl.elevators.util.config.converter;
 
+import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.util.config.ConfigConverter;
 import com.lkeehl.elevators.util.config.nodes.ClassicConfigNode;
 import com.lkeehl.elevators.util.config.nodes.ConfigNode;
@@ -21,7 +22,7 @@ public class ListConfigConverter extends ConfigConverter {
         if (field != null) {
             ParameterizedType genericType = (field.getGenericType() instanceof ParameterizedType) ? (ParameterizedType) field.getGenericType() : null;
             if (genericType != null) {
-                genericClazz = this.getClass().getClassLoader().loadClass(genericType.getActualTypeArguments()[0].getTypeName());
+                genericClazz = Elevators.getInstance().getClass().getClassLoader().loadClass(genericType.getActualTypeArguments()[0].getTypeName());
                 converter = ConfigConverter.getConverter(genericClazz);
             }
         }

@@ -3,6 +3,7 @@ package com.lkeehl.elevators.models;
 import com.lkeehl.elevators.Elevators;
 import com.lkeehl.elevators.helpers.ItemStackHelper;
 import com.lkeehl.elevators.services.ElevatorDataContainerService;
+import com.lkeehl.elevators.services.ElevatorRecipeService;
 import com.lkeehl.elevators.services.configs.versions.configv5.ConfigRecipe;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
@@ -24,41 +25,55 @@ public class ElevatorRecipeGroup extends ConfigRecipe {
 
     private transient final List<ElevatorRecipe> recipeList = new ArrayList<>();
 
-    private transient final Map<Character, Material> materialMap = new HashMap<>();
-
     @Override()
     public void setKey(String key) {
-        this.recipeKey = key;
+        this.recipeKey = key != null ? key.toUpperCase() : null;
     }
 
     public void load(ElevatorType elevatorType) {
         this.elevatorType = elevatorType;
 
-        this.loadMaterialMap();
+        this.refreshRecipes();
+    }
+
+    public void refreshRecipes() {
+
+        this.recipeList.clear();
+
         if(this.supportMultiColorMaterials) {
             for (DyeColor color : DyeColor.values())
                 this.addRecipe(this.craftPermission + "." + color.toString().toLowerCase(), color);
         } else
             this.addRecipe(this.craftPermission, this.defaultOutputColor);
-    }
 
-    private void loadMaterialMap() {
-        Map<String, String> stringMaterialMap = this.materials;
-
-        for (String character : stringMaterialMap.keySet()) {
-            String materialString = stringMaterialMap.get(character);
-
-            Material type = Material.matchMaterial(materialString);
-            if (type == null) {
-                Elevators.getElevatorsLogger().warning("Elevators: There was an error loading \"" + this.recipeKey + "\" recipe of elevator type \"" + this.elevatorType.getTypeKey() + "\"! Reason: Invalid material \"" + materialString + "\"");
-                return;
-            }
-            this.materialMap.put(character.charAt(0), type);
-        }
     }
 
     private Material getMaterialVariant(Material initialType, DyeColor color) {
         return ItemStackHelper.getVariant(initialType, color);
+    }
+
+    public String getRecipeKey() {
+        return this.recipeKey;
+    }
+
+    public String getCraftPermission() {
+        return this.craftPermission;
+    }
+
+    public Map<Character, Material> getMaterialMap() {
+        return this.materials;
+    }
+
+    public List<String> getRecipe() {
+        return this.recipe;
+    }
+
+    public boolean supportMultiColorOutput() {
+        return this.supportMultiColorOutput;
+    }
+
+    public boolean supportMultiColorMaterials() {
+        return this.supportMultiColorMaterials;
     }
 
     /* Note to anyone working with this method: A new recipe is registered for each color, so the namespacedKey check
@@ -93,8 +108,8 @@ public class ElevatorRecipeGroup extends ConfigRecipe {
         ShapedRecipe recipe = new ShapedRecipe(namespacedKey, elevatorItemStack);
         recipe.shape(this.recipe.toArray(new String[]{}));
 
-        for (char character : this.materialMap.keySet())
-            recipe.setIngredient(character, getMaterialVariant(this.materialMap.get(character), dyeColor));
+        for (char character : this.materials.keySet())
+            recipe.setIngredient(character, getMaterialVariant(this.materials.get(character), dyeColor));
 
         this.recipeList.add(new ElevatorRecipe(permission, namespacedKey, recipe));
         Bukkit.addRecipe(recipe);

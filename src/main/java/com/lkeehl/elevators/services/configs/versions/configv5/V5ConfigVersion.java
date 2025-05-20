@@ -9,8 +9,10 @@ import com.lkeehl.elevators.services.configs.ConfigVersion;
 import com.lkeehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRecipe;
 import com.lkeehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRoot;
 import org.bukkit.DyeColor;
+import org.bukkit.Material;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, ConfigRoot> {
     @Override
@@ -84,8 +86,15 @@ public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, ConfigRoot>
             newRecipe.supportMultiColorOutput = currentRecipe.coloredCrafting;
             newRecipe.supportMultiColorMaterials = currentRecipe.coloredCrafting;
             newRecipe.recipe = currentRecipe.recipe;
-            newRecipe.materials = currentRecipe.materials;
             newRecipe.craftPermission = currentRecipe.permission;
+
+            Map<Character, Material> materialMap = new HashMap<>();
+            for(String characterStr : currentRecipe.materials.keySet()) {
+                char character = characterStr.charAt(0);
+                materialMap.put(character, Material.matchMaterial(currentRecipe.materials.get(characterStr)));
+            }
+
+            newRecipe.materials = materialMap;
 
             defaultElevator.recipes.put(recipeKey, newRecipe);
         }

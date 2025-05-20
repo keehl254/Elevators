@@ -3,10 +3,9 @@ package com.lkeehl.elevators.services.configs.versions.configv5;
 import com.lkeehl.elevators.util.config.Comments;
 import com.lkeehl.elevators.util.config.Config;
 import org.bukkit.DyeColor;
+import org.bukkit.Material;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigRecipe implements Config {
 
@@ -28,6 +27,63 @@ public class ConfigRecipe implements Config {
     protected List<String> recipe = Arrays.asList("www","wew","www");
 
     @Comments("Map characters to their materials. If \"supportMultiColorMaterials\" is enabled, dye colors in materials such as \"white\" in \"white_wool\" will be substituted for different dye colors.")
-    protected Map<String, String> materials = Map.of("w","white_wool","e","ender_pearl");
+    protected Map<Character, Material> materials = Map.of('w',Material.WHITE_WOOL,'e',Material.ENDER_PEARL);
+
+    public static void setAmount(ConfigRecipe recipe, int amount) {
+        recipe.amount = amount;
+    }
+
+    public static void setCraftPermission(ConfigRecipe recipe, String craftPermission) {
+        recipe.craftPermission = craftPermission;
+    }
+
+    public static void setDefaultOutputColor(ConfigRecipe recipe, DyeColor defaultOutputColor) {
+        recipe.defaultOutputColor = defaultOutputColor;
+    }
+
+    public static void setMultiColorOutput(ConfigRecipe recipe, boolean supportMultiColorOutput) {
+        recipe.supportMultiColorOutput = supportMultiColorOutput;
+    }
+
+    public static void setMultiColorMaterials(ConfigRecipe recipe, boolean supportMultiColorMaterials) {
+        recipe.supportMultiColorMaterials = supportMultiColorMaterials;
+    }
+
+    public static void setRecipe(ConfigRecipe recipe, List<String> recipeText) {
+        recipe.recipe = new ArrayList<>(recipeText);
+    }
+
+    public static void setMaterials(ConfigRecipe recipe, Map<Character, Material> materialMap) {
+        recipe.materials = new HashMap<>();
+        recipe.materials.putAll(materialMap);
+    }
+
+    public static int getAmount(ConfigRecipe recipe) {
+        return recipe.amount;
+    }
+
+    public static String getCraftPermission(ConfigRecipe recipe) {
+        return recipe.craftPermission;
+    }
+
+    public static DyeColor getDefaultOutputColor(ConfigRecipe recipe) {
+        return recipe.defaultOutputColor;
+    }
+
+    public static boolean supportsMultiColorOutput(ConfigRecipe recipe) {
+        return recipe.supportMultiColorOutput;
+    }
+
+    public static boolean supportsMultiColorMaterials(ConfigRecipe recipe) {
+        return recipe.supportMultiColorMaterials;
+    }
+
+    public static List<String> getRecipe(ConfigRecipe recipe) {
+        return recipe.recipe;
+    }
+
+    public static Map<Character, Material> getMaterials(ConfigRecipe recipe) {
+        return recipe.materials;
+    }
 
 }
