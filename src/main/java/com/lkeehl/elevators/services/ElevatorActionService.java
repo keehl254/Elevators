@@ -11,7 +11,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -85,12 +87,24 @@ public class ElevatorActionService {
         return action;
     }
 
+    public static List<String> getRegisteredActions() {
+        return new ArrayList<>(actionIcons.keySet());
+    }
+
+    public static ItemStack getActionIcon(String actionKey) {
+        return actionIcons.getOrDefault(actionKey, null);
+    }
+
     public static ElevatorAction createBlankAction(ElevatorType elevatorType, String actionKey) {
         actionKey = actionKey.toLowerCase().trim();
         if(!actionConstructors.containsKey(actionKey))
             return null;
 
-        return actionConstructors.get(actionKey).apply(elevatorType);
+        ElevatorAction action = actionConstructors.get(actionKey).apply(elevatorType);
+        action.initialize("");
+        action.setIcon(actionIcons.get(actionKey));
+
+        return action;
     }
 
 

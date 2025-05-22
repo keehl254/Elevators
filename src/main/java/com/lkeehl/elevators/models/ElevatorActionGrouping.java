@@ -37,6 +37,8 @@ public class ElevatorActionGrouping<T> {
     }
 
     public T getObjectFromString(String value, ElevatorAction action) {
+        if(value == null)
+            return this.defaultObject;
         try {
             return this.conversionFunction.apply(value);
         } catch (Exception e) {

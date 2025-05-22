@@ -74,6 +74,11 @@ public abstract class ElevatorAction {
         if (!defaultGroupingSet)
             this.calculateGroupingFromAlias(this.defaultGroupingAlias, value);
 
+        for(ElevatorActionGrouping<?> grouping : this.groupings) {
+            if(!this.groupingData.containsKey(grouping))
+                this.groupingData.put(grouping, grouping.getDefaultObject());
+        }
+
         this.initialized = true;
         this.onInitialize(this.value);
     }
@@ -135,7 +140,7 @@ public abstract class ElevatorAction {
 
     private boolean calculateGroupingFromAlias(String groupingAlias, String groupingValue) {
         String groupingAliasFixed = groupingAlias.trim().toLowerCase();
-        String groupingValueFixed = groupingValue.trim();
+        String groupingValueFixed = groupingValue.isBlank() ? null : groupingValue.trim();
 
         Optional<ElevatorActionGrouping<?>> grouping = this.groupings.stream().filter(i -> i.isGroupingAlias(groupingAliasFixed)).findFirst();
         grouping.ifPresent(elevatorActionGrouping -> this.groupingData.put(elevatorActionGrouping, elevatorActionGrouping.getObjectFromString(groupingValueFixed, this)));

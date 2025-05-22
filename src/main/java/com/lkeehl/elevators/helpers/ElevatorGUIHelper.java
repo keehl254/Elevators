@@ -308,6 +308,28 @@ public class ElevatorGUIHelper {
         display.open();
     }
 
+    public static void openAdminCreateActionMenu(Player player, ElevatorType tempElevatorType, List<ElevatorAction> currentActionList) {
+        final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
+        if (elevatorType == null) {
+            player.closeInventory();
+            return;
+        }
+
+        List<String> registeredActions = ElevatorActionService.getRegisteredActions();
+
+        PagedDisplay<String> display = new PagedDisplay<>(Elevators.getInstance(), player, registeredActions, "Settings > Actions > Create", () -> openAdminSettingsMenu(player, elevatorType));
+        display.onCreateItem(ElevatorActionService::getActionIcon);
+        display.onClick((item, event, myDisplay) -> {
+            myDisplay.stopReturn();
+            ElevatorAction newAction = ElevatorActionService.createBlankAction(elevatorType, item);
+            currentActionList.add(newAction);
+            openAdminActionSettingsMenu(player, elevatorType, newAction, () -> openAdminActionsMenu(player, elevatorType, currentActionList));
+        });
+
+        display.open();
+
+    }
+
     public static void openAdminActionsMenu(Player player, ElevatorType tempElevatorType, List<ElevatorAction> actions) {
         final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
         if (elevatorType == null) {
@@ -315,25 +337,52 @@ public class ElevatorGUIHelper {
             return;
         }
 
-        int inventorySize = (Math.floorDiv(actions.size() + 8, 9) * 9) + 9;
-        Inventory inventory = Bukkit.createInventory(null, inventorySize, "Admin > Settings > Actions");
+        PagedDisplay<ElevatorAction> display = new PagedDisplay<>(Elevators.getInstance(), player, actions, "Admin > Settings > Actions", () -> openAdminSettingsMenu(player, elevatorType));
+        display.onCreateItem(action -> {
+            ItemStack template = action.getIcon().clone();
+            ItemMeta meta = template.getItemMeta();
+            assert meta != null;
 
-        SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> openAdminSettingsMenu(player, elevatorType));
-        for (int i = 0; i < actions.size(); i++) {
-            ElevatorAction action = actions.get(i);
-            display.setItemSimple(i + 9, action.getIcon(), (event, myDisplay) -> {
+            List<String> lore = meta.getLore() == null ? new ArrayList<>() : meta.getLore();
+            lore.add("");
+            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Edit Action");
+            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Shift Click: " + ChatColor.GRAY + "Delete Action");
+
+            meta.setLore(lore);
+            template.setItemMeta(meta);
+            return template;
+        });
+        display.onClick((item, event, myDisplay) -> {
+            myDisplay.stopReturn();
+
+            if(event.isShiftClick()) {
+                openConfirmMenu(player, confirm -> {
+                    if(confirm)
+                        actions.remove(item);
+
+                    openAdminActionsMenu(player, elevatorType, actions);
+                });
+                return;
+            }
+            openAdminActionSettingsMenu(player, elevatorType, item, () -> openAdminActionsMenu(player, elevatorType, actions));
+        });
+        display.onLoad((tempDisplay, page) -> {
+            int addRecipeIndex = display.getDisplay().getInventory().getSize() - 1;
+            display.getDisplay().setItemSimple(addRecipeIndex, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Add Action", Material.NETHER_STAR, 1), (event, myDisplay) -> {
                 myDisplay.stopReturn();
-                openAdminActionSettingsMenu(player, elevatorType, action, () -> openAdminActionsMenu(player, elevatorType, actions));
+                openAdminCreateActionMenu(player, elevatorType, actions);
             });
-        }
-        display.setReturnButton(0, ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "BACK", Material.ARROW, 1));
-
-        //TODO: Add an "Add Action" button
+        });
 
         display.open();
     }
 
-    public static void openSaveRecipeMenu(Player player, ElevatorType elevatorType, ElevatorRecipeGroup recipeGroup) {
+    public static void openSaveRecipeMenu(Player player, ElevatorType tempElevatorType, ElevatorRecipeGroup recipeGroup) {
+        final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
+        if (elevatorType == null) {
+            player.closeInventory();
+            return;
+        }
         Runnable onReturn = () -> openAdminEditRecipesMenu(player, elevatorType);
         if (recipeGroup.getRecipeKey() != null) {
             elevatorType.getRecipeMap().put(recipeGroup.getRecipeKey(), recipeGroup);
@@ -357,7 +406,13 @@ public class ElevatorGUIHelper {
 
     }
 
-    public static void openEditRecipePermissionMenu(Player player, ElevatorType elevatorType, ElevatorRecipeGroup recipeGroup) {
+    public static void openEditRecipePermissionMenu(Player player, ElevatorType tempElevatorType, ElevatorRecipeGroup recipeGroup) {
+        final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
+        if (elevatorType == null) {
+            player.closeInventory();
+            return;
+        }
+
         player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
 
         SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
@@ -379,7 +434,13 @@ public class ElevatorGUIHelper {
     }
 
     // Elevators most complicated menu.
-    public static void openAdminEditElevatorRecipeMenu(Player player, ElevatorType elevatorType, ElevatorRecipeGroup currentRecipeGroup) {
+    public static void openAdminEditElevatorRecipeMenu(Player player, ElevatorType tempElevatorType, ElevatorRecipeGroup currentRecipeGroup) {
+        final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
+        if (elevatorType == null) {
+            player.closeInventory();
+            return;
+        }
+
         Inventory inventory = Bukkit.createInventory(null, 54, "Settings > Recipes > Recipe");
 
         ElevatorRecipeGroup tempRecipe = new ElevatorRecipeGroup();
