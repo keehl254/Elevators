@@ -1,7 +1,7 @@
 name: Elevators
 version: 5.0.0
 author: Keehl
-main: com.lkeehl.elevators.Elevators
+main: me.keehl.elevators.ElevatorsPlugin
 api-version: 1.13
 folia-supported: true
 loadbefore: [SuperiorSkyblock2]
