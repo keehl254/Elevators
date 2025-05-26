@@ -1,5 +1,6 @@
 package me.keehl.elevators.helpers;
 
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.services.ElevatorHookService;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,9 +45,8 @@ public class ShulkerBoxHelper {
         if (ItemStackHelper.isNotShulkerBox(block.getType()))
             return null;
 
-        if (ElevatorHookService.isServerRunningPaper()) {
+        if (Elevators.getFoliaLib().isPaper())
             return (ShulkerBox) block.getState(false);
-        }
 
         return (ShulkerBox) block.getState();
     }
@@ -71,10 +71,11 @@ public class ShulkerBoxHelper {
         if (block.getType() != Material.DISPENSER)
             return false;
         Dispenser dispenser;
-        if (ElevatorHookService.isServerRunningPaper())
+        if (Elevators.getFoliaLib().isPaper())
             dispenser = (Dispenser) block.getState(false);
         else
             dispenser = (Dispenser) block.getState();
+
         Directional directional = (Directional) block.getBlockData();
 
         boolean match = false;

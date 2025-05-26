@@ -71,7 +71,7 @@ public class VersionHelper {
         return currentVersionID >= shulkerOpenCloseUseAPI;
     }
 
-    public static boolean doesVersionSupportPaperCollectEffect() { return ElevatorHookService.isServerRunningPaper() && currentVersionID >= paperCollectItemEffect; }
+    public static boolean doesVersionSupportPaperCollectEffect() { return Elevators.getFoliaLib().isPaper() && currentVersionID >= paperCollectItemEffect; }
 
     public static boolean doesVersionSupportRemoveRecipe() { return currentVersionID >= supportRemoveRecipe; }
 

@@ -59,7 +59,7 @@ public class ElevatorListenerService {
         registerEventExecutor(EntityPickupItemEvent.class, EventPriority.NORMAL , EntityEventExecutor::onPickup);
         registerEventExecutor(PlayerInteractEvent.class, EventPriority.NORMAL, EntityEventExecutor::onRightClick);
 
-        if(ElevatorHookService.isServerRunningPaper()) {
+        if(Elevators.getFoliaLib().isPaper()) {
             registerEventExecutor(com.destroystokyo.paper.event.player.PlayerJumpEvent.class, EventPriority.NORMAL, PaperEventExecutor::onJump, false);
             registerEventExecutor(InventoryMoveItemEvent.class, EventPriority.LOWEST , PaperEventExecutor::onHopperTake);
         }else {

@@ -3,10 +3,7 @@ package me.keehl.elevators.services;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.ElevatorHook;
-import me.keehl.elevators.models.hooks.HologramHook;
-import me.keehl.elevators.models.hooks.PlaceholderHook;
-import me.keehl.elevators.models.hooks.ProtectionHook;
+import me.keehl.elevators.models.hooks.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -24,11 +21,12 @@ public class ElevatorHookService {
 
     private static final Map<String, ElevatorHook> hookMap = new HashMap<>();
 
+    private static PlaceholderHook placeholderHook = null;
+    private static HologramHook<?> hologramHook = null;
+
     public static void init() {
         if(ElevatorHookService.initialized)
             return;
-
-        ElevatorHookService.buildHooks();
 
         ElevatorHookService.initialized = true;
     }
@@ -39,42 +37,30 @@ public class ElevatorHookService {
         ElevatorHookService.initialized = false;
     }
 
-    private static void buildHooks() {
-
-        // ElevatorHookService.registerHook("GriefPrevention", GriefPreventionHook.class);
-        // ElevatorHookService.registerHook("GriefDefender", GriefDefenderHook.class);
-        // ElevatorHookService.registerHook("RedProtect", RedProtectHook.class);
-        // ElevatorHookService.registerHook("PlotSquared", PlotSquaredHook.class);
-        // ElevatorHookService.registerHook("BentoBox", BentoBoxHook.class);
-        // ElevatorHookService.registerHook("PlaceholderAPI", PlaceholderAPIHook.class);
-        // ElevatorHookService.registerHook("DecentHolograms", DecentHologramsHook.class);
-        // ElevatorHookService.registerHook("FancyHolograms", FancyHologramsHook.class);
-        // ElevatorHookService.registerHook("SuperiorSkyblock2", SuperiorSkyblock2Hook.class, false);
-
-    }
-
-    public static boolean registerHook(String pluginName, Class<? extends ElevatorHook> elevatorHookClass, boolean requireActive) {
+    public static void registerHook(String pluginName, Class<? extends ElevatorHook> elevatorHookClass, boolean requireActive) {
        if(hookMap.containsKey(pluginName.toUpperCase()))
-           return true;
+           return;
 
         if(Bukkit.getPluginManager().getPlugin(pluginName) == null)
-            return false;
+            return;
        if(requireActive && !Bukkit.getPluginManager().isPluginEnabled(pluginName))
-           return false;
+           return;
 
         try {
             Constructor<?> hookConstructor = elevatorHookClass.getConstructor();
             hookMap.put(pluginName.toUpperCase(), (ElevatorHook) hookConstructor.newInstance());
             Elevators.getElevatorsLogger().info("Hooked into " + pluginName);
-            return true;
+
+            placeholderHook = hookMap.values().stream().filter(i -> i instanceof PlaceholderHook).map(i -> (PlaceholderHook) i).findFirst().orElse(null);
+            hologramHook = hookMap.values().stream().filter(i -> i instanceof HologramHook).map(i -> (HologramHook<?>) i).findFirst().orElse(null);
+
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             Elevators.getElevatorsLogger().log(Level.WARNING, "Failed to register hook for \"" + pluginName + "\" due to an inaccessible constructor. The plugin will still function; however, this hook will not work. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues", e);
-            return false;
         }
     }
 
-    public static boolean registerHook(String pluginName, Class<? extends ElevatorHook> elevatorHookClass) {
-        return registerHook(pluginName, elevatorHookClass, true);
+    public static void registerHook(String pluginName, Class<? extends ElevatorHook> elevatorHookClass) {
+        registerHook(pluginName, elevatorHookClass, true);
     }
 
     public static boolean canUseElevator(Player player, Elevator elevator, boolean sendMessage) {
@@ -104,31 +90,20 @@ public class ElevatorHookService {
         return false;
     }
 
-    public static PlaceholderHook getPlaceholderAPIHook() {
-        return getHook("PlaceholderAPI");
+    public static PlaceholderHook getPlaceholderHook() {
+        return placeholderHook;
     }
 
     // Protected because we want all hologram alterations to be done through HologramService
     protected static HologramHook<?> getHologramHook() {
-        HologramHook<?> hook = getHook("DecentHolograms");
-        if(hook == null)
-            hook = getHook("FancyHolograms");
-
-        return hook;
-    }
-
-    public static boolean isServerRunningPaper() {
-        return Elevators.getFoliaLib().isPaper();
+        return hologramHook;
     }
 
     @SuppressWarnings("unchecked")
     public static <T extends ElevatorHook> T getHook(String hookKey) {
         hookKey = hookKey.toUpperCase();
-        if(!hookMap.containsKey(hookKey.toUpperCase())) {
-            ElevatorHookService.buildHooks(); // No need to check individual hooks here. BuildHooks will not re-register.
-            if(!hookMap.containsKey(hookKey.toUpperCase()))
-                return null;
-        }
+        if(!hookMap.containsKey(hookKey.toUpperCase()))
+            return null;
 
         return (T) hookMap.get(hookKey);
     }
