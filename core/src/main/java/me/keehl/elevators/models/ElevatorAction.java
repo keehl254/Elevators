@@ -207,6 +207,10 @@ public abstract class ElevatorAction {
         return new ElevatorActionBuilder(actionKey);
     }
 
+    public boolean meetsConditions(ElevatorEventData eventData, Player player) {
+        return true;
+    }
+
     protected abstract void onInitialize(String value);
 
     public abstract void execute(ElevatorEventData eventData, Player player);

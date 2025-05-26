@@ -22,6 +22,7 @@ public class ElevatorActionBuilder {
 
     private final String actionKey;
     private Consumer<ElevatorActionExecuteContext> executeConsumer;
+    private Function<ElevatorActionExecuteContext, Boolean> conditionsFunction = data -> true;
     private Runnable onInit = () -> {};
 
     public ElevatorActionBuilder(String actionKey) {
@@ -30,6 +31,11 @@ public class ElevatorActionBuilder {
 
     public ElevatorActionBuilder onExecute(Consumer<ElevatorActionExecuteContext> executeConsumer) {
         this.executeConsumer = executeConsumer;
+        return this;
+    }
+
+    public ElevatorActionBuilder onCheckConditions(Function<ElevatorActionExecuteContext, Boolean> conditionsConsumer) {
+        this.conditionsFunction = conditionsConsumer;
         return this;
     }
 
@@ -96,6 +102,11 @@ public class ElevatorActionBuilder {
         @Override
         public void execute(ElevatorEventData eventData, Player player) {
             this.builder.executeConsumer.accept(new ElevatorActionExecuteContext(this, eventData, player));
+        }
+
+        @Override
+        public boolean meetsConditions(ElevatorEventData eventData, Player player) {
+            return this.builder.conditionsFunction.apply(new ElevatorActionExecuteContext(this, eventData, player));
         }
     }
 

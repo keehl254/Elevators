@@ -1,9 +1,11 @@
 package me.keehl.elevators.helpers;
 
 import me.keehl.elevators.Elevators;
+import me.keehl.elevators.events.ElevatorUseEvent;
 import me.keehl.elevators.models.*;
 import me.keehl.elevators.models.settings.*;
 import me.keehl.elevators.services.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -185,6 +187,13 @@ public class ElevatorHelper {
             actions = elevatorEventData.getOrigin().getElevatorType().getActionsUp();
         else
             actions = elevatorEventData.getOrigin().getElevatorType().getActionsDown();
+
+        if(actions.stream().anyMatch(action -> !action.meetsConditions(elevatorEventData, player)))
+            return;
+
+        ElevatorUseEvent useEvent = new ElevatorUseEvent(player, elevatorEventData);
+        Bukkit.getPluginManager().callEvent(useEvent);
+        if (useEvent.isCancelled()) return;
 
         actions.forEach(action -> action.execute(elevatorEventData, player));
 

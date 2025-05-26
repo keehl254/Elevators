@@ -1,7 +1,6 @@
 package me.keehl.elevators.services.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
-import me.keehl.elevators.events.ElevatorUseEvent;
 import me.keehl.elevators.helpers.ElevatorHelper;
 import me.keehl.elevators.helpers.ElevatorPermHelper;
 import me.keehl.elevators.helpers.MessageHelper;
@@ -15,7 +14,6 @@ import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorSettingService;
 import me.keehl.elevators.services.ElevatorHookService;
 import io.papermc.lib.PaperLib;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
@@ -53,10 +51,6 @@ public class PaperEventExecutor {
                 MessageHelper.sendCantUseMessage(e.getPlayer(), closest);
             return;
         }
-
-        ElevatorUseEvent event = new ElevatorUseEvent(e.getPlayer(), box, closest);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
 
         ElevatorHelper.onElevatorUse(e.getPlayer(), closest);
     }

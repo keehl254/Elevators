@@ -1,6 +1,5 @@
 package me.keehl.elevators.services.listeners;
 
-import me.keehl.elevators.events.ElevatorUseEvent;
 import me.keehl.elevators.helpers.*;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorEventData;
@@ -10,7 +9,6 @@ import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorRecipeService;
 import me.keehl.elevators.services.ElevatorSettingService;
 import me.keehl.elevators.services.ElevatorHookService;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
@@ -70,10 +68,6 @@ public class EntityEventExecutor {
             return;
         }
 
-        ElevatorUseEvent useEvent = new ElevatorUseEvent(event.getPlayer(), box, closest);
-        Bukkit.getPluginManager().callEvent(useEvent);
-        if (useEvent.isCancelled()) return;
-
         ElevatorHelper.onElevatorUse(event.getPlayer(), closest);
     }
 
@@ -105,10 +99,6 @@ public class EntityEventExecutor {
                 MessageHelper.sendCantUseMessage(event.getPlayer(), closest);
             return;
         }
-
-        ElevatorUseEvent useEvent = new ElevatorUseEvent(event.getPlayer(), box, closest);
-        Bukkit.getPluginManager().callEvent(useEvent);
-        if (useEvent.isCancelled()) return;
 
         ElevatorHelper.onElevatorUse(event.getPlayer(), closest);
     }

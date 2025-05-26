@@ -1,8 +1,8 @@
 package me.keehl.elevators.events;
 
+import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorEventData;
 import me.keehl.elevators.models.ElevatorType;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 public class ElevatorUseEvent extends Event implements Cancellable {
 
     private final Player player;
-    private final ShulkerBox originShulkerBox;
 
     private final ElevatorEventData searchResult;
 
@@ -20,11 +19,10 @@ public class ElevatorUseEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
-    public ElevatorUseEvent(Player player, ShulkerBox origin, ElevatorEventData searchResult) {
+    public ElevatorUseEvent(Player player, ElevatorEventData searchResult) {
         super(false);
 
         this.player = player;
-        this.originShulkerBox = origin;
         this.searchResult = searchResult;
     }
 
@@ -36,13 +34,6 @@ public class ElevatorUseEvent extends Event implements Cancellable {
         return this.searchResult.getOrigin().getElevatorType();
     }
 
-    public ShulkerBox getOriginShulkerBox() {
-        return this.originShulkerBox;
-    }
-
-    public ShulkerBox getDestinationShulkerBox() {
-        return this.searchResult.getDestination().getShulkerBox();
-    }
 
     public byte getDirection() {
         return this.searchResult.getDirection();
@@ -50,6 +41,14 @@ public class ElevatorUseEvent extends Event implements Cancellable {
 
     public ElevatorEventData getSearchResult() {
         return this.searchResult;
+    }
+
+    public Elevator getOriginElevator() {
+        return this.searchResult.getOrigin();
+    }
+
+    public Elevator getDestinationElevator() {
+        return this.searchResult.getDestination();
     }
 
     public boolean isUp() {
