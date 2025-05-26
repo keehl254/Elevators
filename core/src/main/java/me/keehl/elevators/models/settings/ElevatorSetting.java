@@ -33,16 +33,20 @@ public class ElevatorSetting<T> {
 
     private final Map<String, String> actions = new HashMap<>();
 
-    public ElevatorSetting(String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
+    public ElevatorSetting(String settingName, String settingDisplayName, String description, Material icon) {
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.addAll(MessageHelper.formatLore(description, ChatColor.GRAY));
 
         this.settingName = settingName;
-        this.iconTemplate = ItemStackHelper.createItem(textColor + "" + ChatColor.BOLD + settingDisplayName, icon, 1, lore);
+        this.iconTemplate = ItemStackHelper.createItem(settingDisplayName, icon, 1, lore);
 
         this.onClickGlobalConsumer = this::onClickGlobal;
         this.onClickIndividualConsumer = this::onClickIndividual;
+    }
+
+    public ElevatorSetting(String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
+        this(settingName, textColor + "" + ChatColor.BOLD + settingDisplayName, description, icon);
     }
 
     public ElevatorSetting<T> addAction(String action, String description) {

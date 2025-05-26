@@ -4,7 +4,7 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.actions.settings.ElevatorActionSetting;
 import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.models.ElevatorAction;
-import me.keehl.elevators.models.ElevatorActionGrouping;
+import me.keehl.elevators.models.ElevatorActionVariable;
 import me.keehl.elevators.models.ElevatorEventData;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.services.ElevatorConfigService;
@@ -19,10 +19,10 @@ import java.util.function.Consumer;
 
 public class CommandConsoleAction extends ElevatorAction {
 
-    private static final ElevatorActionGrouping<String> commandGrouping = new ElevatorActionGrouping<>("", i -> i, "command","c");
+    private static final ElevatorActionVariable<String> commandGrouping = new ElevatorActionVariable<>("", i -> i, "command","c");
 
     public CommandConsoleAction(ElevatorType elevatorType) {
-        super(elevatorType, "command-console", "command", commandGrouping);
+        super(elevatorType, "command-console", commandGrouping);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class CommandConsoleAction extends ElevatorAction {
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
-        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(commandGrouping, eventData.getOrigin()));
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getVariableValue(commandGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
 
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value);

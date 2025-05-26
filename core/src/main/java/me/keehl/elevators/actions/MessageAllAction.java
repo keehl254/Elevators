@@ -4,7 +4,7 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.actions.settings.ElevatorActionSetting;
 import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.models.ElevatorAction;
-import me.keehl.elevators.models.ElevatorActionGrouping;
+import me.keehl.elevators.models.ElevatorActionVariable;
 import me.keehl.elevators.models.ElevatorEventData;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.services.ElevatorConfigService;
@@ -19,10 +19,10 @@ import java.util.function.Consumer;
 
 public class MessageAllAction extends ElevatorAction {
 
-    private static final ElevatorActionGrouping<String> messageGrouping = new ElevatorActionGrouping<>("", i -> i, "message","m");
+    private static final ElevatorActionVariable<String> messageGrouping = new ElevatorActionVariable<>("", i -> i, "message","m");
 
     public MessageAllAction(ElevatorType elevatorType) {
-        super(elevatorType, "message-all","message", messageGrouping);
+        super(elevatorType, "message-all", messageGrouping);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class MessageAllAction extends ElevatorAction {
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
 
-        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping, eventData.getOrigin()));
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getVariableValue(messageGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
         value = MessageHelper.formatColors(value);
 

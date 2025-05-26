@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ElevatorActionGrouping<T> {
+public class ElevatorActionVariable<T> {
 
     private final T defaultObject;
 
@@ -20,11 +20,11 @@ public class ElevatorActionGrouping<T> {
 
     private final List<String> groupingAliases;
 
-    public ElevatorActionGrouping(T defaultObject, Function<String, T> conversionFunction, String mainAlias, String... aliases) {
+    public ElevatorActionVariable(T defaultObject, Function<String, T> conversionFunction, String mainAlias, String... aliases) {
         this(defaultObject, conversionFunction, Objects::toString, mainAlias, aliases);
     }
 
-    public ElevatorActionGrouping(T defaultObject, Function<String, T> conversionFunction, Function<T, String> toStringFunction, String mainAlias, String... aliases) {
+    public ElevatorActionVariable(T defaultObject, Function<String, T> conversionFunction, Function<T, String> toStringFunction, String mainAlias, String... aliases) {
         this.defaultObject = defaultObject;
         this.conversionFunction = conversionFunction;
         this.toStringFunction = toStringFunction;
