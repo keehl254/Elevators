@@ -1,22 +1,13 @@
-<style>
-    .sample {
-        text-align: center;
-        color: #FFFFFF;
-        border-radius: 10px;
-		background-color: #9B050B;
-        border: 1px solid #9B050B;
-        margin-bottom: 20px;
-    }
-
-    .sample p {
-        color: white;
-    }
-</style>
 <div align="center">
 
 ![](https://keehl.me/static/logo.png)
 
-<div class="sample"><p>A lightweight and simple means of vertical transportation.</p></div>
+<div style="text-align: center;
+        color: #FFFFFF;
+        border-radius: 10px;
+		background-color: #9B050B;
+        border: 1px solid #9B050B;
+        margin-bottom: 20px;"><p style="color: white">A lightweight and simple means of vertical transportation.</p></div>
 
 
 [![Hangar](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/available/hangar_vector.svg)](https://hangar.papermc.io/Keehl/Elevators)
