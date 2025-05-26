@@ -172,7 +172,7 @@ public class MessageHelper {
             return message;
         Player player = (Player) sender;
 
-        PlaceholderHook hook = ElevatorHookService.getPlaceholderAPIHook();
+        PlaceholderHook hook = ElevatorHookService.getPlaceholderHook();
         if(hook == null)
             return message;
 
