@@ -1,3 +1,3 @@
-rootProject.name = "Elevators"
+rootProject.name = "elevators"
 
 include("Core", "Hooks")

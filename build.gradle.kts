@@ -1,4 +1,4 @@
-group = "me.keehl.elevators"
+group = "me.keehl"
 version = "5.0.0-beta.9"
 
 plugins {
@@ -34,6 +34,9 @@ tasks.test {
 }
 
 allprojects {
+    group = rootProject.group
+    version = rootProject.version
+
     repositories {
         mavenCentral()
         mavenLocal()

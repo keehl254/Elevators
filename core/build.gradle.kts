@@ -1,5 +1,6 @@
 plugins {
     java
+    `maven-publish`
 }
 
 java {
@@ -44,4 +45,21 @@ dependencies {
     implementation("com.github.technicallycoded:FoliaLib:main-SNAPSHOT")
     implementation("org.yaml:snakeyaml:2.2")
 
+}
+
+
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            artifactId = "elevators-core"
+        }
+    }
+
+    repositories {
+        maven {
+            url = uri(layout.buildDirectory.dir("../../build/repo"))
+        }
+    }
 }
