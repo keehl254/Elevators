@@ -3,13 +3,13 @@ package me.keehl.elevators.services;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.actions.*;
 import me.keehl.elevators.events.ElevatorRegisterActionsEvent;
+import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.models.ElevatorAction;
 import me.keehl.elevators.models.ElevatorType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,49 +47,10 @@ public class ElevatorActionService {
         registerElevatorAction("boss-bar", BossBarAction::new, ChatColor.RED.toString(), "Boss Bar", Material.DRAGON_HEAD);
 
         Bukkit.getPluginManager().callEvent(new ElevatorRegisterActionsEvent());
-
-        /* TODO: Figure out why this doesn't work.
-        ElevatorAction.builder("give-exp").addVariable(1, variable -> {
-            variable.setAlias("amount","amnt","a");
-            variable.setConversion(Integer::valueOf);
-            variable.setIconDescription("This option controls the amount of exp given to the player");
-            variable.setIconType(Material.EXPERIENCE_BOTTLE);
-            variable.setDisplayName("Give Experience");
-            variable.setSettingName("amount");
-            variable.addAction("Left Click", "Increase Amount");
-            variable.addAction("Right Click", "Decrease Amount");
-            variable.addAction("Shift Click", "Reset Amount");
-            variable.onClick((player, returnMethod, event, currentValue, setValueMethod) -> {
-                if(event.isShiftClick()) {
-                    setValueMethod.accept(1);
-                    returnMethod.run();
-                    return;
-                }
-
-                int newValue = currentValue + (event.isLeftClick() ? 1 : -1);
-                newValue = Math.min(Math.max(newValue, -1), 500);
-                setValueMethod.accept(newValue);
-                returnMethod.run();
-            });
-        }).addVariable(true, variable -> {
-           variable.setAlias("mending", "mend", "m");
-           variable.setConversion(Boolean::parseBoolean);
-           variable.setIconDescription("This option controls whether the given exp can be used to mend gear");
-           variable.setIconType(Material.STONE_PICKAXE);
-           variable.setDisplayName("Allow Mending");
-           variable.setSettingName("mending");
-           variable.addAction("Left Click", "Toggle Mending");
-           variable.onClick((player, returnMethod, event, currentValue, setValueMethod) -> {
-               setValueMethod.accept(!currentValue);
-               returnMethod.run();
-           });
-        }).onExecute((groupings, eventData, player)-> {
-            player.giveExp(groupings.getVariable("amount"), groupings.getVariable("mending"));
-        }).register(ChatColor.GOLD.toString(), "Give Experience", Material.EXPERIENCE_BOTTLE);
-        */
     }
 
     public static void registerElevatorAction(String key, Function<ElevatorType, ElevatorAction> actionConstructor, ItemStack icon) {
+
         key = key.toLowerCase().trim();
         actionIcons.put(key, icon);
         actionConstructors.put(key, actionConstructor);
@@ -103,13 +64,7 @@ public class ElevatorActionService {
     }
 
     public static void registerElevatorAction(String key, Function<ElevatorType, ElevatorAction> actionConstructor, String chatColor,  String displayName, Material itemType) {
-        ItemStack icon = new ItemStack(itemType, 1);
-        ItemMeta meta = icon.getItemMeta();
-        if(meta != null) {
-            meta.setDisplayName(chatColor + ChatColor.BOLD + displayName);
-            icon.setItemMeta(meta);
-        }
-        registerElevatorAction(key, actionConstructor, icon);
+        registerElevatorAction(key, actionConstructor, ItemStackHelper.createItem(chatColor + ChatColor.BOLD + displayName, itemType, 1));
     }
 
     public static ElevatorAction createActionFromString(ElevatorType elevatorType, String actionString) {
@@ -137,6 +92,7 @@ public class ElevatorActionService {
 
     public static ElevatorAction createBlankAction(ElevatorType elevatorType, String actionKey) {
         actionKey = actionKey.toLowerCase().trim();
+        Elevators.getElevatorsLogger().info(actionKey);
         if(!actionConstructors.containsKey(actionKey))
             return null;
 

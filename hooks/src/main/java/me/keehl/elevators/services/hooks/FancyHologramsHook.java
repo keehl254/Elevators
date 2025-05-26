@@ -33,7 +33,7 @@ public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHol
 
     @Override
     public void clearAll() {
-        this.holograms.values().forEach(FancyHologramWrapper::delete);
+        new ArrayList<>(this.holograms.values()).forEach(FancyHologramWrapper::delete);
     }
 
     @Override

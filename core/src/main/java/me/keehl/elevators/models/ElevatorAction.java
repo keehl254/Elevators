@@ -157,7 +157,7 @@ public abstract class ElevatorAction {
         if (!this.initialized)
             throw new RuntimeException("Elevator Action Setting mapped prior to initialization. Please move all mapSetting calls to the onInitialize method.");
 
-        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, textColor + "" + ChatColor.BOLD + settingName, settingDisplayName, description, icon, setupDataStore);
+        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, textColor + "" + ChatColor.BOLD + settingDisplayName, description, icon, setupDataStore);
         this.settings.put(grouping, setting);
 
         this.initIdentifier();

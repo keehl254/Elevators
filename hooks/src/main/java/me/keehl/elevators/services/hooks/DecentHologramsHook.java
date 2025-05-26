@@ -33,7 +33,7 @@ public class DecentHologramsHook extends HologramHook<DecentHologramsHook.Decent
 
     @Override
     public void clearAll() {
-        this.holograms.values().forEach(DecentHologramWrapper::delete);
+        new ArrayList<>(this.holograms.values()).forEach(DecentHologramWrapper::delete);
     }
 
     @Override

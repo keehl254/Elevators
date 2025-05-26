@@ -24,7 +24,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     compileOnly(kotlin("stdlib"))
-    implementation(files("Hooks${File.separator}build${File.separator}libs${File.separator}Hooks-downgraded.jar"))
+    implementation(files("Hooks${File.separator}build${File.separator}libs${File.separator}Hooks-5.0.0-beta.9-downgraded.jar"))
 
     compileOnly("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT")
 }

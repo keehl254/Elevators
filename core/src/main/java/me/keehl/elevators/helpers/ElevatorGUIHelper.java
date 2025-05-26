@@ -731,19 +731,15 @@ public class ElevatorGUIHelper {
             openAdminEditRecipesMenu(player, elevatorType);
         });
 
-        if (!downActions.isEmpty()) {
-            display.setItemSimple(inventory.getSize() - 1, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Downwards Actions", Material.SPECTRAL_ARROW, 1), (event, myDisplay) -> {
-                myDisplay.stopReturn();
-                openAdminActionsMenu(player, elevatorType, downActions);
-            });
-        }
+        display.setItemSimple(inventory.getSize() - 1, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Downwards Actions", Material.SPECTRAL_ARROW, 1), (event, myDisplay) -> {
+            myDisplay.stopReturn();
+            openAdminActionsMenu(player, elevatorType, downActions);
+        });
 
-        if (!upActions.isEmpty()) {
-            display.setItemSimple(inventory.getSize() - (downActions.isEmpty() ? 1 : 2), ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Upwards Actions", Material.TIPPED_ARROW, 1), (event, myDisplay) -> {
-                myDisplay.stopReturn();
-                openAdminActionsMenu(player, elevatorType, upActions);
-            });
-        }
+        display.setItemSimple(inventory.getSize() - (downActions.isEmpty() ? 1 : 2), ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Upwards Actions", Material.TIPPED_ARROW, 1), (event, myDisplay) -> {
+            myDisplay.stopReturn();
+            openAdminActionsMenu(player, elevatorType, upActions);
+        });
 
         display.setReturnButton(0, ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "BACK", Material.ARROW, 1));
 

@@ -1,33 +1,34 @@
 package me.keehl.elevators.models;
 
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.actions.settings.ElevatorActionSetting;
 import me.keehl.elevators.helpers.ItemStackHelper;
+import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.services.ElevatorActionService;
-import me.keehl.elevators.util.PentaConsumer;
-import me.keehl.elevators.util.TriConsumer;
+import me.keehl.elevators.util.exceptions.ElevatorActionBuilderException;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 public class ElevatorActionBuilder {
 
-    private List<ElevatorActionVariableBuilder<?>> groupings = new ArrayList<>();
+    private final List<ElevatorActionVariableBuilder<?>> groupings = new ArrayList<>();
 
     private final String actionKey;
-    private TriConsumer<ElevatorGroupingHolder, ElevatorEventData, Player> executeConsumer;
-    private Runnable onInit;
+    private Consumer<ElevatorActionExecuteContext> executeConsumer;
+    private Runnable onInit = () -> {};
 
     public ElevatorActionBuilder(String actionKey) {
         this.actionKey = actionKey;
     }
 
-    public ElevatorActionBuilder onExecute(TriConsumer<ElevatorGroupingHolder, ElevatorEventData, Player> executeConsumer) {
+    public ElevatorActionBuilder onExecute(Consumer<ElevatorActionExecuteContext> executeConsumer) {
         this.executeConsumer = executeConsumer;
         return this;
     }
@@ -83,32 +84,51 @@ public class ElevatorActionBuilder {
 
         @Override
         protected void onInitialize(String value) {
-            for(ElevatorActionVariableBuilder<?> variableBuilder : this.variableBuilders.keySet())
-                variableBuilder.setup(this);
+            try {
+                for (ElevatorActionVariableBuilder<?> variableBuilder : this.variableBuilders.keySet())
+                    variableBuilder.setup(this);
+            }catch (ElevatorActionBuilderException e) {
+                Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to create ElevatorAction Issue:\n" + ResourceHelper.cleanTrace(e));
+            }
             this.builder.onInit.run();
         }
 
         @Override
         public void execute(ElevatorEventData eventData, Player player) {
-            ElevatorGroupingHolder holder = new ElevatorGroupingHolder();
-            holder.action = this;
-            holder.elevator = eventData.getOrigin();
-
-            this.builder.executeConsumer.accept(holder, eventData, player);
+            this.builder.executeConsumer.accept(new ElevatorActionExecuteContext(this, eventData, player));
         }
     }
 
-    public static class ElevatorGroupingHolder {
+    public static class ElevatorActionExecuteContext {
 
-        private ElevatorAction action;
-        private Elevator elevator;
+        private final ElevatorAction action;
+        private final ElevatorEventData eventData;
+        private final Player player;
+
+        protected ElevatorActionExecuteContext(ElevatorAction action, ElevatorEventData eventData, Player player) {
+            this.action = action;
+            this.eventData = eventData;
+            this.player = player;
+        }
 
         @SuppressWarnings("unchecked")
         public <T> T getVariable(String alias) {
             Optional<ElevatorActionVariable<?>> groupingOptional = this.action.getGroupingByAlias(alias);
             if(!groupingOptional.isPresent())
                 throw new RuntimeException("Attempt to pull Elevator Action Variable with alias that was not setup: " + this.action.getKey() + " -> " + alias);
-            return (T) this.action.getVariableValue(groupingOptional.get(), this.elevator);
+            return (T) this.action.getVariableValue(groupingOptional.get(), this.eventData.getOrigin());
+        }
+
+        public ElevatorAction getAction() {
+            return this.action;
+        }
+
+        public ElevatorEventData getEventData() {
+            return this.eventData;
+        }
+
+        public Player getPlayer() {
+            return this.player;
         }
 
     }
@@ -126,7 +146,7 @@ public class ElevatorActionBuilder {
 
         protected boolean allowPerEleCustomization = false;
 
-        protected PentaConsumer<Player, Runnable, InventoryClickEvent, T, Consumer<T>> onClick = (player, returnMethod, event, currentValue, setMethod)-> returnMethod.run();
+        protected Consumer<ElevatorSettingClickContext<T>> onClick = ElevatorSettingClickContext::close;
 
         protected Map<String, String> actions = new HashMap<>();
 
@@ -180,7 +200,7 @@ public class ElevatorActionBuilder {
             return this;
         }
 
-        public ElevatorActionVariableBuilder<T> onClick(PentaConsumer<Player, Runnable, InventoryClickEvent, T, Consumer<T>> onClick) {
+        public ElevatorActionVariableBuilder<T> onClick(Consumer<ElevatorSettingClickContext<T>> onClick) {
             this.onClick = onClick;
             return this;
         }
@@ -190,21 +210,21 @@ public class ElevatorActionBuilder {
             return this;
         }
 
-        protected void validate() {
+        protected void validate() throws ElevatorActionBuilderException {
             if(this.defaultValue == null)
-                throw new RuntimeException("Default Value is not set");
+                throw new ElevatorActionBuilderException("Default Value is not set");
             if(this.conversionFunction == null)
-                throw new RuntimeException("ConversionFunction is not set");
+                throw new ElevatorActionBuilderException("ConversionFunction is not set");
             if(this.alias == null || this.alias.length == 0)
-                throw new RuntimeException("Alias is not set");
+                throw new ElevatorActionBuilderException("Alias is not set");
             if(this.settingName == null)
-                throw new RuntimeException("Setting Name is not set");
+                throw new ElevatorActionBuilderException("Setting Name is not set");
             if(this.description == null)
-                throw new RuntimeException("Description is not set");
+                throw new ElevatorActionBuilderException("Description is not set");
             if(this.displayName == null)
-                throw new RuntimeException("Display Name is not set");
+                throw new ElevatorActionBuilderException("Display Name is not set");
             if(this.iconType == null)
-                throw new RuntimeException("Icon Type is not set");
+                throw new ElevatorActionBuilderException("Icon Type is not set");
         }
 
         protected ElevatorActionVariable<T> build() {
@@ -212,12 +232,16 @@ public class ElevatorActionBuilder {
             return this.builtGrouping;
         }
 
-        protected void setup(ElevatorAction action) {
+        protected void setup(ElevatorAction action) throws ElevatorActionBuilderException {
             if(this.builtGrouping == null)
-                throw new RuntimeException("Elevator variable was setup for being built");
+                throw new ElevatorActionBuilderException("Elevator variable was setup for being built");
 
             ElevatorActionSetting<T> setting = action.mapSetting(this.builtGrouping, this.settingName, this.displayName, this.description, this.iconType, this.allowPerEleCustomization);
-            setting.onClick(this.onClick);
+            setting.onClick((player, returnMethod, clickEvent, currentValue, setValueMethod) -> {
+                this.onClick.accept(new ElevatorSettingClickContext<>(player, returnMethod, clickEvent, currentValue, setValueMethod));
+            });
+            for(String actionKey : this.actions.keySet())
+                setting.addAction(actionKey, this.actions.get(actionKey));
         }
 
     }
