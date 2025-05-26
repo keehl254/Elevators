@@ -4,7 +4,7 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.actions.settings.ElevatorActionSetting;
 import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.models.ElevatorAction;
-import me.keehl.elevators.models.ElevatorActionGrouping;
+import me.keehl.elevators.models.ElevatorActionVariable;
 import me.keehl.elevators.models.ElevatorEventData;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.services.ElevatorConfigService;
@@ -13,29 +13,27 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.function.Consumer;
 
 public class MessagePlayerAction extends ElevatorAction {
 
-    private static final ElevatorActionGrouping<String> messageGrouping = new ElevatorActionGrouping<>("", i -> i, "message","m");
+    private static final ElevatorActionVariable<String> messageGrouping = new ElevatorActionVariable<>("", i -> i, "message","m");
 
     public MessagePlayerAction(ElevatorType elevatorType) {
-        super(elevatorType, "message-player", "message",messageGrouping);
+        super(elevatorType, "message-player",messageGrouping);
     }
 
     @Override
     protected void onInitialize(String value) {
         String desc = "This option controls the message sent to the user of an elevator.";
-        ElevatorActionSetting<String> setting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
-        setting.setupDataStore("message", PersistentDataType.STRING);
+        ElevatorActionSetting<String> setting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD, true);
         setting.onClick(this::editMessage);
     }
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
-        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping, eventData.getOrigin()));
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getVariableValue(messageGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
         value = MessageHelper.formatColors(value);
 

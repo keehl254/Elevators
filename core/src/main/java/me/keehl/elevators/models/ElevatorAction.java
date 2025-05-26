@@ -19,7 +19,7 @@ public abstract class ElevatorAction {
     // A regex pattern used to recognize the following format: key: value
     static Pattern subPattern = Pattern.compile("([a-zA-Z]+)=(.*?(?= [a-zA-Z]+=)|.*\\S)");
 
-    private static final ElevatorActionGrouping<UUID> keyGrouping = new ElevatorActionGrouping<>(null, UUID::fromString, "identifier", "identifier", "i");
+    private static final ElevatorActionVariable<UUID> keyGrouping = new ElevatorActionVariable<>(null, UUID::fromString, "identifier", "identifier", "i");
 
     private final ElevatorType elevatorType;
 
@@ -27,25 +27,25 @@ public abstract class ElevatorAction {
 
     private final String key;
 
-    private final String defaultGroupingAlias;
+    private final String defaultVariableAlias;
 
-    private final Map<ElevatorActionGrouping<?>, Object> groupingData = new HashMap<>();
+    private final Map<ElevatorActionVariable<?>, Object> variableData = new HashMap<>();
 
-    private final List<ElevatorActionGrouping<?>> groupings;
+    private final List<ElevatorActionVariable<?>> variables;
 
-    private final Map<ElevatorActionGrouping<?>, ElevatorActionSetting<?>> settings = new HashMap<>();
+    private final Map<ElevatorActionVariable<?>, ElevatorActionSetting<?>> settings = new HashMap<>();
 
     private ItemStack icon;
     private boolean initialized = false;
 
 
-    protected ElevatorAction(ElevatorType elevatorType, String key, String defaultGroupingAlias, ElevatorActionGrouping<?>... groupings) {
+    protected ElevatorAction(ElevatorType elevatorType, String key, ElevatorActionVariable<?>... variables) {
         this.elevatorType = elevatorType;
         this.key = key;
-        this.defaultGroupingAlias = defaultGroupingAlias;
+        this.defaultVariableAlias = variables.length > 0 ? variables[0].getMainAlias() : null;
 
-        this.groupings = new ArrayList<>(Arrays.asList(groupings));
-        this.groupings.add(keyGrouping);
+        this.variables = new ArrayList<>(Arrays.asList(variables));
+        this.variables.add(keyGrouping);
 
         this.icon = ItemStackHelper.createItem(key, Material.EGG, 1);
     }
@@ -60,23 +60,23 @@ public abstract class ElevatorAction {
         value = value.trim();
         this.value = value;
 
-        boolean defaultGroupingSet = false;
+        boolean defaultVariableSet = false;
 
         Matcher matcher = subPattern.matcher(this.value);
         while (matcher.find()) {
             String alias = matcher.group(1);
-            if (this.calculateGroupingFromAlias(alias, matcher.group(2)))
-                defaultGroupingSet = true;
+            if (this.calculateVariableFromAlias(alias, matcher.group(2)))
+                defaultVariableSet = true;
 
             value = value.replace(this.value.substring(matcher.start(), matcher.end()), "");
         }
 
-        if (!defaultGroupingSet)
-            this.calculateGroupingFromAlias(this.defaultGroupingAlias, value);
+        if (!defaultVariableSet && this.defaultVariableAlias != null)
+            this.calculateVariableFromAlias(this.defaultVariableAlias, value);
 
-        for(ElevatorActionGrouping<?> grouping : this.groupings) {
-            if(!this.groupingData.containsKey(grouping))
-                this.groupingData.put(grouping, grouping.getDefaultObject());
+        for(ElevatorActionVariable<?> grouping : this.variables) {
+            if(!this.variableData.containsKey(grouping))
+                this.variableData.put(grouping, grouping.getDefaultObject());
         }
 
         this.initialized = true;
@@ -98,70 +98,94 @@ public abstract class ElevatorAction {
     public String serialize() {
         StringBuilder builder = new StringBuilder(this.key + ": ");
 
-        for (ElevatorActionGrouping<?> grouping : this.groupingData.keySet()) {
-            Object value = this.groupingData.get(grouping);
-            builder.append(grouping.getMainAlias());
+        for (ElevatorActionVariable<?> variable : this.variableData.keySet()) {
+            Object value = this.variableData.get(variable);
+            builder.append(variable.getMainAlias());
             builder.append("=");
-            builder.append(grouping.getStringFromObject(value));
+            builder.append(variable.getStringFromObject(value));
             builder.append(" ");
         }
 
         return builder.toString().trim();
     }
 
-    public <T> T getGroupingObject(ElevatorActionGrouping<T> grouping) {
-        return this.getGroupingObject(grouping, null);
+    public <T> T getVariableValue(ElevatorActionVariable<T> grouping) {
+        return this.getVariableValue(grouping, null);
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T getGroupingObject(ElevatorActionGrouping<T> grouping, Elevator elevator) {
+    protected <T> T getVariableValue(ElevatorActionVariable<T> variable, Elevator elevator) {
 
-        if (elevator != null && this.settings.containsKey(grouping)) {
+        if (elevator != null && this.settings.containsKey(variable)) {
 
-            ElevatorActionSetting<T> data = (ElevatorActionSetting<T>) this.settings.get(grouping);
+            ElevatorActionSetting<T> data = (ElevatorActionSetting<T>) this.settings.get(variable);
             if (data.canBeEditedIndividually(elevator))
-                return grouping.getObjectFromString(data.getIndividualElevatorValue(elevator), this);
+                return variable.getObjectFromString(data.getIndividualElevatorValue(elevator), this);
         }
 
-        if (this.groupingData.containsKey(grouping))
-            return (T) this.groupingData.get(grouping);
-        return grouping.getDefaultObject();
+        if (this.variableData.containsKey(variable))
+            return (T) this.variableData.get(variable);
+        return variable.getDefaultObject();
     }
 
-    public <T> void setGroupingObject(ElevatorActionGrouping<T> grouping, T value) {
+    protected Optional<ElevatorActionVariable<?>> getGroupingByAlias(String alias) {
+        return this.variables.stream().filter(i -> i.isGroupingAlias(alias)).findFirst();
+    }
+
+    public <T> void setGroupingObject(ElevatorActionVariable<T> grouping, T value) {
         if (value.equals(grouping.getDefaultObject()))
-            this.groupingData.remove(grouping);
+            this.variableData.remove(grouping);
         else
-            this.groupingData.put(grouping, value);
+            this.variableData.put(grouping, value);
 
         if(ElevatorConfigService.isConfigLoaded())
             Elevators.getInstance().saveConfig();
     }
 
-    private boolean calculateGroupingFromAlias(String groupingAlias, String groupingValue) {
+    private boolean calculateVariableFromAlias(String groupingAlias, String groupingValue) {
         String groupingAliasFixed = groupingAlias.trim().toLowerCase();
         String groupingValueFixed = groupingValue.trim().isEmpty() ? null : groupingValue.trim();
 
-        Optional<ElevatorActionGrouping<?>> grouping = this.groupings.stream().filter(i -> i.isGroupingAlias(groupingAliasFixed)).findFirst();
-        grouping.ifPresent(elevatorActionGrouping -> this.groupingData.put(elevatorActionGrouping, elevatorActionGrouping.getObjectFromString(groupingValueFixed, this)));
+        Optional<ElevatorActionVariable<?>> grouping = this.variables.stream().filter(i -> i.isGroupingAlias(groupingAliasFixed)).findFirst();
+        grouping.ifPresent(elevatorActionGrouping -> this.variableData.put(elevatorActionGrouping, elevatorActionGrouping.getObjectFromString(groupingValueFixed, this)));
 
-        return grouping.map(elevatorActionGrouping -> elevatorActionGrouping.getMainAlias().equalsIgnoreCase(this.defaultGroupingAlias)).orElse(false);
+        return grouping.map(elevatorActionGrouping -> elevatorActionGrouping.getMainAlias().equalsIgnoreCase(this.defaultVariableAlias)).orElse(false);
     }
 
-    protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionGrouping<T> grouping, String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
+    protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionVariable<T> grouping, String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor, boolean setupDataStore) {
 
         if (!this.initialized)
             throw new RuntimeException("Elevator Action Setting mapped prior to initialization. Please move all mapSetting calls to the onInitialize method.");
 
-        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, settingDisplayName, description, icon, textColor);
+        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, textColor + "" + ChatColor.BOLD + settingName, settingDisplayName, description, icon, setupDataStore);
         this.settings.put(grouping, setting);
 
         this.initIdentifier();
         return setting;
     }
 
+    protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionVariable<T> grouping, String settingName, String settingDisplayName, String description, Material icon, boolean setupDataStore) {
+
+        if (!this.initialized)
+            throw new RuntimeException("Elevator Action Setting mapped prior to initialization. Please move all mapSetting calls to the onInitialize method.");
+
+        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, settingDisplayName, description, icon, setupDataStore);
+        this.settings.put(grouping, setting);
+
+        this.initIdentifier();
+        return setting;
+    }
+
+    protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionVariable<T> grouping, String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
+        return mapSetting(grouping, settingName, settingDisplayName, description, icon,textColor, false);
+    }
+
+    protected <T> ElevatorActionSetting<T> mapSetting(ElevatorActionVariable<T> grouping, String settingName, String settingDisplayName, String description, Material icon) {
+        return mapSetting(grouping, settingName, settingDisplayName, description, icon, false);
+    }
+
     public UUID getIdentifier() {
-        return this.getGroupingObject(keyGrouping);
+        return this.getVariableValue(keyGrouping);
     }
 
     public List<ElevatorActionSetting<?>> getSettings() {
@@ -169,7 +193,7 @@ public abstract class ElevatorAction {
     }
 
     public void initIdentifier() {
-        UUID currentIdent = this.getGroupingObject(keyGrouping);
+        UUID currentIdent = this.getVariableValue(keyGrouping);
         if (currentIdent != null)
             return;
 
@@ -178,6 +202,10 @@ public abstract class ElevatorAction {
 
     public void onStartEditing(Player player, SimpleDisplay display, Elevator elevator) {}
     public void onStopEditing(Player player, SimpleDisplay display, Elevator elevator) {}
+
+    public static ElevatorActionBuilder builder(String actionKey) {
+        return new ElevatorActionBuilder(actionKey);
+    }
 
     protected abstract void onInitialize(String value);
 

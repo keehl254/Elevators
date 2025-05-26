@@ -2,11 +2,10 @@ package me.keehl.elevators.actions.settings;
 
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorAction;
-import me.keehl.elevators.models.ElevatorActionGrouping;
+import me.keehl.elevators.models.ElevatorActionVariable;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.models.settings.ElevatorSetting;
 import me.keehl.elevators.util.PentaConsumer;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -17,17 +16,20 @@ import java.util.function.Consumer;
 public class ElevatorActionSetting<T> extends ElevatorSetting<String> {
 
     private final ElevatorAction elevatorAction;
-    private final ElevatorActionGrouping<T> actionGrouping;
+    private final ElevatorActionVariable<T> actionGrouping;
 
     private PentaConsumer<Player, Runnable, InventoryClickEvent, T, Consumer<T>> onClickMethod;
 
-    public ElevatorActionSetting(ElevatorAction action, ElevatorActionGrouping<T> grouping, String settingName, String settingDisplayName, String description, Material icon, ChatColor textColor) {
-        super(action.getKey()+"/"+settingName, settingDisplayName, description, icon, textColor);
+    public ElevatorActionSetting(ElevatorAction action, ElevatorActionVariable<T> grouping, String settingName, String settingDisplayName, String description, Material icon, boolean useDataStore) {
+        super(action.getKey()+"/"+settingName, settingDisplayName, description, icon);
 
         this.elevatorAction = action;
         this.actionGrouping = grouping;
 
-        this.setGetValueGlobal(et -> grouping.getStringFromObject(action.getGroupingObject(grouping)));
+        this.setGetValueGlobal(et -> grouping.getStringFromObject(action.getVariableValue(grouping)));
+
+        if(useDataStore)
+            this.setupDataStore(settingName, PersistentDataType.STRING);
     }
 
     public void onClick(PentaConsumer<Player, Runnable, InventoryClickEvent, T, Consumer<T>> setValueGlobalMethod) {

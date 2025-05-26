@@ -4,7 +4,7 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.actions.settings.ElevatorActionSetting;
 import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.models.ElevatorAction;
-import me.keehl.elevators.models.ElevatorActionGrouping;
+import me.keehl.elevators.models.ElevatorActionVariable;
 import me.keehl.elevators.models.ElevatorEventData;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.services.ElevatorConfigService;
@@ -13,36 +13,33 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.function.Consumer;
 
 public class TitleAction extends ElevatorAction {
 
-    private static final ElevatorActionGrouping<String> titleGrouping = new ElevatorActionGrouping<>("", i -> i, "title", "tit", "t");
-    private static final ElevatorActionGrouping<String> subTitleGrouping = new ElevatorActionGrouping<>("", i -> i, "subtitle","sub","s");
+    private static final ElevatorActionVariable<String> titleGrouping = new ElevatorActionVariable<>("", i -> i, "title", "tit", "t");
+    private static final ElevatorActionVariable<String> subTitleGrouping = new ElevatorActionVariable<>("", i -> i, "subtitle","sub","s");
 
     public TitleAction(ElevatorType elevatorType) {
-        super(elevatorType, "title", "title", titleGrouping,subTitleGrouping);
+        super(elevatorType, "title", titleGrouping,subTitleGrouping);
     }
 
     @Override
     protected void onInitialize(String value) {
         String desc = "This option controls the top text that appears in the middle of the screen upon elevator use.";
-        ElevatorActionSetting<String> titleSetting = this.mapSetting(titleGrouping, "title","Title", desc, Material.PAPER, ChatColor.GOLD);
-        titleSetting.setupDataStore("message", PersistentDataType.STRING);
+        ElevatorActionSetting<String> titleSetting = this.mapSetting(titleGrouping, "title","Title", desc, Material.PAPER, ChatColor.GOLD, true);
         titleSetting.onClick(this::editTitle);
 
         desc = "This option controls the bottom text that appears in the middle of the screen upon elevator use.";
-        ElevatorActionSetting<String> subTitleSetting = this.mapSetting(subTitleGrouping, "subtitle","Sub-Title", desc, Material.NAME_TAG, ChatColor.YELLOW);
-        subTitleSetting.setupDataStore("message", PersistentDataType.STRING);
+        ElevatorActionSetting<String> subTitleSetting = this.mapSetting(subTitleGrouping, "subtitle","Sub-Title", desc, Material.NAME_TAG, ChatColor.YELLOW, true);
         subTitleSetting.onClick(this::editSubTitle);
     }
 
     @Override
     public void execute(ElevatorEventData eventData, Player player) {
-        String title = formatText(this.getGroupingObject(titleGrouping, eventData.getOrigin()), eventData, player);
-        String subTitle = formatText(this.getGroupingObject(subTitleGrouping, eventData.getOrigin()), eventData, player);
+        String title = formatText(this.getVariableValue(titleGrouping, eventData.getOrigin()), eventData, player);
+        String subTitle = formatText(this.getVariableValue(subTitleGrouping, eventData.getOrigin()), eventData, player);
 
         player.sendTitle(title, subTitle, 10, 70, 20);
     }

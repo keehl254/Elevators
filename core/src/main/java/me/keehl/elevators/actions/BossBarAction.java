@@ -20,7 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Random;
 import java.util.function.Consumer;
@@ -31,31 +30,28 @@ public class BossBarAction extends ElevatorAction {
 
     private static final Random random = new Random();
 
-    private static final ElevatorActionGrouping<BarColor> barColorGrouping = new ElevatorActionGrouping<>(BarColor.BLUE, BarColor::valueOf, "barcolor","color","c");
-    private static final ElevatorActionGrouping<BarStyle> barStyleGrouping = new ElevatorActionGrouping<>(BarStyle.SOLID, BarStyle::valueOf, "barstyle","style","s");
-    private static final ElevatorActionGrouping<String> messageGrouping = new ElevatorActionGrouping<>("", i -> i, "message","m");
+    private static final ElevatorActionVariable<BarColor> barColorGrouping = new ElevatorActionVariable<>(BarColor.BLUE, BarColor::valueOf, "barcolor","color","c");
+    private static final ElevatorActionVariable<BarStyle> barStyleGrouping = new ElevatorActionVariable<>(BarStyle.SOLID, BarStyle::valueOf, "barstyle","style","s");
+    private static final ElevatorActionVariable<String> messageGrouping = new ElevatorActionVariable<>("", i -> i, "message","m");
 
     public BossBarAction(ElevatorType elevatorType) {
-        super(elevatorType, "boss-bar", "message", barColorGrouping, barStyleGrouping, messageGrouping);
+        super(elevatorType, "boss-bar", barColorGrouping, barStyleGrouping, messageGrouping);
     }
 
     @Override
     protected void onInitialize(String value) {
         String desc = "This option controls the message shown in the boss bar.";
-        ElevatorActionSetting<String> messageSetting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD);
-        messageSetting.setupDataStore("message", PersistentDataType.STRING);
+        ElevatorActionSetting<String> messageSetting = this.mapSetting(messageGrouping, "message","Message", desc, Material.WRITABLE_BOOK, ChatColor.GOLD, true);
         messageSetting.onClick(this::editMessage);
 
         desc = "This option controls the segments of the boss bar.";
-        ElevatorActionSetting<BarStyle> styleSetting = this.mapSetting(barStyleGrouping, "style","Segments", desc, Material.SHULKER_SHELL, ChatColor.LIGHT_PURPLE);
-        styleSetting.setupDataStore("style", PersistentDataType.STRING);
+        ElevatorActionSetting<BarStyle> styleSetting = this.mapSetting(barStyleGrouping, "style","Segments", desc, Material.SHULKER_SHELL, ChatColor.LIGHT_PURPLE, true);
         styleSetting.onClick(this::editStyle);
         styleSetting.addAction("Left Click", "Raise Segments");
         styleSetting.addAction("Right Click", "Lower Segments");
 
         desc = "This option controls the color of the boss bar.";
-        ElevatorActionSetting<BarColor> colorSetting = this.mapSetting(barColorGrouping, "color","Color", desc, Material.LIGHT_BLUE_DYE, ChatColor.AQUA);
-        colorSetting.setupDataStore("color", PersistentDataType.STRING);
+        ElevatorActionSetting<BarColor> colorSetting = this.mapSetting(barColorGrouping, "color","Color", desc, Material.LIGHT_BLUE_DYE, ChatColor.AQUA, true);
         colorSetting.onClick(this::editColor);
     }
 
@@ -64,7 +60,7 @@ public class BossBarAction extends ElevatorAction {
         /*if (elevator instanceof PremiumElevator && ((PremiumElevator) elevator).getSpeed() > 0.0)
             return;*/
 
-        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getGroupingObject(messageGrouping, eventData.getOrigin()));
+        String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getVariableValue(messageGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
         value = MessageHelper.formatColors(value);
 
@@ -81,14 +77,14 @@ public class BossBarAction extends ElevatorAction {
 
     public static BossBar getPlayerBar(Player player, BossBarAction action, Elevator elevator) {
         if (!player.hasMetadata("elevator-boss-bar")) {
-            BossBar bar = Bukkit.createBossBar("elevator-boss-bar", action.getGroupingObject(barColorGrouping, elevator), action.getGroupingObject(barStyleGrouping, elevator));
+            BossBar bar = Bukkit.createBossBar("elevator-boss-bar", action.getVariableValue(barColorGrouping, elevator), action.getVariableValue(barStyleGrouping, elevator));
             player.setMetadata("elevator-boss-bar", new FixedMetadataValue(Elevators.getInstance(), bar));
         }
         return (BossBar) player.getMetadata("elevator-boss-bar").get(0).value();
     }
 
     public String getMessage() {
-        return this.getGroupingObject(messageGrouping);
+        return this.getVariableValue(messageGrouping);
     }
 
     public static void changeProgress(Player player, BossBarAction action, Elevator elevator, double progress) {
@@ -106,8 +102,8 @@ public class BossBarAction extends ElevatorAction {
             progress = 1.0;
 
         BossBar bar = BossBarAction.getPlayerBar(player, this, elevator);
-        bar.setColor(this.getGroupingObject(barColorGrouping, elevator));
-        bar.setStyle(this.getGroupingObject(barStyleGrouping, elevator));
+        bar.setColor(this.getVariableValue(barColorGrouping, elevator));
+        bar.setStyle(this.getVariableValue(barStyleGrouping, elevator));
         bar.setTitle(message.get());
         bar.setProgress(Math.max(0.0, Math.min(progress, 1.0)));
         if (!bar.getPlayers().contains(player))
@@ -127,7 +123,7 @@ public class BossBarAction extends ElevatorAction {
 
     @Override
     public void onStartEditing(Player player, SimpleDisplay display, Elevator elevator) {
-        display.setCache("ele-boss-bar-runnable", this.displayMessage(player, elevator, () -> this.getGroupingObject(messageGrouping, elevator), 50));
+        display.setCache("ele-boss-bar-runnable", this.displayMessage(player, elevator, () -> this.getVariableValue(messageGrouping, elevator), 50));
     }
 
     @Override

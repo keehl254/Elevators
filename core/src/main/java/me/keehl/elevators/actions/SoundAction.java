@@ -13,7 +13,6 @@ import org.bukkit.*;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,37 +22,33 @@ import java.util.stream.Collectors;
 
 public class SoundAction extends ElevatorAction {
 
-    private static final ElevatorActionGrouping<Sound> soundGrouping = new ElevatorActionGrouping<>(Sound.ENTITY_BLAZE_SHOOT, SoundAction::getSoundFromString , "sound", "s");
-    private static final ElevatorActionGrouping<Float> volumeGrouping = new ElevatorActionGrouping<>(1.0F, Float::parseFloat, "volume","vol","v");
-    private static final ElevatorActionGrouping<Float> pitchGrouping = new ElevatorActionGrouping<>(1.0F, Float::parseFloat, "pitch","p");
-    private static final ElevatorActionGrouping<Boolean> globalGrouping = new ElevatorActionGrouping<>(true, Boolean::parseBoolean, "global","g","worldsounds","ws","w");
+    private static final ElevatorActionVariable<Sound> soundGrouping = new ElevatorActionVariable<>(Sound.ENTITY_BLAZE_SHOOT, SoundAction::getSoundFromString , "sound", "s");
+    private static final ElevatorActionVariable<Float> volumeGrouping = new ElevatorActionVariable<>(1.0F, Float::parseFloat, "volume","vol","v");
+    private static final ElevatorActionVariable<Float> pitchGrouping = new ElevatorActionVariable<>(1.0F, Float::parseFloat, "pitch","p");
+    private static final ElevatorActionVariable<Boolean> globalGrouping = new ElevatorActionVariable<>(true, Boolean::parseBoolean, "global","g","worldsounds","ws","w");
 
     public SoundAction(ElevatorType elevatorType) {
-        super(elevatorType, "sound", "sound", soundGrouping, volumeGrouping, pitchGrouping);
+        super(elevatorType, "sound", soundGrouping, volumeGrouping, pitchGrouping);
     }
 
     @Override
     protected void onInitialize(String value) {
         String desc = "This option controls the sound effect that plays upon elevator use.";
-        ElevatorActionSetting<Sound> soundSetting = this.mapSetting(soundGrouping, "sound","Elevator Sound", desc, Material.MUSIC_DISC_CAT, ChatColor.GOLD);
-        soundSetting.setupDataStore("sound-sound", PersistentDataType.STRING);
+        ElevatorActionSetting<Sound> soundSetting = this.mapSetting(soundGrouping, "sound","Elevator Sound", desc, Material.MUSIC_DISC_CAT, ChatColor.GOLD, true);
         soundSetting.onClick(this::editSound);
 
         desc = "This option controls whether the elevator sound is only played to the elevator user or to everyone nearby.";
-        ElevatorActionSetting<Boolean> globalSetting = this.mapSetting(globalGrouping, "global","Elevator Global Sounds", desc, Material.MUSIC_DISC_CHIRP, ChatColor.BLUE);
-        globalSetting.setupDataStore("sound-global", PersistentDataType.STRING);
+        ElevatorActionSetting<Boolean> globalSetting = this.mapSetting(globalGrouping, "global","Elevator Global Sounds", desc, Material.MUSIC_DISC_CHIRP, ChatColor.BLUE, true);
         globalSetting.onClick(this::editGlobal);
 
         desc = "This option controls the volume at which the elevator sound effect plays.";
-        ElevatorActionSetting<Float> volumeSetting = this.mapSetting(volumeGrouping, "volume","Elevator Volume", desc, Material.MUSIC_DISC_13, ChatColor.LIGHT_PURPLE);
-        volumeSetting.setupDataStore("sound-volume", PersistentDataType.STRING);
+        ElevatorActionSetting<Float> volumeSetting = this.mapSetting(volumeGrouping, "volume","Elevator Volume", desc, Material.MUSIC_DISC_13, ChatColor.LIGHT_PURPLE, true);
         volumeSetting.onClick(this::editVolume);
         volumeSetting.addAction("Left Click", "Raise Volume");
         volumeSetting.addAction("Right Click", "Lower Volume");
 
         desc = "This option controls the pitch at which the elevator sound effect plays.";
-        ElevatorActionSetting<Float> pitchSetting = this.mapSetting(pitchGrouping, "pitch","Elevator Pitch", desc, Material.MUSIC_DISC_11, ChatColor.DARK_PURPLE);
-        pitchSetting.setupDataStore("sound-pitch", PersistentDataType.STRING);
+        ElevatorActionSetting<Float> pitchSetting = this.mapSetting(pitchGrouping, "pitch","Elevator Pitch", desc, Material.MUSIC_DISC_11, ChatColor.DARK_PURPLE, true);
         pitchSetting.onClick(this::editPitch);
         pitchSetting.addAction("Left Click", "Raise Pitch");
         pitchSetting.addAction("Right Click", "Lower Pitch");
@@ -64,11 +59,11 @@ public class SoundAction extends ElevatorAction {
         Consumer<Elevator> soundConsumer = elevator -> {
             ShulkerBox box = elevator.getShulkerBox();
 
-            Sound sound = this.getGroupingObject(soundGrouping, eventData.getOrigin());
-            float volume = this.getGroupingObject(volumeGrouping, eventData.getOrigin());
-            float pitch = this.getGroupingObject(pitchGrouping, eventData.getOrigin());
+            Sound sound = this.getVariableValue(soundGrouping, eventData.getOrigin());
+            float volume = this.getVariableValue(volumeGrouping, eventData.getOrigin());
+            float pitch = this.getVariableValue(pitchGrouping, eventData.getOrigin());
 
-            if(this.getGroupingObject(globalGrouping, eventData.getOrigin()))
+            if(this.getVariableValue(globalGrouping, eventData.getOrigin()))
                 player.playSound(box.getLocation(), sound, volume, pitch);
             else
                 box.getWorld().playSound(box.getLocation(), sound, volume, pitch);
