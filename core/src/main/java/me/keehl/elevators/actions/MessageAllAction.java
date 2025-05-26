@@ -21,8 +21,8 @@ public class MessageAllAction extends ElevatorAction {
 
     private static final ElevatorActionVariable<String> messageGrouping = new ElevatorActionVariable<>("", i -> i, "message","m");
 
-    public MessageAllAction(ElevatorType elevatorType) {
-        super(elevatorType, "message-all", messageGrouping);
+    public MessageAllAction(ElevatorType elevatorType, String key) {
+        super(elevatorType, key, messageGrouping);
     }
 
     @Override

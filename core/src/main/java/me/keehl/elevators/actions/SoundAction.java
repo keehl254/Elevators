@@ -27,8 +27,8 @@ public class SoundAction extends ElevatorAction {
     private static final ElevatorActionVariable<Float> pitchGrouping = new ElevatorActionVariable<>(1.0F, Float::parseFloat, "pitch","p");
     private static final ElevatorActionVariable<Boolean> globalGrouping = new ElevatorActionVariable<>(true, Boolean::parseBoolean, "global","g","worldsounds","ws","w");
 
-    public SoundAction(ElevatorType elevatorType) {
-        super(elevatorType, "sound", soundGrouping, volumeGrouping, pitchGrouping);
+    public SoundAction(ElevatorType elevatorType, String key) {
+        super(elevatorType, key, soundGrouping, volumeGrouping, pitchGrouping);
     }
 
     @Override

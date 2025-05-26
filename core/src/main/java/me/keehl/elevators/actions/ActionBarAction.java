@@ -20,8 +20,8 @@ public class ActionBarAction extends ElevatorAction {
 
     private static final ElevatorActionVariable<String> messageGrouping = new ElevatorActionVariable<>("", i -> i, "message","m");
 
-    public ActionBarAction(ElevatorType elevatorType) {
-        super(elevatorType, "action-bar", messageGrouping);
+    public ActionBarAction(ElevatorType elevatorType, String key) {
+        super(elevatorType, key, messageGrouping);
     }
 
     @Override

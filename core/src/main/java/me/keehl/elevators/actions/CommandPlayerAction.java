@@ -20,8 +20,8 @@ public class CommandPlayerAction extends ElevatorAction {
 
     private static final ElevatorActionVariable<String> commandGrouping = new ElevatorActionVariable<>("", i -> i, "command","c");
 
-    public CommandPlayerAction(ElevatorType elevatorType) {
-        super(elevatorType, "command-player", commandGrouping);
+    public CommandPlayerAction(ElevatorType elevatorType, String key) {
+        super(elevatorType, key, commandGrouping);
     }
 
     @Override

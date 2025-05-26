@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -59,13 +60,13 @@ public class ElevatorActionBuilder {
     }
 
     public void register(ItemStack icon) {
-        Function<ElevatorType, ElevatorAction> buildAction = type -> {
+        BiFunction<ElevatorType, String, ElevatorAction> buildAction = (type, actionKey) -> {
 
             Map<ElevatorActionVariableBuilder<?>, ElevatorActionVariable<?>> varBuilderXGroups = new HashMap<>();
             for(ElevatorActionVariableBuilder<?> builder : this.groupings)
                 varBuilderXGroups.put(builder, builder.build());
 
-            return new BuilderElevatorAction(this, type, varBuilderXGroups);
+            return new BuilderElevatorAction(this, actionKey, type, varBuilderXGroups);
         };
 
         ElevatorActionService.registerElevatorAction(this.actionKey, buildAction, icon);
@@ -81,8 +82,8 @@ public class ElevatorActionBuilder {
         private final ElevatorActionBuilder builder;
         private final Map<ElevatorActionVariableBuilder<?>, ElevatorActionVariable<?>> variableBuilders;
 
-        protected BuilderElevatorAction(ElevatorActionBuilder builder, ElevatorType elevatorType, Map<ElevatorActionVariableBuilder<?>, ElevatorActionVariable<?>> variableBuilders) {
-            super(elevatorType, builder.actionKey, variableBuilders.values().toArray(new ElevatorActionVariable<?>[]{}));
+        protected BuilderElevatorAction(ElevatorActionBuilder builder, String actionKey, ElevatorType elevatorType, Map<ElevatorActionVariableBuilder<?>, ElevatorActionVariable<?>> variableBuilders) {
+            super(elevatorType, actionKey, variableBuilders.values().toArray(new ElevatorActionVariable<?>[]{}));
 
             this.builder = builder;
             this.variableBuilders = variableBuilders;

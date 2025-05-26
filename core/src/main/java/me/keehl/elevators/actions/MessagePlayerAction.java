@@ -20,8 +20,8 @@ public class MessagePlayerAction extends ElevatorAction {
 
     private static final ElevatorActionVariable<String> messageGrouping = new ElevatorActionVariable<>("", i -> i, "message","m");
 
-    public MessagePlayerAction(ElevatorType elevatorType) {
-        super(elevatorType, "message-player",messageGrouping);
+    public MessagePlayerAction(ElevatorType elevatorType, String key) {
+        super(elevatorType, key,messageGrouping);
     }
 
     @Override

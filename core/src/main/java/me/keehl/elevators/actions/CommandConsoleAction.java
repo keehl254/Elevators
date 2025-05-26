@@ -21,8 +21,8 @@ public class CommandConsoleAction extends ElevatorAction {
 
     private static final ElevatorActionVariable<String> commandGrouping = new ElevatorActionVariable<>("", i -> i, "command","c");
 
-    public CommandConsoleAction(ElevatorType elevatorType) {
-        super(elevatorType, "command-console", commandGrouping);
+    public CommandConsoleAction(ElevatorType elevatorType, String key) {
+        super(elevatorType, key, commandGrouping);
     }
 
     @Override

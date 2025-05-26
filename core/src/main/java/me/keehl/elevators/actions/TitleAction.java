@@ -21,8 +21,8 @@ public class TitleAction extends ElevatorAction {
     private static final ElevatorActionVariable<String> titleGrouping = new ElevatorActionVariable<>("", i -> i, "title", "tit", "t");
     private static final ElevatorActionVariable<String> subTitleGrouping = new ElevatorActionVariable<>("", i -> i, "subtitle","sub","s");
 
-    public TitleAction(ElevatorType elevatorType) {
-        super(elevatorType, "title", titleGrouping,subTitleGrouping);
+    public TitleAction(ElevatorType elevatorType, String key) {
+        super(elevatorType, key, titleGrouping,subTitleGrouping);
     }
 
     @Override

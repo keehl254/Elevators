@@ -15,8 +15,8 @@ public class EffectAction extends ElevatorAction {
 
     private static final ElevatorActionVariable<String> effectNameGrouping = new ElevatorActionVariable<>("CREEPER", i -> i, "name","n");
 
-    public EffectAction(ElevatorType elevatorType) {
-        super(elevatorType, "effect", effectNameGrouping);
+    public EffectAction(ElevatorType elevatorType, String key) {
+        super(elevatorType, key, effectNameGrouping);
     }
 
     @Override

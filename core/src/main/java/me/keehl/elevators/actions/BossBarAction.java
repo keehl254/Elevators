@@ -34,8 +34,8 @@ public class BossBarAction extends ElevatorAction {
     private static final ElevatorActionVariable<BarStyle> barStyleGrouping = new ElevatorActionVariable<>(BarStyle.SOLID, BarStyle::valueOf, "barstyle","style","s");
     private static final ElevatorActionVariable<String> messageGrouping = new ElevatorActionVariable<>("", i -> i, "message","m");
 
-    public BossBarAction(ElevatorType elevatorType) {
-        super(elevatorType, "boss-bar", barColorGrouping, barStyleGrouping, messageGrouping);
+    public BossBarAction(ElevatorType elevatorType, String key) {
+        super(elevatorType, key, barColorGrouping, barStyleGrouping, messageGrouping);
     }
 
     @Override
