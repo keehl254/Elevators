@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.function.Consumer;
 
@@ -29,10 +30,12 @@ public class TitleAction extends ElevatorAction {
     protected void onInitialize(String value) {
         String desc = "This option controls the top text that appears in the middle of the screen upon elevator use.";
         ElevatorActionSetting<String> titleSetting = this.mapSetting(titleGrouping, "title","Title", desc, Material.PAPER, ChatColor.GOLD);
+        titleSetting.setupDataStore("message", PersistentDataType.STRING);
         titleSetting.onClick(this::editTitle);
 
         desc = "This option controls the bottom text that appears in the middle of the screen upon elevator use.";
         ElevatorActionSetting<String> subTitleSetting = this.mapSetting(subTitleGrouping, "subtitle","Sub-Title", desc, Material.NAME_TAG, ChatColor.YELLOW);
+        subTitleSetting.setupDataStore("message", PersistentDataType.STRING);
         subTitleSetting.onClick(this::editSubTitle);
     }
 

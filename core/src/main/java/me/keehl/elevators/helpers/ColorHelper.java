@@ -55,10 +55,6 @@ public class ColorHelper {
         return code.toString();
     }
 
-    public static byte[] decodeHex(final String data) throws Exception {
-        return decodeHex(data.toCharArray());
-    }
-
     public static byte[] decodeHex(final char[] data) throws Exception {
 
         final int len = data.length;
@@ -95,10 +91,6 @@ public class ColorHelper {
             out[j++] = toDigits[0x0F & data[i]];
         }
         return out;
-    }
-
-    protected static char[] encodeHex(final ByteBuffer data, final char[] toDigits) {
-        return encodeHex(data.array(), toDigits);
     }
 
     public static String encodeHexString(final byte[] data) {

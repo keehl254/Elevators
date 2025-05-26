@@ -8,7 +8,6 @@ import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.hooks.ProtectionHook;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

@@ -5,7 +5,7 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 jvmdg.downgradeTo = JavaVersion.VERSION_1_8
@@ -31,6 +31,7 @@ repositories {
     maven("https://repo.spongepowered.org/maven/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.bg-software.com/repository/api/")
+    maven("https://maven.enginehub.org/repo/")
 }
 
 dependencies {
@@ -54,6 +55,7 @@ dependencies {
     compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.2"){ exclude(group = "*") }
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.bgsoftware:SuperiorSkyblockAPI:2024.4")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
 
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
     compileOnly("de.oliver:FancyHolograms:2.4.2")

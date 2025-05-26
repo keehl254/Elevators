@@ -5,7 +5,7 @@ main: me.keehl.elevators.ElevatorsPlugin
 api-version: 1.13
 folia-supported: true
 loadbefore: [SuperiorSkyblock2]
-softdepend: [PlaceholderAPI,RedProtect,Vault,HolographicDisplays,GriefPrevention,GriefDefender,CMI,PlotSquared,BentoBox,DecentHolograms,FancyHolograms,ProtocolLib]
+softdepend: [PlaceholderAPI,RedProtect,Vault,HolographicDisplays,GriefPrevention,GriefDefender,CMI,PlotSquared,BentoBox,DecentHolograms,FancyHolograms,ProtocolLib,WorldGuard]
 
 commands:
   elevators:
