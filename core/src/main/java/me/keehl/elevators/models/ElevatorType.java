@@ -294,6 +294,9 @@ public class ElevatorType extends ConfigElevatorType {
 
     @Override()
     public void onLoad() {
+        this.getActionsUp().clear();
+        this.getActionsDown().clear();
+
         this.getActionsUp().addAll(this.actions.up.stream().map(i -> ElevatorActionService.createActionFromString(this, i)).filter(Objects::nonNull).collect(Collectors.toList()));
         this.getActionsDown().addAll(this.actions.down.stream().map(i -> ElevatorActionService.createActionFromString(this, i)).filter(Objects::nonNull).collect(Collectors.toList()));
 

@@ -736,7 +736,7 @@ public class ElevatorGUIHelper {
             openAdminActionsMenu(player, elevatorType, downActions);
         });
 
-        display.setItemSimple(inventory.getSize() - (downActions.isEmpty() ? 1 : 2), ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Upwards Actions", Material.TIPPED_ARROW, 1), (event, myDisplay) -> {
+        display.setItemSimple(inventory.getSize() - 2, ItemStackHelper.createItem(ChatColor.GOLD + "" + ChatColor.BOLD + "Upwards Actions", Material.TIPPED_ARROW, 1), (event, myDisplay) -> {
             myDisplay.stopReturn();
             openAdminActionsMenu(player, elevatorType, upActions);
         });
@@ -800,6 +800,9 @@ public class ElevatorGUIHelper {
             List<String> lore = meta.getLore() == null ? new ArrayList<>() : meta.getLore();
             lore.add("");
             lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Type Key: " + elevatorType.getTypeKey());
+            lore.add("");
+            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Edit Elevator");
+            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Shift Click: " + ChatColor.GRAY + "Delete Elevator");
             meta.setLore(lore);
             icon.setItemMeta(meta);
 

@@ -40,6 +40,13 @@ public class ElevatorTypeService {
         }
 
         defaultElevatorType = elevatorTypes.get("DEFAULT");
+
+
+        for(String elevatorKey : elevatorTypes.keySet()) {
+            ElevatorType elevatorType = elevatorTypes.get(elevatorKey);
+            elevatorType.setKey(elevatorKey);
+            elevatorType.onLoad();
+        }
     }
 
     public static ElevatorType getElevatorType(String name) {
@@ -73,7 +80,7 @@ public class ElevatorTypeService {
         ElevatorConfigService.getElevatorTypeConfigs().put(typeKey, type);
         reloadElevatorsFromConfig(ElevatorConfigService.getRootConfig());
 
-        return type;
+        return getElevatorType(typeKey);
     }
 
     public static void unregisterElevatorType(ElevatorType elevatorType) {
