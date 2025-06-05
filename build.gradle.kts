@@ -1,5 +1,5 @@
 group = "me.keehl"
-version = "5.0.0-beta.9"
+version = "5.0.0-beta.10"
 
 plugins {
     kotlin("jvm") version "1.9.0"
@@ -7,7 +7,7 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8)) // Or 8, depending on target
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -24,7 +24,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     compileOnly(kotlin("stdlib"))
-    implementation(files("Hooks${File.separator}build${File.separator}libs${File.separator}Hooks-5.0.0-beta.9-downgraded.jar"))
+    implementation(files("Hooks${File.separator}build${File.separator}libs${File.separator}Hooks-${version}-downgraded.jar"))
 
     compileOnly("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT")
 }

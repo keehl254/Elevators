@@ -150,7 +150,7 @@ public class MessageHelper {
     public static List<String> formatLore(String message, ChatColor defaultColor) {
         List<String> messages = new ArrayList<>();
         String[] words = message.split(" ");
-        messages.add(ChatColor.WHITE + words[0]);
+        messages.add(defaultColor + words[0]);
         for (int i = 1; i < words.length; i++) {
             if ((messages.get(messages.size()-1) + " " + words[i]).length() <= 30)
                 messages.set(messages.size() - 1, messages.get(messages.size()-1) + " " + words[i]);

@@ -147,7 +147,7 @@ public class LoreLinesSetting extends ElevatorSetting<List<String>> {
         } else {
             lore.add(ChatColor.GRAY + "Current Value: ");
             for (String line : loreLines)
-                lore.add("\t" + ChatColor.GOLD + MessageHelper.formatColors(line));
+                lore.add(MessageHelper.formatColors(line));
         }
 
         ItemStack icon = this.iconTemplate.clone();
