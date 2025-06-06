@@ -22,7 +22,7 @@ public class ElevatorHookService {
     private static final Map<String, ElevatorHook> hookMap = new HashMap<>();
 
     private static PlaceholderHook placeholderHook = null;
-    private static HologramHook<?> hologramHook = null;
+    private static HologramHook hologramHook = null;
 
     public static void init() {
         if(ElevatorHookService.initialized)
@@ -52,7 +52,7 @@ public class ElevatorHookService {
             Elevators.getElevatorsLogger().info("Hooked into " + pluginName);
 
             placeholderHook = hookMap.values().stream().filter(i -> i instanceof PlaceholderHook).map(i -> (PlaceholderHook) i).findFirst().orElse(null);
-            hologramHook = hookMap.values().stream().filter(i -> i instanceof HologramHook).map(i -> (HologramHook<?>) i).findFirst().orElse(null);
+            hologramHook = hookMap.values().stream().filter(i -> i instanceof HologramHook).map(i -> (HologramHook) i).findFirst().orElse(null);
 
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             Elevators.getElevatorsLogger().log(Level.WARNING, "Failed to register hook for \"" + pluginName + "\" due to an inaccessible constructor. The plugin will still function; however, this hook will not work. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues", e);
@@ -65,7 +65,7 @@ public class ElevatorHookService {
 
     public static boolean canUseElevator(Player player, Elevator elevator, boolean sendMessage) {
         try {
-            return hookMap.values().stream().allMatch(hook -> hook.canPlayerUseElevator(player, elevator, sendMessage));
+            return ElevatorHookService.getProtectionHooks().stream().allMatch(hook -> !hook.isCheckEnabled(elevator) || hook.canPlayerUseElevator(player, elevator, sendMessage));
         } catch (Exception e) {
             Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to check hooks for use permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
@@ -95,7 +95,7 @@ public class ElevatorHookService {
     }
 
     // Protected because we want all hologram alterations to be done through HologramService
-    protected static HologramHook<?> getHologramHook() {
+    protected static HologramHook getHologramHook() {
         return hologramHook;
     }
 

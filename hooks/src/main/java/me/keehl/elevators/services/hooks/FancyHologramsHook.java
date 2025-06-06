@@ -10,49 +10,21 @@ import org.bukkit.Location;
 import org.bukkit.entity.Display;
 
 import java.util.*;
-import java.util.function.Consumer;
 
-public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHologramWrapper> {
-
-    private final Map<String, FancyHologramWrapper> holograms = new HashMap<>();
+public class FancyHologramsHook extends HologramHook {
 
     @Override
-    public FancyHologramWrapper createHologram(Elevator elevator, Consumer<WrappedHologram> deleteConsumer, String... lines) {
-
-        UUID uuid;
-        do {
-            uuid = UUID.randomUUID();
-        } while(this.holograms.containsKey(uuid.toString()));
-
-        FancyHologramWrapper hologram = new FancyHologramWrapper(uuid.toString(), elevator, deleteConsumer, lines);
-
-        this.holograms.put(uuid.toString(), hologram);
-
-        return hologram;
+    public WrappedHologram createHologram(Elevator elevator, String... lines) {
+        return new FancyHologramWrapper(elevator, lines);
     }
 
-    @Override
-    public void clearAll() {
-        new ArrayList<>(this.holograms.values()).forEach(FancyHologramWrapper::delete);
-    }
-
-    @Override
-    public Collection<FancyHologramWrapper> getHolograms() {
-        return this.holograms.values();
-    }
-
-    @Override
-    public FancyHologramWrapper getHologram(String uuid) {
-        return this.holograms.get(uuid);
-    }
-
-    public class FancyHologramWrapper extends WrappedHologram {
+    public static class FancyHologramWrapper extends WrappedHologram {
 
         private final Hologram hologram;
-        public FancyHologramWrapper(String uuid, Elevator elevator, Consumer<WrappedHologram> deleteConsumer, String... lines) {
-            super(uuid, elevator, deleteConsumer);
+        public FancyHologramWrapper(Elevator elevator, String... lines) {
+            super(elevator);
 
-            TextHologramData textData = new TextHologramData(uuid, elevator.getLocation().clone());
+            TextHologramData textData = new TextHologramData(this.getUUID(), elevator.getLocation().clone());
             Arrays.stream(lines).forEach(textData::addLine);
 
             textData.setBillboard(Display.Billboard.CENTER);
@@ -82,14 +54,6 @@ public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHol
         }
 
         @Override
-        public void clearLines() {
-            TextHologramData data = (TextHologramData) this.hologram.getData();
-            data.setText(new ArrayList<>());
-
-            this.hologram.queueUpdate();
-        }
-
-        @Override
         public double getHeight() {
             return ((TextHologramData)this.hologram.getData()).getScale().y();
         }
@@ -103,7 +67,6 @@ public class FancyHologramsHook extends HologramHook<FancyHologramsHook.FancyHol
         @Override
         public void onDelete() {
             FancyHologramsPlugin.get().getHologramManager().removeHologram(this.hologram);
-            FancyHologramsHook.this.holograms.remove(this.getUUID());
         }
     }
 

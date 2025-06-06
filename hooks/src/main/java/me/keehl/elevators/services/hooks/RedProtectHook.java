@@ -34,9 +34,6 @@ public class RedProtectHook extends ProtectionHook {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(!this.isCheckEnabled(elevator))
-            return true;
-
         Region region = this.redProtect.getRegion(elevator.getShulkerBox().getLocation());
         if(region == null || region.getFlagBool(this.flagName))
             return true;

@@ -11,27 +11,25 @@ import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public abstract class WrappedHologram {
 
     private final String uuid;
     private final Location elevatorLocation;
     private final String elevatorTypeKey;
-    private final Consumer<WrappedHologram> deleteConsumer;
 
-    public WrappedHologram(String uuid, Elevator elevator, Consumer<WrappedHologram> deleteConsumer) {
-        this.uuid = uuid;
+    public WrappedHologram(Elevator elevator) {
+
+        this.uuid = ElevatorHologramService.getNextAvailableUUID().toString();
         this.elevatorLocation = elevator.getLocation();
         this.elevatorTypeKey = elevator.getElevatorType().getTypeKey(); // Store Elevator Type Key to account for a config reload.
-        this.deleteConsumer = deleteConsumer;
+
+        ElevatorHologramService.registerHologram(this);
     }
 
     public abstract void addLine(String text);
 
     public abstract void setLines(List<String> text);
-
-    public abstract void clearLines();
 
     public abstract double getHeight();
 
@@ -77,7 +75,7 @@ public abstract class WrappedHologram {
 
     public final void delete() {
         this.onDelete();
-        this.deleteConsumer.accept(this);
+        ElevatorHologramService.unregisterHologram(this);
     }
 
     public abstract void onDelete();

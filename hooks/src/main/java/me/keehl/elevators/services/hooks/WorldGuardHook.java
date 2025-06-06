@@ -58,9 +58,6 @@ public class WorldGuardHook extends ProtectionHook {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(!this.isCheckEnabled(elevator))
-            return true;
-
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
 
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();

@@ -6,6 +6,7 @@ import me.keehl.elevators.services.ElevatorDataContainerService;
 import me.keehl.elevators.services.configs.versions.configv5.ConfigHookData;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public abstract class ProtectionHook implements ElevatorHook {
 
@@ -44,4 +45,8 @@ public abstract class ProtectionHook implements ElevatorHook {
     public abstract boolean canEditName(Player player, Elevator elevator, boolean sendMessage);
 
     public abstract boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage);
+
+    public abstract boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage);
+
+    public abstract ItemStack createIconForElevator(Player player, Elevator elevator);
 }

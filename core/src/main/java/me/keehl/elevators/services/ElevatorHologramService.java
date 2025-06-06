@@ -14,14 +14,14 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.List;
-import java.util.Collection;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ElevatorHologramService {
 
     private static boolean initialized = false;
 
+    private static final Map<String, WrappedHologram> holograms = new HashMap<>();
 
     private static WrappedTask task;
     private static int currentIndex = 0;
@@ -36,7 +36,7 @@ public class ElevatorHologramService {
             if(!canUseHolograms())
                 return;
 
-            WrappedHologram[] holograms = ElevatorHookService.getHologramHook().getHolograms().toArray(new WrappedHologram[]{});
+            WrappedHologram[] holograms = getHolograms().toArray(new WrappedHologram[]{});
             if(holograms.length == 0)
                 return;
 
@@ -75,7 +75,7 @@ public class ElevatorHologramService {
         ShulkerBox shulkerBox = elevator.getShulkerBox();
         if(shulkerBox.hasMetadata("elevator-holo-uuid")) {
             String hologramUUID = shulkerBox.getMetadata("elevator-holo-uuid").get(0).asString();
-            WrappedHologram hologram = ElevatorHookService.getHologramHook().getHologram(hologramUUID);
+            WrappedHologram hologram = getHologram(hologramUUID);
             if(hologram != null)
                 return hologram;
 
@@ -94,10 +94,7 @@ public class ElevatorHologramService {
         if(hologram != null)
             return hologram;
 
-        ShulkerBox shulkerBox = elevator.getShulkerBox();
-
-        hologram = ElevatorHookService.getHologramHook().createHologram(elevator, ElevatorHologramService::deleteHologram);
-        shulkerBox.setMetadata("elevator-holo-uuid", new FixedMetadataValue(Elevators.getInstance(), hologram.getUUID()));
+        hologram = ElevatorHookService.getHologramHook().createHologram(elevator);
 
         updateElevatorHologram(elevator);
         return hologram;
@@ -171,21 +168,58 @@ public class ElevatorHologramService {
     }
 
     public static void updateHologramsOfElevatorType(ElevatorType elevatorType) {
-        List<? extends WrappedHologram> holograms = ElevatorHookService.getHologramHook().getHolograms().stream().filter(i -> i.getElevatorType().equals(elevatorType)).collect(Collectors.toList());
+        List<? extends WrappedHologram> holograms = getHolograms().stream().filter(i -> i.getElevatorType().equals(elevatorType)).collect(Collectors.toList());
         for(WrappedHologram hologram : holograms)
             hologram.update();
     }
 
-    private static void deleteHologram(WrappedHologram hologram) {
-        Elevator elevator = hologram.getElevator();
-        if(elevator != null && elevator.getShulkerBox() != null)
-            elevator.getShulkerBox().removeMetadata("elevator-holo-uuid", Elevators.getInstance());
+    public static UUID getNextAvailableUUID() {
+        UUID uuid;
+        do {
+            uuid = UUID.randomUUID();
+        } while(holograms.containsKey(uuid.toString()));
+
+        return uuid;
     }
 
     public static void clearAll() {
         if(!canUseHolograms())
             return;
-        ElevatorHookService.getHologramHook().clearAll();
+
+        new ArrayList<>(holograms.values()).forEach(WrappedHologram::delete);
+    }
+
+    public static void registerHologram(WrappedHologram holo) {
+        if(!canUseHolograms())
+            return;
+
+        holograms.put(holo.getUUID(), holo);
+        holo.getElevator().getShulkerBox().setMetadata("elevator-holo-uuid", new FixedMetadataValue(Elevators.getInstance(), holo.getUUID()));
+    }
+
+    public static void unregisterHologram(WrappedHologram hologram) {
+        if(!canUseHolograms())
+            return;
+
+        holograms.remove(hologram.getUUID());
+
+        Elevator elevator = hologram.getElevator();
+        if(elevator != null && elevator.getShulkerBox() != null)
+            elevator.getShulkerBox().removeMetadata("elevator-holo-uuid", Elevators.getInstance());
+    }
+
+    public static Collection<WrappedHologram> getHolograms() {
+        if(!canUseHolograms())
+            return new ArrayList<>();
+
+        return holograms.values();
+    }
+
+    public static WrappedHologram getHologram(String uuid) {
+        if(!canUseHolograms())
+            return null;
+
+        return holograms.get(uuid);
     }
 
     public static boolean canUseHolograms() {

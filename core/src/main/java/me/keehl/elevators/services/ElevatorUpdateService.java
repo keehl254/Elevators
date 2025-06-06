@@ -56,7 +56,7 @@ public class ElevatorUpdateService {
         if (!updateAvailable)
             return;
         if (player.hasPermission("elevators.updatenotify"))
-            player.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "ELEVATORS " + ChatColor.WHITE + "An update is available for Elevators at " + ChatColor.GOLD + resourceURL);
+            player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "ELEVATORS " + ChatColor.WHITE + "An update is available for Elevators at " + ChatColor.GOLD + resourceURL);
     }
 
     public static void checkUpdate() {

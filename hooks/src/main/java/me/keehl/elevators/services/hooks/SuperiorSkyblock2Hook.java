@@ -52,7 +52,7 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
 
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(!registered || !this.isCheckEnabled(elevator))
+        if(!registered)
             return true;
 
         Island island = SuperiorSkyblockAPI.getIslandAt(elevator.getLocation());

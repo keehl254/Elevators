@@ -57,9 +57,6 @@ public class BentoBoxHook extends ProtectionHook {
     }
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
-        if(!this.isCheckEnabled(elevator))
-            return true;
-
         Location location = elevator.getLocation();
         Island island = BentoBox.getInstance().getIslands().getIslandAt(location).orElse(null);
         if (island == null)
