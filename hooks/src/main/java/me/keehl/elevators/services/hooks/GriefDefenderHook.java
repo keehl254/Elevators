@@ -34,8 +34,8 @@ public class GriefDefenderHook extends ProtectionHook {
     public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
         final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
 
-        if (claim == null) //The elevator can be in the spawn
-            return false;
+        if (claim == null)
+            return true;
         if(claim.isWilderness())
             return true;
         return claim.canUseBlock(elevator.getShulkerBox(), elevator.getLocation(), GriefDefender.getCore().getUser(player.getUniqueId()), TrustTypes.ACCESSOR);
@@ -45,8 +45,8 @@ public class GriefDefenderHook extends ProtectionHook {
     public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
         final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
 
-        if (claim == null) //The elevator can be in the spawn
-            return false;
+        if (claim == null)
+            return true;
         if(claim.isWilderness())
             return true;
         return claim.canUseBlock(elevator.getShulkerBox(), elevator.getLocation(), GriefDefender.getCore().getUser(player.getUniqueId()), TrustTypes.MANAGER);
