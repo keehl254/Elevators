@@ -2,6 +2,7 @@ package me.keehl.elevators;
 
 import me.keehl.elevators.services.*;
 import com.tcoded.folialib.FoliaLib;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,12 +14,14 @@ public class Elevators {
 
     protected static JavaPlugin instance;
     protected static FoliaLib foliaLib;
+    protected static Metrics metrics;
 
     protected static boolean initialized = false;
 
     protected static void enable(JavaPlugin plugin) {
         instance = plugin;
         foliaLib = new FoliaLib(plugin);
+        metrics = new Metrics(plugin, 8026);
 
         ElevatorDataContainerService.init();
         ElevatorSettingService.init();
@@ -32,6 +35,7 @@ public class Elevators {
         ElevatorHookService.init();
         ElevatorHologramService.init();
         ElevatorCommandService.init();
+        ElevatorUpdateService.init(plugin.getDescription().getVersion());
 
         reloadElevators();
         initialized = true;
@@ -41,6 +45,7 @@ public class Elevators {
         ElevatorHookService.unInitialize();
         ElevatorListenerService.unInitialize();
         ElevatorHologramService.onDisable();
+        ElevatorUpdateService.unInitialize();
 
         saveConfig();
         initialized = false;

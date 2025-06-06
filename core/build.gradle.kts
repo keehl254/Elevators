@@ -34,7 +34,7 @@ dependencies {
     compileOnly("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT") {
         exclude(group = "org.yaml", module = "snakeyaml")
     }
-    implementation ("io.papermc:paperlib:1.0.7")
+    implementation ("io.papermc:paperlib:1.0.8")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
     compileOnly("net.kyori:adventure-api:4.14.0")
@@ -44,10 +44,9 @@ dependencies {
     implementation("net.wesjd:anvilgui:1.10.5-SNAPSHOT")
     implementation("com.github.technicallycoded:FoliaLib:main-SNAPSHOT")
     implementation("org.yaml:snakeyaml:2.2")
+    implementation("org.bstats:bstats-bukkit:3.1.1-SNAPSHOT") // Snapshot because the release does not have Folia support
 
 }
-
-
 
 publishing {
     publications {

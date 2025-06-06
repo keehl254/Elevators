@@ -47,6 +47,26 @@ allprojects {
     }
 }
 
+val updatePluginYml by tasks.registering {
+    val pluginYmlFile = file("src/main/resources/plugin.yml")
+    val versionString = project.version.toString()
+
+    doLast {
+        if (!pluginYmlFile.exists())
+            throw GradleException("plugin.yml does not exist: ${pluginYmlFile.absolutePath}")
+
+        val lines = pluginYmlFile.readLines().toMutableList()
+
+        lines.removeAll { it.startsWith("version:") }
+
+        lines.add("version: $versionString")
+
+        pluginYmlFile.writeText(lines.joinToString(System.lineSeparator()))
+
+        println("Updated plugin.yml with version: $versionString")
+    }
+}
+
 // Custom task to build Core and Hooks together
 tasks.register("buildElevators") {
     group = "build"
@@ -62,6 +82,7 @@ tasks.register("buildElevators") {
         commandLine = gradleCommand + ":Hooks:downgradeJar"
     }
 
+    dependsOn(updatePluginYml)
     dependsOn(tasks.named("shadowJar"))
 
     doLast {

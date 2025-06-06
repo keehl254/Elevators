@@ -67,6 +67,7 @@ tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJ
     relocate("com.tcoded.folialib", "me.keehl.elevators.util.folialib")
     relocate("io.papermc.lib", "me.keehl.elevators.util.paperlib")
     relocate("org.yaml.snakeyaml", "me.keehl.elevators.util.config.snakeyaml")
+    relocate("org.bstats", "me.keehl.elevators.util.bstats")
 
     archiveClassifier.set("all")
 }
