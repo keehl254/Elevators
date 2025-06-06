@@ -151,7 +151,7 @@ public class HologramLinesSetting extends ElevatorSetting<String[]> {
         } else {
             lore.add(ChatColor.GRAY + "Current Value: ");
             for (String line : loreLines)
-                lore.add(MessageHelper.formatColors(line));
+                lore.add(ChatColor.WHITE + MessageHelper.formatColors(line));
         }
 
         ItemStack icon = this.iconTemplate.clone();
