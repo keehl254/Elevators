@@ -47,6 +47,7 @@ public class ElevatorActionService {
         registerElevatorAction("boss-bar", BossBarAction::new, ChatColor.RED.toString(), "Boss Bar", Material.DRAGON_HEAD);
 
         registerElevatorAction("charge-exp", ChargeExpAction::new, ChatColor.GOLD.toString(), "Charge EXP", Material.EXPERIENCE_BOTTLE);
+        registerElevatorAction("trigger-observer", TriggerObserverAction::new, ChatColor.RED.toString(), "Trigger Observer", Material.OBSERVER);
 
         Bukkit.getPluginManager().callEvent(new ElevatorRegisterActionsEvent());
     }

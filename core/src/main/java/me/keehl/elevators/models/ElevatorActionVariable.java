@@ -43,7 +43,7 @@ public class ElevatorActionVariable<T> {
         try {
             return this.conversionFunction.apply(value);
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().info(value);
+            Elevators.getElevatorsLogger().info(this.getMainAlias() + ": " + value);
             Elevators.getElevatorsLogger().warning(String.format(this.conversionErrorMessage, action.getKey(), this.getMainAlias(), action.getElevatorType().getTypeKey(), this.defaultObject.toString()));
             return this.defaultObject;
         }

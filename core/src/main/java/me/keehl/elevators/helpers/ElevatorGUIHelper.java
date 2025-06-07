@@ -334,8 +334,15 @@ public class ElevatorGUIHelper {
         display.onClick((item, event, myDisplay) -> {
             myDisplay.stopReturn();
             ElevatorAction newAction = ElevatorActionService.createBlankAction(elevatorType, item);
-            currentActionList.add(newAction);
-            openAdminActionSettingsMenu(player, elevatorType, newAction, () -> openAdminActionsMenu(player, elevatorType, currentActionList));
+            if(newAction != null) {
+                currentActionList.add(newAction);
+
+                if (!newAction.getSettings().isEmpty()) {
+                    openAdminActionSettingsMenu(player, elevatorType, newAction, () -> openAdminActionsMenu(player, elevatorType, currentActionList));
+                    return;
+                }
+            }
+            openAdminActionsMenu(player, elevatorType, currentActionList);
         });
 
         display.open();
@@ -357,26 +364,29 @@ public class ElevatorGUIHelper {
 
             List<String> lore = meta.getLore() == null ? new ArrayList<>() : meta.getLore();
             lore.add("");
-            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Edit Action");
+            if(!action.getSettings().isEmpty())
+                lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Edit Action");
             lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Shift Click: " + ChatColor.GRAY + "Delete Action");
 
             meta.setLore(lore);
             template.setItemMeta(meta);
             return template;
         });
-        display.onClick((item, event, myDisplay) -> {
+        display.onClick((action, event, myDisplay) -> {
             myDisplay.stopReturn();
 
             if(event.isShiftClick()) {
                 openConfirmMenu(player, confirm -> {
                     if(confirm)
-                        actions.remove(item);
+                        actions.remove(action);
 
                     openAdminActionsMenu(player, elevatorType, actions);
                 });
                 return;
             }
-            openAdminActionSettingsMenu(player, elevatorType, item, () -> openAdminActionsMenu(player, elevatorType, actions));
+
+            if(!action.getSettings().isEmpty())
+                openAdminActionSettingsMenu(player, elevatorType, action, () -> openAdminActionsMenu(player, elevatorType, actions));
         });
         display.onLoad((tempDisplay, page) -> {
             int addRecipeIndex = display.getDisplay().getInventory().getSize() - 1;

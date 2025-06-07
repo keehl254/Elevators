@@ -81,6 +81,7 @@ public abstract class ElevatorAction {
 
         this.initialized = true;
         this.onInitialize(this.value);
+        this.initIdentifier();
     }
 
     public ElevatorType getElevatorType() {
