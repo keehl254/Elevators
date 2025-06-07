@@ -17,7 +17,7 @@ public abstract class ElevatorEffect {
     private final ItemStack icon;
 
     public ElevatorEffect(String effectKey, ItemStack icon) {
-        this.effectKey = effectKey;
+        this.effectKey = effectKey.toUpperCase();
         if (icon != null)
             this.icon = icon;
         else

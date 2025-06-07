@@ -11,10 +11,13 @@ public class ElevatorHooks {
         ElevatorHookService.registerHook("RedProtect", RedProtectHook.class);
         ElevatorHookService.registerHook("PlotSquared", PlotSquaredHook.class);
         ElevatorHookService.registerHook("BentoBox", BentoBoxHook.class);
-        ElevatorHookService.registerHook("PlaceholderAPI", PlaceholderAPIHook.class);
+        ElevatorHookService.registerHook("SuperiorSkyblock2", SuperiorSkyblock2Hook.class, false);
+        ElevatorHookService.registerHook("Protect", ProtectHook.class);
+
         ElevatorHookService.registerHook("DecentHolograms", DecentHologramsHook.class);
         ElevatorHookService.registerHook("FancyHolograms", FancyHologramsHook.class);
-        ElevatorHookService.registerHook("SuperiorSkyblock2", SuperiorSkyblock2Hook.class, false);
+
+        ElevatorHookService.registerHook("PlaceholderAPI", PlaceholderAPIHook.class);
     }
 
 }

@@ -57,11 +57,11 @@ public class ElevatorEffectService {
     }
 
     public static ElevatorEffect getEffectFromKey(String effectKey) {
-        effectKey = effectKey.toUpperCase();
-        if(!elevatorEffects.containsKey(effectKey))
-            return elevatorEffects.get("NONE");
+        return elevatorEffects.getOrDefault(effectKey.toUpperCase(), null);
+    }
 
-        return elevatorEffects.get(effectKey);
+    public static void registerVisualEffect(ElevatorEffect effect) {
+        elevatorEffects.put(effect.getEffectKey(), effect);
     }
 
     public static List<ElevatorEffect> getEffects() {

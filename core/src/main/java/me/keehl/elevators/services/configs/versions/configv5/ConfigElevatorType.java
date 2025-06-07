@@ -52,7 +52,7 @@ public class ConfigElevatorType implements Config {
             "Default actions are:",
             "action-bar, boss-bar, command-console",
             "command-player, message-all, message-player",
-            "sound, title, effect, cost",
+            "sound, title, effect, cost, trigger-observer, charge-exp",
             "",
             "If you do not wish to use actions on use, you can either delete the actions section",
             "or set the \"up\" and \"down\" values to an empty array with \"[]\". PlaceholderAPI is supported.",
