@@ -30,7 +30,8 @@ public class ElevatorUpdateService {
         ElevatorConfigService.addConfigCallback(root -> {
             unInitialize();
 
-            task = Elevators.getFoliaLib().getScheduler().runTimerAsync(ElevatorUpdateService::checkUpdate, 1200, 288000);
+            if(root.updateCheckerEnabled)
+                task = Elevators.getFoliaLib().getScheduler().runTimerAsync(ElevatorUpdateService::checkUpdate, 1200, 288000);
         });
 
     }
