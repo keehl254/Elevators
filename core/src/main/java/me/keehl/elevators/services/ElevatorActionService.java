@@ -95,7 +95,6 @@ public class ElevatorActionService {
 
     public static ElevatorAction createBlankAction(ElevatorType elevatorType, String actionKey) {
         actionKey = actionKey.toLowerCase().trim();
-        Elevators.getElevatorsLogger().info(actionKey);
         if(!actionConstructors.containsKey(actionKey))
             return null;
 
