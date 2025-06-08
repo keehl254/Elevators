@@ -57,7 +57,7 @@ public class ElevatorListenerService {
         registerEventExecutor(PlayerJoinEvent.class, EventPriority.NORMAL, EntityEventExecutor::onJoin);
         registerEventExecutor(PlayerToggleSneakEvent.class, EventPriority.NORMAL , EntityEventExecutor::onSneak);
         registerEventExecutor(EntityPickupItemEvent.class, EventPriority.NORMAL , EntityEventExecutor::onPickup);
-        registerEventExecutor(PlayerInteractEvent.class, EventPriority.NORMAL, EntityEventExecutor::onRightClick);
+        registerEventExecutor(PlayerInteractEvent.class, EventPriority.HIGHEST, EntityEventExecutor::onRightClick);
 
         if(Elevators.getFoliaLib().isPaper()) {
             registerEventExecutor(com.destroystokyo.paper.event.player.PlayerJumpEvent.class, EventPriority.NORMAL, PaperEventExecutor::onJump, false);

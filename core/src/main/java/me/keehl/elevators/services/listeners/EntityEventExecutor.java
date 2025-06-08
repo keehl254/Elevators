@@ -104,21 +104,28 @@ public class EntityEventExecutor {
     }
 
     public static void onRightClick(PlayerInteractEvent event) {
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
-        if (event.isBlockInHand() && event.getPlayer().isSneaking()) return;
-        if (event.getClickedBlock() == null) return;
+        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+            return;
+
+        if (event.isBlockInHand() && event.getPlayer().isSneaking())
+            return;
+
+        if (event.getClickedBlock() == null)
+            return;
 
         ShulkerBox box = ShulkerBoxHelper.getShulkerBox(event.getClickedBlock());
         if(box == null)
             return;
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(box.getBlock());
-        if (elevatorType == null) return;
+        if (elevatorType == null)
+            return;
 
         event.setCancelled(true);
 
         if (event.getPlayer().isSneaking()) {
-            if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
+            if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND))
+                return;
 
             ElevatorHelper.onElevatorInteract(event.getPlayer(), event, new Elevator(box,elevatorType));
         }

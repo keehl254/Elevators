@@ -24,6 +24,7 @@ repositories {
     maven("https://repo.spongepowered.org/maven/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.bg-software.com/repository/api/")
+    maven("https://repo.keehl.me/releases/")
     mavenLocal()
     mavenCentral()
 }
@@ -42,7 +43,7 @@ dependencies {
 
     implementation("de.rapha149.signgui:signgui:2.5.0")
     implementation("net.wesjd:anvilgui:1.10.5-SNAPSHOT")
-    implementation("com.github.technicallycoded:FoliaLib:main-SNAPSHOT")
+    implementation("com.tcoded:FoliaLib:0.4.3")
     implementation("org.yaml:snakeyaml:2.2")
     implementation("org.bstats:bstats-bukkit:3.1.1-SNAPSHOT") // Snapshot because the release does not have Folia support
 

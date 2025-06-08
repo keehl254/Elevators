@@ -75,12 +75,7 @@ public class GriefPreventionHook extends ProtectionHook {
             return true;
 
         Supplier<String> message = claim.checkPermission(player, ClaimPermission.Manage, null);
-        if (message != null) {
-            if (sendMessage)
-                player.sendMessage(ChatColor.RED + message.get());
-            return false;
-        }
-        return true;
+        return message == null; // Let's not send a message here because GriefPrevention already sends one on interact event.
     }
 
     @Override

@@ -44,6 +44,7 @@ allprojects {
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://repo.codemc.io/repository/maven-snapshots/")
         maven ("https://repo.papermc.io/repository/maven-public/")
+        maven("https://repo.keehl.me/releases/")
     }
 }
 
