@@ -13,6 +13,7 @@ public class ElevatorHooks {
         ElevatorHookService.registerHook("BentoBox", BentoBoxHook.class);
         ElevatorHookService.registerHook("SuperiorSkyblock2", SuperiorSkyblock2Hook.class, false);
         ElevatorHookService.registerHook("Protect", ProtectHook.class);
+        ElevatorHookService.registerHook("Lands", LandsHook.class, false);
 
         ElevatorHookService.registerHook("DecentHolograms", DecentHologramsHook.class);
         ElevatorHookService.registerHook("FancyHolograms", FancyHologramsHook.class);

@@ -60,6 +60,7 @@ dependencies {
     compileOnly("net.thenextlvl.protect:api:3.0.3")
     compileOnly("net.thenextlvl.protect:plugin:2.1.2")
     compileOnly("net.thenextlvl.core:nbt:2.3.2") { isTransitive = false }
+    compileOnly ("com.github.angeschossen:LandsAPI:7.15.20")
 
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
     compileOnly("de.oliver:FancyHolograms:2.4.2")
