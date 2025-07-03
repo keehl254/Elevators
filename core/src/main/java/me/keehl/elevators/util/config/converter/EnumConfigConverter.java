@@ -13,8 +13,9 @@ import java.util.Optional;
 public class EnumConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> createNodeFromFieldAndObject(ConfigNode<?> parentNode, Class<?> fieldType, String key, Object object, @Nullable Field field) {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) {
 
+        Class<?> fieldType = fieldData.getFieldClass();
         if(object instanceof String) {
             String strValue = object.toString();
             Optional<?> objectOpt = Arrays.stream(fieldType.getEnumConstants()).filter(i -> i.toString().equalsIgnoreCase(strValue)).findFirst();
@@ -29,15 +30,15 @@ public class EnumConfigConverter extends ConfigConverter {
             Elevators.getElevatorsLogger().warning("Value at path \"" + parentNode.getPath() + "\" must be a \"" + fieldType.getSimpleName()+"\" enum value! Using default: \"" + object.toString() + "\".");
         }
 
-        return createNodeWithData(parentNode, key, object, field);
+        return createNodeWithData(parentNode, key, object, fieldData.getField());
     }
 
-    public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
-        return createObjectFromValue(node.getValue());
+    public Object serializeNodeToObject(ConfigNode<?> node) throws Exception {
+        return serializeValueToObject(node.getValue());
     }
 
     @Override
-    public Object createObjectFromValue(Object value) throws Exception {
+    public Object serializeValueToObject(Object value) throws Exception {
         return value.toString();
     }
 

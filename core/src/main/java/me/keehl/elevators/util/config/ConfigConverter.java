@@ -17,10 +17,13 @@ import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.representer.Representer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
@@ -43,6 +46,8 @@ public abstract class ConfigConverter {
             addConverter(SetConfigConverter.class);
             addConverter(MaterialConfigConverter.class);
             addConverter(EnumConfigConverter.class);
+            addConverter(RecipeRowConfigConverter.class);
+            addConverter(NamespacedKeyConfigConverter.class);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -50,6 +55,7 @@ public abstract class ConfigConverter {
         DumperOptions yamlOptions = new DumperOptions();
         yamlOptions.setIndent(2);
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        yamlOptions.setSplitLines(false);
 
         Representer yamlRepresenter = new ElevatorsRepresenter(yamlOptions);
         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -90,7 +96,7 @@ public abstract class ConfigConverter {
             ConfigConfigConverter ccc = (ConfigConfigConverter) converter;
             ConfigRootNode<T> root = new ConfigRootNode<>(yamlData == null ? new HashMap<>() : yamlData, config);
             config.setKey("root");
-            ccc.constructMapToConfig(root, root, config, config.getClass());
+            ccc.constructMapToConfig(root, root, config, new FieldData(null, config.getClass(), config.getClass()));
             config.onLoad();
             return root;
         }
@@ -200,11 +206,11 @@ public abstract class ConfigConverter {
 
     // public abstract Object toConfig(Class<?> type, Object obj, ParameterizedType parameterizedType) throws Exception;
 
-    public abstract ConfigNode<?> createNodeFromFieldAndObject(ConfigNode<?> parentNode, Class<?> fieldType, String key, Object object, @Nullable Field field) throws Exception;
+    public abstract ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception;
 
-    public abstract Object createObjectFromNode(ConfigNode<?> node) throws Exception;
+    public abstract Object serializeNodeToObject(ConfigNode<?> node) throws Exception;
 
-    public abstract Object createObjectFromValue(Object value) throws Exception;
+    public abstract Object serializeValueToObject(Object value) throws Exception;
 
     public abstract boolean supports(Class<?> type);
 
@@ -214,6 +220,78 @@ public abstract class ConfigConverter {
         if (field == null)
             return new DirectConfigNode<>(parentNode, key, object);
         return new ClassicConfigNode<>(parentNode, field, object);
+    }
+
+    public static class FieldData {
+
+        private final Field field;
+        private final Class<?> fieldClass;
+        private final Type fieldType;
+
+        public FieldData(Field field, Class<?> fieldClass, Type fieldType) {
+            this.field = field;
+            this.fieldClass = fieldClass;
+            this.fieldType = fieldType;
+        }
+
+        public FieldData(@Nonnull Field field) {
+            this.field = field;
+            this.fieldClass = field.getType();
+            this.fieldType = field.getGenericType();
+        }
+
+
+        public Field getField() {
+            return this.field;
+        }
+
+        public Class<?> getFieldClass() {
+            return this.fieldClass;
+        }
+
+        public Type getFieldType() {
+            return this.fieldType;
+        }
+
+        private String getRawTypeName(Type type) {
+            if (type instanceof ParameterizedType) {
+                Type raw = ((ParameterizedType) type).getRawType();
+                return raw.getTypeName();
+            } else {
+                return type.getTypeName();
+            }
+        }
+
+        public FieldData[] getGenericData() throws ClassNotFoundException {
+
+            // Generic array creation is not allowed in java, so no need to worry too much here
+            if(this.fieldClass.isArray()) {
+                Class<?> component = this.fieldClass.getComponentType();
+                return new FieldData[] { new FieldData(null, component, component) };
+            }
+            ParameterizedType genericType;
+            if(this.field != null) {
+
+                // We know for sure it does not have a generic if it's not a ParameterizedType
+                if(!(this.field.getGenericType() instanceof ParameterizedType))
+                    return null;
+
+                genericType = (ParameterizedType) this.field.getGenericType();
+            } else if(this.fieldType instanceof ParameterizedType) {
+                genericType = (ParameterizedType) this.fieldType;
+            }else
+                return null;
+
+            List<FieldData> fieldDataList = new ArrayList<>();
+            for(Type type : genericType.getActualTypeArguments()) {
+                String typeName = getRawTypeName(type);
+                Class<?> clazz = this.getClass().getClassLoader().loadClass(typeName);
+                fieldDataList.add(new FieldData(null, clazz, type));
+            }
+
+            return fieldDataList.toArray(new FieldData[]{});
+        }
+
     }
 
 }

@@ -9,31 +9,41 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class ArrayConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> createNodeFromFieldAndObject(ConfigNode<?> parentNode, Class<?> fieldType, String key, Object object, @Nullable Field field) throws Exception {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception {
 
-        Class<?> singleType = fieldType.getComponentType();
-        List<?> values = new ArrayList<>(object instanceof List ? (List<?>) object : Arrays.asList((Object[]) object));
+        FieldData childFieldData = fieldData.getGenericData()[0];
+        if(childFieldData == null)
+            return null;
 
-        ConfigNode<?> myNode = createNodeWithData(parentNode, key, values.toArray(), field);
+        ConfigConverter converter = ConfigConverter.getConverter(childFieldData.getFieldClass());
+        List<?> currentValues = new ArrayList<>(object instanceof List ? (List<?>) object : Arrays.asList((Object[]) object));
+        List<Object> values = new ArrayList<>();
 
-        ConfigConverter converter = ConfigConverter.getConverter(singleType);
-        for (Object obj : values) {
-            if (converter != null)
-                myNode.getChildren().add(converter.createNodeFromFieldAndObject(parentNode, singleType, obj.toString(), obj, null));
-            else
-                myNode.getChildren().add(this.createNodeWithData(parentNode, obj.toString(), obj, null));
+        List<ConfigNode<?>> childrenNodes = new ArrayList<>();
+
+        for (Object obj : currentValues) {
+            if (converter != null) {
+                ConfigNode<?> childNode = converter.deserializeNodeWithFieldAndObject(parentNode, obj.toString(), obj, childFieldData);
+                values.add(childNode.getValue());
+                childrenNodes.add(childNode);
+            } else
+                childrenNodes.add(this.createNodeWithData(parentNode, obj.toString(), obj, null));
         }
+
+        ConfigNode<?> myNode = createNodeWithData(parentNode, key, values.toArray(), fieldData.getField());
+        myNode.getChildren().addAll(childrenNodes);
 
         return myNode;
     }
 
     @Override()
-    public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
+    public Object serializeNodeToObject(ConfigNode<?> node) throws Exception {
 
         List<Object> values = new ArrayList<>();
         for (ConfigNode<?> childNode : node.getChildren()) {
@@ -41,7 +51,7 @@ public class ArrayConfigConverter extends ConfigConverter {
 
             ConfigConverter converter = ConfigConverter.getConverter(value.getClass());
             if (converter != null)
-                value = converter.createObjectFromNode(childNode);
+                value = converter.serializeNodeToObject(childNode);
 
             values.add(value);
         }
@@ -63,14 +73,14 @@ public class ArrayConfigConverter extends ConfigConverter {
     }
 
     @Override
-    public Object createObjectFromValue(Object arrayObj) throws Exception {
+    public Object serializeValueToObject(Object arrayObj) throws Exception {
         Object[] array = this.convertToObjectArray(arrayObj);
 
         List<Object> values = new ArrayList<>();
         for (Object item : array) {
             ConfigConverter converter = ConfigConverter.getConverter(item.getClass());
             if (converter != null)
-                item = converter.createObjectFromValue(item);
+                item = converter.serializeValueToObject(item);
             values.add(item);
         }
         return values;

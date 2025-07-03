@@ -11,23 +11,23 @@ import java.util.*;
 public class ConfigConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> createNodeFromFieldAndObject(ConfigNode<?> parentNode, Class<?> fieldType, String key, Object object, @Nullable Field field) throws Exception {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception {
 
         if (!(object instanceof Config) || object.getClass().isInterface()) {
-            if (fieldType == Config.class) {
+            if (fieldData.getFieldClass() == Config.class) {
                 Object rawData = parentNode.getRoot().getObjectAtPath(key, new HashMap<>());
                 object = new BlankConfig(rawData);
             } else {
-                object = fieldType.getConstructor().newInstance();
+                object = fieldData.getFieldClass().getConstructor().newInstance();
             }
         }
 
 
-        ConfigNode<?> myNode = this.createNodeWithData(parentNode, key, object, field);
+        ConfigNode<?> myNode = this.createNodeWithData(parentNode, key, object, fieldData.getField());
         if (myNode.getValue() instanceof Config)
             ((Config) myNode.getValue()).setKey(key);
 
-        this.constructMapToConfig(parentNode, myNode, object, fieldType);
+        this.constructMapToConfig(parentNode, myNode, object, fieldData);
 
         if (myNode.getValue() instanceof Config)
             ((Config) myNode.getValue()).onLoad();
@@ -35,9 +35,9 @@ public class ConfigConfigConverter extends ConfigConverter {
         return myNode;
     }
 
-    public void constructMapToConfig(ConfigNode<?> parentNode, ConfigNode<?> myNode, Object object, Class<?> fieldType) throws Exception {
+    public void constructMapToConfig(ConfigNode<?> parentNode, ConfigNode<?> myNode, Object object, FieldData fieldData) throws Exception {
         List<Field> fields = new ArrayList<>();
-        Class<?> current = fieldType;
+        Class<?> current = fieldData.getFieldClass();
         while (current != null) {
             fields.addAll(Arrays.asList(current.getDeclaredFields()));
             current = current.getSuperclass();
@@ -47,6 +47,7 @@ public class ConfigConfigConverter extends ConfigConverter {
                 continue;
 
             childField.setAccessible(true);
+            FieldData childFieldData = new FieldData(childField);
 
             ConfigFieldName fieldName = childField.getAnnotation(ConfigFieldName.class);
             String path = fieldName != null ? fieldName.value() : childField.getName();
@@ -73,10 +74,10 @@ public class ConfigConfigConverter extends ConfigConverter {
 
             ConfigConverter converter = ConfigConverter.getConverter(childField.getType());
             ConfigNode<?> childNode;
-            if (converter == null)
-                childNode = this.createNodeWithData(myNode, path, obj, childField);
+            if (converter != null)
+                childNode = converter.deserializeNodeWithFieldAndObject(myNode, path, obj, childFieldData);
             else
-                childNode = converter.createNodeFromFieldAndObject(myNode, childField.getType(), path, obj, childField);
+                childNode = this.createNodeWithData(myNode, path, obj, childField);
 
             if (childField.isAnnotationPresent(Comments.class)) {
                 Comments comments = childField.getAnnotation(Comments.class);
@@ -90,7 +91,7 @@ public class ConfigConfigConverter extends ConfigConverter {
     }
 
     @Override()
-    public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
+    public Object serializeNodeToObject(ConfigNode<?> node) throws Exception {
 
         ((Config) node.getValue()).onSave();
 
@@ -103,7 +104,7 @@ public class ConfigConfigConverter extends ConfigConverter {
 
             ConfigConverter converter = ConfigConverter.getConverter(value.getClass());
             if (converter != null)
-                value = converter.createObjectFromNode(childNode);
+                value = converter.serializeNodeToObject(childNode);
 
             newMap.put(childNode.getKey(), value);
         }
@@ -112,7 +113,7 @@ public class ConfigConfigConverter extends ConfigConverter {
     }
 
     @Override
-    public Object createObjectFromValue(Object configObj) throws Exception {
+    public Object serializeValueToObject(Object configObj) throws Exception {
 
         if (!(configObj instanceof Config))
             return new HashMap<>();
@@ -160,7 +161,7 @@ public class ConfigConfigConverter extends ConfigConverter {
 
             ConfigConverter converter = ConfigConverter.getConverter(obj.getClass());
             if (converter != null)
-                obj = converter.createObjectFromValue(obj);
+                obj = converter.serializeValueToObject(obj);
 
             newMap.put(path, obj);
 

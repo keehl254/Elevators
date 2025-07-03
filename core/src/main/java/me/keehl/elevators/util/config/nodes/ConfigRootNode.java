@@ -71,7 +71,7 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
         ConfigConverter converter = ConfigConverter.getConverter(this.config.getClass());
         if (converter != null) {
             try {
-                return converter.createObjectFromValue(this.config);
+                return converter.serializeValueToObject(this.config);
             } catch (Exception ignored) {
             }
         }
@@ -81,7 +81,7 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
         LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
         for (ConfigNode<?> childNode : this.getChildren()) {
             try {
-                map.put(childNode.getKey(), childNode.getConfigConverter().createObjectFromNode(childNode));
+                map.put(childNode.getKey(), childNode.getConfigConverter().serializeNodeToObject(childNode));
             } catch (Exception e) {
                 Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to save config path \"" + childNode.getPath() + ".\". Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
             }

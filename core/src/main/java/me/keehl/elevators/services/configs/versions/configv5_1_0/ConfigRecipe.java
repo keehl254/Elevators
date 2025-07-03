@@ -1,9 +1,11 @@
-package me.keehl.elevators.services.configs.versions.configv5;
+package me.keehl.elevators.services.configs.versions.configv5_1_0;
 
 import me.keehl.elevators.util.config.Comments;
 import me.keehl.elevators.util.config.Config;
+import me.keehl.elevators.util.config.RecipeRow;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 
 import java.util.*;
 
@@ -23,14 +25,12 @@ public class ConfigRecipe implements Config {
     @Comments("If this option is enabled, multiple variations of this recipe will be created for each dyed color.")
     protected boolean supportMultiColorMaterials = true;
 
-    @Comments("Create a shaped recipe using unique characters here and map these characters to materials in the \"material\" config option.")
-    protected List<String> recipe = Arrays.asList("www","wew","www");
-
-    @Comments("Map characters to their materials. If \"supportMultiColorMaterials\" is enabled, dye colors in materials such as \"white\" in \"white_wool\" will be substituted for different dye colors.")
-    protected Map<Character, Material> materials = new HashMap<Character, Material>() {{
-        put('w',Material.WHITE_WOOL);
-        put('e',Material.ENDER_PEARL);
-    }};
+    @Comments("Create a shaped recipe using item keys. You may use elevators:elevator_key to require an elevator in your recipe in Minecraft 1.21+")
+    protected List<RecipeRow<NamespacedKey>> recipe = Arrays.asList(
+            new RecipeRow<>(Arrays.asList(Material.WHITE_WOOL.getKey(), Material.WHITE_WOOL.getKey(), Material.WHITE_WOOL.getKey())),
+            new RecipeRow<>(Arrays.asList(Material.WHITE_WOOL.getKey(), Material.ENDER_PEARL.getKey(), Material.WHITE_WOOL.getKey())),
+            new RecipeRow<>(Arrays.asList(Material.WHITE_WOOL.getKey(), Material.WHITE_WOOL.getKey(), Material.WHITE_WOOL.getKey()))
+    );
 
     public static void setAmount(ConfigRecipe recipe, int amount) {
         recipe.amount = amount;
@@ -52,41 +52,32 @@ public class ConfigRecipe implements Config {
         recipe.supportMultiColorMaterials = supportMultiColorMaterials;
     }
 
-    public static void setRecipe(ConfigRecipe recipe, List<String> recipeText) {
-        recipe.recipe = new ArrayList<>(recipeText);
+    public static void setRecipe(ConfigRecipe recipe, List<RecipeRow<NamespacedKey>> recipeKeys) {
+        recipe.recipe = recipeKeys;
     }
 
-    public static void setMaterials(ConfigRecipe recipe, Map<Character, Material> materialMap) {
-        recipe.materials = new HashMap<>();
-        recipe.materials.putAll(materialMap);
+    public int getAmount() {
+        return this.amount;
     }
 
-    public static int getAmount(ConfigRecipe recipe) {
-        return recipe.amount;
+    public String getCraftPermission() {
+        return this.craftPermission;
     }
 
-    public static String getCraftPermission(ConfigRecipe recipe) {
-        return recipe.craftPermission;
+    public DyeColor getDefaultOutputColor() {
+        return this.defaultOutputColor;
     }
 
-    public static DyeColor getDefaultOutputColor(ConfigRecipe recipe) {
-        return recipe.defaultOutputColor;
+    public boolean supportsMultiColorOutput() {
+        return this.supportMultiColorOutput;
     }
 
-    public static boolean supportsMultiColorOutput(ConfigRecipe recipe) {
-        return recipe.supportMultiColorOutput;
+    public boolean supportsMultiColorMaterials() {
+        return this.supportMultiColorMaterials;
     }
 
-    public static boolean supportsMultiColorMaterials(ConfigRecipe recipe) {
-        return recipe.supportMultiColorMaterials;
-    }
-
-    public static List<String> getRecipe(ConfigRecipe recipe) {
-        return recipe.recipe;
-    }
-
-    public static Map<Character, Material> getMaterials(ConfigRecipe recipe) {
-        return recipe.materials;
+    public List<RecipeRow<NamespacedKey>> getRecipe() {
+        return this.recipe;
     }
 
 }

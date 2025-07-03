@@ -6,7 +6,7 @@ import me.keehl.elevators.models.hooks.PlaceholderHook;
 import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorDataContainerService;
 import me.keehl.elevators.services.ElevatorHookService;
-import me.keehl.elevators.services.configs.versions.configv5.ConfigLocale;
+import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigLocale;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;

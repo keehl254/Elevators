@@ -1,5 +1,5 @@
 group = "me.keehl"
-version = "5.0.0-beta.11"
+version = "5.0.0-beta.12"
 
 plugins {
     kotlin("jvm") version "1.9.0"

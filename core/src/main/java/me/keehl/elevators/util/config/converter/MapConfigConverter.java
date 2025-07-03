@@ -13,31 +13,17 @@ import java.util.*;
 public class MapConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> createNodeFromFieldAndObject(ConfigNode<?> parentNode, Class<?> fieldType, String key, Object object, @Nullable Field field) throws Exception {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception {
         Map<Object, Object> mapObj = new LinkedHashMap<>();
 
-        ConfigNode<?> myNode = createNodeWithData(parentNode, key, mapObj, field);
+        ConfigNode<?> myNode = createNodeWithData(parentNode, key, mapObj, fieldData.getField());
 
-        ConfigConverter valueConverter = null;
-        Class<?> valueClazz = null;
-        Class<?> keyClazz = null;
-        if (field != null) {
-            keyClazz = Elevators.getInstance().getClass().getClassLoader().loadClass(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0].getTypeName());
-            valueClazz = Elevators.getInstance().getClass().getClassLoader().loadClass(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[1].getTypeName());
-            Type valueType = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[1];
-            Class<?> containerParam;
-            if (valueType instanceof ParameterizedType) {
-                ParameterizedType parameterizedType = (ParameterizedType) valueType;
-                containerParam = (Class<?>) parameterizedType.getRawType();
-                if (containerParam.isAssignableFrom(List.class) && containerParam.isInterface()) {
-                    containerParam = ArrayList.class;
-                }
-            } else
-                containerParam = (Class<?>) valueType;
+        FieldData[] fieldDataList = fieldData.getGenericData();
+        FieldData keyFieldData = fieldDataList[0];
+        FieldData valueFieldData = fieldDataList[1];
 
-            valueConverter = ConfigConverter.getConverter(containerParam);
-            valueClazz = containerParam;
-        }
+
+        ConfigConverter valueConverter = valueFieldData.getFieldClass() != null ? getConverter(valueFieldData.getFieldClass()) : null;
 
         if (object instanceof Map<?, ?>) {
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) object).entrySet()) {
@@ -47,18 +33,18 @@ public class MapConfigConverter extends ConfigConverter {
                 ConfigNode<?> childNode;
 
                 if (valueConverter != null)
-                    childNode = valueConverter.createNodeFromFieldAndObject(myNode, valueClazz, entry.getKey().toString(), entry.getValue(), null);
+                    childNode = valueConverter.deserializeNodeWithFieldAndObject(myNode, entry.getKey().toString(), entry.getValue(), valueFieldData);
                 else
                     childNode = this.createNodeWithData(myNode, entry.getKey().toString(), entry.getValue(), null);
 
                 Object keyObj = null;
-                if (keyClazz.isEnum()) {
-                    Optional<?> objectOpt = Arrays.stream(keyClazz.getEnumConstants()).filter(i -> i.toString().equalsIgnoreCase(entry.getKey().toString())).findFirst();
+                if (keyFieldData.getFieldClass().isEnum()) {
+                    Optional<?> objectOpt = Arrays.stream(keyFieldData.getFieldClass().getEnumConstants()).filter(i -> i.toString().equalsIgnoreCase(entry.getKey().toString())).findFirst();
                     if (objectOpt.isPresent())
                         keyObj = objectOpt.get();
                 }
                 if (keyObj == null)
-                    keyObj = PrimitiveConfigConverter.createPrimitiveFromObj(keyClazz, entry.getKey());
+                    keyObj = PrimitiveConfigConverter.createPrimitiveFromObj(keyFieldData.getFieldClass(), entry.getKey());
 
                 myNode.getChildren().add(childNode);
                 mapObj.put(keyObj, childNode.getValue());
@@ -70,7 +56,7 @@ public class MapConfigConverter extends ConfigConverter {
         return myNode;
     }
 
-    public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
+    public Object serializeNodeToObject(ConfigNode<?> node) throws Exception {
 
         LinkedHashMap<String, Object> newMap = new LinkedHashMap<>();
 
@@ -80,7 +66,7 @@ public class MapConfigConverter extends ConfigConverter {
 
             ConfigConverter converter = ConfigConverter.getConverter(value.getClass());
             if (converter != null)
-                value = converter.createObjectFromNode(childNode);
+                value = converter.serializeNodeToObject(childNode);
 
             newMap.put(childNode.getKey(), value);
         }
@@ -89,7 +75,7 @@ public class MapConfigConverter extends ConfigConverter {
     }
 
     @Override
-    public Object createObjectFromValue(Object mapObj) throws Exception {
+    public Object serializeValueToObject(Object mapObj) throws Exception {
 
         if (!(mapObj instanceof Map<?, ?>))
             return new HashMap<>();
@@ -103,11 +89,11 @@ public class MapConfigConverter extends ConfigConverter {
 
             ConfigConverter converter = ConfigConverter.getConverter(key.getClass());
             if (converter != null)
-                key = converter.createObjectFromValue(key);
+                key = converter.serializeValueToObject(key);
 
             converter = ConfigConverter.getConverter(value.getClass());
             if (converter != null)
-                value = converter.createObjectFromValue(value);
+                value = converter.serializeValueToObject(value);
 
             newMap.put(key, value);
         }

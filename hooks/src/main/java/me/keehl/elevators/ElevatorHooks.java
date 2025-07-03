@@ -19,6 +19,7 @@ public class ElevatorHooks {
         ElevatorHookService.registerHook("FancyHolograms", FancyHologramsHook.class);
 
         ElevatorHookService.registerHook("PlaceholderAPI", PlaceholderAPIHook.class);
+
     }
 
 }

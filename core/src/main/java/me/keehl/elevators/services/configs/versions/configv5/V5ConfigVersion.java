@@ -1,23 +1,25 @@
 package me.keehl.elevators.services.configs.versions.configv5;
 
 import me.keehl.elevators.Elevators;
-import me.keehl.elevators.models.ElevatorRecipeGroup;
-import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.models.hooks.ProtectionHook;
 import me.keehl.elevators.services.ElevatorHookService;
 import me.keehl.elevators.services.configs.ConfigVersion;
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRecipe;
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRoot;
+import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigEffect;
+import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigHookData;
+import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigLocale;
 import org.bukkit.DyeColor;
 
 import java.util.HashMap;
 
-public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, ConfigRoot> {
+public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, V5ConfigRoot> {
+
     @Override
-    public ConfigRoot upgradeVersion(V4_0_2ConfigRoot currentConfig) {
+    public V5ConfigRoot upgradeVersion(V4_0_2ConfigRoot currentConfig) {
         Elevators.getElevatorsLogger().info("Converting config from V4.0.2 - V5.0.0");
 
-        ConfigRoot newConfig = new ConfigRoot();
+        V5ConfigRoot newConfig = new V5ConfigRoot();
         newConfig.updateCheckerEnabled = currentConfig.updateCheckerEnabled;
         newConfig.forceFacingUpwards = currentConfig.forceFacingUpwards;
 
@@ -32,7 +34,7 @@ public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, ConfigRoot>
 
         newConfig.locale = locale;
 
-        // We now support many different protection hooks, so lets set the "claimProtectionDefault" setting on all that are loaded.
+        // We now support many different protection hooks, so let's set the "claimProtectionDefault" setting on all that are loaded.
         for (ProtectionHook hook : ElevatorHookService.getProtectionHooks()) {
             ConfigHookData hookData = new ConfigHookData();
             hookData.blockNonMemberUseDefault = currentConfig.claimProtectionDefault;
@@ -58,7 +60,7 @@ public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, ConfigRoot>
 
         // It hurts to carry over the old perms, because the old perms do not take into account multiple elevator types. Oh well.
 
-        ElevatorType defaultElevator = new ElevatorType();
+        V5ConfigElevatorType defaultElevator = new V5ConfigElevatorType();
         defaultElevator.usePermission = "elevators.use";
         defaultElevator.dyePermission = "elevators.dye";
 
@@ -79,7 +81,7 @@ public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, ConfigRoot>
 
         for (String recipeKey : currentConfig.recipes.keySet()) {
             V4_0_2ConfigRecipe currentRecipe = currentConfig.recipes.get(recipeKey);
-            ElevatorRecipeGroup newRecipe = new ElevatorRecipeGroup();
+            V5ConfigRecipe newRecipe = new V5ConfigRecipe();
             newRecipe.defaultOutputColor = DyeColor.valueOf(currentConfig.defaultColor);
             newRecipe.supportMultiColorOutput = currentRecipe.coloredCrafting;
             newRecipe.supportMultiColorMaterials = currentRecipe.coloredCrafting;

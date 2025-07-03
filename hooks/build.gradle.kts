@@ -33,6 +33,7 @@ repositories {
     maven("https://repo.bg-software.com/repository/api/")
     maven("https://repo.thenextlvl.net/releases/")
     maven("https://maven.enginehub.org/repo/")
+    maven("https://maven.devs.beer/")
 }
 
 dependencies {
@@ -41,7 +42,7 @@ dependencies {
     compileOnly(platform("com.intellectualsites.bom:bom-newest:1.32"))
 
     // Our hooks project is allowed to reference later versions. We must be very careful, though.
-    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.6-R0.1-SNAPSHOT")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
     compileOnly("net.kyori:adventure-api:4.14.0")
@@ -64,6 +65,8 @@ dependencies {
 
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
     compileOnly("de.oliver:FancyHolograms:2.4.2")
+
+    compileOnly("dev.lone:api-itemsadder:4.0.10")
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {

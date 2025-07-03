@@ -1,44 +1,44 @@
 package me.keehl.elevators.util.config.converter;
 
-import com.sun.org.apache.xerces.internal.dom.ChildNode;
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.util.config.ConfigConverter;
+import me.keehl.elevators.util.config.RecipeRow;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public class SetConfigConverter extends ConfigConverter {
+public class RecipeRowConfigConverter extends ConfigConverter {
 
     @Override
     public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception {
 
-        FieldData childData = fieldData.getGenericData()[0];
-        ConfigConverter converter = childData != null ? getConverter(childData.getFieldClass()) : null;
+        ConfigConverter converter = null;
+        FieldData childFieldData = fieldData.getGenericData()[0];
+        if(childFieldData != null)
+            converter = getConverter(childFieldData.getFieldClass());
 
-        List<Object> values = new ArrayList<>();
-
-        List<ConfigNode<?>> childrenNodes = new ArrayList<>();
+        RecipeRow<Object> values = new RecipeRow<>();
+        ConfigNode<?> myNode = createNodeWithData(parentNode, key, values, fieldData.getField());
 
         for (Object obj : (Collection<?>) object) {
             if (converter != null) {
-                ConfigNode<?> childNode = converter.deserializeNodeWithFieldAndObject(parentNode, obj.toString(), obj, childData);
+                ConfigNode<?> childNode = converter.deserializeNodeWithFieldAndObject(parentNode, obj.toString(), obj, childFieldData);
                 values.add(childNode.getValue());
-                childrenNodes.add(childNode);
-            }else
-                childrenNodes.add(this.createNodeWithData(parentNode, obj.toString(), obj, null));
+                myNode.getChildren().add(childNode);
+            } else
+                myNode.getChildren().add(this.createNodeWithData(parentNode, obj.toString(), obj, null));
         }
-        ConfigNode<?> myNode = createNodeWithData(parentNode, key, new HashSet<>(values), fieldData.getField());
-        myNode.getChildren().addAll(childrenNodes);
 
         return myNode;
     }
 
     public Object serializeNodeToObject(ConfigNode<?> node) throws Exception {
 
-        List<Object> values = new ArrayList<>();
+        RecipeRow<Object> values = new RecipeRow<>();
         for(ConfigNode<?> childNode : node.getChildren()) {
             Object value = childNode.getValue();
 
@@ -53,15 +53,15 @@ public class SetConfigConverter extends ConfigConverter {
     }
 
     @Override
-    public Object serializeValueToObject(Object setObj) throws Exception {
+    public Object serializeValueToObject(Object listObj) throws Exception {
 
-        if(!(setObj instanceof Set<?>))
-            return new HashSet<>();
+        if(!(listObj instanceof RecipeRow<?>))
+            return new RecipeRow<>();
 
-        Set<?> set = (Set<?>) setObj;
+        RecipeRow<?> list = (RecipeRow<?>) listObj;
 
-        List<Object> values = new ArrayList<>();
-        for(Object item : set) {
+        RecipeRow<Object> values = new RecipeRow<>();
+        for(Object item : list) {
             ConfigConverter converter = ConfigConverter.getConverter(item.getClass());
             if (converter != null)
                 item = converter.serializeValueToObject(item);
@@ -72,7 +72,7 @@ public class SetConfigConverter extends ConfigConverter {
 
     @Override
     public boolean supports(Class<?> type) {
-        return Set.class.isAssignableFrom(type);
+        return RecipeRow.class.isAssignableFrom(type);
     }
 
     @Override

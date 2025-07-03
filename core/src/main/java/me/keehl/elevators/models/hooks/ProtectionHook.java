@@ -3,7 +3,7 @@ package me.keehl.elevators.models.hooks;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorDataContainerService;
-import me.keehl.elevators.services.configs.versions.configv5.ConfigHookData;
+import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigHookData;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

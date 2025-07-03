@@ -10,38 +10,38 @@ import java.lang.reflect.Field;
 public class PrimitiveConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> createNodeFromFieldAndObject(ConfigNode<?> parentNode, Class<?> fieldType, String key, Object object, @Nullable Field field) {
-        switch(fieldType.getSimpleName().toLowerCase()) {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) {
+        switch(fieldData.getFieldClass().getSimpleName().toLowerCase()) {
             case "short":
-                return createNodeWithData(parentNode, key, (object instanceof Short) ? object : Integer.valueOf((int) object).shortValue(), field);
+                return createNodeWithData(parentNode, key, (object instanceof Short) ? object : Integer.valueOf((int) object).shortValue(), fieldData.getField());
             case "byte":
-                return createNodeWithData(parentNode, key, (object instanceof Byte) ? object : Integer.valueOf((int) object).byteValue(), field);
+                return createNodeWithData(parentNode, key, (object instanceof Byte) ? object : Integer.valueOf((int) object).byteValue(), fieldData.getField());
             case "float":
                 if (object instanceof Integer)
-                    return createNodeWithData(parentNode, key, Double.valueOf((int) object).floatValue(), field);
+                    return createNodeWithData(parentNode, key, Double.valueOf((int) object).floatValue(), fieldData.getField());
                 else
-                    return createNodeWithData(parentNode, key, (object instanceof Float) ? object : Double.valueOf((double) object).floatValue(), field);
+                    return createNodeWithData(parentNode, key, (object instanceof Float) ? object : Double.valueOf((double) object).floatValue(), fieldData.getField());
             case "char":
-                return createNodeWithData(parentNode, key, (object instanceof Character) ? object : ((String) object).charAt(0), field);
+                return createNodeWithData(parentNode, key, (object instanceof Character) ? object : ((String) object).charAt(0), fieldData.getField());
             case "boolean":
-                return createNodeWithData(parentNode, key, (object instanceof Boolean) ? object : Boolean.getBoolean((String) object), field);
+                return createNodeWithData(parentNode, key, (object instanceof Boolean) ? object : Boolean.getBoolean((String) object), fieldData.getField());
             case "integer":
-                return createNodeWithData(parentNode, key, object instanceof Integer ? object : Integer.valueOf(object.toString()), field);
+                return createNodeWithData(parentNode, key, object instanceof Integer ? object : Integer.valueOf(object.toString()), fieldData.getField());
             case "long":
-                return createNodeWithData(parentNode, key, object instanceof Long ? object : Long.valueOf(object.toString()), field);
+                return createNodeWithData(parentNode, key, object instanceof Long ? object : Long.valueOf(object.toString()), fieldData.getField());
             case "string":
-                return createNodeWithData(parentNode, key, object.toString(), field);
+                return createNodeWithData(parentNode, key, object.toString(), fieldData.getField());
         }
 
-        return createNodeWithData(parentNode, key, object, field);
+        return createNodeWithData(parentNode, key, object, fieldData.getField());
     }
 
-    public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
-        return createObjectFromValue(node.getValue());
+    public Object serializeNodeToObject(ConfigNode<?> node) throws Exception {
+        return serializeValueToObject(node.getValue());
     }
 
     @Override
-    public Object createObjectFromValue(Object value) throws Exception {
+    public Object serializeValueToObject(Object value) throws Exception {
         return value;
     }
 

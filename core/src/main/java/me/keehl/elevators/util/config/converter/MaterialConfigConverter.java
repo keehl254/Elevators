@@ -10,16 +10,16 @@ import java.lang.reflect.Field;
 public class MaterialConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> createNodeFromFieldAndObject(ConfigNode<?> parentNode, Class<?> fieldType, String key, Object object, @Nullable Field field) {
-        return createNodeWithData(parentNode, key, Material.matchMaterial(object.toString()), field);
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) {
+        return createNodeWithData(parentNode, key, Material.matchMaterial(object.toString()), fieldData.getField());
     }
 
-    public Object createObjectFromNode(ConfigNode<?> node) throws Exception {
-        return createObjectFromValue(node.getValue());
+    public Object serializeNodeToObject(ConfigNode<?> node) throws Exception {
+        return serializeValueToObject(node.getValue());
     }
 
     @Override
-    public Object createObjectFromValue(Object value) throws Exception {
+    public Object serializeValueToObject(Object value) throws Exception {
         Material materialValue = (Material) value;
         return materialValue != null ? materialValue.getKey().toString() : null;
     }

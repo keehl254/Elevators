@@ -7,7 +7,7 @@ import me.keehl.elevators.helpers.VersionHelper;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.models.hooks.WrappedHologram;
-import me.keehl.elevators.services.configs.versions.configv5.ConfigRoot;
+import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import org.bukkit.Chunk;
 import org.bukkit.block.BlockState;
@@ -27,37 +27,37 @@ public class ElevatorHologramService {
     private static int currentIndex = 0;
 
     public static void init() {
-        if(ElevatorHologramService.initialized)
+        if (ElevatorHologramService.initialized)
             return;
 
         ElevatorConfigService.addConfigCallback(ElevatorHologramService::onConfigReload);
 
         task = Elevators.getFoliaLib().getScheduler().runTimer(() -> {
-            if(!canUseHolograms())
+            if (!canUseHolograms())
                 return;
 
             WrappedHologram[] holograms = getHolograms().toArray(new WrappedHologram[]{});
-            if(holograms.length == 0)
+            if (holograms.length == 0)
                 return;
 
             // Try to update 10 holos at a time.
             int attempts = 0;
             int startIndex = currentIndex;
-            while(attempts++ < 10) {
+            while (attempts++ < 10) {
                 currentIndex = currentIndex % holograms.length;
                 WrappedHologram hologram = holograms[currentIndex];
-                if(!hologram.getElevatorLocation().getChunk().isLoaded())
+                if (!hologram.getElevatorLocation().getChunk().isLoaded())
                     continue;
 
                 hologram.update();
                 currentIndex++;
 
                 // We've come full circle looking for 10 holos to update.
-                if(startIndex == currentIndex)
+                if (startIndex == currentIndex)
                     return;
             }
 
-        }, 5,5);
+        }, 5, 5);
 
         ElevatorHologramService.initialized = true;
     }
@@ -73,10 +73,10 @@ public class ElevatorHologramService {
     public static WrappedHologram getElevatorHologramIfExists(Elevator elevator) {
 
         ShulkerBox shulkerBox = elevator.getShulkerBox();
-        if(shulkerBox.hasMetadata("elevator-holo-uuid")) {
+        if (shulkerBox.hasMetadata("elevator-holo-uuid")) {
             String hologramUUID = shulkerBox.getMetadata("elevator-holo-uuid").get(0).asString();
             WrappedHologram hologram = getHologram(hologramUUID);
-            if(hologram != null)
+            if (hologram != null)
                 return hologram;
 
             // It had the metadata, but the hologram could not be found.
@@ -87,11 +87,11 @@ public class ElevatorHologramService {
 
     public static WrappedHologram getElevatorHologram(Elevator elevator) {
 
-        if(!canUseHolograms())
+        if (!canUseHolograms())
             return null;
 
         WrappedHologram hologram = getElevatorHologramIfExists(elevator);
-        if(hologram != null)
+        if (hologram != null)
             return hologram;
 
         hologram = ElevatorHookService.getHologramHook().createHologram(elevator);
@@ -102,8 +102,8 @@ public class ElevatorHologramService {
 
     public static void deleteHologram(Elevator elevator) {
 
-        WrappedHologram hologram = getElevatorHologram(elevator);
-        if(hologram == null)
+        WrappedHologram hologram = getElevatorHologramIfExists(elevator);
+        if (hologram == null)
             return;
 
         hologram.delete();
@@ -127,7 +127,7 @@ public class ElevatorHologramService {
     }
 
     public static void updateHologramsInChunk(Chunk chunk) {
-        if(!canUseHolograms())
+        if (!canUseHolograms())
             return;
 
         Collection<BlockState> tileEntities = VersionHelper.getShulkerBoxesInChunk(chunk);
@@ -137,7 +137,7 @@ public class ElevatorHologramService {
             ShulkerBox box = (ShulkerBox) state;
 
             ElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
-            if(elevatorType == null)
+            if (elevatorType == null)
                 continue;
 
             ElevatorHologramService.updateElevatorHologram(new Elevator(box, elevatorType));
@@ -146,19 +146,19 @@ public class ElevatorHologramService {
 
     public static void updateElevatorHologram(Elevator elevator) {
 
-        if(!canUseHolograms())
+        if (!canUseHolograms())
             return;
 
-        if(elevator == null)
+        if (elevator == null)
             return;
 
         List<String> hologramLines = elevator.getElevatorType().getHolographicLines().stream().map(i -> MessageHelper.formatPlaceholders(null, i)).collect(Collectors.toList());
 
         WrappedHologram hologram = hologramLines.isEmpty() ? getElevatorHologramIfExists(elevator) : getElevatorHologram(elevator);
-        if(hologram == null) // We delete holograms that are empty. No need to "create" the hologram just to delete it.
+        if (hologram == null) // We delete holograms that are empty. No need to "create" the hologram just to delete it.
             return;
 
-        if(hologramLines.isEmpty()) {
+        if (hologramLines.isEmpty()) {
             hologram.delete();
             return;
         }
@@ -169,7 +169,7 @@ public class ElevatorHologramService {
 
     public static void updateHologramsOfElevatorType(ElevatorType elevatorType) {
         List<? extends WrappedHologram> holograms = getHolograms().stream().filter(i -> i.getElevatorType().equals(elevatorType)).collect(Collectors.toList());
-        for(WrappedHologram hologram : holograms)
+        for (WrappedHologram hologram : holograms)
             hologram.update();
     }
 
@@ -177,20 +177,20 @@ public class ElevatorHologramService {
         UUID uuid;
         do {
             uuid = UUID.randomUUID();
-        } while(holograms.containsKey(uuid.toString()));
+        } while (holograms.containsKey(uuid.toString()));
 
         return uuid;
     }
 
     public static void clearAll() {
-        if(!canUseHolograms())
+        if (!canUseHolograms())
             return;
 
         new ArrayList<>(holograms.values()).forEach(WrappedHologram::delete);
     }
 
     public static void registerHologram(WrappedHologram holo) {
-        if(!canUseHolograms())
+        if (!canUseHolograms())
             return;
 
         holograms.put(holo.getUUID(), holo);
@@ -198,32 +198,32 @@ public class ElevatorHologramService {
     }
 
     public static void unregisterHologram(WrappedHologram hologram) {
-        if(!canUseHolograms())
+        if (!canUseHolograms())
             return;
 
         holograms.remove(hologram.getUUID());
 
         Elevator elevator = hologram.getElevator();
-        if(elevator != null && elevator.getShulkerBox() != null)
+        if (elevator != null && elevator.getShulkerBox() != null)
             elevator.getShulkerBox().removeMetadata("elevator-holo-uuid", Elevators.getInstance());
     }
 
     public static Collection<WrappedHologram> getHolograms() {
-        if(!canUseHolograms())
+        if (!canUseHolograms())
             return new ArrayList<>();
 
         return holograms.values();
     }
 
     public static WrappedHologram getHologram(String uuid) {
-        if(!canUseHolograms())
+        if (!canUseHolograms())
             return null;
 
         return holograms.get(uuid);
     }
 
     public static boolean canUseHolograms() {
-        return ElevatorHookService.getHologramHook() != null;
+        return ElevatorHookService.getHologramHook() != null && (ElevatorConfigService.isConfigLoaded() && ElevatorConfigService.getRootConfig().hologramServiceEnabled);
     }
 
 }

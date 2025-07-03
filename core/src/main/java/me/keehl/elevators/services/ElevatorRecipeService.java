@@ -3,7 +3,7 @@ package me.keehl.elevators.services;
 import me.keehl.elevators.helpers.VersionHelper;
 import me.keehl.elevators.models.ElevatorRecipeGroup;
 import me.keehl.elevators.models.ElevatorType;
-import me.keehl.elevators.services.configs.versions.configv5.ConfigRoot;
+import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;

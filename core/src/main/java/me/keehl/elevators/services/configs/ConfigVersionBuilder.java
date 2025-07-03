@@ -12,8 +12,10 @@ import me.keehl.elevators.services.configs.versions.configv4.V4ConfigRoot;
 import me.keehl.elevators.services.configs.versions.configv4.V4ConfigVersion;
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRoot;
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigVersion;
-import me.keehl.elevators.services.configs.versions.configv5.ConfigRoot;
+import me.keehl.elevators.services.configs.versions.configv5.V5ConfigRoot;
 import me.keehl.elevators.services.configs.versions.configv5.V5ConfigVersion;
+import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
+import me.keehl.elevators.services.configs.versions.configv5_1_0.V5_1_0ConfigVersion;
 import me.keehl.elevators.util.config.Config;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ConfigRootNode;
@@ -33,6 +35,7 @@ public class ConfigVersionBuilder {
     private static final V4ConfigVersion v4ConfigVersion = new V4ConfigVersion();
     private static final V4_0_2ConfigVersion v4_0_2ConfigVersion = new V4_0_2ConfigVersion();
     private static final V5ConfigVersion v5ConfigVersion = new V5ConfigVersion();
+    private static final V5_1_0ConfigVersion v5_1_0ConfigVersion = new V5_1_0ConfigVersion();
 
     @SuppressWarnings("unchecked")
     private static <Z extends Config, T extends Config, V extends ConfigVersion<Z, T>> T convert(V converter, File configFile, Z existingRoot) throws Exception {
@@ -70,15 +73,17 @@ public class ConfigVersionBuilder {
                     root = convert(v4ConfigVersion, configFile, (V3ConfigRoot) root);
                 case "4.0.2":
                     root = convert(v4_0_2ConfigVersion, configFile, (V4ConfigRoot) root);
-                default:
+                case "5.0.0":
                     root = convert(v5ConfigVersion, configFile, (V4_0_2ConfigRoot) root);
+                default:
+                    root = convert(v5_1_0ConfigVersion, configFile, (V5ConfigRoot) root);
             }
 
             ConfigConverter converter = ConfigConverter.getConverter(root.getClass());
             if(converter == null)
                 throw new RuntimeException("Failed to convert elevators version.");
 
-            Map<?,?> data = (Map<?, ?>) converter.createObjectFromValue(root);
+            Map<?,?> data = (Map<?, ?>) converter.serializeValueToObject(root);
             ConfigRootNode<ConfigRoot> rootNode = ConfigConverter.createNodeForConfigData((ConfigRoot) root, data);
             if(rootNode == null)
                 throw new RuntimeException("Failed to convert elevators version.");
