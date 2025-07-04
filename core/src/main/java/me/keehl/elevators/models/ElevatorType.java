@@ -3,6 +3,7 @@ package me.keehl.elevators.models;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.services.ElevatorActionService;
 import me.keehl.elevators.services.ElevatorHologramService;
+import me.keehl.elevators.services.ElevatorRecipeService;
 import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigElevatorType;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -53,6 +54,7 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+        ElevatorRecipeService.refreshRecipes();
 
         Elevators.getInstance().saveConfig();
     }
@@ -180,6 +182,7 @@ public class ElevatorType extends ConfigElevatorType {
      */
     public void setLore(List<String> loreLines) {
         this.loreLines = loreLines;
+        ElevatorRecipeService.refreshRecipes();
 
         Elevators.getInstance().saveConfig();
     }

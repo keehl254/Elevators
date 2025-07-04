@@ -20,6 +20,9 @@ public class ElevatorHooks {
 
         ElevatorHookService.registerHook("PlaceholderAPI", PlaceholderAPIHook.class);
 
+        ElevatorHookService.registerHook("ItemsAdder", ItemsAdderHook.class);
+        ElevatorHookService.registerHook("Oraxen", OraxenHook.class);
+        ElevatorHookService.registerHook("Nexo", NexoHook.class);
     }
 
 }

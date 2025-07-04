@@ -34,6 +34,8 @@ repositories {
     maven("https://repo.thenextlvl.net/releases/")
     maven("https://maven.enginehub.org/repo/")
     maven("https://maven.devs.beer/")
+    maven("https://repo.oraxen.com/releases")
+    maven("https://repo.nexomc.com/releases")
 }
 
 dependencies {
@@ -67,6 +69,8 @@ dependencies {
     compileOnly("de.oliver:FancyHolograms:2.4.2")
 
     compileOnly("dev.lone:api-itemsadder:4.0.10")
+    compileOnly("io.th0rgal:oraxen:1.190.0") { isTransitive = false }
+    compileOnly("com.nexomc:nexo:1.8.0") //Nexo 1.X -> 1.X.0
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
