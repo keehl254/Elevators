@@ -1,6 +1,7 @@
 package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
+import me.keehl.elevators.helpers.ElevatorHelper;
 import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.models.Elevator;
@@ -10,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -128,6 +128,11 @@ public class ElevatorHookService {
 
     public static NamespacedKey getKeyFromItemStack(ItemStack item) {
         try {
+
+            ElevatorType elevatorType = ElevatorHelper.getElevatorType(item);
+            if(elevatorType != null)
+                return new NamespacedKey(Elevators.getInstance(), elevatorType.getTypeKey().toLowerCase());
+
             for(ItemsHook hook : ElevatorHookService.getItemsHooks()) {
                 NamespacedKey key = hook.getKeyFromItemStack(item);
                 if(key != null)

@@ -5,7 +5,6 @@ import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import me.keehl.elevators.models.hooks.ItemsHook;
 import me.keehl.elevators.services.ElevatorListenerService;
 import me.keehl.elevators.services.ElevatorRecipeService;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
@@ -14,9 +13,7 @@ public class ItemsAdderHook extends ItemsHook {
 
     public ItemsAdderHook() {
 
-        ElevatorListenerService.registerEventExecutor(ItemsAdderLoadDataEvent.class, EventPriority.MONITOR, (ItemsAdderLoadDataEvent event) -> {
-            ElevatorRecipeService.refreshRecipes();
-        });
+        ElevatorListenerService.registerEventExecutor(ItemsAdderLoadDataEvent.class, EventPriority.MONITOR, (ItemsAdderLoadDataEvent event) -> ElevatorRecipeService.refreshRecipes());
 
     }
 
