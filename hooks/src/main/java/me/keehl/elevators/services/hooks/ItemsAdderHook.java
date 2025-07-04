@@ -22,10 +22,7 @@ public class ItemsAdderHook extends ItemsHook {
 
     @Override
     public ItemStack createItemStackFromKey(NamespacedKey key) {
-        if(!key.getKey().equalsIgnoreCase("ItemsAdder"))
-            return null;
-
-        CustomStack stack = CustomStack.getInstance(key.getNamespace());
+        CustomStack stack = CustomStack.getInstance(key.toString());
         if(stack == null)
             return null;
         return stack.getItemStack();
@@ -37,7 +34,7 @@ public class ItemsAdderHook extends ItemsHook {
         if(stack == null)
             return null;
 
-        return NamespacedKey.fromString(stack.getNamespace(), Bukkit.getPluginManager().getPlugin("ItemsAdder"));
+        return new NamespacedKey(stack.getNamespace(), stack.getId());
     }
 
 }

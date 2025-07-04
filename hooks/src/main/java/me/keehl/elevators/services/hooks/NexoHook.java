@@ -3,7 +3,6 @@ package me.keehl.elevators.services.hooks;
 import com.nexomc.nexo.api.NexoItems;
 import com.nexomc.nexo.items.ItemBuilder;
 import me.keehl.elevators.models.hooks.ItemsHook;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,7 +13,7 @@ public class NexoHook extends ItemsHook {
         if(!key.getKey().equalsIgnoreCase("Nexo"))
             return null;
 
-        ItemBuilder itemBuilder = NexoItems.itemFromId(key.getNamespace());
+        ItemBuilder itemBuilder = NexoItems.itemFromId(key.getKey());
         if(itemBuilder == null)
             return null;
 
@@ -23,11 +22,11 @@ public class NexoHook extends ItemsHook {
 
     @Override
     public NamespacedKey getKeyFromItemStack(ItemStack item) {
-        String namespace = NexoItems.idFromItem(item);
-        if(namespace == null)
+        String key = NexoItems.idFromItem(item);
+        if(key == null)
             return null;
 
-        return NamespacedKey.fromString(namespace, Bukkit.getPluginManager().getPlugin("Nexo"));
+        return new NamespacedKey("Nexo", key);
     }
 
 }

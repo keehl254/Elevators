@@ -16,17 +16,17 @@ public class OraxenHook extends ItemsHook {
         if(!key.getKey().equalsIgnoreCase("Oraxen"))
             return null;
 
-        Optional<ItemBuilder> itemBuilder = OraxenItems.getOptionalItemById(key.getNamespace());
+        Optional<ItemBuilder> itemBuilder = OraxenItems.getOptionalItemById(key.getKey());
         return itemBuilder.map(ItemBuilder::build).orElse(null);
     }
 
     @Override
     public NamespacedKey getKeyFromItemStack(ItemStack item) {
-        String namespace = OraxenItems.getIdByItem(item);
-        if(namespace == null)
+        String key = OraxenItems.getIdByItem(item);
+        if(key == null)
             return null;
 
-        return NamespacedKey.fromString(namespace, Bukkit.getPluginManager().getPlugin("Oraxen"));
+        return new NamespacedKey("Oraxen", key);
     }
 
 }
