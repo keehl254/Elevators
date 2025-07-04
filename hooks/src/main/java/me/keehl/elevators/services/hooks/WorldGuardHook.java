@@ -33,9 +33,9 @@ public class WorldGuardHook extends ProtectionHook {
     public WorldGuardHook() {
         super("WorldGuard");
 
-        USE_FLAG = registerFlag("elevators-allow-use");
-        NAME_FLAG = registerFlag("elevators-allow-rename");
-        SETTINGS_FLAG = registerFlag("elevators-allow-settings");
+        USE_FLAG = registerFlag("elevators_allow_use");
+        NAME_FLAG = registerFlag("elevators_allow_rename");
+        SETTINGS_FLAG = registerFlag("elevators_allow_settings");
     }
 
     private StateFlag registerFlag(String flagName) {

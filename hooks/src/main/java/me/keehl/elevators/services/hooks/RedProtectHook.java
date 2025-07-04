@@ -19,9 +19,9 @@ public class RedProtectHook extends ProtectionHook {
     //TODO: Code cleanup
     private final RedProtectAPI redProtect;
 
-    private final String flagName = "outsiders-use-elevators";
-    private final String nameFlagName = "edit-name-elevators";
-    private final String settingsFlagName = "edit-settings-elevators";
+    private final String flagName = "outsiders_use_elevators";
+    private final String nameFlagName = "edit_name_elevators";
+    private final String settingsFlagName = "edit_settings_elevators";
 
     public RedProtectHook() {
         super("RedProtect");

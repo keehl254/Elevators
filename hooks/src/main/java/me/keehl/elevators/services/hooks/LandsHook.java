@@ -32,13 +32,13 @@ public class LandsHook extends ProtectionHook {
         this.lands = LandsIntegration.of(Elevators.getInstance());
 
         this.lands.onLoad(() -> {
-            this.useFlag = RoleFlag.of(this.lands, FlagTarget.PLAYER, RoleFlagCategory.ACTION, "elevator-use");
+            this.useFlag = RoleFlag.of(this.lands, FlagTarget.PLAYER, RoleFlagCategory.ACTION, "elevator_use");
             this.useFlag.setDisplayName("Elevator Use");
             this.useFlag.setDescription("Allows the role to use Elevators in this area");
             this.useFlag.setIcon(ItemStackHelper.createItem(ChatColor.RED + "" + ChatColor.BOLD + "Elevator Use", Material.RED_SHULKER_BOX,1,MessageHelper.formatLore("Allows the rule to use Elevators in this area", ChatColor.GRAY)));
             this.useFlag.setAlwaysAllowInWilderness(true);
 
-            this.settingsFlag = RoleFlag.of(this.lands, FlagTarget.PLAYER, RoleFlagCategory.ACTION, "elevator-settings");
+            this.settingsFlag = RoleFlag.of(this.lands, FlagTarget.PLAYER, RoleFlagCategory.ACTION, "elevator_settings");
             this.settingsFlag.setDisplayName("Elevator Manage");
             this.settingsFlag.setDescription("Allows the role to edit Elevators in this area");
             this.settingsFlag.setIcon(ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "Elevator Manage", Material.LIGHT_GRAY_SHULKER_BOX,1,MessageHelper.formatLore("Allows the rule to edit Elevators in this area", ChatColor.GRAY)));

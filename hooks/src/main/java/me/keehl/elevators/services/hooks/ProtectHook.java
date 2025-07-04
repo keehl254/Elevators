@@ -38,9 +38,9 @@ public class ProtectHook extends ProtectionHook {
         super("Protect");
 
         this.protectPlugin = (ProtectPlugin) Bukkit.getPluginManager().getPlugin("Protect");
-        this.useFlag = registerFlag("elevator-use");
-        this.nameFlag = registerFlag("elevator-rename");
-        this.settingsFlag = registerFlag("elevator-settings");
+        this.useFlag = registerFlag("elevator_use");
+        this.nameFlag = registerFlag("elevator_rename");
+        this.settingsFlag = registerFlag("elevator_settings");
     }
 
     private Flag<Boolean> registerFlag(@KeyPattern.Value String flagName) {
