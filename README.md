@@ -21,8 +21,7 @@
 ![Supports Spigot](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/compact-minimal/supported/spigot_vector.svg)
 [![Supports Folia](assets/Folia.svg)]()
 
-[![CodeFactor](https://www.codefactor.io/repository/github/keehl254/elevators/badge/main)](https://www.codefactor.io/repository/github/keehl254/elevators/overview/main)
-</div>
+[![CodeFactor](https://www.codefactor.io/repository/github/keehl254/elevators/badge/main)](https://www.codefactor.io/repository/github/keehl254/elevators/overview/main)</div>
 
 # Features
 
@@ -46,6 +45,30 @@ You're now ready to place elevators and start teleporting!
 
 Looking for recipes, configuration help, or how to add effects and messages?  
 **Visit the full documentation site:** [Elevators Docs](https://ele.keehl.me)
+
+# Building
+
+To build Elevators from source using Gradle:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/keehl254/Elevators.git
+   cd Elevators
+   ```
+2. Run the custom Gradle task:
+    ```bash
+   ./gradlew :buildElevators
+    ```
+3. The compiled plugin JAR will be located in
+   ```bash
+   build/libs/
+    ```
+
+## Java Version Notes
+
+The core project and all submodules except Hooks are built using Java 8. The Hooks subproject is written in Java 21.
+A downgrade plugin is used to compile Hooks into a Java 8-compatible format for use in the final build.
+Be sure you have both JDK 8 and JDK 21 installed and properly configured if you're developing or building locally.
 
 # License
 
