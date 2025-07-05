@@ -1,6 +1,8 @@
 package me.keehl.elevators.services;
 
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.helpers.VersionHelper;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -14,8 +16,10 @@ public class ElevatorObstructionService {
     public static void init() {
         if (ElevatorObstructionService.initialized)
             return;
+        Elevators.pushAndHoldLog();
 
         initialized = true;
+        Elevators.popLog(logData -> Elevators.log("Obstruction service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     public static double getHitBoxAddition(Block block, Player player) {

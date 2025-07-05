@@ -1,9 +1,11 @@
 package me.keehl.elevators.services;
 
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.models.settings.*;
 import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
+import org.bukkit.ChatColor;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -18,13 +20,18 @@ public class ElevatorSettingService {
     public static void init() {
         if(ElevatorSettingService.initialized)
             return;
+        Elevators.pushAndHoldLog();
 
         ElevatorConfigService.addConfigCallback(ElevatorSettingService::registerDefaultSettings);
 
         ElevatorSettingService.initialized = true;
+        Elevators.popLog(logData -> Elevators.log("Setting service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     private static void registerDefaultSettings(ConfigRoot config) {
+
+        Elevators.pushAndHoldLog();
+
         settingsMap.clear();
 
         addSetting(CanExplodeSetting.class);
@@ -39,6 +46,8 @@ public class ElevatorSettingService {
         addSetting(StopObstructionSetting.class);
         addSetting(SupportDyingSetting.class);
         addSetting(HologramLinesSetting.class);
+
+        Elevators.popLog(logData -> Elevators.log("Registered " + settingsMap.size() + " settings. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     public static void addSetting(Class<? extends ElevatorSetting<?>> settingsClass) {

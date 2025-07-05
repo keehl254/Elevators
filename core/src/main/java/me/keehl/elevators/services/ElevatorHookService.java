@@ -7,10 +7,7 @@ import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.models.hooks.*;
-import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,8 +32,10 @@ public class ElevatorHookService {
     public static void init() {
         if(ElevatorHookService.initialized)
             return;
+        Elevators.pushAndHoldLog();
 
         ElevatorHookService.initialized = true;
+        Elevators.popLog(logData -> Elevators.log("Hook service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     public static void unInitialize() {
@@ -55,12 +54,14 @@ public class ElevatorHookService {
            return;
 
         try {
+            Elevators.pushAndHoldLog();
             Constructor<?> hookConstructor = elevatorHookClass.getConstructor();
             hookMap.put(pluginName.toUpperCase(), (ElevatorHook) hookConstructor.newInstance());
-            Elevators.getElevatorsLogger().info("Hooked into " + pluginName);
 
             placeholderHook = hookMap.values().stream().filter(i -> i instanceof PlaceholderHook).map(i -> (PlaceholderHook) i).findFirst().orElse(null);
             hologramHook = hookMap.values().stream().filter(i -> i instanceof HologramHook).map(i -> (HologramHook) i).findFirst().orElse(null);
+
+            Elevators.popLog((logData) -> Elevators.log("Hooked into " + pluginName + ". "+ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
 
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             Elevators.getElevatorsLogger().log(Level.WARNING, "Failed to register hook for \"" + pluginName + "\" due to an inaccessible constructor. The plugin will still function; however, this hook will not work. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues", e);

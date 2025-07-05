@@ -1,11 +1,13 @@
 package me.keehl.elevators.services;
 
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.helpers.ShulkerBoxHelper;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.services.versions.ElevatorsV1;
 import me.keehl.elevators.services.versions.ElevatorsV2;
 import me.keehl.elevators.services.versions.ElevatorsV3;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
@@ -25,12 +27,14 @@ public class ElevatorVersionService {
     public static void init() {
         if (ElevatorVersionService.initialized)
             return;
+        Elevators.pushAndHoldLog();
 
         versions.add(new ElevatorsV3());
         versions.add(new ElevatorsV2());
         versions.add(new ElevatorsV1());
 
         ElevatorVersionService.initialized = true;
+        Elevators.popLog(logData -> Elevators.log("Version service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     public static ElevatorType getElevatorType(ItemStack item) {

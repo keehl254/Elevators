@@ -8,6 +8,7 @@ import me.keehl.elevators.services.listeners.InventoryEventExecutor;
 import me.keehl.elevators.services.listeners.PaperEventExecutor;
 import me.keehl.elevators.services.listeners.WorldEventExecutor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.event.*;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
@@ -36,6 +37,7 @@ public class ElevatorListenerService {
     public static void init() {
         if(ElevatorListenerService.initialized)
             return;
+        Elevators.pushAndHoldLog();
 
         listener = new Listener() {};
 
@@ -93,6 +95,7 @@ public class ElevatorListenerService {
         }
 
         ElevatorListenerService.initialized = true;
+        Elevators.popLog(logData -> Elevators.log("Listener service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     public static void unInitialize() {

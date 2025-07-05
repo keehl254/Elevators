@@ -1,8 +1,10 @@
 # Don't Mess With. Deals with config conversion
-version: 5.0.0
+version: 5.1.0
 # This option controls whether the plugin will check for plugin updates upon startup or every four hours.
 # Players with the update permission will receive a message if one is available.
 updateCheckerEnabled: true
+# If this option is disabled, Elevators will not be able to interact with Hologram hooks.
+hologramServiceEnabled: true
 # effectDestination controls which elevator the effects and elevators sounds will play at. Options are:
 # Origin
 # Destination
@@ -24,20 +26,20 @@ protectionHooks:
     blockNonMemberUseDefault: true
 # Locale change. All messages support color codes.
 locale:
-  cantCreateMessage: '&b&lELEVATORS&f You do not have permission to create this Elevator!'
-  cantDyeMessage: '&b&lELEVATORS&f You do not have permission to dye this Elevator!'
-  cantUseMessage: '&b&lELEVATORS&f You do not have permission to use this Elevator!'
-  cantGiveMessage: '&b&lELEVATORS&f You do not have permission to give Elevators!'
-  cantAdministrateMessage: '&b&lELEVATORS&f You do not have permission to administrate
+  cantCreateMessage: '&c&lELEVATORS&f You do not have permission to create this Elevator!'
+  cantDyeMessage: '&c&lELEVATORS&f You do not have permission to dye this Elevator!'
+  cantUseMessage: '&c&lELEVATORS&f You do not have permission to use this Elevator!'
+  cantGiveMessage: '&c&lELEVATORS&f You do not have permission to give Elevators!'
+  cantAdministrateMessage: '&c&lELEVATORS&f You do not have permission to administrate
     Elevators!'
-  cantReloadMessage: '&b&lELEVATORS&f You do not have permission to reload Elevators!'
-  notEnoughRoomGiveMessage: '&b&lELEVATORS&f You do not have enough space in your
+  cantReloadMessage: '&c&lELEVATORS&f You do not have permission to reload Elevators!'
+  notEnoughRoomGiveMessage: '&c&lELEVATORS&f You do not have enough space in your
     inventory! The Elevator is on the ground in front of you!'
-  givenElevatorMessage: '&b&lELEVATORS&f You have been given an Elevator!'
-  worldDisabledMessage: '&b&lELEVATORS&f Elevators have been disabled in this world!'
-  elevatorNowProtected: '&b&lELEVATORS&f The elevator can now only be used by trusted
+  givenElevatorMessage: '&c&lELEVATORS&f You have been given an Elevator!'
+  worldDisabledMessage: '&c&lELEVATORS&f Elevators have been disabled in this world!'
+  elevatorNowProtected: '&c&lELEVATORS&f The elevator can now only be used by trusted
     players.'
-  elevatorNowUnprotected: '&b&lELEVATORS&f The elevator can now be used by anyone.'
+  elevatorNowUnprotected: '&c&lELEVATORS&f The elevator can now be used by anyone.'
   chatInputBackOut: '&7Type "cancel" to back out of chat input.'
   chatInputBackOutAllowReset: '&7Type "cancel" to back out of chat input or type "reset"
     to reset.'
@@ -138,12 +140,8 @@ elevators:
         supportMultiColorOutput: true
         # If this option is enabled, multiple variations of this recipe will be created for each dyed color.
         supportMultiColorMaterials: true
-        # Create a shaped recipe using unique characters here and map these characters to materials in the "material" config option.
+        # Create a shaped recipe using item keys. You may use elevators:elevator_key to require an elevator in your recipe in Minecraft 1.21+
         recipe:
-          - www
-          - wew
-          - www
-        # Map characters to their materials. If "supportMultiColorMaterials" is enabled, dye colors in materials such as "white" in "white_wool" will be substituted for different dye colors.
-        materials:
-          w: white_wool
-          e: ender_pearl
+          - ['minecraft:white_wool', 'minecraft:white_wool', 'minecraft:white_wool']
+          - ['minecraft:white_wool', 'minecraft:ender_pearl', 'minecraft:white_wool']
+          - ['minecraft:white_wool', 'minecraft:white_wool', 'minecraft:white_wool']

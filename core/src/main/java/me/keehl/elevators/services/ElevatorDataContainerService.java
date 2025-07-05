@@ -7,6 +7,7 @@ import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.util.persistantDataTypes.BooleanPersistentDataType;
 import me.keehl.elevators.util.persistantDataTypes.StringArrayPersistentDataType;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
@@ -34,11 +35,13 @@ public class ElevatorDataContainerService {
     public static void init() {
         if(ElevatorDataContainerService.initialized)
             return;
+        Elevators.pushAndHoldLog();
 
         ElevatorDataContainerService.typeKey = getKeyFromKey("elevator-type", PersistentDataType.STRING);
         ElevatorDataContainerService.nameKey = getKeyFromKey("floor-name", PersistentDataType.STRING);
 
         ElevatorDataContainerService.initialized = true;
+        Elevators.popLog(logData -> Elevators.log("Data Container service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     public static NamespacedKey createKey(String key) {

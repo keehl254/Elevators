@@ -27,9 +27,11 @@ public class ElevatorActionService {
     public static void init() {
         if(ElevatorActionService.initialized)
             return;
+        Elevators.pushAndHoldLog();
 
         ElevatorActionService.registerDefaultActions();
         ElevatorActionService.initialized = true;
+        Elevators.popLog(logData -> Elevators.log("Action service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     private static void registerDefaultActions() {

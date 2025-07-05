@@ -7,8 +7,8 @@ import me.keehl.elevators.helpers.VersionHelper;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.models.hooks.WrappedHologram;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
@@ -29,8 +29,7 @@ public class ElevatorHologramService {
     public static void init() {
         if (ElevatorHologramService.initialized)
             return;
-
-        ElevatorConfigService.addConfigCallback(ElevatorHologramService::onConfigReload);
+        Elevators.pushAndHoldLog();
 
         task = Elevators.getFoliaLib().getScheduler().runTimer(() -> {
             if (!canUseHolograms())
@@ -60,14 +59,12 @@ public class ElevatorHologramService {
         }, 5, 5);
 
         ElevatorHologramService.initialized = true;
+        Elevators.popLog(logData -> Elevators.log("Hologram service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     public static void onDisable() {
         clearAll();
         task.cancel();
-    }
-
-    private static void onConfigReload(ConfigRoot config) {
     }
 
     public static WrappedHologram getElevatorHologramIfExists(Elevator elevator) {

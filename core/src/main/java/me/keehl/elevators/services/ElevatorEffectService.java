@@ -8,6 +8,7 @@ import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.models.ElevatorEffect;
 import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigEffect;
 import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
+import org.bukkit.ChatColor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,13 +25,18 @@ public class ElevatorEffectService {
     public static void init() {
         if(ElevatorEffectService.initialized)
             return;
+        Elevators.pushAndHoldLog();
 
         ElevatorConfigService.addConfigCallback(ElevatorEffectService::loadEffects);
 
         ElevatorEffectService.initialized = true;
+        Elevators.popLog(logData -> Elevators.log("Effect service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     private static void loadEffects(ConfigRoot rootNode) {
+
+        Elevators.pushAndHoldLog();
+
         elevatorEffects.clear();
 
         File effectDirectory = new File(Elevators.getConfigDirectory(), "effects");
@@ -53,6 +59,8 @@ public class ElevatorEffectService {
 
             elevatorEffects.put(elevatorEffectKey, new ImageEffect(elevatorEffectKey, effectFile, effectConfig.scale, effectConfig.duration, effectConfig.useHolo, effectConfig.background));
         }
+
+        Elevators.popLog(logData -> Elevators.log("Registered " + elevatorEffects.size() + " effects. " + ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
 
     }
 

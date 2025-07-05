@@ -25,6 +25,7 @@ public class ElevatorUpdateService {
     private static boolean updateAvailable = false;
 
     public static void init(String version) {
+        Elevators.pushAndHoldLog();
         currentVersion = (version.contains("-") ? version.split("-")[0].trim() : version);
 
         ElevatorConfigService.addConfigCallback(root -> {
@@ -33,7 +34,7 @@ public class ElevatorUpdateService {
             if(root.updateCheckerEnabled)
                 task = Elevators.getFoliaLib().getScheduler().runTimerAsync(ElevatorUpdateService::checkUpdate, 1200, 288000);
         });
-
+        Elevators.popLog(logData -> Elevators.log("Update service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     public static void unInitialize() {
