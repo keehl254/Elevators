@@ -43,6 +43,7 @@ public class ElevatorListenerService {
 
         registerEventExecutor(InventoryOpenEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onInventoryOpen);
         registerEventExecutor(InventoryClickEvent.class, EventPriority.HIGHEST, InventoryEventExecutor::onClickStackHandler, true);
+        registerEventExecutor(InventoryClickEvent.class, EventPriority.LOWEST, InventoryEventExecutor::updateStackOnClick, true);
         registerEventExecutor(PrepareAnvilEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onAnvilPrepare);
         registerEventExecutor(CraftItemEvent.class, EventPriority.NORMAL , InventoryEventExecutor::onCraft);
 

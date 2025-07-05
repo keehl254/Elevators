@@ -94,6 +94,13 @@ public class ItemStackHelper {
         return itemStack;
     }
 
+    public static void updateElevator(ElevatorType elevatorType, ItemStack currentStack) {
+        ItemStack newStack = createItemStackFromElevatorType(elevatorType, getDyeColorFromMaterial(currentStack.getType()));
+        newStack.setAmount(currentStack.getAmount());
+
+        currentStack.setItemMeta(newStack.getItemMeta());
+    }
+
     public static void giveElevator(Item itemEntity, Inventory inv) {
         ItemStack item = itemEntity.getItemStack();
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(item);

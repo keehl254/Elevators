@@ -99,7 +99,6 @@ public class ElevatorRecipeGroup extends ConfigRecipe {
                 char character = currentChar;
                 shape[rowIndex] += character;
 
-                // TODO: Apparently Spigot hates you adding the ingredient before the shape. What a pain.
                 Runnable addIncredientRunnable;
                 if (key.getNamespace().equalsIgnoreCase(NamespacedKey.MINECRAFT)) {
                     addIncredientRunnable = () -> shapedRecipe.setIngredient(character, ItemStackHelper.getVariant(item.getType(), dyeColor));

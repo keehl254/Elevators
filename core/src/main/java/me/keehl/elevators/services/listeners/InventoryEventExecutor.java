@@ -33,6 +33,15 @@ public class InventoryEventExecutor {
         ShulkerBoxHelper.playClose(box);
     }
 
+    public static void updateStackOnClick(InventoryClickEvent event) {
+        ItemStack clickedItem = event.getCurrentItem();
+        ElevatorType elevatorType = ElevatorHelper.getElevatorType(clickedItem);
+        if(elevatorType == null || clickedItem == null)
+            return;
+
+        ItemStackHelper.updateElevator(elevatorType, clickedItem);
+    }
+
     @SuppressWarnings("ConstantConditions")
     public static void onClickStackHandler(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;

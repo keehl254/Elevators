@@ -456,6 +456,61 @@ public class ElevatorGUIHelper {
 
     }
 
+    private static void saveInventoryToRecipe(Inventory inventory, ElevatorRecipeGroup tempRecipe) {
+        List<RecipeRow<NamespacedKey>> keyList = new ArrayList<>();
+        for(int y=0;y<3;y++) {
+
+            RecipeRow<NamespacedKey> keyRow = new RecipeRow<>();
+            for(int x=0;x<3;x++) {
+                int slot = 10 + (y * 9) + x;
+                ItemStack item = inventory.getItem(slot);
+                NamespacedKey key = (item == null || item.getType().isAir()) ? Material.AIR.getKey() : ElevatorHookService.getKeyFromItemStack(item);
+                keyRow.add(key);
+            }
+            keyList.add(keyRow);
+        }
+
+        ConfigRecipe.setRecipe(tempRecipe, keyList);
+    }
+
+    private static void runRecipeColorTask(ElevatorType elevatorType, Inventory inventory, ElevatorRecipeGroup tempRecipe, AtomicInteger dyeColorIndex) {
+        DyeColor color = null;
+        if(!tempRecipe.supportsMultiColorOutput()) {
+            color = tempRecipe.getDefaultOutputColor();
+        } else if(!tempRecipe.supportsMultiColorMaterials()) {
+
+            for(List<NamespacedKey> keyRow : tempRecipe.getRecipe()) {
+                for(NamespacedKey key : keyRow) {
+                    boolean colorable = key.getNamespace().equalsIgnoreCase(NamespacedKey.MINECRAFT) || key.getNamespace().equalsIgnoreCase(Elevators.getInstance().getName().toLowerCase(Locale.ROOT));
+                    if(!colorable)
+                        continue;
+
+                    ItemStack item = ElevatorHookService.createItemStackFromKey(key);
+                    if(item == null)
+                        continue;
+
+                    DyeColor tempColor = ItemStackHelper.getDyeColorFromMaterial(item.getType());
+                    if(tempColor == null)
+                        continue;
+
+                    if(color != null && tempColor != color) {
+                        color = tempRecipe.getDefaultOutputColor(); // Multiple colorable materials in recipe. Cannot determine output color.
+                        break;
+                    }
+                    color = tempColor;
+                }
+            }
+
+        } else
+            color = DyeColor.values()[dyeColorIndex.get()];
+
+        ItemStack elevatorItemStack = ItemStackHelper.createItemStackFromElevatorType(elevatorType, color);
+        elevatorItemStack.setAmount(tempRecipe.getAmount());
+
+        inventory.setItem(25, elevatorItemStack);
+        dyeColorIndex.set(dyeColorIndex.incrementAndGet() % DyeColor.values().length);
+    }
+
     // Elevators most complicated menu.
     public static void openAdminEditElevatorRecipeMenu(Player player, ElevatorType tempElevatorType, ElevatorRecipeGroup currentRecipeGroup) {
         final ElevatorType elevatorType = ElevatorTypeService.getElevatorType(tempElevatorType.getTypeKey());
@@ -477,62 +532,8 @@ public class ElevatorGUIHelper {
             tempRecipe.setKey(currentRecipeGroup.getRecipeKey());
         }
 
-        Runnable saveToTemp = () -> {
-
-            List<RecipeRow<NamespacedKey>> keyList = new ArrayList<>();
-            for(int y=0;y<3;y++) {
-
-                RecipeRow<NamespacedKey> keyRow = new RecipeRow<>();
-                for(int x=0;x<3;x++) {
-                    int slot = 10 + (y * 9) + x;
-                    ItemStack item = inventory.getItem(slot);
-                    NamespacedKey key = (item == null || item.getType().isAir()) ? Material.AIR.getKey() : ElevatorHookService.getKeyFromItemStack(item);
-                    keyRow.add(key);
-                }
-                keyList.add(keyRow);
-            }
-
-            ConfigRecipe.setRecipe(tempRecipe, keyList);
-        };
-
         AtomicInteger dyeColorIndex = new AtomicInteger(0);
-        WrappedTask colorTask = Elevators.getFoliaLib().getScheduler().runTimer(() -> {
-            DyeColor color = null;
-            if(!tempRecipe.supportsMultiColorOutput()) {
-                color = tempRecipe.getDefaultOutputColor();
-            } else if(!tempRecipe.supportsMultiColorMaterials()) {
-
-                for(List<NamespacedKey> keyRow : tempRecipe.getRecipe()) {
-                    for(NamespacedKey key : keyRow) {
-                        boolean colorable = key.getNamespace().equalsIgnoreCase(NamespacedKey.MINECRAFT) || key.getNamespace().equalsIgnoreCase(Elevators.getInstance().getName().toLowerCase(Locale.ROOT));
-                        if(!colorable)
-                            continue;
-
-                        ItemStack item = ElevatorHookService.createItemStackFromKey(key);
-                        if(item == null)
-                            continue;
-
-                        DyeColor tempColor = ItemStackHelper.getDyeColorFromMaterial(item.getType());
-                        if(tempColor == null)
-                            continue;
-
-                        if(color != null && tempColor != color) {
-                            color = tempRecipe.getDefaultOutputColor(); // Multiple colorable materials in recipe. Cannot determine output color.
-                            break;
-                        }
-                        color = tempColor;
-                    }
-                }
-
-            } else
-                color = DyeColor.values()[dyeColorIndex.get()];
-
-            ItemStack elevatorItemStack = ItemStackHelper.createItemStackFromElevatorType(elevatorType, color);
-            elevatorItemStack.setAmount(tempRecipe.getAmount());
-
-            inventory.setItem(25, elevatorItemStack);
-            dyeColorIndex.set(dyeColorIndex.incrementAndGet() % DyeColor.values().length);
-        }, 20, 20);
+        WrappedTask colorTask = Elevators.getFoliaLib().getScheduler().runTimer(() -> runRecipeColorTask(elevatorType, inventory, tempRecipe, dyeColorIndex), 20, 20);
 
         SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> {
             colorTask.cancel();
@@ -577,7 +578,7 @@ public class ElevatorGUIHelper {
 
         display.setReturnButton(45, ItemStackHelper.createItem(ChatColor.RED + "" + ChatColor.BOLD + "CANCEL", Material.BARRIER, 1));
         display.setItemSimple(47, permissionTemplate, (event, myDisplay) -> {
-            saveToTemp.run();
+            saveInventoryToRecipe(inventory, tempRecipe);
             colorTask.cancel();
             display.stopReturn();
             openEditRecipePermissionMenu(player, elevatorType, tempRecipe);
@@ -591,7 +592,7 @@ public class ElevatorGUIHelper {
         });
 
         display.setItemSimple(49, createValueButton(outputColorTemplate, tempRecipe.getDefaultOutputColor(), DyeColor::name, createActionMap(Collections.singletonList("Left Click"), Collections.singletonList("Change Color"))), (event, myDisplay) -> {
-            saveToTemp.run();
+            saveInventoryToRecipe(inventory, tempRecipe);
             colorTask.cancel();
             display.stopReturn();
             openChooseDyeColorMenu(player, "Recipes > Recipe > Color", color -> {
@@ -612,7 +613,7 @@ public class ElevatorGUIHelper {
         });
 
         display.setItemSimple(53, ItemStackHelper.createItem(ChatColor.GREEN + "" + ChatColor.BOLD + "SAVE", Material.ARROW, 1), (event, myDisplay) -> {
-            saveToTemp.run();
+            saveInventoryToRecipe(inventory, tempRecipe);
             colorTask.cancel();
             display.stopReturn();
             openSaveRecipeMenu(player, elevatorType, tempRecipe);
