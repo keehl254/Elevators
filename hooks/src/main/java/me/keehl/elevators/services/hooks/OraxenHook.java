@@ -2,14 +2,22 @@ package me.keehl.elevators.services.hooks;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.models.hooks.ItemsHook;
-import org.bukkit.Bukkit;
+import me.keehl.elevators.services.ElevatorRecipeService;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
 public class OraxenHook extends ItemsHook {
+
+    public OraxenHook() {
+        Elevators.log("Oraxen has been hooked. Reloading recipes for Oraxen support");
+        Elevators.pushLog();
+        ElevatorRecipeService.refreshRecipes();
+        Elevators.popLog();
+    }
 
     @Override
     public ItemStack createItemStackFromKey(NamespacedKey key) {

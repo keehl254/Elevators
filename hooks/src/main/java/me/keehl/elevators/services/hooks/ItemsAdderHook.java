@@ -2,6 +2,7 @@ package me.keehl.elevators.services.hooks;
 
 import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.models.hooks.ItemsHook;
 import me.keehl.elevators.services.ElevatorListenerService;
 import me.keehl.elevators.services.ElevatorRecipeService;
@@ -13,7 +14,15 @@ public class ItemsAdderHook extends ItemsHook {
 
     public ItemsAdderHook() {
 
-        ElevatorListenerService.registerEventExecutor(ItemsAdderLoadDataEvent.class, EventPriority.MONITOR, (ItemsAdderLoadDataEvent event) -> ElevatorRecipeService.refreshRecipes());
+        // ItemsAdder.areItemsLoaded is not correct. Best to just assume it's not loaded; ItemsAdded will always fire an event when all plugins finish.
+        Elevators.log("ItemsAdder has been hooked, however has not finished loading yet. Waiting for ItemsAdder Data Load.");
+
+        ElevatorListenerService.registerEventExecutor(ItemsAdderLoadDataEvent.class, EventPriority.MONITOR, (ItemsAdderLoadDataEvent event) -> {
+            Elevators.log("Items Adder has finished loading. Reloading recipes for Items Adder support");
+            Elevators.pushLog();
+            ElevatorRecipeService.refreshRecipes();
+            Elevators.popLog();
+        });
 
     }
 

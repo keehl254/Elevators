@@ -9,6 +9,7 @@ import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ConfigRootNode;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 
 import java.io.File;
@@ -28,11 +29,15 @@ public class ElevatorConfigService {
     private static final List<Consumer<ConfigRoot>> configLoadCallbacks = new ArrayList<>();
 
     public static void loadConfig(File configFile) {
+        Elevators.pushAndHoldLog();
+
         ElevatorConfigService.rootNode = ConfigVersionBuilder.getConfig(configFile);
         if(ElevatorConfigService.rootNode == null) {
             Bukkit.getPluginManager().disablePlugin(Elevators.getInstance());
             return;
         }
+
+        Elevators.popLog(logData -> Elevators.log("Config loaded. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
 
         configLoadCallbacks.forEach(i -> i.accept(ElevatorConfigService.rootNode.getConfig()));
         ConfigConverter.saveConfigToFile(ElevatorConfigService.rootNode, configFile);

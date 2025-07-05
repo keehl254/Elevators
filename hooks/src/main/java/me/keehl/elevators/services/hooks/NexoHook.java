@@ -2,11 +2,20 @@ package me.keehl.elevators.services.hooks;
 
 import com.nexomc.nexo.api.NexoItems;
 import com.nexomc.nexo.items.ItemBuilder;
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.models.hooks.ItemsHook;
+import me.keehl.elevators.services.ElevatorRecipeService;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
 public class NexoHook extends ItemsHook {
+
+    public NexoHook() {
+        Elevators.log("Nexo has been hooked. Reloading recipes for Nexo support");
+        Elevators.pushLog();
+        ElevatorRecipeService.refreshRecipes();
+        Elevators.popLog();
+    }
 
     @Override
     public ItemStack createItemStackFromKey(NamespacedKey key) {
