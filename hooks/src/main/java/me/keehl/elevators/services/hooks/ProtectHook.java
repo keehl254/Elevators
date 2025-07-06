@@ -43,6 +43,10 @@ public class ProtectHook extends ProtectionHook {
         this.settingsFlag = registerFlag("elevator_settings");
     }
 
+    @Override
+    public void onInit() {
+    }
+
     private Flag<Boolean> registerFlag(@KeyPattern.Value String flagName) {
         NamespacedKey key = new NamespacedKey(Elevators.getInstance(), flagName);
         Optional<Flag<Boolean>> flagOpt = this.protectPlugin.flagRegistry().getFlag(key);

@@ -16,6 +16,10 @@ public class DecentHologramsHook extends HologramHook {
         return new DecentHologramWrapper(elevator);
     }
 
+    @Override
+    public void onInit() {
+    }
+
     public static class DecentHologramWrapper extends WrappedHologram {
 
         private final Hologram hologram;

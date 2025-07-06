@@ -35,6 +35,10 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
         ElevatorListenerService.registerEventExecutor(PluginInitializeEvent.class, EventPriority.NORMAL, this::onSSB2Enable);
     }
 
+    @Override
+    public void onInit() {
+    }
+
     public void onSSB2Enable(PluginInitializeEvent e) {
         try {
             IslandPrivilege.register(USE_ELEVATOR_FLAG);

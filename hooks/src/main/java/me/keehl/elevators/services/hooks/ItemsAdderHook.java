@@ -12,8 +12,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemsAdderHook extends ItemsHook {
 
-    public ItemsAdderHook() {
-
+    @Override
+    public void onInit() {
         // ItemsAdder.areItemsLoaded is not correct. Best to just assume it's not loaded; ItemsAdded will always fire an event when all plugins finish.
         Elevators.log("ItemsAdder has been hooked, however has not finished loading yet. Waiting for ItemsAdder Data Load.");
 
@@ -23,7 +23,6 @@ public class ItemsAdderHook extends ItemsHook {
             ElevatorRecipeService.refreshRecipes();
             Elevators.popLog();
         });
-
     }
 
     @Override

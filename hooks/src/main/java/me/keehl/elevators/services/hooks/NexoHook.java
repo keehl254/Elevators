@@ -10,7 +10,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class NexoHook extends ItemsHook {
 
-    public NexoHook() {
+    @Override
+    public void onInit() {
         Elevators.log("Nexo has been hooked. Reloading recipes for Nexo support");
         Elevators.pushLog();
         ElevatorRecipeService.refreshRecipes();
@@ -19,10 +20,10 @@ public class NexoHook extends ItemsHook {
 
     @Override
     public ItemStack createItemStackFromKey(NamespacedKey key) {
-        if(!key.getKey().equalsIgnoreCase("Nexo"))
+        if(!key.getKey().equalsIgnoreCase("nexo"))
             return null;
 
-        ItemBuilder itemBuilder = NexoItems.itemFromId(key.getKey());
+        ItemBuilder itemBuilder = NexoItems.itemFromId(key.getNamespace());
         if(itemBuilder == null)
             return null;
 
@@ -35,7 +36,7 @@ public class NexoHook extends ItemsHook {
         if(key == null)
             return null;
 
-        return new NamespacedKey("Nexo", key);
+        return new NamespacedKey(key, "nexo");
     }
 
 }

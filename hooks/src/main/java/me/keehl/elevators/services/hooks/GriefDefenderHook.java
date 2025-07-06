@@ -21,6 +21,10 @@ public class GriefDefenderHook extends ProtectionHook {
     }
 
     @Override
+    public void onInit() {
+    }
+
+    @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
         final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
 

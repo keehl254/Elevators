@@ -56,11 +56,13 @@ public class ElevatorHookService {
         try {
             Elevators.pushAndHoldLog();
             Constructor<?> hookConstructor = elevatorHookClass.getConstructor();
-            hookMap.put(pluginName.toUpperCase(), (ElevatorHook) hookConstructor.newInstance());
+            ElevatorHook hook = (ElevatorHook) hookConstructor.newInstance();
+            hookMap.put(pluginName.toUpperCase(), hook);
 
             placeholderHook = hookMap.values().stream().filter(i -> i instanceof PlaceholderHook).map(i -> (PlaceholderHook) i).findFirst().orElse(null);
             hologramHook = hookMap.values().stream().filter(i -> i instanceof HologramHook).map(i -> (HologramHook) i).findFirst().orElse(null);
 
+            hook.onInit();
             Elevators.popLog((logData) -> Elevators.log("Hooked into " + pluginName + ". "+ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
 
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {

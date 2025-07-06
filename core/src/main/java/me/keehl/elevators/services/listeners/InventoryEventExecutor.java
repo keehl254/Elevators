@@ -35,8 +35,10 @@ public class InventoryEventExecutor {
 
     public static void updateStackOnClick(InventoryClickEvent event) {
         ItemStack clickedItem = event.getCurrentItem();
+        if(clickedItem == null)
+            return;
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(clickedItem);
-        if(elevatorType == null || clickedItem == null)
+        if(elevatorType == null)
             return;
 
         ItemStackHelper.updateElevator(elevatorType, clickedItem);

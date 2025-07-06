@@ -546,10 +546,8 @@ public class ElevatorGUIHelper {
         for(List<NamespacedKey> keyRow : tempRecipe.getRecipe()) {
             for(NamespacedKey key : keyRow) {
                 ItemStack item = ElevatorHookService.createItemStackFromKey(key);
-                if(item == null) {
-                    x++;
-                    continue;
-                }
+                if(item == null)
+                    item = new ItemStack(Material.AIR, 1);
 
                 int slot = 10 + (y * 9) + (x%3);
                 BiFunction<InventoryClickEvent, SimpleDisplay, SimpleDisplay.DisplayClickResult> onClick = (event, myDisplay) -> SimpleDisplay.DisplayClickResult.ALLOW;

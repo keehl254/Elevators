@@ -38,6 +38,10 @@ public class PlotSquaredHook extends ProtectionHook {
     }
 
     @Override
+    public void onInit() {
+    }
+
+    @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
         PlotPlayer<?> plotPlayer = this.api.wrapPlayer(player.getUniqueId());
         if(plotPlayer == null)

@@ -28,6 +28,10 @@ public class GriefPreventionHook extends ProtectionHook {
     }
 
     @Override
+    public void onInit() {
+    }
+
+    @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
         if(this.griefPrevention == null)
             return false;

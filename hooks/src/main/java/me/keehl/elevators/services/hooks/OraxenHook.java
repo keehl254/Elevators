@@ -12,7 +12,8 @@ import java.util.Optional;
 
 public class OraxenHook extends ItemsHook {
 
-    public OraxenHook() {
+    @Override
+    public void onInit() {
         Elevators.log("Oraxen has been hooked. Reloading recipes for Oraxen support");
         Elevators.pushLog();
         ElevatorRecipeService.refreshRecipes();
@@ -21,10 +22,10 @@ public class OraxenHook extends ItemsHook {
 
     @Override
     public ItemStack createItemStackFromKey(NamespacedKey key) {
-        if(!key.getKey().equalsIgnoreCase("Oraxen"))
+        if(!key.getKey().equalsIgnoreCase("oraxen"))
             return null;
 
-        Optional<ItemBuilder> itemBuilder = OraxenItems.getOptionalItemById(key.getKey());
+        Optional<ItemBuilder> itemBuilder = OraxenItems.getOptionalItemById(key.getNamespace());
         return itemBuilder.map(ItemBuilder::build).orElse(null);
     }
 
@@ -34,7 +35,7 @@ public class OraxenHook extends ItemsHook {
         if(key == null)
             return null;
 
-        return new NamespacedKey("Oraxen", key);
+        return new NamespacedKey(key, "oraxen");
     }
 
 }

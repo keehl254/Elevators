@@ -46,6 +46,10 @@ public class LandsHook extends ProtectionHook {
     }
 
     @Override
+    public void onInit() {
+    }
+
+    @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
         LandWorld world = this.lands.getWorld(elevator.getLocation().getWorld());
         if(world == null)

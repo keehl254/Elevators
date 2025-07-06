@@ -18,6 +18,10 @@ public class FancyHologramsHook extends HologramHook {
         return new FancyHologramWrapper(elevator, lines);
     }
 
+    @Override
+    public void onInit() {
+    }
+
     public static class FancyHologramWrapper extends WrappedHologram {
 
         private final Hologram hologram;

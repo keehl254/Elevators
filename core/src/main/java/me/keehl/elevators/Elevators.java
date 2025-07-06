@@ -133,17 +133,17 @@ public class Elevators {
         mainLogStack.push();
     }
 
-    public static void popLog(Consumer<LogReleaseData> onPop) {
+    public static LogReleaseData popLog(Consumer<LogReleaseData> onPop) {
         LogReleaseData releaseData = mainLogStack.pop();
         if (onPop != null)
             onPop.accept(releaseData);
         for (String message : releaseData.getLogs())
             Elevators.log(message);
-
+        return releaseData;
     }
 
-    public static void popLog() {
-        popLog(null);
+    public static LogReleaseData popLog() {
+        return popLog(null);
     }
 
     public static void holdLog() {
@@ -155,16 +155,17 @@ public class Elevators {
         holdLog();
     }
 
-    public static void releaseLog(Consumer<LogReleaseData> onRelease) {
+    public static LogReleaseData releaseLog(Consumer<LogReleaseData> onRelease) {
         LogReleaseData released = mainLogStack.releaseLogs();
         if (onRelease != null)
             onRelease.accept(released);
         for (String message : released.getLogs())
             Elevators.log(message);
+        return released;
     }
 
-    public static void releaseLog() {
-        releaseLog(null);
+    public static LogReleaseData releaseLog() {
+        return releaseLog(null);
     }
 
     public static boolean isInitialized() {

@@ -52,6 +52,10 @@ public class BentoBoxHook extends ProtectionHook {
         }
     }
 
+    @Override
+    public void onInit() {
+    }
+
     public boolean isIsland(Location location) {
         return BentoBox.getInstance().getIslands().getIslandAt(location).isPresent();
     }

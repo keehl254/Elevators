@@ -38,6 +38,10 @@ public class WorldGuardHook extends ProtectionHook {
         SETTINGS_FLAG = registerFlag("elevators_allow_settings");
     }
 
+    @Override
+    public void onInit() {
+    }
+
     private StateFlag registerFlag(String flagName) {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {

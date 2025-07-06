@@ -10,4 +10,8 @@ public class PlaceholderAPIHook extends PlaceholderHook {
         return PlaceholderAPI.setPlaceholders(player, message);
     }
 
+    @Override
+    public void onInit() {
+    }
+
 }
