@@ -1,19 +1,26 @@
 package me.keehl.elevators.models.settings;
 
+import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorType;
+import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public class MaxSolidBlocksSetting extends ElevatorSetting<Integer> {
+public class MaxSolidBlocksSetting extends InternalElevatorSetting<Integer> {
 
-    public MaxSolidBlocksSetting() {
-        super("change-max-solid-blocks","Max Solid Blocks", "This controls the maximum number of solid blocks that can be between an origin and destination elevator.", Material.IRON_BLOCK, ChatColor.RED);
-        this.setGetValueGlobal(ElevatorType::getMaxSolidBlocksAllowedBetweenElevators);
+    public MaxSolidBlocksSetting(JavaPlugin plugin) {
+        super(plugin, InternalElevatorSettingType.MAX_SOLID_BLOCKS.getSettingName(),"Max Solid Blocks", "This controls the maximum number of solid blocks that can be between an origin and destination elevator.", Material.IRON_BLOCK, ChatColor.RED);
         this.addAction("Left Click", "Increase Quantity");
         this.addAction("Right Click", "Decrease Quantity");
         this.addAction("Shift Click", "Reset Quantity");
+    }
+
+    @Override
+    public boolean canBeEditedIndividually(Elevator elevator) {
+        return false;
     }
 
     @Override
@@ -30,6 +37,16 @@ public class MaxSolidBlocksSetting extends ElevatorSetting<Integer> {
         elevatorType.setMaxSolidBlocksAllowedBetweenElevators(newValue);
         returnMethod.run();
 
+    }
+
+    @Override
+    public void onClickIndividual(Player player, Elevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent, Integer currentValue) {
+        returnMethod.run();
+    }
+
+    @Override
+    public Integer getGlobalValue(ElevatorType elevatorType) {
+        return elevatorType.getMaxSolidBlocksAllowedBetweenElevators();
     }
 
 }

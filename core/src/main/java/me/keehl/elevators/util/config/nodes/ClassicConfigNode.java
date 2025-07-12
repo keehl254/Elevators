@@ -6,6 +6,7 @@ import me.keehl.elevators.util.config.ConfigConverter;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 public class ClassicConfigNode<T> implements ConfigNode<T> {
@@ -60,6 +61,16 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
     @Override
     public void addComment(String comment) {
         this.getRoot().addComment(getPath(), comment);
+    }
+
+    @Override
+    public List<String> getComments() {
+        return this.getRoot().getCommentsAtPath(getPath());
+    }
+
+    @Override
+    public void clearComments() {
+        this.getRoot().clearCommentsAtPath(getPath());
     }
 
     @Override

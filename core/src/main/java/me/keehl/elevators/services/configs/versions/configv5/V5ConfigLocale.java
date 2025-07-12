@@ -1,8 +1,8 @@
-package me.keehl.elevators.services.configs.versions.configv5_1_0;
+package me.keehl.elevators.services.configs.versions.configv5;
 
 import me.keehl.elevators.util.config.Config;
 
-public class ConfigLocale implements Config {
+public class V5ConfigLocale implements Config {
 
     private final transient String prefix = "&c&lELEVATORS&f ";
 

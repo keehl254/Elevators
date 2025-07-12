@@ -4,7 +4,9 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.services.ElevatorActionService;
 import me.keehl.elevators.services.ElevatorHologramService;
 import me.keehl.elevators.services.ElevatorRecipeService;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigElevatorType;
+import me.keehl.elevators.services.ElevatorSettingService;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigElevatorType;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -45,6 +47,10 @@ public class ElevatorType extends ConfigElevatorType {
 
     public ConfigElevatorType getConfig() { return this; }
 
+    public ConfigSettings getSettingsConfig() {
+        return this.settings;
+    }
+
     //endregion
 
     /* region property setters */
@@ -53,17 +59,34 @@ public class ElevatorType extends ConfigElevatorType {
      *  Sets the elevators ItemStack display name.
      */
     public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        this.settings.displayName = displayName;
         ElevatorRecipeService.refreshRecipes();
 
         Elevators.getInstance().saveConfig();
     }
 
     /**
+     *  Sets the elevators use permission.
+     */
+    public void setUsePermission(String usePermission) {
+        this.settings.usePermission = usePermission;
+        Elevators.getInstance().saveConfig();
+    }
+
+    /**
+     *  Sets the elevators dye permission.
+     */
+    public void setDyePermission(String dyePermission) {
+        this.settings.dyePermission = dyePermission;
+        Elevators.getInstance().saveConfig();
+    }
+
+
+    /**
      * Sets the maximum distance that an elevator will search for a destination elevator.
      */
     public void setMaxDistanceAllowedBetweenElevators(int maxDistance) {
-        this.maxDistance = maxDistance;
+        this.settings.maxDistance = maxDistance;
 
         Elevators.getInstance().saveConfig();
     }
@@ -72,7 +95,7 @@ public class ElevatorType extends ConfigElevatorType {
      * Sets the max stack size of an elevator ItemStack
      */
     public void setMaxStackSize(int maxStackSize) {
-        this.maxStackSize = maxStackSize;
+        this.settings.maxStackSize = maxStackSize;
 
         Elevators.getInstance().saveConfig();
     }
@@ -82,7 +105,7 @@ public class ElevatorType extends ConfigElevatorType {
      * it stops searching.
      */
     public void setMaxSolidBlocksAllowedBetweenElevators(int maxSolidBlocks) {
-        this.maxSolidBlocks = maxSolidBlocks;
+        this.settings.maxSolidBlocks = maxSolidBlocks;
 
         Elevators.getInstance().saveConfig();
     }
@@ -91,7 +114,7 @@ public class ElevatorType extends ConfigElevatorType {
      * Sets whether the elevator must teleport to destination elevator of the same type.
      */
     public void setCheckDestinationElevatorType(boolean checkType) {
-        this.classCheck = checkType;
+        this.settings.classCheck = checkType;
 
         Elevators.getInstance().saveConfig();
     }
@@ -102,7 +125,7 @@ public class ElevatorType extends ConfigElevatorType {
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public void setElevatorRequiresPermissions(boolean checkPerms) {
-        this.checkPerms = checkPerms;
+        this.settings.checkPerms = checkPerms;
 
         Elevators.getInstance().saveConfig();
     }
@@ -111,7 +134,7 @@ public class ElevatorType extends ConfigElevatorType {
      * Set whether the elevator can explode from creepers, tnt, etc.
      */
     public void setCanElevatorExplode(boolean canExplode) {
-        this.canExplode = canExplode;
+        this.settings.canExplode = canExplode;
 
         Elevators.getInstance().saveConfig();
     }
@@ -120,7 +143,7 @@ public class ElevatorType extends ConfigElevatorType {
      * Set whether a recipe for this elevator type can produce a colored elevator.
      */
     public void setCanDye(boolean supportDying) {
-        this.supportDying = supportDying;
+        this.settings.supportDying = supportDying;
 
         Elevators.getInstance().saveConfig();
     }
@@ -130,7 +153,7 @@ public class ElevatorType extends ConfigElevatorType {
      * of a block.
      */
     public void setStopsObstructedTeleportation(boolean stopsObstruction) {
-        this.stopObstruction = stopsObstruction;
+        this.settings.stopObstruction = stopsObstruction;
 
         Elevators.getInstance().saveConfig();
     }
@@ -139,7 +162,7 @@ public class ElevatorType extends ConfigElevatorType {
      * Set whether an elevator can be teleported to if the destination is a separate color than the origin.
      */
     public void setShouldValidateColor(boolean checkColor) {
-        this.checkColor = checkColor;
+        this.settings.checkColor = checkColor;
 
         Elevators.getInstance().saveConfig();
     }
@@ -148,8 +171,8 @@ public class ElevatorType extends ConfigElevatorType {
      * Set the lines that should appear over an elevator of this type.
      */
     public void setHologramLines(List<String> holoLines) {
-        boolean checkCreate = this.hologramLines.isEmpty();
-        this.hologramLines = holoLines;
+        boolean checkCreate = this.settings.hologramLines.isEmpty();
+        this.settings.hologramLines = holoLines;
 
         Elevators.getInstance().saveConfig();
 
@@ -181,7 +204,7 @@ public class ElevatorType extends ConfigElevatorType {
      * Set the lines that should appear in an itemstack of this type.
      */
     public void setLore(List<String> loreLines) {
-        this.loreLines = loreLines;
+        this.settings.loreLines = loreLines;
         ElevatorRecipeService.refreshRecipes();
 
         Elevators.getInstance().saveConfig();
@@ -193,6 +216,10 @@ public class ElevatorType extends ConfigElevatorType {
     public void onSave() {
         this.actions.up = this.getActionsUp().stream().map(ElevatorAction::serialize).collect(Collectors.toList());
         this.actions.down = this.getActionsDown().stream().map(ElevatorAction::serialize).collect(Collectors.toList());
+
+        for(ElevatorSetting<?> setting : ElevatorSettingService.getElevatorSettings()) {
+            setting.applyToElevatorSettings(this, this.settings);
+        }
     }
 
     @Override()

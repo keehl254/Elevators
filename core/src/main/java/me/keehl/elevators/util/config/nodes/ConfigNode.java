@@ -3,6 +3,7 @@ package me.keehl.elevators.util.config.nodes;
 import me.keehl.elevators.util.config.ConfigConverter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface ConfigNode<T> {
 
@@ -13,6 +14,10 @@ public interface ConfigNode<T> {
     ArrayList<ConfigNode<?>> getChildren();
 
     void addComment(String comment);
+
+    List<String> getComments();
+
+    void clearComments();
 
     ConfigConverter getConfigConverter();
 

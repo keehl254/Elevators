@@ -1,12 +1,9 @@
 package me.keehl.elevators.util.config.converter;
 
-import com.sun.org.apache.xerces.internal.dom.ChildNode;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
@@ -28,9 +25,9 @@ public class SetConfigConverter extends ConfigConverter {
                 values.add(childNode.getValue());
                 childrenNodes.add(childNode);
             }else
-                childrenNodes.add(this.createNodeWithData(parentNode, obj.toString(), obj, null));
+                childrenNodes.add(ConfigConverter.createNodeWithData(parentNode, obj.toString(), obj, null));
         }
-        ConfigNode<?> myNode = createNodeWithData(parentNode, key, new HashSet<>(values), fieldData.getField());
+        ConfigNode<?> myNode = ConfigConverter.createNodeWithData(parentNode, key, new HashSet<>(values), fieldData.getField());
         myNode.getChildren().addAll(childrenNodes);
 
         return myNode;

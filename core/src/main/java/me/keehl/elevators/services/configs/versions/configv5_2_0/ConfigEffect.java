@@ -1,4 +1,4 @@
-package me.keehl.elevators.services.configs.versions.configv5_1_0;
+package me.keehl.elevators.services.configs.versions.configv5_2_0;
 
 import me.keehl.elevators.util.config.Comments;
 import me.keehl.elevators.util.config.Config;

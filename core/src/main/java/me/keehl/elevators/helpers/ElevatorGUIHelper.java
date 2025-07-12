@@ -3,10 +3,10 @@ package me.keehl.elevators.helpers;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.actions.settings.ElevatorActionSetting;
 import me.keehl.elevators.models.*;
-import me.keehl.elevators.models.settings.ElevatorSetting;
+import me.keehl.elevators.models.ElevatorSetting;
 import me.keehl.elevators.models.hooks.ProtectionHook;
 import me.keehl.elevators.services.*;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRecipe;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigRecipe;
 import me.keehl.elevators.services.interaction.PagedDisplay;
 import me.keehl.elevators.services.interaction.SimpleDisplay;
 import me.keehl.elevators.services.interaction.SimpleInput;
@@ -312,7 +312,7 @@ public class ElevatorGUIHelper {
 
         for (int i = 0; i < settings.size(); i++) {
             ElevatorActionSetting<?> setting = settings.get(i);
-            display.setItemSimple(i + 9, setting.createIcon(setting.getCurrentValueGlobal(elevatorType), true), (event, myDisplay) -> {
+            display.setItemSimple(i + 9, setting.createIcon(setting.getGlobalValue(elevatorType), true), (event, myDisplay) -> {
                 myDisplay.stopReturn();
                 setting.clickGlobal(player, elevatorType, () -> openAdminActionSettingsMenu(player, elevatorType, action, onReturn), event);
             });
@@ -704,7 +704,7 @@ public class ElevatorGUIHelper {
         SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> openAdminMenu(player));
         for (int i = 0; i < settings.size(); i++) {
             ElevatorSetting<?> setting = settings.get(i);
-            display.setItemSimple(i + 9, setting.createIcon(setting.getCurrentValueGlobal(elevatorType), true), (event, myDisplay) -> {
+            display.setItemSimple(i + 9, setting.createIcon(setting.getGlobalValue(elevatorType), true), (event, myDisplay) -> {
                 myDisplay.stopReturn();
                 setting.clickGlobal(player, elevatorType, () -> openAdminSettingsMenu(player, elevatorType), event);
             });
@@ -929,7 +929,7 @@ public class ElevatorGUIHelper {
     private static List<ElevatorAction> getActionsWithSettings(Elevator elevator, boolean up) {
         List<ElevatorAction> actions = new ArrayList<>(up ? elevator.getElevatorType(false).getActionsUp() : elevator.getElevatorType(false).getActionsDown()); // Don't want to alter the original list.
         actions.removeIf(i -> i.getSettings().isEmpty());
-        actions.removeIf(i -> i.getSettings().stream().noneMatch(s -> s.canBeEditedIndividually(elevator)));
+        actions.removeIf(i -> i.getSettings().stream().allMatch(s -> s.isSettingGlobalOnly(elevator)));
         return actions;
     }
 
@@ -940,7 +940,7 @@ public class ElevatorGUIHelper {
         }
 
         List<ElevatorActionSetting<?>> settings = new ArrayList<>(action.getSettings());
-        settings.removeIf(i -> !i.canBeEditedIndividually(elevator));
+        settings.removeIf(i -> i.isSettingGlobalOnly(elevator));
 
         int inventorySize = (Math.floorDiv(settings.size() + 8, 9) * 9) + 9;
         Inventory inventory = Bukkit.createInventory(null, inventorySize, "Settings > Actions > Action");
@@ -955,7 +955,7 @@ public class ElevatorGUIHelper {
 
         for (int i = 0; i < settings.size(); i++) {
             ElevatorActionSetting<?> setting = settings.get(i);
-            display.setItemSimple(i + 9, setting.createIcon(setting.getIndividualElevatorValue(elevator), false), (event, myDisplay) -> {
+            display.setItemSimple(i + 9, setting.createIcon(setting.getIndividualValue(elevator), false), (event, myDisplay) -> {
                 myDisplay.stopReturn();
                 setting.clickIndividual(player, elevator, () -> openInteractActionSettingsMenu(player, elevator, action, onReturn), event);
             });
@@ -992,7 +992,7 @@ public class ElevatorGUIHelper {
             return;
         }
 
-        List<ElevatorSetting<?>> settings = ElevatorSettingService.getElevatorSettings().stream().filter(i -> i.canBeEditedIndividually(elevator)).collect(Collectors.toList());
+        List<ElevatorSetting<?>> settings = ElevatorSettingService.getElevatorSettings().stream().filter(i -> !i.isSettingGlobalOnly(elevator)).collect(Collectors.toList());
 
         int itemAmount = settings.size();
         List<ElevatorAction> upActions = getActionsWithSettings(elevator, true);
@@ -1010,7 +1010,7 @@ public class ElevatorGUIHelper {
         SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> openInteractMenu(player, elevator));
         for (int i = 0; i < settings.size(); i++) {
             ElevatorSetting<?> setting = settings.get(i);
-            display.setItemSimple(i + 9, setting.createIcon(setting.getIndividualElevatorValue(elevator), false), (event, myDisplay) -> {
+            display.setItemSimple(i + 9, setting.createIcon(setting.getIndividualValue(elevator), false), (event, myDisplay) -> {
                 myDisplay.stopReturn();
                 setting.clickIndividual(player, elevator, () -> openInteractSettingsMenu(player, elevator), event);
             });

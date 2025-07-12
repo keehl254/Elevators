@@ -4,12 +4,9 @@ import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class ArrayConfigConverter extends ConfigConverter {
@@ -33,7 +30,7 @@ public class ArrayConfigConverter extends ConfigConverter {
                 values.add(childNode.getValue());
                 childrenNodes.add(childNode);
             } else
-                childrenNodes.add(this.createNodeWithData(parentNode, obj.toString(), obj, null));
+                childrenNodes.add(ConfigConverter.createNodeWithData(parentNode, obj.toString(), obj, null));
         }
 
         ConfigNode<?> myNode = createNodeWithData(parentNode, key, values.toArray(), fieldData.getField());

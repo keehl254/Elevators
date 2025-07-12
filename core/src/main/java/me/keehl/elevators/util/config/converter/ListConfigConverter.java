@@ -1,13 +1,10 @@
 package me.keehl.elevators.util.config.converter;
 
-import me.keehl.elevators.Elevators;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.RecipeRow;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +29,7 @@ public class ListConfigConverter extends ConfigConverter {
                 values.add(childNode.getValue());
                 myNode.getChildren().add(childNode);
             } else
-                myNode.getChildren().add(this.createNodeWithData(parentNode, obj.toString(), obj, null));
+                myNode.getChildren().add(ConfigConverter.createNodeWithData(parentNode, obj.toString(), obj, null));
         }
 
         return myNode;

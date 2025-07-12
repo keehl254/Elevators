@@ -6,7 +6,7 @@ import me.keehl.elevators.models.hooks.PlaceholderHook;
 import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorDataContainerService;
 import me.keehl.elevators.services.ElevatorHookService;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigLocale;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigLocale;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -95,7 +95,7 @@ public class MessageHelper {
     public static void sendFormattedMessage(CommandSender sender, String message, Object... items) {
         message = String.format(message, items);
         message = formatPlaceholders(sender, message);
-        message = formatColors(message);
+        message = formatLineColors(message);
 
         if(sender instanceof Player)
             sendPlayerMessageConsumer.accept((Player) sender, message);
@@ -143,7 +143,7 @@ public class MessageHelper {
 
     }
 
-    public static String formatColors(String message) {
+    public static String formatLineColors(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
@@ -160,10 +160,10 @@ public class MessageHelper {
         return messages;
     }
 
-    public static List<String> formatColors(List<String> messages) {
+    public static List<String> formatListColors(List<String> messages) {
         if(messages == null) return messages;
         List<String> finalMessages = new ArrayList<>();
-        messages.forEach(i -> finalMessages.add(formatColors(i)));
+        messages.forEach(i -> finalMessages.add(formatLineColors(i)));
         return finalMessages;
     }
 

@@ -9,6 +9,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.intellij.lang.annotations.Subst;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -21,6 +23,7 @@ public abstract class ElevatorAction {
 
     private static final ElevatorActionVariable<UUID> keyGrouping = new ElevatorActionVariable<>(null, UUID::fromString, "identifier", "identifier", "i");
 
+    private final JavaPlugin plugin;
     private final ElevatorType elevatorType;
 
     protected String value;
@@ -39,7 +42,8 @@ public abstract class ElevatorAction {
     private boolean initialized = false;
 
 
-    protected ElevatorAction(ElevatorType elevatorType, String key, ElevatorActionVariable<?>... variables) {
+    protected ElevatorAction(JavaPlugin plugin, ElevatorType elevatorType, String key, ElevatorActionVariable<?>... variables) {
+        this.plugin = plugin;
         this.elevatorType = elevatorType;
         this.key = key;
         this.defaultVariableAlias = variables.length > 0 ? variables[0].getMainAlias() : null;
@@ -88,6 +92,7 @@ public abstract class ElevatorAction {
         return this.elevatorType;
     }
 
+    @Subst("test_key")
     public String getKey() {
         return this.key;
     }
@@ -120,8 +125,8 @@ public abstract class ElevatorAction {
         if (elevator != null && this.settings.containsKey(variable)) {
 
             ElevatorActionSetting<T> data = (ElevatorActionSetting<T>) this.settings.get(variable);
-            if (data.canBeEditedIndividually(elevator))
-                return variable.getObjectFromString(data.getIndividualElevatorValue(elevator), this);
+            if (!data.isSettingGlobalOnly(elevator))
+                return variable.getObjectFromString(data.getIndividualValue(elevator), this);
         }
 
         if (this.variableData.containsKey(variable))
@@ -158,7 +163,7 @@ public abstract class ElevatorAction {
         if (!this.initialized)
             throw new RuntimeException("Elevator Action Setting mapped prior to initialization. Please move all mapSetting calls to the onInitialize method.");
 
-        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, textColor + "" + ChatColor.BOLD + settingDisplayName, description, icon, setupDataStore);
+        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this.plugin, this, grouping, settingName, textColor + "" + ChatColor.BOLD + settingDisplayName, description, icon, setupDataStore);
         this.settings.put(grouping, setting);
 
         this.initIdentifier();
@@ -170,7 +175,7 @@ public abstract class ElevatorAction {
         if (!this.initialized)
             throw new RuntimeException("Elevator Action Setting mapped prior to initialization. Please move all mapSetting calls to the onInitialize method.");
 
-        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this, grouping, settingName, settingDisplayName, description, icon, setupDataStore);
+        ElevatorActionSetting<T> setting = new ElevatorActionSetting<>(this.plugin, this, grouping, settingName, settingDisplayName, description, icon, setupDataStore);
         this.settings.put(grouping, setting);
 
         this.initIdentifier();

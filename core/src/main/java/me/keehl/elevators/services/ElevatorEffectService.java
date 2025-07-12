@@ -6,8 +6,8 @@ import me.keehl.elevators.effects.HelixEffect;
 import me.keehl.elevators.effects.ImageEffect;
 import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.models.ElevatorEffect;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigEffect;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigEffect;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigRoot;
 import org.bukkit.ChatColor;
 
 import java.io.File;

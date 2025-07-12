@@ -216,7 +216,7 @@ public abstract class ConfigConverter {
 
     public abstract String getFieldDisplay(ConfigNode<?> node);
 
-    public ConfigNode<?> createNodeWithData(ConfigNode<?> parentNode, String key, Object object, @Nullable Field field) {
+    public static ConfigNode<?> createNodeWithData(ConfigNode<?> parentNode, String key, Object object, @Nullable Field field) {
         if (field == null)
             return new DirectConfigNode<>(parentNode, key, object);
         return new ClassicConfigNode<>(parentNode, field, object);

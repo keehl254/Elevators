@@ -4,11 +4,11 @@ import me.keehl.elevators.helpers.*;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorEventData;
 import me.keehl.elevators.models.ElevatorType;
-import me.keehl.elevators.models.settings.MaxStackSizeSetting;
 import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorRecipeService;
 import me.keehl.elevators.services.ElevatorSettingService;
 import me.keehl.elevators.services.ElevatorHookService;
+import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
@@ -134,16 +134,21 @@ public class EntityEventExecutor {
 
     public static void onPickup(EntityPickupItemEvent event) {
         ItemStack item = event.getItem().getItemStack();
-        if (ItemStackHelper.isNotShulkerBox(item.getType())) return;
-        if (!ElevatorHelper.isElevator(item)) return;
-        if (!(event.getEntity() instanceof Player)) return;
+        if (ItemStackHelper.isNotShulkerBox(item.getType()))
+            return;
+        if (!ElevatorHelper.isElevator(item))
+            return;
+        if (!(event.getEntity() instanceof Player))
+            return;
         Player player = (Player) event.getEntity();
 
         ItemMeta itemMeta = item.getItemMeta();
-        if(itemMeta == null) return; // To appease the god that is intellisense.
+        if(itemMeta == null)
+            return; // To appease the god that is intellisense.
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(item);
-        if(ElevatorSettingService.getSettingValue(elevatorType, MaxStackSizeSetting.class) <= 1) return; // I really wish Minecraft would support custom item maxStackSizes already. Returning here gives the most natural pickup.
+        if((int) ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.MAX_STACK_SIZE) <= 1)
+            return; // I really wish Minecraft would support custom item maxStackSizes already. Returning here gives the most natural pickup.
 
         int pickupAmount = item.getAmount();
 

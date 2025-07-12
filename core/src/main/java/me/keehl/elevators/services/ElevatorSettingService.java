@@ -1,90 +1,118 @@
 package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
+import me.keehl.elevators.events.ElevatorRegisterSettingsEvent;
 import me.keehl.elevators.models.Elevator;
+import me.keehl.elevators.models.ElevatorSetting;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.models.settings.*;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
+import me.keehl.elevators.util.InternalElevatorSettingType;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class ElevatorSettingService {
 
     private static boolean initialized = false;
+    private static boolean allowSelfRegister = false;
 
-    private static final Map<Class<? extends ElevatorSetting<?>>, ElevatorSetting<?>> settingsMap = new HashMap<>();
+    private static final List<ElevatorSetting<?>> elevatorSettings = new ArrayList<>();
 
     public static void init() {
         if(ElevatorSettingService.initialized)
             return;
         Elevators.pushAndHoldLog();
 
-        ElevatorConfigService.addConfigCallback(ElevatorSettingService::registerDefaultSettings);
+        ElevatorSettingService.registerDefaultSettings();
 
         ElevatorSettingService.initialized = true;
         Elevators.popLog(logData -> Elevators.log("Setting service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
-    private static void registerDefaultSettings(ConfigRoot config) {
+    private static void registerDefaultSettings() {
 
         Elevators.pushAndHoldLog();
 
-        settingsMap.clear();
+        allowSelfRegister = true;
+        addSetting(new UsePermissionSetting(Elevators.getInstance()));
+        addSetting(new DyePermissionSetting(Elevators.getInstance()));
+        addSetting(new CanExplodeSetting(Elevators.getInstance()));
+        addSetting(new CheckColorSetting(Elevators.getInstance()));
+        addSetting(new CheckPermsSetting(Elevators.getInstance()));
+        addSetting(new ClassCheckSetting(Elevators.getInstance()));
+        addSetting(new DisplayNameSetting(Elevators.getInstance()));
+        addSetting(new LoreLinesSetting(Elevators.getInstance()));
+        addSetting(new MaxDistanceSetting(Elevators.getInstance()));
+        addSetting(new MaxSolidBlocksSetting(Elevators.getInstance()));
+        addSetting(new MaxStackSizeSetting(Elevators.getInstance()));
+        addSetting(new StopObstructionSetting(Elevators.getInstance()));
+        addSetting(new SupportDyingSetting(Elevators.getInstance()));
+        addSetting(new HologramLinesSetting(Elevators.getInstance()));
 
-        addSetting(CanExplodeSetting.class);
-        addSetting(CheckColorSetting.class);
-        addSetting(CheckPermsSetting.class);
-        addSetting(ClassCheckSetting.class);
-        addSetting(DisplayNameSetting.class);
-        addSetting(LoreLinesSetting.class);
-        addSetting(MaxDistanceSetting.class);
-        addSetting(MaxSolidBlocksSetting.class);
-        addSetting(MaxStackSizeSetting.class);
-        addSetting(StopObstructionSetting.class);
-        addSetting(SupportDyingSetting.class);
-        addSetting(HologramLinesSetting.class);
+        Elevators.popLog(logData -> Elevators.log("Registered " + elevatorSettings.size() + " settings. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
+        allowSelfRegister = false;
 
-        Elevators.popLog(logData -> Elevators.log("Registered " + settingsMap.size() + " settings. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
+        Bukkit.getPluginManager().callEvent(new ElevatorRegisterSettingsEvent());
     }
 
-    public static void addSetting(Class<? extends ElevatorSetting<?>> settingsClass) {
-        try {
-            Constructor<?> constructor = settingsClass.getConstructor();
-            settingsMap.put(settingsClass, (ElevatorSetting<?>) constructor.newInstance());
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+    public static void addSetting(ElevatorSetting<?> setting) {
+        if(setting.getPlugin().getName().equalsIgnoreCase(Elevators.getInstance().getName()) && !allowSelfRegister)
+            throw new RuntimeException("An invalid Plugin was provided when trying to register an Elevator Setting.");
+
+        for(ElevatorSetting<?> otherSetting : elevatorSettings) {
+            if(!otherSetting.getSettingName().equalsIgnoreCase(setting.getSettingName()))
+                continue;
+
+            String message;
+            if(otherSetting.getPlugin().getName().equalsIgnoreCase(Elevators.getInstance().getName()))
+                message = "External elevator settings are not able to override default settings";
+            else
+                message = "An elevator setting with the key \"" + setting.getSettingName() + "\" was already registered by plugin: " + otherSetting.getPlugin().getName();
+            throw new RuntimeException(message);
         }
-    }
 
-    public static <T> T getSettingValue(Elevator elevator, Class<? extends ElevatorSetting<T>> settingsClass) {
-
-        if(!settingsMap.containsKey(settingsClass))
-            throw new RuntimeException("Settings class not found");
-
-        return (T) settingsMap.get(settingsClass).getIndividualElevatorValue(elevator);
-    }
-
-    public static <T> T getSettingValue(ElevatorType elevatorType, Class<? extends ElevatorSetting<T>> settingsClass) {
-
-        if(!settingsMap.containsKey(settingsClass))
-            throw new RuntimeException("Settings class not found");
-
-        return (T) settingsMap.get(settingsClass).getCurrentValueGlobal(elevatorType);
-    }
-
-    public static <T extends ElevatorSetting<Z>,Z> T getElevatorSetting(Class<T> settingsClass) {
-
-        if(!settingsMap.containsKey(settingsClass))
-            throw new RuntimeException("Settings class not found");
-
-        return (T) settingsMap.get(settingsClass);
+        elevatorSettings.add(setting);
     }
 
     public static List<ElevatorSetting<?>> getElevatorSettings() {
-        return new ArrayList<>(settingsMap.values());
+        return new ArrayList<>(elevatorSettings);
+    }
+
+    public static Optional<ElevatorSetting<?>> getElevatorSetting(String settingsKey) {
+        return elevatorSettings.stream().filter(s -> s.getSettingName().equalsIgnoreCase(settingsKey)).findFirst();
+    }
+
+    public static <T> T getElevatorSettingValue(Elevator elevator, String settingsKey) {
+        Optional<ElevatorSetting<?>> setting = getElevatorSetting(settingsKey);
+        if(!setting.isPresent())
+            return null;
+
+        try {
+            return (T) setting.get().getIndividualValue(elevator);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static <T> T getElevatorSettingValue(ElevatorType elevatorType, String settingsKey) {
+        Optional<ElevatorSetting<?>> setting = getElevatorSetting(settingsKey);
+        if(!setting.isPresent())
+            return null;
+
+        try {
+            return (T) setting.get().getGlobalValue(elevatorType);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static <T> T getElevatorSettingValue(Elevator elevator, InternalElevatorSettingType settingsKey) {
+        return getElevatorSettingValue(elevator, settingsKey.getSettingName());
+    }
+
+    public static <T> T getElevatorSettingValue(ElevatorType elevatorType, InternalElevatorSettingType settingsKey) {
+        return getElevatorSettingValue(elevatorType, settingsKey.getSettingName());
     }
 
 

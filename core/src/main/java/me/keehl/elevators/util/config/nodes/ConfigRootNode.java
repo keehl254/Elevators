@@ -100,6 +100,16 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
         this.addComment("", comment);
     }
 
+    @Override
+    public List<String> getComments() {
+        throw new RuntimeException("GetComments called on RootNode");
+    }
+
+    @Override
+    public void clearComments() {
+        this.comments.clear();
+    }
+
     public void addComment(String path, String comment) {
         if (!this.comments.containsKey(path))
             this.comments.put(path, new ArrayList<>());
@@ -111,6 +121,10 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
         if (this.comments.containsKey(path))
             return this.comments.get(path);
         return new ArrayList<>();
+    }
+
+    public void clearCommentsAtPath(String path) {
+        this.comments.remove(path);
     }
 
     @Override

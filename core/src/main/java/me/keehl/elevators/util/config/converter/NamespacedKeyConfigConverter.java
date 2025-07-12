@@ -4,9 +4,7 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 import org.bukkit.NamespacedKey;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +18,7 @@ public class NamespacedKeyConfigConverter extends ConfigConverter {
 
         if(!(object instanceof String)) {
             Elevators.getElevatorsLogger().warning("Value at path \"" + parentNode.getPath() + "\" must be a string value!");
-            return createNodeWithData(parentNode, key, null, fieldData.getField());
+            return ConfigConverter.createNodeWithData(parentNode, key, null, fieldData.getField());
         }
 
         String strValue = object.toString();
@@ -28,12 +26,12 @@ public class NamespacedKeyConfigConverter extends ConfigConverter {
 
         if(!matcher.matches()) {
             Elevators.getElevatorsLogger().warning("Value at path \"" + parentNode.getPath() + "\" must be in a valid NamespacedKey format! Example: minecraft:white_wool");
-            return createNodeWithData(parentNode, key, null, fieldData.getField());
+            return ConfigConverter.createNodeWithData(parentNode, key, null, fieldData.getField());
         }
 
         // I apologize to papermc and spigot for using a deprecated method lol
         //noinspection deprecation
-        return createNodeWithData(parentNode, key, new NamespacedKey(matcher.group(1), matcher.group(2)), fieldData.getField());
+        return ConfigConverter.createNodeWithData(parentNode, key, new NamespacedKey(matcher.group(1), matcher.group(2)), fieldData.getField());
     }
 
     @Override

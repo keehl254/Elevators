@@ -5,8 +5,6 @@ import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -30,7 +28,7 @@ public class EnumConfigConverter extends ConfigConverter {
             Elevators.getElevatorsLogger().warning("Value at path \"" + parentNode.getPath() + "\" must be a \"" + fieldType.getSimpleName()+"\" enum value! Using default: \"" + object.toString() + "\".");
         }
 
-        return createNodeWithData(parentNode, key, object, fieldData.getField());
+        return ConfigConverter.createNodeWithData(parentNode, key, object, fieldData.getField());
     }
 
     public Object serializeNodeToObject(ConfigNode<?> node) throws Exception {

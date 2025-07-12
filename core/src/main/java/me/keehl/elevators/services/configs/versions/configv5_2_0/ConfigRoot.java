@@ -1,4 +1,4 @@
-package me.keehl.elevators.services.configs.versions.configv5_1_0;
+package me.keehl.elevators.services.configs.versions.configv5_2_0;
 
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.util.ExecutionMode;
@@ -11,7 +11,7 @@ public class ConfigRoot implements Config {
 
 
     @Comments("Don't Mess With. Deals with config conversion")
-    public String version = "5.1.0";
+    public String version = "5.2.0";
 
     @Comments({"This option controls whether the plugin will check for plugin updates upon startup or every four hours.", "Players with the update permission will receive a message if one is available."})
     public boolean updateCheckerEnabled = true;

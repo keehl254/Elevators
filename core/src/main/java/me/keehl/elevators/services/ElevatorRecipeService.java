@@ -4,7 +4,7 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.helpers.VersionHelper;
 import me.keehl.elevators.models.ElevatorRecipeGroup;
 import me.keehl.elevators.models.ElevatorType;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigRoot;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;

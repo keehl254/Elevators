@@ -11,11 +11,13 @@ import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorDataContainerService;
 import me.keehl.elevators.services.interaction.PagedDisplay;
 import me.keehl.elevators.services.interaction.SimpleInput;
+import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +25,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class HologramLinesSetting extends ElevatorSetting<String[]> {
+public class HologramLinesSetting extends InternalElevatorSetting<String[]> {
 
-    public HologramLinesSetting() {
-        super("change-holo", "Hologram Lines", "Click to alter the hologram lines that appear above the elevator.", Material.PAPER, ChatColor.YELLOW);
-        this.setGetValueGlobal(e -> e.getHolographicLines().toArray(new String[]{}));
+    public HologramLinesSetting(JavaPlugin plugin) {
+        super(plugin, InternalElevatorSettingType.HOLO_LINES.getSettingName(), "Hologram Lines", "Click to alter the hologram lines that appear above the elevator.", Material.PAPER, ChatColor.YELLOW);
         this.setupDataStore("hologram-lines", ElevatorDataContainerService.stringArrayPersistentDataType);
     }
 
@@ -66,7 +67,7 @@ public class HologramLinesSetting extends ElevatorSetting<String[]> {
 
             List<String> lore = new ArrayList<>();
             lore.add("");
-            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Value: " + ChatColor.GRAY + MessageHelper.formatColors(message));
+            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Value: " + ChatColor.GRAY + MessageHelper.formatLineColors(message));
             lore.add("");
             lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Move up line");
             lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right Click: " + ChatColor.GRAY + "Move back line");
@@ -133,7 +134,17 @@ public class HologramLinesSetting extends ElevatorSetting<String[]> {
 
     @Override
     public void onClickIndividual(Player player, Elevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent, String[] currentValue) {
-        this.editLines(player, returnMethod, clickEvent, currentValue, (value) -> this.setIndividualElevatorValue(elevator, value));
+        this.editLines(player, returnMethod, clickEvent, currentValue, (value) -> this.setIndividualValue(elevator, value));
+    }
+
+    @Override
+    public String[] getGlobalValue(ElevatorType elevatorType) {
+        return elevatorType.getHolographicLines().toArray(new String[]{});
+    }
+
+    @Override
+    public boolean canBeEditedIndividually(Elevator elevator) {
+        return true;
     }
 
     @Override
@@ -151,7 +162,7 @@ public class HologramLinesSetting extends ElevatorSetting<String[]> {
         } else {
             lore.add(ChatColor.GRAY + "Current Value: ");
             for (String line : loreLines)
-                lore.add(ChatColor.WHITE + MessageHelper.formatColors(line));
+                lore.add(ChatColor.WHITE + MessageHelper.formatLineColors(line));
         }
 
         ItemStack icon = this.iconTemplate.clone();

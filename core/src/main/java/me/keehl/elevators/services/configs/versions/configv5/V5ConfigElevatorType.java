@@ -1,8 +1,5 @@
 package me.keehl.elevators.services.configs.versions.configv5;
 
-import me.keehl.elevators.models.ElevatorAction;
-import me.keehl.elevators.models.ElevatorRecipeGroup;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigElevatorType;
 import me.keehl.elevators.util.config.Config;
 
 import java.util.*;
@@ -22,7 +19,7 @@ public class V5ConfigElevatorType implements Config {
     protected boolean canExplode = false;
     protected List<String> hologramLines = new ArrayList<>();
     protected List<String> loreLines = new ArrayList<>();
-    protected ConfigElevatorType.ConfigActions actions = new ConfigElevatorType.ConfigActions();
+    protected V5ConfigElevatorType.ConfigActions actions = new V5ConfigElevatorType.ConfigActions();
     protected List<String> disabledSettings = Arrays.asList("change-holo","sound/sound","action-bar/message","boss-bar/message","message-player/message","title/title","title/subtitle","effect/effect");
     protected Map<String, V5ConfigRecipe> recipes = new HashMap<String, V5ConfigRecipe>() {{
        put("classic", new V5ConfigRecipe());
@@ -120,7 +117,7 @@ public class V5ConfigElevatorType implements Config {
         return this.disabledSettings;
     }
 
-    public ConfigElevatorType.ConfigActions getActionsConfig() {
+    public V5ConfigElevatorType.ConfigActions getActionsConfig() {
         return this.actions;
     }
 
@@ -131,5 +128,14 @@ public class V5ConfigElevatorType implements Config {
     public List<String> getHolographicLines() {
         return this.hologramLines;
     }
+
+    public static class ConfigActions implements Config {
+
+        public List<String> up = Collections.singletonList("sound: ENTITY_BLAZE_SHOOT pitch=2.0 volume=1.0");
+
+        public List<String> down = Collections.singletonList("sound: ENTITY_BLAZE_SHOOT pitch=2.0 volume=1.0");
+
+    }
+
 
 }

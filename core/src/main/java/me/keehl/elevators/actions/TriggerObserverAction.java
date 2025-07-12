@@ -10,13 +10,14 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Observer;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 
 public class TriggerObserverAction extends ElevatorAction {
 
-    public TriggerObserverAction(ElevatorType elevatorType, String key) {
-        super(elevatorType, key);
+    public TriggerObserverAction(JavaPlugin plugin, ElevatorType elevatorType, String key) {
+        super(plugin, elevatorType, key);
     }
 
     @Override

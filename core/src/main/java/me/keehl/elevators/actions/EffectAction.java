@@ -8,6 +8,7 @@ import me.keehl.elevators.services.interaction.PagedDisplay;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.Consumer;
 
@@ -15,8 +16,8 @@ public class EffectAction extends ElevatorAction {
 
     private static final ElevatorActionVariable<String> effectNameGrouping = new ElevatorActionVariable<>("CREEPER", i -> i, "name","n");
 
-    public EffectAction(ElevatorType elevatorType, String key) {
-        super(elevatorType, key, effectNameGrouping);
+    public EffectAction(JavaPlugin plugin, ElevatorType elevatorType, String key) {
+        super(plugin, elevatorType, key, effectNameGrouping);
     }
 
     @Override

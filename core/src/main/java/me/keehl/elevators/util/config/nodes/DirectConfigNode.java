@@ -3,6 +3,7 @@ package me.keehl.elevators.util.config.nodes;
 import me.keehl.elevators.util.config.ConfigConverter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DirectConfigNode<T> implements ConfigNode<T> {
 
@@ -37,6 +38,17 @@ public class DirectConfigNode<T> implements ConfigNode<T> {
     @Override
     public void addComment(String comment) {
         this.getRoot().addComment(getPath(), comment);
+    }
+
+    @Override
+    public List<String> getComments() {
+        return this.getRoot().getCommentsAtPath(getPath());
+    }
+
+
+    @Override
+    public void clearComments() {
+        this.getRoot().clearCommentsAtPath(getPath());
     }
 
     @Override

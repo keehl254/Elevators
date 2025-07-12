@@ -8,12 +8,11 @@ import me.keehl.elevators.helpers.ShulkerBoxHelper;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorEventData;
 import me.keehl.elevators.models.ElevatorType;
-import me.keehl.elevators.models.settings.DisplayNameSetting;
-import me.keehl.elevators.models.settings.LoreLinesSetting;
 import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorSettingService;
 import me.keehl.elevators.services.ElevatorHookService;
 import io.papermc.lib.PaperLib;
+import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
@@ -71,8 +70,8 @@ public class PaperEventExecutor {
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(event.getItem());
         if (elevatorType != null) {
-            meta.setDisplayName(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, DisplayNameSetting.class)));
-            meta.setLore(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class)));
+            meta.setDisplayName(MessageHelper.formatLineColors(ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.DISPLAY_NAME)));
+            meta.setLore(MessageHelper.formatListColors(ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.LORE_LINES)));
             event.getItem().setItemMeta(meta);
         }
 

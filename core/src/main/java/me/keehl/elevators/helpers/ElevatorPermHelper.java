@@ -4,12 +4,11 @@ import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorEventData;
 import me.keehl.elevators.models.ElevatorRecipeGroup;
 import me.keehl.elevators.models.ElevatorType;
-import me.keehl.elevators.models.settings.CheckPermsSetting;
-import me.keehl.elevators.models.settings.SupportDyingSetting;
 import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorSettingService;
 import me.keehl.elevators.services.ElevatorHookService;
 import me.keehl.elevators.util.ExecutionMode;
+import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.DyeColor;
 import org.bukkit.Keyed;
 import org.bukkit.entity.Player;
@@ -23,7 +22,7 @@ public class ElevatorPermHelper {
 
     public static <T extends Recipe & Keyed> boolean canCraftElevatorType(ElevatorType elevatorType, Player player, T recipe) {
 
-        if (!ElevatorSettingService.getSettingValue(elevatorType, CheckPermsSetting.class))
+        if (!(boolean) ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.CHECK_PERMS))
             return true;
 
         Optional<ElevatorRecipeGroup> optRecipeGroup = elevatorType.getRecipeGroups().stream().filter(i -> i.getNameSpacedKeys().contains(recipe.getKey())).findAny();
@@ -36,10 +35,10 @@ public class ElevatorPermHelper {
 
     public static boolean canDyeElevatorType(ElevatorType elevatorType, Player player, DyeColor color) {
 
-        if (!ElevatorSettingService.getSettingValue(elevatorType, CheckPermsSetting.class))
+        if (!(boolean)ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.CHECK_PERMS))
             return true;
 
-        if (!ElevatorSettingService.getSettingValue(elevatorType, SupportDyingSetting.class))
+        if (!(boolean)ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.SUPPORT_DYING))
             return player.hasPermission(elevatorType.getDyePermission());
 
         if (player.hasPermission(elevatorType.getDyePermission() + ".*"))
@@ -62,7 +61,7 @@ public class ElevatorPermHelper {
                 return;
             }
 
-            boolean shouldCheckSettings = ElevatorSettingService.getSettingValue(elevator, CheckPermsSetting.class);
+            boolean shouldCheckSettings = ElevatorSettingService.getElevatorSettingValue(elevator, InternalElevatorSettingType.CHECK_PERMS);
             if (!shouldCheckSettings || player.hasPermission(elevator.getElevatorType().getUsePermission() + ".*"))
                 return;
 

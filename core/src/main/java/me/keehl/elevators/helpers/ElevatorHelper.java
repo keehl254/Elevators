@@ -3,8 +3,8 @@ package me.keehl.elevators.helpers;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.events.ElevatorUseEvent;
 import me.keehl.elevators.models.*;
-import me.keehl.elevators.models.settings.*;
 import me.keehl.elevators.services.*;
+import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -111,16 +111,16 @@ public class ElevatorHelper {
         World world = origin.getWorld();
 
         int worldMinHeight = VersionHelper.getWorldMinHeight(world);
-        int maxDistance = ElevatorSettingService.getSettingValue(elevator, MaxDistanceSetting.class);
+        int maxDistance = ElevatorSettingService.getElevatorSettingValue(elevator, InternalElevatorSettingType.MAX_DISTANCE);
         if (maxDistance == -1 || ignoreDistanceCheck)
             maxDistance = Short.MAX_VALUE;
 
         int endPointY = Math.min(Math.max(origin.getBlockY() + (maxDistance * direction), worldMinHeight), world.getMaxHeight());
 
-        boolean stopsObstruction = ElevatorSettingService.getSettingValue(elevator, StopObstructionSetting.class);
-        boolean checkColor = ElevatorSettingService.getSettingValue(elevator, CheckColorSetting.class);
-        boolean checksClass = ElevatorSettingService.getSettingValue(elevator, ClassCheckSetting.class);
-        int maxSolidBlocks = ElevatorSettingService.getSettingValue(elevator, MaxSolidBlocksSetting.class);
+        boolean stopsObstruction = ElevatorSettingService.getElevatorSettingValue(elevator, InternalElevatorSettingType.STOP_OBSTRUCTION);
+        boolean checkColor = ElevatorSettingService.getElevatorSettingValue(elevator, InternalElevatorSettingType.CHECK_COLOR);
+        boolean checksClass = ElevatorSettingService.getElevatorSettingValue(elevator, InternalElevatorSettingType.CLASS_CHECK);
+        int maxSolidBlocks = ElevatorSettingService.getElevatorSettingValue(elevator, InternalElevatorSettingType.MAX_SOLID_BLOCKS);
 
         int solidBlocks = maxSolidBlocks == -1 || ignoreSolidBlockCheck ? Short.MIN_VALUE : 0;
         Location tempLocation = origin.clone();

@@ -3,11 +3,9 @@ package me.keehl.elevators.services.listeners;
 import me.keehl.elevators.helpers.*;
 import me.keehl.elevators.models.ElevatorEventData;
 import me.keehl.elevators.models.ElevatorType;
-import me.keehl.elevators.models.settings.DisplayNameSetting;
-import me.keehl.elevators.models.settings.LoreLinesSetting;
-import me.keehl.elevators.models.settings.MaxStackSizeSetting;
 import me.keehl.elevators.services.ElevatorDataContainerService;
 import me.keehl.elevators.services.ElevatorSettingService;
+import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.DyeColor;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -83,7 +81,7 @@ public class InventoryEventExecutor {
         // Adding cursor to clicked stack.
         if (!clickedItem.getType().isAir() && clickedItem instanceof ShulkerBox) {
             ElevatorType elevatorType = ElevatorHelper.getElevatorType(clickedItem);
-            int amountToAdd = ElevatorSettingService.getSettingValue(elevatorType, MaxStackSizeSetting.class) - clickedItem.getAmount();
+            int amountToAdd = (int) ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.MAX_STACK_SIZE) - clickedItem.getAmount();
             amountToAdd = Math.min(amountToAdd, event.getCursor().getAmount());
 
             clickedItem.setAmount(clickedItem.getAmount() + amountToAdd);
@@ -104,8 +102,8 @@ public class InventoryEventExecutor {
 
         ElevatorType elevatorType = ElevatorHelper.getElevatorType(event.getItem());
         if (elevatorType != null) {
-            meta.setDisplayName(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, DisplayNameSetting.class)));
-            meta.setLore(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class)));
+            meta.setDisplayName(MessageHelper.formatLineColors(ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.DISPLAY_NAME)));
+            meta.setLore(MessageHelper.formatListColors(ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.LORE_LINES)));
             event.getItem().setItemMeta(meta);
         }
         Location src = event.getSource().getLocation();

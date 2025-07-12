@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.Consumer;
 
@@ -21,8 +22,8 @@ public class TitleAction extends ElevatorAction {
     private static final ElevatorActionVariable<String> titleGrouping = new ElevatorActionVariable<>("", i -> i, "title", "tit", "t");
     private static final ElevatorActionVariable<String> subTitleGrouping = new ElevatorActionVariable<>("", i -> i, "subtitle","sub","s");
 
-    public TitleAction(ElevatorType elevatorType, String key) {
-        super(elevatorType, key, titleGrouping,subTitleGrouping);
+    public TitleAction(JavaPlugin plugin, ElevatorType elevatorType, String key) {
+        super(plugin, elevatorType, key, titleGrouping,subTitleGrouping);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class TitleAction extends ElevatorAction {
     private String formatText(String message, ElevatorEventData eventData, Player player) {
         String value = MessageHelper.formatElevatorPlaceholders(player, eventData, message);
         value = MessageHelper.formatPlaceholders(player, value);
-        value = MessageHelper.formatColors(value);
+        value = MessageHelper.formatLineColors(value);
 
         return value;
     }

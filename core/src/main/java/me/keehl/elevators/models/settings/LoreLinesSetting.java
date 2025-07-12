@@ -5,28 +5,27 @@ import me.keehl.elevators.helpers.ElevatorGUIHelper;
 import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.helpers.TagHelper;
+import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.interaction.PagedDisplay;
 import me.keehl.elevators.services.interaction.SimpleInput;
+import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
-public class LoreLinesSetting extends ElevatorSetting<List<String>> {
+public class LoreLinesSetting extends InternalElevatorSetting<List<String>> {
 
-    public LoreLinesSetting() {
-        super("change-lore", "Lore Lines", "Click to alter the lore lines that appear on dropped elevators of this type.", Material.LAPIS_LAZULI, ChatColor.DARK_PURPLE);
-        this.setGetValueGlobal(ElevatorType::getLore);
+    public LoreLinesSetting(JavaPlugin plugin) {
+        super(plugin, InternalElevatorSettingType.LORE_LINES.getSettingName(), "Lore Lines", "Click to alter the lore lines that appear on dropped elevators of this type.", Material.LAPIS_LAZULI, ChatColor.DARK_PURPLE);
     }
 
     private void addLine(Player player, List<String> currentValue, Consumer<List<String>> completeConsumer) {
@@ -64,7 +63,7 @@ public class LoreLinesSetting extends ElevatorSetting<List<String>> {
 
             List<String> lore = new ArrayList<>();
             lore.add("");
-            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Value: " + ChatColor.GRAY + MessageHelper.formatColors(message));
+            lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Value: " + ChatColor.GRAY + MessageHelper.formatLineColors(message));
             lore.add("");
             lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Move up line");
             lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Right Click: " + ChatColor.GRAY + "Move back line");
@@ -129,6 +128,21 @@ public class LoreLinesSetting extends ElevatorSetting<List<String>> {
     }
 
     @Override
+    public void onClickIndividual(Player player, Elevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent, List<String> currentValue) {
+        returnMethod.run();
+    }
+
+    @Override
+    public List<String> getGlobalValue(ElevatorType elevatorType) {
+        return elevatorType.getLore();
+    }
+
+    @Override
+    public boolean canBeEditedIndividually(Elevator elevator) {
+        return false;
+    }
+
+    @Override
     public ItemStack createIcon(Object value, boolean global) {
         List<String> lore = new ArrayList<>();
         List<String> loreLines;
@@ -147,7 +161,7 @@ public class LoreLinesSetting extends ElevatorSetting<List<String>> {
         } else {
             lore.add(ChatColor.GRAY + "Current Value: ");
             for (String line : loreLines)
-                lore.add(ChatColor.WHITE + MessageHelper.formatColors(line));
+                lore.add(ChatColor.WHITE + MessageHelper.formatLineColors(line));
         }
 
         ItemStack icon = this.iconTemplate.clone();

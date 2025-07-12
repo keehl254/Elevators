@@ -14,8 +14,10 @@ import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRoo
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigVersion;
 import me.keehl.elevators.services.configs.versions.configv5.V5ConfigRoot;
 import me.keehl.elevators.services.configs.versions.configv5.V5ConfigVersion;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRoot;
+import me.keehl.elevators.services.configs.versions.configv5_1_0.V5_1_0ConfigRoot;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigRoot;
 import me.keehl.elevators.services.configs.versions.configv5_1_0.V5_1_0ConfigVersion;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.V5_2_0ConfigVersion;
 import me.keehl.elevators.util.config.Config;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ConfigRootNode;
@@ -36,6 +38,7 @@ public class ConfigVersionBuilder {
     private static final V4_0_2ConfigVersion v4_0_2ConfigVersion = new V4_0_2ConfigVersion();
     private static final V5ConfigVersion v5ConfigVersion = new V5ConfigVersion();
     private static final V5_1_0ConfigVersion v5_1_0ConfigVersion = new V5_1_0ConfigVersion();
+    private static final V5_2_0ConfigVersion v5_2_0ConfigVersion = new V5_2_0ConfigVersion();
 
     @SuppressWarnings("unchecked")
     private static <Z extends Config, T extends Config, V extends ConfigVersion<Z, T>> T convert(V converter, File configFile, Z existingRoot) throws Exception {
@@ -44,6 +47,7 @@ public class ConfigVersionBuilder {
             Type[] arguments = ((ParameterizedType) converter.getClass().getGenericSuperclass()).getActualTypeArguments();
             Class<T> newClass = (Class<T>) Elevators.getInstance().getClass().getClassLoader().loadClass(arguments[1].getTypeName());
             T newRoot = newClass.getConstructor().newInstance();
+            Elevators.getElevatorsLogger().info("Creating node for version: " + newRoot.getClass().getSimpleName());
             return ConfigConverter.createNodeForConfig(newRoot, configFile).getRoot().getConfig();
         }
 
@@ -75,8 +79,10 @@ public class ConfigVersionBuilder {
                     root = convert(v4_0_2ConfigVersion, configFile, (V4ConfigRoot) root);
                 case "5.0.0":
                     root = convert(v5ConfigVersion, configFile, (V4_0_2ConfigRoot) root);
-                default:
+                case "5.1.0":
                     root = convert(v5_1_0ConfigVersion, configFile, (V5ConfigRoot) root);
+                default:
+                    root = convert(v5_2_0ConfigVersion, configFile, (V5_1_0ConfigRoot) root);
             }
 
             ConfigConverter converter = ConfigConverter.getConverter(root.getClass());

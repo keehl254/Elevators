@@ -1,15 +1,12 @@
 package me.keehl.elevators.util.config.converter;
 
-import me.keehl.elevators.Elevators;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.RecipeRow;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class RecipeRowConfigConverter extends ConfigConverter {
 
@@ -22,7 +19,7 @@ public class RecipeRowConfigConverter extends ConfigConverter {
             converter = getConverter(childFieldData.getFieldClass());
 
         RecipeRow<Object> values = new RecipeRow<>();
-        ConfigNode<?> myNode = createNodeWithData(parentNode, key, values, fieldData.getField());
+        ConfigNode<?> myNode = ConfigConverter.createNodeWithData(parentNode, key, values, fieldData.getField());
 
         for (Object obj : (Collection<?>) object) {
             if (converter != null) {
@@ -30,7 +27,7 @@ public class RecipeRowConfigConverter extends ConfigConverter {
                 values.add(childNode.getValue());
                 myNode.getChildren().add(childNode);
             } else
-                myNode.getChildren().add(this.createNodeWithData(parentNode, obj.toString(), obj, null));
+                myNode.getChildren().add(ConfigConverter.createNodeWithData(parentNode, obj.toString(), obj, null));
         }
 
         return myNode;

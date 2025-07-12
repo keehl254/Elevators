@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.Consumer;
 
@@ -20,8 +21,8 @@ public class MessagePlayerAction extends ElevatorAction {
 
     private static final ElevatorActionVariable<String> messageGrouping = new ElevatorActionVariable<>("", i -> i, "message","m");
 
-    public MessagePlayerAction(ElevatorType elevatorType, String key) {
-        super(elevatorType, key,messageGrouping);
+    public MessagePlayerAction(JavaPlugin plugin, ElevatorType elevatorType, String key) {
+        super(plugin, elevatorType, key,messageGrouping);
     }
 
     @Override
@@ -35,7 +36,7 @@ public class MessagePlayerAction extends ElevatorAction {
     public void execute(ElevatorEventData eventData, Player player) {
         String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getVariableValue(messageGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
-        value = MessageHelper.formatColors(value);
+        value = MessageHelper.formatLineColors(value);
 
         player.sendMessage(value);
     }

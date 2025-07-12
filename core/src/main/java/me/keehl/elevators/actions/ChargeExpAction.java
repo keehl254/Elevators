@@ -7,6 +7,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.Consumer;
 
@@ -15,8 +16,8 @@ public class ChargeExpAction extends ElevatorAction {
     private static final ElevatorActionVariable<Integer> expLevelGrouping = new ElevatorActionVariable<>(0, Integer::parseInt, "level","lvl","l");
     private static final ElevatorActionVariable<Integer> expGrouping = new ElevatorActionVariable<>(0, Integer::parseInt, "exp","e", "xp","x");
 
-    public ChargeExpAction(ElevatorType elevatorType, String key) {
-        super(elevatorType, key, expLevelGrouping, expGrouping);
+    public ChargeExpAction(JavaPlugin plugin, ElevatorType elevatorType, String key) {
+        super(plugin, elevatorType, key, expLevelGrouping, expGrouping);
     }
 
     @Override

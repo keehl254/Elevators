@@ -5,14 +5,15 @@ import me.keehl.elevators.actions.settings.ElevatorActionSetting;
 import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.services.ElevatorActionService;
+import me.keehl.elevators.util.TriFunction;
 import me.keehl.elevators.util.exceptions.ElevatorActionBuilderException;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -59,21 +60,21 @@ public class ElevatorActionBuilder {
         return this;
     }
 
-    public void register(ItemStack icon) {
-        BiFunction<ElevatorType, String, ElevatorAction> buildAction = (type, actionKey) -> {
+    public void register(JavaPlugin plugin, ItemStack icon) {
+        TriFunction<JavaPlugin, ElevatorType, String, ElevatorAction> buildAction = (javaPlugin, type, actionKey) -> {
 
             Map<ElevatorActionVariableBuilder<?>, ElevatorActionVariable<?>> varBuilderXGroups = new HashMap<>();
             for(ElevatorActionVariableBuilder<?> builder : this.groupings)
                 varBuilderXGroups.put(builder, builder.build());
 
-            return new BuilderElevatorAction(this, actionKey, type, varBuilderXGroups);
+            return new BuilderElevatorAction(plugin, this, actionKey, type, varBuilderXGroups);
         };
 
-        ElevatorActionService.registerElevatorAction(this.actionKey, buildAction, icon);
+        ElevatorActionService.registerElevatorAction(plugin, this.actionKey, buildAction, icon);
     }
 
-    public void register(String chatColor,  String displayName, Material itemType) {
-        this.register(ItemStackHelper.createItem(chatColor + ChatColor.BOLD + displayName, itemType, 1));
+    public void register(JavaPlugin plugin, String chatColor,  String displayName, Material itemType) {
+        this.register(plugin, ItemStackHelper.createItem(chatColor + ChatColor.BOLD + displayName, itemType, 1));
     }
 
     public static class BuilderElevatorAction extends ElevatorAction {
@@ -82,8 +83,8 @@ public class ElevatorActionBuilder {
         private final ElevatorActionBuilder builder;
         private final Map<ElevatorActionVariableBuilder<?>, ElevatorActionVariable<?>> variableBuilders;
 
-        protected BuilderElevatorAction(ElevatorActionBuilder builder, String actionKey, ElevatorType elevatorType, Map<ElevatorActionVariableBuilder<?>, ElevatorActionVariable<?>> variableBuilders) {
-            super(elevatorType, actionKey, variableBuilders.values().toArray(new ElevatorActionVariable<?>[]{}));
+        protected BuilderElevatorAction(JavaPlugin plugin, ElevatorActionBuilder builder, String actionKey, ElevatorType elevatorType, Map<ElevatorActionVariableBuilder<?>, ElevatorActionVariable<?>> variableBuilders) {
+            super(plugin, elevatorType, actionKey, variableBuilders.values().toArray(new ElevatorActionVariable<?>[]{}));
 
             this.builder = builder;
             this.variableBuilders = variableBuilders;

@@ -14,6 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.Consumer;
 
@@ -21,8 +22,8 @@ public class CommandConsoleAction extends ElevatorAction {
 
     private static final ElevatorActionVariable<String> commandGrouping = new ElevatorActionVariable<>("", i -> i, "command","c");
 
-    public CommandConsoleAction(ElevatorType elevatorType, String key) {
-        super(elevatorType, key, commandGrouping);
+    public CommandConsoleAction(JavaPlugin plugin, ElevatorType elevatorType, String key) {
+        super(plugin, elevatorType, key, commandGrouping);
     }
 
     @Override

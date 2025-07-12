@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Random;
 import java.util.function.Consumer;
@@ -34,8 +35,8 @@ public class BossBarAction extends ElevatorAction {
     private static final ElevatorActionVariable<BarStyle> barStyleGrouping = new ElevatorActionVariable<>(BarStyle.SOLID, BarStyle::valueOf, "barstyle","style","s");
     private static final ElevatorActionVariable<String> messageGrouping = new ElevatorActionVariable<>("", i -> i, "message","m");
 
-    public BossBarAction(ElevatorType elevatorType, String key) {
-        super(elevatorType, key, barColorGrouping, barStyleGrouping, messageGrouping);
+    public BossBarAction(JavaPlugin plugin, ElevatorType elevatorType, String key) {
+        super(plugin, elevatorType, key, barColorGrouping, barStyleGrouping, messageGrouping);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class BossBarAction extends ElevatorAction {
 
         String value = MessageHelper.formatElevatorPlaceholders(player, eventData, this.getVariableValue(messageGrouping, eventData.getOrigin()));
         value = MessageHelper.formatPlaceholders(player, value);
-        value = MessageHelper.formatColors(value);
+        value = MessageHelper.formatLineColors(value);
 
         int floorCount = ElevatorHelper.getFloorNumberOrCount(eventData.getDestination(), false);
         int currentFloor = ElevatorHelper.getFloorNumberOrCount(eventData.getDestination(), true);

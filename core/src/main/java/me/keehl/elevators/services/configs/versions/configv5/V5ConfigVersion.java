@@ -6,9 +6,7 @@ import me.keehl.elevators.services.ElevatorHookService;
 import me.keehl.elevators.services.configs.ConfigVersion;
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRecipe;
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRoot;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigEffect;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigHookData;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigLocale;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigLocale;
 import org.bukkit.DyeColor;
 
 import java.util.HashMap;
@@ -23,20 +21,20 @@ public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, V5ConfigRoo
         newConfig.updateCheckerEnabled = currentConfig.updateCheckerEnabled;
         newConfig.forceFacingUpwards = currentConfig.forceFacingUpwards;
 
-        ConfigLocale locale = new ConfigLocale();
-        locale.cantCreateMessage = currentConfig.cantCreateMessage;
-        locale.cantUseMessage = currentConfig.cantUseMessage;
-        locale.cantGiveMessage = currentConfig.cantGiveMessage;
-        locale.cantReloadMessage = currentConfig.cantReloadMessage;
-        locale.notEnoughRoomGiveMessage = currentConfig.notEnoughRoomGiveMessage;
-        locale.givenElevatorMessage = currentConfig.givenElevatorMessage;
-        locale.worldDisabledMessage = currentConfig.worldDisabledMessage;
+        V5ConfigLocale newLocale = new V5ConfigLocale();
+        newLocale.cantCreateMessage = currentConfig.cantCreateMessage;
+        newLocale.cantUseMessage = currentConfig.cantUseMessage;
+        newLocale.cantGiveMessage = currentConfig.cantGiveMessage;
+        newLocale.cantReloadMessage = currentConfig.cantReloadMessage;
+        newLocale.notEnoughRoomGiveMessage = currentConfig.notEnoughRoomGiveMessage;
+        newLocale.givenElevatorMessage = currentConfig.givenElevatorMessage;
+        newLocale.worldDisabledMessage = currentConfig.worldDisabledMessage;
 
-        newConfig.locale = locale;
+        newConfig.locale = newLocale;
 
         // We now support many different protection hooks, so let's set the "claimProtectionDefault" setting on all that are loaded.
         for (ProtectionHook hook : ElevatorHookService.getProtectionHooks()) {
-            ConfigHookData hookData = new ConfigHookData();
+            V5ConfigHookData hookData = new V5ConfigHookData();
             hookData.blockNonMemberUseDefault = currentConfig.claimProtectionDefault;
 
             if(newConfig.protectionHooks == null)
@@ -48,7 +46,7 @@ public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, V5ConfigRoo
         newConfig.disabledWorlds = currentConfig.disabledWorlds;
 
         // Let's make our default effect :) Show them how it's done :)
-        ConfigEffect creeperEffect = new ConfigEffect();
+        V5ConfigEffect creeperEffect = new V5ConfigEffect();
         creeperEffect.file = "Creeper.png";
         creeperEffect.scale = 1;
         creeperEffect.duration = 1.0F;

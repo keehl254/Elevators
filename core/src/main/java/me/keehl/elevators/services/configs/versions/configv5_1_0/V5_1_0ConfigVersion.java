@@ -1,52 +1,86 @@
 package me.keehl.elevators.services.configs.versions.configv5_1_0;
 
 import me.keehl.elevators.Elevators;
-import me.keehl.elevators.models.ElevatorRecipeGroup;
-import me.keehl.elevators.models.ElevatorType;
-import me.keehl.elevators.models.hooks.ProtectionHook;
-import me.keehl.elevators.services.ElevatorHookService;
 import me.keehl.elevators.services.configs.ConfigVersion;
-import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRecipe;
-import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRoot;
-import me.keehl.elevators.services.configs.versions.configv5.V5ConfigElevatorType;
-import me.keehl.elevators.services.configs.versions.configv5.V5ConfigRecipe;
-import me.keehl.elevators.services.configs.versions.configv5.V5ConfigRoot;
-import me.keehl.elevators.services.interaction.SimpleDisplay;
+import me.keehl.elevators.services.configs.versions.configv5.*;
 import me.keehl.elevators.util.config.RecipeRow;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.BiFunction;
 
-public class V5_1_0ConfigVersion extends ConfigVersion<V5ConfigRoot, ConfigRoot> {
+public class V5_1_0ConfigVersion extends ConfigVersion<V5ConfigRoot, V5_1_0ConfigRoot> {
 
     @Override
-    public ConfigRoot upgradeVersion(V5ConfigRoot currentConfig) {
+    public V5_1_0ConfigRoot upgradeVersion(V5ConfigRoot currentConfig) {
         Elevators.getElevatorsLogger().info("Converting config from V5.0.0 - V5.1.0");
 
         // This is a lot of work for simply changing something in ConfigRecipe...
-        ConfigRoot newConfig = new ConfigRoot();
+        V5_1_0ConfigRoot newConfig = new V5_1_0ConfigRoot();
         newConfig.updateCheckerEnabled = currentConfig.updateCheckerEnabled;
         newConfig.effectDestination = currentConfig.effectDestination;
         newConfig.permissionMode = currentConfig.permissionMode;
         newConfig.forceFacingUpwards = currentConfig.forceFacingUpwards;
-        newConfig.protectionHooks = currentConfig.protectionHooks;
-        newConfig.locale = currentConfig.locale;
+        newConfig.protectionHooks = new HashMap<>();
+
+        for(String pluginKey : currentConfig.protectionHooks.keySet()) {
+            V5ConfigHookData currentHookData = currentConfig.protectionHooks.get(pluginKey);
+            V5_1_0ConfigHookData newHookData = new V5_1_0ConfigHookData();
+            newHookData.allowCustomization = currentHookData.allowCustomization;
+            newHookData.blockNonMemberUseDefault = currentHookData.blockNonMemberUseDefault;
+
+            newConfig.protectionHooks.put(pluginKey, newHookData);
+        }
+
+        V5_1_0ConfigLocale newLocale = new V5_1_0ConfigLocale();
+        newLocale.cantCreateMessage = currentConfig.locale.cantCreateMessage;
+        newLocale.cantDyeMessage = currentConfig.locale.cantDyeMessage;
+        newLocale.cantUseMessage = currentConfig.locale.cantUseMessage;
+        newLocale.cantGiveMessage = currentConfig.locale.cantGiveMessage;
+        newLocale.cantAdministrateMessage = currentConfig.locale.cantAdministrateMessage;
+        newLocale.cantReloadMessage = currentConfig.locale.cantReloadMessage;
+        newLocale.notEnoughRoomGiveMessage = currentConfig.locale.notEnoughRoomGiveMessage;
+        newLocale.givenElevatorMessage = currentConfig.locale.givenElevatorMessage;
+        newLocale.worldDisabledMessage = currentConfig.locale.worldDisabledMessage;
+        newLocale.elevatorChangedKickedOut = currentConfig.locale.elevatorChangedKickedOut;
+        newLocale.chatInputBackOut = currentConfig.locale.chatInputBackOut;
+        newLocale.chatInputBackOutAllowReset = currentConfig.locale.chatInputBackOutAllowReset;
+        newLocale.enterDisplayName = currentConfig.locale.enterDisplayName;
+        newLocale.enterRecipeName = currentConfig.locale.enterRecipeName;
+        newLocale.enterRecipePermission = currentConfig.locale.enterRecipePermission;
+        newLocale.enterFloorName = currentConfig.locale.enterFloorName;
+        newLocale.enterTitle = currentConfig.locale.enterTitle;
+        newLocale.enterSubtitle = currentConfig.locale.enterSubtitle;
+        newLocale.enterMessage = currentConfig.locale.enterMessage;
+        newLocale.enterElevatorKey = currentConfig.locale.enterElevatorKey;
+        newLocale.nonUniqueElevatorKey = currentConfig.locale.nonUniqueElevatorKey;
+        newLocale.nonUniqueRecipeName = currentConfig.locale.nonUniqueRecipeName;
+        newLocale.enterCommand = currentConfig.locale.enterCommand;
+
+        newConfig.locale = newLocale;
         newConfig.allowElevatorDispense = currentConfig.allowElevatorDispense;
         newConfig.disabledWorlds = currentConfig.disabledWorlds;
-        newConfig.effects = currentConfig.effects;
+
+        newConfig.effects = new HashMap<>();
+        for(String effectKey : currentConfig.effects.keySet()) {
+            V5_1_0ConfigEffect newEffect = new V5_1_0ConfigEffect();
+            V5ConfigEffect currentEffect = currentConfig.effects.get(effectKey);
+            newEffect.file = currentEffect.file;
+            newEffect.scale = currentEffect.scale;
+            newEffect.duration = currentEffect.duration;
+            newEffect.useHolo = currentEffect.useHolo;
+            newEffect.background = currentEffect.background;
+
+            newConfig.effects.put(effectKey, newEffect);
+        }
+
         newConfig.elevators = new HashMap<>();
 
         for(String key : currentConfig.elevators.keySet()) {
             V5ConfigElevatorType oldElevatorType = currentConfig.elevators.get(key);
-            ElevatorType newElevatorType = new ElevatorType();
+            V5_1_0ConfigElevatorType newElevatorType = new V5_1_0ConfigElevatorType();
 
             newElevatorType.displayName = oldElevatorType.getDisplayName();
             newElevatorType.usePermission = oldElevatorType.getUsePermission();
@@ -62,13 +96,17 @@ public class V5_1_0ConfigVersion extends ConfigVersion<V5ConfigRoot, ConfigRoot>
             newElevatorType.canExplode = oldElevatorType.canElevatorExplode();
             newElevatorType.hologramLines = oldElevatorType.getHolographicLines();
             newElevatorType.loreLines = oldElevatorType.getLore();
-            newElevatorType.actions = oldElevatorType.getActionsConfig();
+
+            newElevatorType.actions = new V5_1_0ConfigElevatorType.ConfigActions();
+            newElevatorType.actions.up = oldElevatorType.getActionsConfig().up;
+            newElevatorType.actions.down = oldElevatorType.getActionsConfig().down;
+
             newElevatorType.disabledSettings = oldElevatorType.getDisabledSettings();
             newElevatorType.recipes = new HashMap<>();
 
             for(String recipeKey : oldElevatorType.getRecipeMap().keySet()) {
                 V5ConfigRecipe oldRecipe = oldElevatorType.getRecipeMap().get(recipeKey);
-                ElevatorRecipeGroup newRecipe = new ElevatorRecipeGroup();
+                V5_1_0ConfigRecipe newRecipe = new V5_1_0ConfigRecipe();
 
                 newRecipe.defaultOutputColor = oldRecipe.getDefaultOutputColor();
                 newRecipe.supportMultiColorOutput = oldRecipe.supportsMultiColorOutput();

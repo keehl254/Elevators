@@ -2,11 +2,9 @@ package me.keehl.elevators.helpers;
 
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorType;
-import me.keehl.elevators.models.settings.DisplayNameSetting;
-import me.keehl.elevators.models.settings.LoreLinesSetting;
-import me.keehl.elevators.models.settings.MaxStackSizeSetting;
 import me.keehl.elevators.services.ElevatorDataContainerService;
 import me.keehl.elevators.services.ElevatorSettingService;
+import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -53,7 +51,7 @@ public class ItemStackHelper {
 
     private static ItemStack findElevatorType(ElevatorType elevatorType, ItemStack item, Inventory inv) {
         ItemStack elevator = null;
-        int maxStackSize = ElevatorSettingService.getSettingValue(elevatorType, MaxStackSizeSetting.class);
+        int maxStackSize = ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.MAX_STACK_SIZE);
         for (ItemStack content : inv.getContents()) {
             if (content == null || content.getType().equals(Material.AIR))
                 continue;
@@ -74,8 +72,8 @@ public class ItemStackHelper {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return itemStack; // How?
 
-        meta.setDisplayName(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, DisplayNameSetting.class)));
-        meta.setLore(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class)));
+        meta.setDisplayName(MessageHelper.formatLineColors(ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.DISPLAY_NAME)));
+        meta.setLore(MessageHelper.formatListColors(ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.LORE_LINES)));
 
         itemStack.setItemMeta(meta);
 
@@ -110,8 +108,8 @@ public class ItemStackHelper {
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, DisplayNameSetting.class)));
-            meta.setLore(MessageHelper.formatColors(ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class)));
+            meta.setDisplayName(MessageHelper.formatLineColors(ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.DISPLAY_NAME)));
+            meta.setLore(MessageHelper.formatListColors(ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.LORE_LINES)));
             item.setItemMeta(meta);
         }
 
@@ -133,19 +131,19 @@ public class ItemStackHelper {
     }
 
     public static Map<ItemStack, Integer> addElevatorToInventory(ElevatorType elevatorType, int itemAmount, Material dyeMaterial, Inventory inventory) {
-        List<String> lore = ElevatorSettingService.getSettingValue(elevatorType, LoreLinesSetting.class);
-        String displayName = ElevatorSettingService.getSettingValue(elevatorType, DisplayNameSetting.class);
+        List<String> lore = ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.LORE_LINES);
+        String displayName = ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.DISPLAY_NAME);
         return ItemStackHelper.addElevatorToInventory(elevatorType, itemAmount, dyeMaterial, inventory, displayName, lore);
     }
 
     public static Map<ItemStack, Integer> addElevatorToInventory(ElevatorType elevatorType, int itemAmount, Material dyeMaterial, Inventory inventory, String displayName, List<String> lore) {
-        displayName = MessageHelper.formatColors(displayName);
-        lore = MessageHelper.formatColors(lore);
+        displayName = MessageHelper.formatLineColors(displayName);
+        lore = MessageHelper.formatListColors(lore);
 
         Map<ItemStack, Integer> partialList = new HashMap<>();
         ItemStack newElevator = ItemStackHelper.createItemStackFromElevatorType(elevatorType, getDyeColorFromMaterial(dyeMaterial));
 
-        int maxStackSize = ElevatorSettingService.getSettingValue(elevatorType, MaxStackSizeSetting.class);
+        int maxStackSize = ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.MAX_STACK_SIZE);
 
         for(ItemStack inventoryItem : inventory.getContents()) {
             if(inventoryItem == null) continue;

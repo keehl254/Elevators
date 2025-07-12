@@ -5,7 +5,7 @@ import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.services.ElevatorDataContainerService;
 import me.keehl.elevators.services.ElevatorHookService;
 import me.keehl.elevators.services.ElevatorTypeService;
-import me.keehl.elevators.services.configs.versions.configv5_1_0.ConfigRecipe;
+import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigRecipe;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;

@@ -8,11 +8,11 @@ import me.keehl.elevators.helpers.ShulkerBoxHelper;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorEventData;
 import me.keehl.elevators.models.ElevatorType;
-import me.keehl.elevators.models.settings.CanExplodeSetting;
 import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorDataContainerService;
 import me.keehl.elevators.services.ElevatorHologramService;
 import me.keehl.elevators.services.ElevatorSettingService;
+import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,7 +57,7 @@ public class WorldEventExecutor {
 
             event.blockList().remove(block);
 
-            if (ElevatorSettingService.getSettingValue(elevator, CanExplodeSetting.class)) {
+            if (ElevatorSettingService.getElevatorSettingValue(elevator, InternalElevatorSettingType.CAN_EXPLODE)) {
                 final ItemStack newItem = ItemStackHelper.createItemStackFromElevator(elevator);
                 final Location location = block.getLocation();
                 Elevators.getFoliaLib().getScheduler().runAtLocation(location, task -> {

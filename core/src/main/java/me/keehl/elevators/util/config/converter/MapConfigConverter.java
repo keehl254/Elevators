@@ -4,10 +4,6 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class MapConfigConverter extends ConfigConverter {
@@ -35,7 +31,7 @@ public class MapConfigConverter extends ConfigConverter {
                 if (valueConverter != null)
                     childNode = valueConverter.deserializeNodeWithFieldAndObject(myNode, entry.getKey().toString(), entry.getValue(), valueFieldData);
                 else
-                    childNode = this.createNodeWithData(myNode, entry.getKey().toString(), entry.getValue(), null);
+                    childNode = ConfigConverter.createNodeWithData(myNode, entry.getKey().toString(), entry.getValue(), null);
 
                 Object keyObj = null;
                 if (keyFieldData.getFieldClass().isEnum()) {

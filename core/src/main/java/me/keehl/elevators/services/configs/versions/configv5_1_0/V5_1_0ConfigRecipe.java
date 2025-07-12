@@ -1,58 +1,49 @@
 package me.keehl.elevators.services.configs.versions.configv5_1_0;
 
-import me.keehl.elevators.util.config.Comments;
 import me.keehl.elevators.util.config.Config;
 import me.keehl.elevators.util.config.RecipeRow;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
-public class ConfigRecipe implements Config {
+public class V5_1_0ConfigRecipe implements Config {
 
     public int amount = 1;
 
-    @Comments("If \"supportMultiColorMaterials\" is disabled, this permission will allow crafting as is. If \"supportMultiColorMaterials\" is enabled, a wildcard or dye-color needs to be appended to this permission for proper checking.")
     protected String craftPermission = "elevators.craft.default";
-
-    @Comments("This option controls the elevator output color if \"supportMultiColorOutput\" is disabled.")
     protected DyeColor defaultOutputColor = DyeColor.RED;
-
-    @Comments("If this option is disabled, all variations of this recipe will be of the \"defaultOutputColor\".")
     protected boolean supportMultiColorOutput = true;
-
-    @Comments("If this option is enabled, multiple variations of this recipe will be created for each dyed color.")
     protected boolean supportMultiColorMaterials = true;
-
-    @Comments("Create a shaped recipe using item keys. You may use elevators:elevator_key to require an elevator in your recipe in Minecraft 1.21+")
     protected List<RecipeRow<NamespacedKey>> recipe = Arrays.asList(
             new RecipeRow<>(Arrays.asList(Material.WHITE_WOOL.getKey(), Material.WHITE_WOOL.getKey(), Material.WHITE_WOOL.getKey())),
             new RecipeRow<>(Arrays.asList(Material.WHITE_WOOL.getKey(), Material.ENDER_PEARL.getKey(), Material.WHITE_WOOL.getKey())),
             new RecipeRow<>(Arrays.asList(Material.WHITE_WOOL.getKey(), Material.WHITE_WOOL.getKey(), Material.WHITE_WOOL.getKey()))
     );
 
-    public static void setAmount(ConfigRecipe recipe, int amount) {
+    public static void setAmount(V5_1_0ConfigRecipe recipe, int amount) {
         recipe.amount = amount;
     }
 
-    public static void setCraftPermission(ConfigRecipe recipe, String craftPermission) {
+    public static void setCraftPermission(V5_1_0ConfigRecipe recipe, String craftPermission) {
         recipe.craftPermission = craftPermission;
     }
 
-    public static void setDefaultOutputColor(ConfigRecipe recipe, DyeColor defaultOutputColor) {
+    public static void setDefaultOutputColor(V5_1_0ConfigRecipe recipe, DyeColor defaultOutputColor) {
         recipe.defaultOutputColor = defaultOutputColor;
     }
 
-    public static void setMultiColorOutput(ConfigRecipe recipe, boolean supportMultiColorOutput) {
+    public static void setMultiColorOutput(V5_1_0ConfigRecipe recipe, boolean supportMultiColorOutput) {
         recipe.supportMultiColorOutput = supportMultiColorOutput;
     }
 
-    public static void setMultiColorMaterials(ConfigRecipe recipe, boolean supportMultiColorMaterials) {
+    public static void setMultiColorMaterials(V5_1_0ConfigRecipe recipe, boolean supportMultiColorMaterials) {
         recipe.supportMultiColorMaterials = supportMultiColorMaterials;
     }
 
-    public static void setRecipe(ConfigRecipe recipe, List<RecipeRow<NamespacedKey>> recipeKeys) {
+    public static void setRecipe(V5_1_0ConfigRecipe recipe, List<RecipeRow<NamespacedKey>> recipeKeys) {
         recipe.recipe = recipeKeys;
     }
 

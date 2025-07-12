@@ -4,14 +4,11 @@ import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 import org.bukkit.Material;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-
 public class MaterialConfigConverter extends ConfigConverter {
 
     @Override
     public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) {
-        return createNodeWithData(parentNode, key, Material.matchMaterial(object.toString()), fieldData.getField());
+        return ConfigConverter.createNodeWithData(parentNode, key, Material.matchMaterial(object.toString()), fieldData.getField());
     }
 
     public Object serializeNodeToObject(ConfigNode<?> node) throws Exception {
