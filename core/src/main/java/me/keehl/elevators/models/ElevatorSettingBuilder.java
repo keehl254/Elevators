@@ -67,12 +67,12 @@ public class ElevatorSettingBuilder<T> {
         return this;
     }
 
-    public ElevatorSettingBuilder<T> setCanEditIndividually() {
+    public ElevatorSettingBuilder<T> allowPerEleCustomization() {
         this.canEditIndividuallyFunc = (elevator) -> true;
         return this;
     }
 
-    public ElevatorSettingBuilder<T> setOnClick(Consumer<ElevatorSettingClickContext<T>> onClick) {
+    public ElevatorSettingBuilder<T> onClick(Consumer<ElevatorSettingClickContext<T>> onClick) {
         this.onClick = onClick;
         return this;
     }
