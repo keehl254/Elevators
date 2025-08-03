@@ -26,6 +26,7 @@ public class LoreLinesSetting extends InternalElevatorSetting<List<String>> {
 
     public LoreLinesSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.LORE_LINES.getSettingName(), "Lore Lines", "Click to alter the lore lines that appear on dropped elevators of this type.", Material.LAPIS_LAZULI, ChatColor.DARK_PURPLE);
+        this.addAction("Left Click", "Edit Text");
     }
 
     private void addLine(Player player, List<String> currentValue, Consumer<List<String>> completeConsumer) {

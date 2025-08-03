@@ -15,6 +15,7 @@ public class StopObstructionSetting extends InternalElevatorSetting<Boolean> {
     public StopObstructionSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.STOP_OBSTRUCTION.getSettingName(),"Stop Obstructed Teleports", "If enabled, the destination elevator must have enough space to teleport the player safely.", Material.PISTON, ChatColor.DARK_GRAY);
         this.setupDataStore(this.getSettingName(), ElevatorDataContainerService.booleanPersistentDataType);
+        this.addAction("Left Click", "Toggle Value");
     }
 
     @Override

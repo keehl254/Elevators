@@ -30,6 +30,7 @@ public class HologramLinesSetting extends InternalElevatorSetting<String[]> {
     public HologramLinesSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.HOLO_LINES.getSettingName(), "Hologram Lines", "Click to alter the hologram lines that appear above the elevator.", Material.PAPER, ChatColor.YELLOW);
         this.setupDataStore("hologram-lines", ElevatorDataContainerService.stringArrayPersistentDataType);
+        this.addAction("Left Click", "Edit Text");
     }
 
     private void addLine(Player player, String[] currentValue, Consumer<String[]> completeConsumer) {

@@ -13,6 +13,7 @@ public class SupportDyingSetting extends InternalElevatorSetting<Boolean> {
 
     public SupportDyingSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.SUPPORT_DYING.getSettingName(),"Support Elevator Dying", "If enabled, the elevator is able to be dyed via crafting an elevator and a dye", Material.LIGHT_BLUE_TERRACOTTA, ChatColor.LIGHT_PURPLE);
+        this.addAction("Left Click", "Toggle Value");
     }
 
     @Override

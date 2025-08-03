@@ -47,6 +47,9 @@ public class ConfigSettings extends ExpandableConfig {
     @Comments("This config option controls whether elevators should be able to explode from TNT or mobs.")
     public boolean canExplode = false;
 
+    @Comments("This config option controls whether users may access the individual elevator settings UI by shift-right clicking.")
+    public boolean canEditIndividually = true;
+
     @Comments("Allows the addition of a hologram that appears above elevators of this type.")
     public List<String> hologramLines = new ArrayList<>();
 

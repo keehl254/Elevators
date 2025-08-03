@@ -17,6 +17,7 @@ public class DyePermissionSetting extends InternalElevatorSetting<String> {
 
     public DyePermissionSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.DYE_PERMISSION.getSettingName(),"Dye Permission", "This will change the permission required to dye the elevator.", Material.RED_DYE, ChatColor.GOLD);
+        this.addAction("Left Click", "Change DyeColor");
     }
 
     @Override

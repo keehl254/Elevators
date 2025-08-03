@@ -48,6 +48,7 @@ public class ElevatorSettingService {
         addSetting(new MaxStackSizeSetting(Elevators.getInstance()));
         addSetting(new StopObstructionSetting(Elevators.getInstance()));
         addSetting(new SupportDyingSetting(Elevators.getInstance()));
+        addSetting(new AllowIndividualEditSetting(Elevators.getInstance()));
         addSetting(new HologramLinesSetting(Elevators.getInstance()));
 
         Elevators.popLog(logData -> Elevators.log("Registered " + elevatorSettings.size() + " settings. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));

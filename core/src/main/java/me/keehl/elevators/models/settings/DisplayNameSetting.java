@@ -15,6 +15,7 @@ public class DisplayNameSetting extends InternalElevatorSetting<String> {
 
     public DisplayNameSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.DISPLAY_NAME.getSettingName(),"Display Name", "This will change the display of newly created elevators. Old elevators will not be affected.", Material.NAME_TAG, ChatColor.GOLD);
+        this.addAction("Left Click", "Edit Text");
     }
 
     @Override

@@ -171,6 +171,9 @@ public class ElevatorHelper {
 
         ElevatorHologramService.updateElevatorHologram(elevator);
 
+        if(!elevator.getElevatorType(true).shouldAllowIndividualEdit())
+            return;
+
         if (!ElevatorHookService.canEditElevator(player, elevator, true))
             return;
 

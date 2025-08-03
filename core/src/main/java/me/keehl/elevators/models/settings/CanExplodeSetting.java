@@ -15,6 +15,7 @@ public class CanExplodeSetting extends InternalElevatorSetting<Boolean> {
     public CanExplodeSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.CAN_EXPLODE.getSettingName(), "Break With Explosions", "If enabled, the elevator will be able to be broken by explosions.", Material.TNT, ChatColor.RED);
         this.setupDataStore(this.getSettingName(), ElevatorDataContainerService.booleanPersistentDataType);
+        this.addAction("Left Click", "Toggle Value");
     }
 
     @Override

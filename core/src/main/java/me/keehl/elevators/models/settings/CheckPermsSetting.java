@@ -13,6 +13,7 @@ public class CheckPermsSetting extends InternalElevatorSetting<Boolean> {
 
     public CheckPermsSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.CHECK_PERMS.getSettingName(),"Check Perms", "If enabled, the player must have access to elevator 'use', 'dye', and 'craft' permissions to have access to their respective abilities.", Material.ANVIL, ChatColor.DARK_GRAY);
+        this.addAction("Left Click", "Toggle Value");
     }
 
     @Override

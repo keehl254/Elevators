@@ -15,6 +15,7 @@ public class CheckColorSetting extends InternalElevatorSetting<Boolean> {
     public CheckColorSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.CHECK_COLOR.getSettingName(),"Color Check", "If enabled, any destination elevators must be the same color as the origin.", Material.BLUE_DYE, ChatColor.BLUE);
         this.setupDataStore(this.getSettingName(), ElevatorDataContainerService.booleanPersistentDataType);
+        this.addAction("Left Click", "Toggle Value");
     }
 
     @Override

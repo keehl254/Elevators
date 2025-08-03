@@ -17,6 +17,7 @@ public class UsePermissionSetting extends InternalElevatorSetting<String> {
 
     public UsePermissionSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.USE_PERMISSION.getSettingName(),"Use Permission", "This will change the permission required to use the elevator.", Material.BEACON, ChatColor.GOLD);
+        this.addAction("Left Click", "Edit Permission");
     }
 
     @Override

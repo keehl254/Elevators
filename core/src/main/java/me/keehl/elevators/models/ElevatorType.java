@@ -168,6 +168,14 @@ public class ElevatorType extends ConfigElevatorType {
     }
 
     /**
+     * Set whether users can open the settings-edit menu of an elevator type.
+     */
+    public void setShouldAllowIndividualEdit(boolean allowIndividualEdit) {
+        this.settings.canEditIndividually = allowIndividualEdit;
+        Elevators.getInstance().saveConfig();
+    }
+
+    /**
      * Set the lines that should appear over an elevator of this type.
      */
     public void setHologramLines(List<String> holoLines) {

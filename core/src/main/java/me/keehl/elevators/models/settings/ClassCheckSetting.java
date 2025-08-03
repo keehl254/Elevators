@@ -15,6 +15,7 @@ public class ClassCheckSetting extends InternalElevatorSetting<Boolean> {
     public ClassCheckSetting(JavaPlugin plugin) {
         super(plugin, InternalElevatorSettingType.CLASS_CHECK.getSettingName(),"Type Check", "If enabled, the destination elevator must be of the same elevator type.", Material.SHULKER_SHELL, ChatColor.LIGHT_PURPLE);
         this.setupDataStore("class-check", ElevatorDataContainerService.booleanPersistentDataType);
+        this.addAction("Left Click", "Toggle Value");
     }
 
     @Override
