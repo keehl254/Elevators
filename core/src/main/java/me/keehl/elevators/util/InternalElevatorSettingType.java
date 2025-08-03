@@ -7,6 +7,7 @@ public enum InternalElevatorSettingType {
 
     CAN_EXPLODE("can-explode"),
     CHECK_COLOR("check-color"),
+    INDIVIDUAL_EDIT("individual-edit"),
     CHECK_PERMS("check-perms"),
     CLASS_CHECK("check-type"),
     DISPLAY_NAME("change-display-name"),

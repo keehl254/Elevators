@@ -135,6 +135,8 @@ public class ConfigElevatorType implements Config {
         return this.settings.checkColor;
     }
 
+    public boolean shouldAllowIndividualEdit() { return this.settings.canEditIndividually; }
+
     public List<String> getDisabledSettings() {
         return this.disabledSettings;
     }
