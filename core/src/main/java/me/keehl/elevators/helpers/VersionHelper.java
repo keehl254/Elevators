@@ -1,7 +1,6 @@
 package me.keehl.elevators.helpers;
 
 import me.keehl.elevators.Elevators;
-import me.keehl.elevators.services.ElevatorHookService;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class VersionHelper {
 
-    private static final Pattern majorMinorPatchPattern = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)");
+    private static final Pattern majorMinorPatchBetaPattern = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(?:-[0-9A-Za-z-]+(?:\\.([0-9]*))?)?$");
     private static final Pattern majorMinorPattern = Pattern.compile("^(\\d+)\\.(\\d+)");
 
     private static final int supportedVersion = getVersionID("1.13.2");
@@ -215,14 +214,19 @@ public class VersionHelper {
     }
 
     public static int getVersionID(String key) {
-        Matcher matcher = majorMinorPatchPattern.matcher(key.toUpperCase());
+        Matcher matcher = majorMinorPatchBetaPattern.matcher(key.toUpperCase());
         byte major;
         byte minor;
         byte patch = 0;
+        byte beta = 127;
         if(matcher.find()) {
             major = Byte.parseByte(matcher.group(1));
             minor = Byte.parseByte(matcher.group(2));
             patch = Byte.parseByte(matcher.group(3));
+            String betaStr = matcher.group(4);
+            if(betaStr != null && !betaStr.isEmpty()){
+                beta = Byte.parseByte(matcher.group(4));
+            }
         } else {
             matcher = majorMinorPattern.matcher(key.toUpperCase());
             if(!matcher.find())
@@ -234,9 +238,10 @@ public class VersionHelper {
 
         int ID = major << 8;
         ID |= minor;
+        ID <<= 8;
+        ID |= patch;
 
-        return (ID << 8) | patch;
-
+        return (ID << 8) | beta;
     }
 
 }

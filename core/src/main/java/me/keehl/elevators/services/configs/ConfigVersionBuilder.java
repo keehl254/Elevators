@@ -47,7 +47,6 @@ public class ConfigVersionBuilder {
             Type[] arguments = ((ParameterizedType) converter.getClass().getGenericSuperclass()).getActualTypeArguments();
             Class<T> newClass = (Class<T>) Elevators.getInstance().getClass().getClassLoader().loadClass(arguments[1].getTypeName());
             T newRoot = newClass.getConstructor().newInstance();
-            Elevators.getElevatorsLogger().info("Creating node for version: " + newRoot.getClass().getSimpleName());
             return ConfigConverter.createNodeForConfig(newRoot, configFile).getRoot().getConfig();
         }
 

@@ -20,14 +20,14 @@ public class ElevatorSettingService {
     private static final List<ElevatorSetting<?>> elevatorSettings = new ArrayList<>();
 
     public static void init() {
-        if(ElevatorSettingService.initialized)
+        if (ElevatorSettingService.initialized)
             return;
         Elevators.pushAndHoldLog();
 
         ElevatorSettingService.registerDefaultSettings();
 
         ElevatorSettingService.initialized = true;
-        Elevators.popLog(logData -> Elevators.log("Setting service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
+        Elevators.popLog(logData -> Elevators.log("Setting service enabled. " + ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     private static void registerDefaultSettings() {
@@ -51,22 +51,22 @@ public class ElevatorSettingService {
         addSetting(new AllowIndividualEditSetting(Elevators.getInstance()));
         addSetting(new HologramLinesSetting(Elevators.getInstance()));
 
-        Elevators.popLog(logData -> Elevators.log("Registered " + elevatorSettings.size() + " settings. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
+        Elevators.popLog(logData -> Elevators.log("Registered " + elevatorSettings.size() + " settings. " + ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
         allowSelfRegister = false;
 
         Bukkit.getPluginManager().callEvent(new ElevatorRegisterSettingsEvent());
     }
 
     public static void addSetting(ElevatorSetting<?> setting) {
-        if(setting.getPlugin().getName().equalsIgnoreCase(Elevators.getInstance().getName()) && !allowSelfRegister)
+        if (setting.getPlugin().getName().equalsIgnoreCase(Elevators.getInstance().getName()) && !allowSelfRegister)
             throw new RuntimeException("An invalid Plugin was provided when trying to register an Elevator Setting.");
 
-        for(ElevatorSetting<?> otherSetting : elevatorSettings) {
-            if(!otherSetting.getSettingName().equalsIgnoreCase(setting.getSettingName()))
+        for (ElevatorSetting<?> otherSetting : elevatorSettings) {
+            if (!otherSetting.getSettingName().equalsIgnoreCase(setting.getSettingName()))
                 continue;
 
             String message;
-            if(otherSetting.getPlugin().getName().equalsIgnoreCase(Elevators.getInstance().getName()))
+            if (otherSetting.getPlugin().getName().equalsIgnoreCase(Elevators.getInstance().getName()))
                 message = "External elevator settings are not able to override default settings";
             else
                 message = "An elevator setting with the key \"" + setting.getSettingName() + "\" was already registered by plugin: " + otherSetting.getPlugin().getName();
@@ -86,7 +86,7 @@ public class ElevatorSettingService {
 
     public static <T> T getElevatorSettingValue(Elevator elevator, String settingsKey) {
         Optional<ElevatorSetting<?>> setting = getElevatorSetting(settingsKey);
-        if(!setting.isPresent())
+        if (!setting.isPresent())
             return null;
 
         try {
@@ -98,7 +98,7 @@ public class ElevatorSettingService {
 
     public static <T> T getElevatorSettingValue(ElevatorType elevatorType, String settingsKey) {
         Optional<ElevatorSetting<?>> setting = getElevatorSetting(settingsKey);
-        if(!setting.isPresent())
+        if (!setting.isPresent())
             return null;
 
         try {
@@ -115,7 +115,6 @@ public class ElevatorSettingService {
     public static <T> T getElevatorSettingValue(ElevatorType elevatorType, InternalElevatorSettingType settingsKey) {
         return getElevatorSettingValue(elevatorType, settingsKey.getSettingName());
     }
-
 
 
 }
