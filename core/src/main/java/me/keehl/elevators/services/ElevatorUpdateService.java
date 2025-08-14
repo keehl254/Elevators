@@ -35,7 +35,7 @@ public class ElevatorUpdateService {
             unInitialize();
 
             if(root.updateCheckerEnabled)
-                task = Elevators.getFoliaLib().getScheduler().runTimerAsync(ElevatorUpdateService::checkUpdate, 60, 288000);
+                task = Elevators.getFoliaLib().getScheduler().runTimerAsync(ElevatorUpdateService::checkUpdate, 60, 72000); // Every hour.
         });
         Elevators.popLog(logData -> Elevators.log("Update service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
@@ -61,7 +61,6 @@ public class ElevatorUpdateService {
             }
 
             maxChannelID = Math.max(maxChannelID, checkResource("Release"));
-
             if(maxChannelID <= currentVersion)
                 return;
 
