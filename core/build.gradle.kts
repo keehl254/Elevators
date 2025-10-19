@@ -4,7 +4,7 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
 }
 
 repositories {
@@ -45,7 +45,7 @@ dependencies {
     implementation("net.wesjd:anvilgui:1.10.8-SNAPSHOT")
     implementation("com.tcoded:FoliaLib:0.4.3")
     implementation("org.yaml:snakeyaml:2.2")
-    implementation("org.bstats:bstats-bukkit:3.1.0") // Snapshot because the release does not have Folia support
+    implementation("org.bstats:bstats-bukkit:3.1.0")
 
 }
 

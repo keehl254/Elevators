@@ -1,6 +1,6 @@
 plugins {
     java
-    id("xyz.wagyourtail.jvmdowngrader") version "1.3.0"
+    id("xyz.wagyourtail.jvmdowngrader") version "1.3.3"
     id("com.gradleup.shadow") version "8.3.6"
 }
 
@@ -39,7 +39,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":Core"))
+    implementation(project(":core"))
 
     compileOnly(platform("com.intellectualsites.bom:bom-newest:1.32"))
 
@@ -60,7 +60,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.bgsoftware:SuperiorSkyblockAPI:2024.4")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13") {
-        exclude(group = "com.google.code.gson", module = "gson")
+        exclude("com.google.code.gson", "gson")
     }
     compileOnly("net.thenextlvl:protect:3.1.3")
     compileOnly ("com.github.angeschossen:LandsAPI:7.15.20")

@@ -7,7 +7,7 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -24,7 +24,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     compileOnly(kotlin("stdlib"))
-    implementation(files("Hooks${File.separator}build${File.separator}libs${File.separator}Hooks-${version}-downgraded.jar"))
+    implementation(files("hooks/build/libs/hooks-${version}-downgraded.jar"))
 
     compileOnly("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT")
 }
