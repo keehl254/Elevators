@@ -22,7 +22,6 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-    compileOnly(kotlin("stdlib"))
     implementation(files("hooks/build/libs/hooks-${version}-downgraded.jar"))
 
     compileOnly("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT")
