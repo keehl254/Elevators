@@ -1,3 +1,3 @@
 rootProject.name = "elevators"
 
-include("Core", "Hooks")
+include("core", "hooks")

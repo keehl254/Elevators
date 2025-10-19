@@ -4,7 +4,11 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
+}
+
+tasks.compileJava {
+    options.release.set(11)
 }
 
 repositories {
@@ -14,7 +18,7 @@ repositories {
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/repositories/central")
     maven("https://jitpack.io/#TechFortress/GriefPrevention/")
-    maven ("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.codemc.org/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
     maven("https://repo.glaremasters.me/repository/bloodshot/")
@@ -35,7 +39,7 @@ dependencies {
     compileOnly("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT") {
         exclude(group = "org.yaml", module = "snakeyaml")
     }
-    implementation ("io.papermc:paperlib:1.0.8")
+    implementation("io.papermc:paperlib:1.0.8")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
     compileOnly("net.kyori:adventure-api:4.14.0")
@@ -45,7 +49,7 @@ dependencies {
     implementation("net.wesjd:anvilgui:1.10.8-SNAPSHOT")
     implementation("com.tcoded:FoliaLib:0.4.3")
     implementation("org.yaml:snakeyaml:2.2")
-    implementation("org.bstats:bstats-bukkit:3.1.0") // Snapshot because the release does not have Folia support
+    implementation("org.bstats:bstats-bukkit:3.1.0")
 
 }
 
