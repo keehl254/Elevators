@@ -63,37 +63,25 @@ public class ProtectHook extends ProtectionHook {
     @Override
     public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
         Area area = this.areaProvider.getArea(elevator.getLocation());
-        if (this.protectionService.canPerformAction(player, area, this.useFlag, null))
-            return true;
-
-        this.failed(player, "You are not allowed to do that here!");
+        if (this.protectionService.canPerformAction(player, area, this.useFlag, null)) return true;
+        if (sendMessage) this.failed(player, "You are not allowed to do that here!");
         return false;
     }
 
     @Override
     public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
         Area area = this.areaProvider.getArea(elevator.getLocation());
-        if (area.getFlag(this.nameFlag))
-            return true;
-
-        boolean permitted = area.isPermitted(player.getUniqueId());
-        if (!permitted && sendMessage)
-            this.failed(player, "You are not allowed to do that here!");
-
-        return permitted;
+        if (this.protectionService.canPerformAction(player, area, this.nameFlag, null)) return true;
+        if (sendMessage) this.failed(player, "You are not allowed to do that here!");
+        return false;
     }
 
     @Override
     public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
         Area area = this.areaProvider.getArea(elevator.getLocation());
-        if (area.getFlag(this.settingsFlag))
-            return true;
-
-        boolean permitted = area.isPermitted(player.getUniqueId());
-        if (!permitted && sendMessage)
-            this.failed(player, "You are not allowed to do that here!");
-
-        return permitted;
+        if (this.protectionService.canPerformAction(player, area, this.settingsFlag, null)) return true;
+        if (sendMessage) this.failed(player, "You are not allowed to do that here!");
+        return false;
     }
 
     @Override
