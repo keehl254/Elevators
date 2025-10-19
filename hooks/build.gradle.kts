@@ -59,7 +59,9 @@ dependencies {
     compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.2"){ exclude(group = "*") }
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.bgsoftware:SuperiorSkyblockAPI:2024.4")
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13") {
+        exclude(group = "com.google.code.gson", module = "gson")
+    }
     compileOnly("net.thenextlvl:protect:3.1.3")
     compileOnly ("com.github.angeschossen:LandsAPI:7.15.20")
 
