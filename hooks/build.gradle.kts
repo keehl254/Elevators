@@ -60,9 +60,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.bgsoftware:SuperiorSkyblockAPI:2024.4")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
-    compileOnly("net.thenextlvl.protect:api:3.0.3")
-    compileOnly("net.thenextlvl.protect:plugin:2.1.2")
-    compileOnly("net.thenextlvl.core:nbt:2.3.2") { isTransitive = false }
+    compileOnly("net.thenextlvl:protect:3.1.3")
     compileOnly ("com.github.angeschossen:LandsAPI:7.15.20")
 
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
