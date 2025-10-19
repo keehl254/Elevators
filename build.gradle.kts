@@ -10,13 +10,12 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(11))
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+tasks.compileJava {
+    options.release.set(11)
 }
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io/")
 }
 
 dependencies {
@@ -43,7 +42,7 @@ allprojects {
 
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://repo.codemc.io/repository/maven-snapshots/")
-        maven ("https://repo.papermc.io/repository/maven-public/")
+        maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.keehl.me/releases/")
     }
 }
@@ -68,26 +67,10 @@ val updatePluginYml by tasks.registering {
     }
 }
 
-// Custom task to build Core and Hooks together
-tasks.register("buildElevators") {
-    group = "build"
-    description = "Builds the Elevators plugin"
+tasks.compileJava {
+    dependsOn(":hooks:downgradeJar")
+}
 
-    val gradleCommand = if (System.getProperty("os.name").startsWith("Windows")) {
-        listOf("cmd", "/c", "gradlew.bat")
-    } else {
-        listOf("./gradlew")
-    }
-
-    exec {
-        commandLine = gradleCommand + ":Hooks:downgradeJar"
-    }
-
+tasks.shadowJar {
     dependsOn(updatePluginYml)
-    dependsOn(tasks.named("shadowJar"))
-
-    doLast {
-        println("JAR built at: ${tasks.named("jar").get().outputs.files.singleFile}")
-    }
-
 }

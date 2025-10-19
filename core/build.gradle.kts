@@ -7,6 +7,10 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(11))
 }
 
+tasks.compileJava {
+    options.release.set(11)
+}
+
 repositories {
     maven("https://repo.maven.apache.org/maven2/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -14,7 +18,7 @@ repositories {
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/repositories/central")
     maven("https://jitpack.io/#TechFortress/GriefPrevention/")
-    maven ("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.codemc.org/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
     maven("https://repo.glaremasters.me/repository/bloodshot/")
@@ -35,7 +39,7 @@ dependencies {
     compileOnly("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT") {
         exclude(group = "org.yaml", module = "snakeyaml")
     }
-    implementation ("io.papermc:paperlib:1.0.8")
+    implementation("io.papermc:paperlib:1.0.8")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
     compileOnly("net.kyori:adventure-api:4.14.0")

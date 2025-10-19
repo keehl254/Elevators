@@ -8,7 +8,11 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
-jvmdg.downgradeTo = JavaVersion.VERSION_1_8
+tasks.compileJava {
+    options.release.set(21)
+}
+
+jvmdg.downgradeTo = JavaVersion.VERSION_11
 jvmdg.shadePath = {
     it.substringBefore(".").substringBeforeLast("-").replace(Regex("[.;\\[/]"), "-")
 }
@@ -55,15 +59,15 @@ dependencies {
     compileOnly("com.intellectualsites.plotsquared:plotsquared-bukkit") { isTransitive = false }
     compileOnly("world.bentobox:bentobox:1.24.0-SNAPSHOT")
     compileOnly("com.griefdefender:api:2.1.0-SNAPSHOT")
-    compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.2"){ exclude(group = "*") }
-    compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.2"){ exclude(group = "*") }
+    compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.2") { exclude(group = "*") }
+    compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.2") { exclude(group = "*") }
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.bgsoftware:SuperiorSkyblockAPI:2024.4")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13") {
         exclude("com.google.code.gson", "gson")
     }
     compileOnly("net.thenextlvl:protect:3.1.3")
-    compileOnly ("com.github.angeschossen:LandsAPI:7.15.20")
+    compileOnly("com.github.angeschossen:LandsAPI:7.15.20")
 
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.3")
     compileOnly("de.oliver:FancyHolograms:2.4.2")
@@ -73,7 +77,7 @@ dependencies {
     compileOnly("com.nexomc:nexo:1.8.0") //Nexo 1.X -> 1.X.0
 }
 
-tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+tasks.shadowJar {
     relocate("de.rapha149.signgui", "me.keehl.elevators.util.signgui")
     relocate("net.wesjd.anvilgui", "me.keehl.elevators.util.anvilgui")
     relocate("com.tcoded.folialib", "me.keehl.elevators.util.folialib")
@@ -84,20 +88,14 @@ tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJ
     archiveClassifier.set("all")
 }
 
-tasks.named("build") {
-    dependsOn("downgradeJar")
-}
-
 tasks {
-
     compileJava {
         options.encoding = Charsets.UTF_8.name()
     }
     javadoc {
-        options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
+        options.encoding = Charsets.UTF_8.name()
     }
     processResources {
-        filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
+        filteringCharset = Charsets.UTF_8.name()
     }
-
 }
