@@ -16,7 +16,7 @@
 
 [![Documentation](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/documentation/ghpages_vector.svg)](https://ele.keehl.me)
 
-![Compiled with Java 8](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/compact-minimal/built-with/java8_vector.svg)
+![Compiled with Java 11](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/compact-minimal/built-with/java11_vector.svg)
 ![Supports Paper](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/compact-minimal/supported/paper_vector.svg)
 ![Supports Spigot](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/compact-minimal/supported/spigot_vector.svg)
 [![Supports Folia](assets/Folia.svg)]()
@@ -57,7 +57,7 @@ To build Elevators from source using Gradle:
    ```
 2. Run the custom Gradle task:
     ```bash
-   ./gradlew :buildElevators
+   ./gradlew shadowJar
     ```
 3. The compiled plugin JAR will be located in
    ```bash
@@ -66,9 +66,9 @@ To build Elevators from source using Gradle:
 
 ## Java Version Notes
 
-The core project and all submodules except Hooks are built using Java 8. The Hooks subproject is written in Java 21.
-A downgrade plugin is used to compile Hooks into a Java 8-compatible format for use in the final build.
-Be sure you have both JDK 8 and JDK 21 installed and properly configured if you're developing or building locally.
+The core project and all submodules except Hooks are built using Java 11. The Hooks subproject is written in Java 21.
+A downgrade plugin is used to compile Hooks into a Java 11-compatible format for use in the final build.
+Be sure you have both JDK 11 and JDK 21 installed and properly configured if you're developing or building locally.
 
 # License
 
