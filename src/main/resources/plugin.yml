@@ -11,4 +11,4 @@ commands:
     description: Access elevators commands
     usage: /elevators
     aliases: [ele]
-version: 5.0.0-beta.14
+version: 5.0.0-beta.15

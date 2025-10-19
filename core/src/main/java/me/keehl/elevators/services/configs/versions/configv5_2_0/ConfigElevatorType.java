@@ -9,7 +9,7 @@ import java.util.*;
 public class ConfigElevatorType implements Config {
 
     @Comments({"Control default setting values of the elevator type."})
-    protected ConfigSettings settings;
+    protected ConfigSettings settings = new ConfigSettings();
 
     @Comments({"Define actions that can be run on elevator usage.",
             "Default actions are:",
