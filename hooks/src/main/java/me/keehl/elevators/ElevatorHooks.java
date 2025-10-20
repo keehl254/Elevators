@@ -6,16 +6,18 @@ import org.bukkit.ChatColor;
 
 public class ElevatorHooks {
 
-    public static void buildHooks() {
+    public static void buildHooksEarly() {
         Elevators.pushAndHoldLog();
+        ElevatorHookService.registerHook("Protect", ProtectHook.class, false);
+    }
 
+    public static void buildHooks() {
         ElevatorHookService.registerHook("GriefPrevention", GriefPreventionHook.class);
         ElevatorHookService.registerHook("GriefDefender", GriefDefenderHook.class);
         ElevatorHookService.registerHook("RedProtect", RedProtectHook.class);
         ElevatorHookService.registerHook("PlotSquared", PlotSquaredHook.class);
         ElevatorHookService.registerHook("BentoBox", BentoBoxHook.class);
         ElevatorHookService.registerHook("SuperiorSkyblock2", SuperiorSkyblock2Hook.class, false);
-        ElevatorHookService.registerHook("Protect", ProtectHook.class);
         ElevatorHookService.registerHook("Lands", LandsHook.class, false);
 
         ElevatorHookService.registerHook("DecentHolograms", DecentHologramsHook.class);
