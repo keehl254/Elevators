@@ -52,7 +52,7 @@ public class ProtectHook extends ProtectionHook {
         NamespacedKey key = new NamespacedKey(Elevators.getInstance(), flagName);
         Optional<Flag<Boolean>> flagOpt = this.flagRegistry.getFlag(key);
         return flagOpt.orElseGet(() ->
-                this.flagRegistry.register(Elevators.getInstance(), flagName, false)
+                this.flagRegistry.register(Elevators.getInstance(), flagName, true)
         );
     }
 
