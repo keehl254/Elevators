@@ -57,7 +57,7 @@ public class ProtectHook extends ProtectionHook {
     }
 
     public void failed(Player player, String message) {
-        MessageHelper.sendFormattedMessage(player, "<red><dark_gray>[<dark_red><bold>!</bold></dark_red>]</dark_gray> " + message + "</red>");
+        player.sendRichMessage("<red><dark_gray>[<dark_red><bold>!</bold></dark_red>]</dark_gray> " + message + "</red>");
     }
 
     @Override
