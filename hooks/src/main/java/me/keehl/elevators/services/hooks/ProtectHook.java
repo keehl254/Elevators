@@ -2,7 +2,6 @@ package me.keehl.elevators.services.hooks;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.helpers.ItemStackHelper;
-import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.hooks.ProtectionHook;
 import net.kyori.adventure.key.KeyPattern;
