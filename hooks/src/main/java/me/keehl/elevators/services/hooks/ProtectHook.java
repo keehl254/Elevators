@@ -2,7 +2,6 @@ package me.keehl.elevators.services.hooks;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.helpers.ItemStackHelper;
-import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.hooks.ProtectionHook;
 import net.kyori.adventure.key.KeyPattern;
@@ -52,12 +51,12 @@ public class ProtectHook extends ProtectionHook {
         NamespacedKey key = new NamespacedKey(Elevators.getInstance(), flagName);
         Optional<Flag<Boolean>> flagOpt = this.flagRegistry.getFlag(key);
         return flagOpt.orElseGet(() ->
-                this.flagRegistry.register(Elevators.getInstance(), flagName, false)
+                this.flagRegistry.register(Elevators.getInstance(), flagName, true)
         );
     }
 
     public void failed(Player player, String message) {
-        MessageHelper.sendFormattedMessage(player, "<red><dark_gray>[<dark_red><bold>!</bold></dark_red>]</dark_gray> " + message + "</red>");
+        player.sendRichMessage("<red><dark_gray>[<dark_red><bold>!</bold></dark_red>]</dark_gray> " + message + "</red>");
     }
 
     @Override

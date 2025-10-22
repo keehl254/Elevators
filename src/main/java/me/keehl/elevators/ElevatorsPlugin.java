@@ -36,6 +36,11 @@ public class ElevatorsPlugin extends JavaPlugin {
         RED + "                                            " + RESET);
     }
 
+    @Override
+    public void onLoad() {
+        ElevatorHooks.buildHooksEarly();
+    }
+
     @Override()
     public void onEnable() {
         FoliaLib foliaLib = new FoliaLib(this);
