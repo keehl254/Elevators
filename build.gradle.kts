@@ -4,6 +4,7 @@ version = "5.0.0-beta.15"
 plugins {
     kotlin("jvm") version "1.9.0"
     id("com.gradleup.shadow") version "8.3.6"
+    id("de.eldoria.plugin-yml.bukkit") version "0.8.0"
 }
 
 java {
@@ -46,30 +47,31 @@ allprojects {
     }
 }
 
-val updatePluginYml by tasks.registering {
-    val pluginYmlFile = file("src/main/resources/plugin.yml")
-    val versionString = project.version.toString()
 
-    doLast {
-        if (!pluginYmlFile.exists())
-            throw GradleException("plugin.yml does not exist: ${pluginYmlFile.absolutePath}")
+bukkit {
+    name = "Elevators"
+    authors = listOf("Keehl")
+    main = "me.keehl.elevators.ElevatorsPlugin"
+    description = "A lightweight and simple means of vertical transportation for Spigot"
+    apiVersion = "1.14"
+    foliaSupported = true
 
-        val lines = pluginYmlFile.readLines().toMutableList()
+    loadBefore = listOf("SuperiorSkyblock2", "Lands")
+    softDepend = listOf(
+        "PlaceholderAPI", "RedProtect", "Vault", "HolographicDisplays", "GriefPrevention", "GriefDefender", "CMI",
+        "PlotSquared", "BentoBox", "DecentHolograms", "FancyHolograms", "ProtocolLib", "WorldGuard", "Protect",
+        "ItemsAdder", "Oraxen", "Nexo"
+    )
 
-        lines.removeAll { it.startsWith("version:") }
-
-        lines.add("version: $versionString")
-
-        pluginYmlFile.writeText(lines.joinToString(System.lineSeparator()))
-
-        println("Updated plugin.yml with version: $versionString")
+    commands {
+        register("elevators") {
+            description = "Access elevators commands"
+            usage = "/elevators"
+            aliases = listOf("ele")
+        }
     }
 }
 
 tasks.compileJava {
     dependsOn(":hooks:downgradeJar")
-}
-
-tasks.shadowJar {
-    dependsOn(updatePluginYml)
 }
