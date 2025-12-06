@@ -33,13 +33,14 @@ public class VersionHelper {
     private static final int supportConsumerDropItem = getVersionID("1.18.0");
     private static final int supportPredicateChunkEntityGrab = getVersionID("1.16.5");
     private static final int supportAlphaColor = getVersionID("1.17.0");
+    private static final int supportDialogs = getVersionID("1.21.6");
 
     private static final int slimeSizeMetaData = 0;
 
 
     private static final int currentVersionID;
     static {
-        currentVersionID = getVersionID(Bukkit.getServer().getBukkitVersion());
+        currentVersionID = getVersionID(Bukkit.getServer().getBukkitVersion().replace("-SNAPSHOT",""));
     }
 
     public static boolean isVersionUnsupported(){
@@ -80,6 +81,10 @@ public class VersionHelper {
 
     public static boolean doesVersionSupportPredicateGetChunkEntities() {
         return currentVersionID >= supportPredicateChunkEntityGrab;
+    }
+
+    public static boolean doesVersionSupportDialogs() {
+        return currentVersionID >= supportDialogs;
     }
 
     public static int getWorldMinHeight(World world) {

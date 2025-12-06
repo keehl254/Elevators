@@ -916,6 +916,25 @@ public class ElevatorGUIHelper {
 
         String currentName = ElevatorDataContainerService.getFloorName(elevator);
 
+        /* TODO: Dialog input moving forward.
+            Sadly doesn't work right now due to Java Downgrader.
+            I will figure it out >_>
+
+            Elevators.log("Interact Name:" + ElevatorHookService.getDialogHook());
+            if(ElevatorHookService.getDialogHook() != null) {
+
+                Elevators.log("DialogHook");
+
+                ElevatorHookService.getDialogHook().createStringInputDialog(player, value -> true,
+                        result -> {
+                            ElevatorDataContainerService.setFloorName(elevator, result);
+                            ElevatorGUIHelper.openInteractMenu(player, elevator);
+                        },
+                        () -> ElevatorGUIHelper.openInteractMenu(player, elevator),
+                        "Elevators", true, ElevatorConfigService.getRootConfig().locale.enterFloorName, currentName, "Floor Name");
+                return;
+            }
+        */
         tryOpenSign(player, value -> true,
                 result -> {
                     ElevatorDataContainerService.setFloorName(elevator, result);

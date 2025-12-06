@@ -1,6 +1,6 @@
 plugins {
     java
-    id("xyz.wagyourtail.jvmdowngrader") version "1.3.3"
+    id("xyz.wagyourtail.jvmdowngrader") version "1.3.4"
     id("com.gradleup.shadow") version "8.3.6"
 }
 
@@ -44,6 +44,7 @@ repositories {
 
 dependencies {
     implementation(project(":core"))
+    implementation(platform("io.github.projectunified:uni-dialog:1.5.0"))
 
     compileOnly(platform("com.intellectualsites.bom:bom-newest:1.32"))
 
@@ -75,6 +76,12 @@ dependencies {
     compileOnly("dev.lone:api-itemsadder:4.0.10")
     compileOnly("io.th0rgal:oraxen:1.190.0") { isTransitive = false }
     compileOnly("com.nexomc:nexo:1.8.0") //Nexo 1.X -> 1.X.0
+    compileOnly("com.tcoded:FoliaLib:0.4.3")
+
+    implementation("io.github.projectunified:uni-dialog-paper:1.5.0")
+    implementation("io.github.projectunified:uni-dialog-spigot:1.5.0")
+    implementation("io.github.projectunified:uni-dialog-core:1.5.0")
+
 }
 
 tasks.shadowJar {
@@ -84,6 +91,7 @@ tasks.shadowJar {
     relocate("io.papermc.lib", "me.keehl.elevators.util.paperlib")
     relocate("org.yaml.snakeyaml", "me.keehl.elevators.util.config.snakeyaml")
     relocate("org.bstats", "me.keehl.elevators.util.bstats")
+    relocate("io.github.projectunified", "me.keehl.elevators.util.projectunified")
 
     archiveClassifier.set("all")
 }

@@ -1,5 +1,6 @@
 package me.keehl.elevators;
 
+import me.keehl.elevators.services.ElevatorHooks;
 import me.keehl.elevators.util.bstats.bukkit.Metrics;
 import me.keehl.elevators.util.folialib.FoliaLib;
 import org.bukkit.Bukkit;
@@ -19,11 +20,12 @@ public class ElevatorsPlugin extends JavaPlugin {
     private static final String BOLD = "\u001B[1m";
 
     private Metrics metrics;
+    private final FoliaLib foliaLib = new FoliaLib(this);
 
-    private void printBanner(FoliaLib foliaLib) {
+    private void printBanner() {
 
         String version = "Version: " + this.getDescription().getVersion();
-        String server = foliaLib.getImplType().name() + " " +Bukkit.getServer().getVersion();
+        String server = this.foliaLib.getImplType().name() + " " +Bukkit.getServer().getVersion();
         String java = "Java Version:" + System.getProperty("java.version");
         String operatingSystem = "OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version");
 
@@ -38,24 +40,23 @@ public class ElevatorsPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        ElevatorHooks.buildHooksEarly();
+        ElevatorHooks.buildHooksEarly(this.foliaLib);
     }
 
     @Override()
     public void onEnable() {
-        FoliaLib foliaLib = new FoliaLib(this);
         this.getLogger().setFilter(new ElevatorLoggingFilter(this.getLogger().getFilter()));
 
-        this.printBanner(foliaLib);
+        this.printBanner();
         Elevators.pushAndHoldLog();
 
         Elevators.pushAndHoldLog();
         this.metrics = new Metrics(this, 8026);
         Elevators.popLog(logData -> Elevators.log("Metrics enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
 
-        Elevators.enable(this, foliaLib);
+        Elevators.enable(this, this.foliaLib);
 
-        ElevatorHooks.buildHooks();
+        ElevatorHooks.buildHooks(this.foliaLib);
         Elevators.popLog(logData -> Elevators.log("Plugin enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
 
     }

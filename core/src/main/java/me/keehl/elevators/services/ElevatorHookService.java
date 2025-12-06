@@ -28,6 +28,7 @@ public class ElevatorHookService {
 
     private static PlaceholderHook placeholderHook = null;
     private static HologramHook hologramHook = null;
+    private static DialogHook dialogHook = null;
 
     public static void init() {
         if(ElevatorHookService.initialized)
@@ -154,6 +155,14 @@ public class ElevatorHookService {
     // Protected because we want all hologram alterations to be done through HologramService
     protected static HologramHook getHologramHook() {
         return hologramHook;
+    }
+
+    public static DialogHook getDialogHook() {
+        return dialogHook;
+    }
+
+    protected static void setDialogHook(DialogHook newDialogHook) {
+        dialogHook = newDialogHook;
     }
 
     @SuppressWarnings("unchecked")
