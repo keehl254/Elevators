@@ -23,15 +23,17 @@ public class V5_1_0ConfigVersion extends ConfigVersion<V5ConfigRoot, V5_1_0Confi
         newConfig.effectDestination = currentConfig.effectDestination;
         newConfig.permissionMode = currentConfig.permissionMode;
         newConfig.forceFacingUpwards = currentConfig.forceFacingUpwards;
-        newConfig.protectionHooks = new HashMap<>();
 
-        for(String pluginKey : currentConfig.protectionHooks.keySet()) {
-            V5ConfigHookData currentHookData = currentConfig.protectionHooks.get(pluginKey);
-            V5_1_0ConfigHookData newHookData = new V5_1_0ConfigHookData();
-            newHookData.allowCustomization = currentHookData.allowCustomization;
-            newHookData.blockNonMemberUseDefault = currentHookData.blockNonMemberUseDefault;
+        if(currentConfig.protectionHooks != null) {
+            newConfig.protectionHooks = new HashMap<>();
+            for (String pluginKey : currentConfig.protectionHooks.keySet()) {
+                V5ConfigHookData currentHookData = currentConfig.protectionHooks.get(pluginKey);
+                V5_1_0ConfigHookData newHookData = new V5_1_0ConfigHookData();
+                newHookData.allowCustomization = currentHookData.allowCustomization;
+                newHookData.blockNonMemberUseDefault = currentHookData.blockNonMemberUseDefault;
 
-            newConfig.protectionHooks.put(pluginKey, newHookData);
+                newConfig.protectionHooks.put(pluginKey, newHookData);
+            }
         }
 
         V5_1_0ConfigLocale newLocale = new V5_1_0ConfigLocale();

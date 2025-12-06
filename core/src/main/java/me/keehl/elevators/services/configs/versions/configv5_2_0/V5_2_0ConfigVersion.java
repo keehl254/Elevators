@@ -21,15 +21,16 @@ public class V5_2_0ConfigVersion extends ConfigVersion<V5_1_0ConfigRoot, ConfigR
         newConfig.permissionMode = currentConfig.permissionMode;
         newConfig.forceFacingUpwards = currentConfig.forceFacingUpwards;
         newConfig.hologramServiceEnabled = currentConfig.hologramServiceEnabled;
-        newConfig.protectionHooks = new HashMap<>();
+        if(currentConfig.protectionHooks != null) {
+            newConfig.protectionHooks = new HashMap<>();
+            for (String pluginKey : currentConfig.protectionHooks.keySet()) {
+                V5_1_0ConfigHookData currentHookData = currentConfig.protectionHooks.get(pluginKey);
+                ConfigHookData newHookData = new ConfigHookData();
+                newHookData.allowCustomization = currentHookData.allowCustomization;
+                newHookData.blockNonMemberUseDefault = currentHookData.blockNonMemberUseDefault;
 
-        for(String pluginKey : currentConfig.protectionHooks.keySet()) {
-            V5_1_0ConfigHookData currentHookData = currentConfig.protectionHooks.get(pluginKey);
-            ConfigHookData newHookData = new ConfigHookData();
-            newHookData.allowCustomization = currentHookData.allowCustomization;
-            newHookData.blockNonMemberUseDefault = currentHookData.blockNonMemberUseDefault;
-
-            newConfig.protectionHooks.put(pluginKey, newHookData);
+                newConfig.protectionHooks.put(pluginKey, newHookData);
+            }
         }
 
         ConfigLocale newLocale = new ConfigLocale();
