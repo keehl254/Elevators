@@ -34,6 +34,7 @@ public class VersionHelper {
     private static final int supportPredicateChunkEntityGrab = getVersionID("1.16.5");
     private static final int supportAlphaColor = getVersionID("1.17.0");
     private static final int supportDialogs = getVersionID("1.21.6");
+    private static final int supportAutoCrafters = getVersionID("1.21.3");
 
     private static final int slimeSizeMetaData = 0;
 
@@ -53,6 +54,10 @@ public class VersionHelper {
 
     public static boolean doesVersionSupportAlphaColor() {
         return currentVersionID >= supportAlphaColor;
+    }
+
+    public static boolean doesVersionSupportAutoCrafters() {
+        return currentVersionID >= supportAutoCrafters;
     }
 
     public static boolean doesVersionSupportShulkerFacingAPI() {

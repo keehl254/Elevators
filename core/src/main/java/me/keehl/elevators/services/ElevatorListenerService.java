@@ -70,29 +70,8 @@ public class ElevatorListenerService {
             registerEventExecutor(InventoryMoveItemEvent.class, EventPriority.LOWEST , InventoryEventExecutor::onHopperTake);
         }
 
-        /* I am not a fan of CMI since it is so massive with abhorrent API support.
-        If it weren't for the fact the plugin lets players open elevators, I wouldn't want to support it. */
-        if (Bukkit.getPluginManager().isPluginEnabled("CMI")) {
+        TryRegisterCMIBackpackOpenEvent(listener);
 
-            try {
-                @SuppressWarnings("unchecked") Class<? extends Event> backpackOpenEventClass = (Class<? extends Event>) Class.forName("com.Zrips.CMI.events.CMIBackpackOpenEvent");
-                Method getShulkerBoxMethod = backpackOpenEventClass.getMethod("getShulkerBox");
-                getShulkerBoxMethod.setAccessible(true);
-
-                Bukkit.getPluginManager().registerEvent(backpackOpenEventClass, listener, EventPriority.NORMAL, (listener, event) -> {
-                    if(event.getClass() != backpackOpenEventClass)
-                        return;
-                    try {
-                        ItemStack item = (ItemStack) getShulkerBoxMethod.invoke(event);
-                        if(ElevatorHelper.isElevator(item))
-                            ((Cancellable) event).setCancelled(true);
-                    } catch (IllegalAccessException | InvocationTargetException ignored) {
-                    }
-                }, Elevators.getInstance(), false);
-
-            } catch (ClassNotFoundException | NoSuchMethodException ignored) {
-            }
-        }
 
         ElevatorListenerService.initialized = true;
         Elevators.popLog(logData -> Elevators.log("Listener service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
@@ -103,6 +82,29 @@ public class ElevatorListenerService {
             HandlerList.unregisterAll(ElevatorListenerService.listener);
 
         ElevatorListenerService.initialized = false;
+    }
+
+    /* I am not a fan of CMI since it is so massive with abhorrent API support.
+    If it weren't for the fact the plugin lets players open elevators, I wouldn't want to support it. */
+    private static void TryRegisterCMIBackpackOpenEvent(Listener listener) {
+        try {
+            @SuppressWarnings("unchecked") Class<? extends Event> backpackOpenEventClass = (Class<? extends Event>) Class.forName("com.Zrips.CMI.events.CMIBackpackOpenEvent");
+            Method getShulkerBoxMethod = backpackOpenEventClass.getMethod("getShulkerBox");
+            getShulkerBoxMethod.setAccessible(true);
+
+            Bukkit.getPluginManager().registerEvent(backpackOpenEventClass, listener, EventPriority.NORMAL, (passedlistener, event) -> {
+                if(event.getClass() != backpackOpenEventClass)
+                    return;
+                try {
+                    ItemStack item = (ItemStack) getShulkerBoxMethod.invoke(event);
+                    if(ElevatorHelper.isElevator(item))
+                        ((Cancellable) event).setCancelled(true);
+                } catch (IllegalAccessException | InvocationTargetException ignored) {
+                }
+            }, Elevators.getInstance(), false);
+
+        } catch (ClassNotFoundException | NoSuchMethodException ignored) {
+        }
     }
 
     @SuppressWarnings({"unchecked"})

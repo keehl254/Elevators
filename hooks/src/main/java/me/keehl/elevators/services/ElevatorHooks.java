@@ -6,6 +6,9 @@ import me.keehl.elevators.helpers.VersionHelper;
 import me.keehl.elevators.services.hooks.*;
 import org.bukkit.ChatColor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class ElevatorHooks {
 
     public static void buildHooksEarly(FoliaLib foliaLibs) {
@@ -38,16 +41,23 @@ public class ElevatorHooks {
         if(VersionHelper.doesVersionSupportDialogs()) {
             if (foliaLibs.isPaper()) {
                 ElevatorHookService.setDialogHook(new PaperDialogHook());
-                Elevators.log("Is paper");
             } else if (foliaLibs.isSpigot()) {
                 ElevatorHookService.setDialogHook(new SpigotDialogHook());
-                Elevators.log("Is Spigot");
-            } else {
-                Elevators.log("Is none");
             }
         }
 
         Elevators.popLog((logData) -> Elevators.log("Hooks built. "+ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
+
+        // I don't care to risk the class failing to load due to a classnotfound error from the event.
+        if(VersionHelper.doesVersionSupportAutoCrafters()) {
+            try {
+                Class<?> clazz = Class.forName("me.keehl.elevators.services.listeners.AutoCrafterListener");
+                Method method = clazz.getMethod("setupListener");
+                method.invoke(null);
+            } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
     }
 
