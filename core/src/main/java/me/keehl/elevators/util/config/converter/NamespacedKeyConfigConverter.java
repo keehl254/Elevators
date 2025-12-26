@@ -5,6 +5,7 @@ import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 import org.bukkit.NamespacedKey;
 
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,7 @@ public class NamespacedKeyConfigConverter extends ConfigConverter {
     public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception {
 
         if(!(object instanceof String)) {
-            Elevators.getElevatorsLogger().warning("Value at path \"" + parentNode.getPath() + "\" must be a string value!");
+            Elevators.log(Level.WARNING, "Value at path \"" + parentNode.getPath() + "\" must be a string value!");
             return ConfigConverter.createNodeWithData(parentNode, key, null, fieldData.getField());
         }
 
@@ -25,7 +26,7 @@ public class NamespacedKeyConfigConverter extends ConfigConverter {
         Matcher matcher = VALID.matcher(strValue);
 
         if(!matcher.matches()) {
-            Elevators.getElevatorsLogger().warning("Value at path \"" + parentNode.getPath() + "\" must be in a valid NamespacedKey format! Example: minecraft:white_wool");
+            Elevators.log(Level.WARNING, "Value at path \"" + parentNode.getPath() + "\" must be in a valid NamespacedKey format! Example: minecraft:white_wool");
             return ConfigConverter.createNodeWithData(parentNode, key, null, fieldData.getField());
         }
 

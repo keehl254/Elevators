@@ -4,11 +4,13 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.services.configs.ConfigVersion;
 import me.keehl.elevators.services.configs.versions.configv1.V1ConfigRoot;
 
+import java.util.logging.Level;
+
 public class V2ConfigVersion extends ConfigVersion<V1ConfigRoot, V2ConfigRoot> {
 
     @Override
     public V2ConfigRoot upgradeVersion(V1ConfigRoot currentConfig) {
-        Elevators.getElevatorsLogger().info("Converting config from V2.0.0 - V3.0.0");
+        Elevators.log(Level.INFO, "Converting config from V2.0.0 - V3.0.0");
 
         V2ConfigRoot newConfig = new V2ConfigRoot();
         newConfig.cantCreateMessage = currentConfig.cantCreateMessage;

@@ -67,7 +67,7 @@ public class ImageEffect extends ElevatorEffect {
 
             height = image.getHeight();
         }catch (IOException e){
-            Elevators.getElevatorsLogger().log(Level.SEVERE, "Error loading image for effect \"" + this.getEffectKey()+"\". Effect disabled. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+            Elevators.log(Level.SEVERE, "Error loading image for effect \"" + this.getEffectKey()+"\". Effect disabled. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
         this.height = height;
         this.rgbPattern = rgbPattern;
@@ -100,7 +100,7 @@ public class ImageEffect extends ElevatorEffect {
 
             Elevators.getFoliaLib().getScheduler().runAtLocationLater(elevator.getLocation(), () -> ElevatorHologramService.updateElevatorHologram(elevator), (long) (this.duration * 20));
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().warning("Effect \"" + this.getEffectKey() + "\" is too wide to use holographic displays. Max width is 150");
+            Elevators.log(Level.WARNING,"Effect \"" + this.getEffectKey() + "\" is too wide to use holographic displays. Max width is 150");
         }
     }
 

@@ -25,12 +25,14 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -62,16 +64,16 @@ public class ElevatorGUIHelper {
                 } catch (InvocationTargetException ite) {
                     if (ite.getTargetException() instanceof NoClassDefFoundError) {
                         anvilEnabled = false;
-                        Elevators.getElevatorsLogger().warning("AnvilAPI is not up-to-date. Using backup chat input system.");
+                        Elevators.log(Level.WARNING, "AnvilAPI is not up-to-date. Using backup chat input system.");
                     } else if (!(ite.getTargetException() instanceof NullPointerException)) {// NPE will occur if the AnvilGUI is up-to-date.
-                        Elevators.getElevatorsLogger().warning(ite.getTargetException().toString());
+                        Elevators.log(Level.WARNING, ite.getTargetException().toString());
                         anvilEnabled = false;
                     }
                 }
 
             } catch (Exception ex) {
-                Elevators.getElevatorsLogger().warning("AnvilAPI is not up-to-date. Using backup chat input system.");
-                Elevators.getElevatorsLogger().warning(ex.toString());
+                Elevators.log(Level.WARNING, "AnvilAPI is not up-to-date. Using backup chat input system.");
+                Elevators.log(Level.WARNING, ex.toString());
                 anvilEnabled = false;
             }
         }
@@ -211,9 +213,9 @@ public class ElevatorGUIHelper {
 
     private static Map<String, String> createActionMap(List<String> keyList, List<String> actionList) {
         Map<String, String> actions = new HashMap<>();
-        for(int i=0;i<keyList.size();i++) {
+        for (int i = 0; i < keyList.size(); i++) {
             String key = keyList.get(i);
-            if(actionList.size() > i)
+            if (actionList.size() > i)
                 actions.put(key, actionList.get(i));
         }
 
@@ -335,7 +337,7 @@ public class ElevatorGUIHelper {
         display.onClick((item, event, myDisplay) -> {
             myDisplay.stopReturn();
             ElevatorAction newAction = ElevatorActionService.createBlankAction(elevatorType, item);
-            if(newAction != null) {
+            if (newAction != null) {
                 currentActionList.add(newAction);
 
                 if (!newAction.getSettings().isEmpty()) {
@@ -365,7 +367,7 @@ public class ElevatorGUIHelper {
 
             List<String> lore = meta.getLore() == null ? new ArrayList<>() : meta.getLore();
             lore.add("");
-            if(!action.getSettings().isEmpty())
+            if (!action.getSettings().isEmpty())
                 lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Left Click: " + ChatColor.GRAY + "Edit Action");
             lore.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Shift Click: " + ChatColor.GRAY + "Delete Action");
 
@@ -376,9 +378,9 @@ public class ElevatorGUIHelper {
         display.onClick((action, event, myDisplay) -> {
             myDisplay.stopReturn();
 
-            if(event.isShiftClick()) {
+            if (event.isShiftClick()) {
                 openConfirmMenu(player, confirm -> {
-                    if(confirm)
+                    if (confirm)
                         actions.remove(action);
 
                     openAdminActionsMenu(player, elevatorType, actions);
@@ -386,7 +388,7 @@ public class ElevatorGUIHelper {
                 return;
             }
 
-            if(!action.getSettings().isEmpty())
+            if (!action.getSettings().isEmpty())
                 openAdminActionSettingsMenu(player, elevatorType, action, () -> openAdminActionsMenu(player, elevatorType, actions));
         });
         display.onLoad((tempDisplay, page) -> {
@@ -458,10 +460,10 @@ public class ElevatorGUIHelper {
 
     private static void saveInventoryToRecipe(Inventory inventory, ElevatorRecipeGroup tempRecipe) {
         List<RecipeRow<NamespacedKey>> keyList = new ArrayList<>();
-        for(int y=0;y<3;y++) {
+        for (int y = 0; y < 3; y++) {
 
             RecipeRow<NamespacedKey> keyRow = new RecipeRow<>();
-            for(int x=0;x<3;x++) {
+            for (int x = 0; x < 3; x++) {
                 int slot = 10 + (y * 9) + x;
                 ItemStack item = inventory.getItem(slot);
                 NamespacedKey key = (item == null || item.getType().isAir()) ? Material.AIR.getKey() : ElevatorHookService.getKeyFromItemStack(item);
@@ -475,25 +477,25 @@ public class ElevatorGUIHelper {
 
     private static void runRecipeColorTask(ElevatorType elevatorType, Inventory inventory, ElevatorRecipeGroup tempRecipe, AtomicInteger dyeColorIndex) {
         DyeColor color = null;
-        if(!tempRecipe.supportsMultiColorOutput()) {
+        if (!tempRecipe.supportsMultiColorOutput()) {
             color = tempRecipe.getDefaultOutputColor();
-        } else if(!tempRecipe.supportsMultiColorMaterials()) {
+        } else if (!tempRecipe.supportsMultiColorMaterials()) {
 
-            for(List<NamespacedKey> keyRow : tempRecipe.getRecipe()) {
-                for(NamespacedKey key : keyRow) {
+            for (List<NamespacedKey> keyRow : tempRecipe.getRecipe()) {
+                for (NamespacedKey key : keyRow) {
                     boolean colorable = key.getNamespace().equalsIgnoreCase(NamespacedKey.MINECRAFT) || key.getNamespace().equalsIgnoreCase(Elevators.getInstance().getName().toLowerCase(Locale.ROOT));
-                    if(!colorable)
+                    if (!colorable)
                         continue;
 
                     ItemStack item = ElevatorHookService.createItemStackFromKey(key);
-                    if(item == null)
+                    if (item == null)
                         continue;
 
                     DyeColor tempColor = ItemStackHelper.getDyeColorFromMaterial(item.getType());
-                    if(tempColor == null)
+                    if (tempColor == null)
                         continue;
 
-                    if(color != null && tempColor != color) {
+                    if (color != null && tempColor != color) {
                         color = tempRecipe.getDefaultOutputColor(); // Multiple colorable materials in recipe. Cannot determine output color.
                         break;
                     }
@@ -541,15 +543,15 @@ public class ElevatorGUIHelper {
         }, SimpleDisplay.DisplayClickResult.CANCEL, SimpleDisplay.DisplayClickResult.ALLOW);
         fillEmptySlotsWithPanes(inventory, DyeColor.BLACK);
 
-        int x=0;
-        int y=0;
-        for(List<NamespacedKey> keyRow : tempRecipe.getRecipe()) {
-            for(NamespacedKey key : keyRow) {
+        int x = 0;
+        int y = 0;
+        for (List<NamespacedKey> keyRow : tempRecipe.getRecipe()) {
+            for (NamespacedKey key : keyRow) {
                 ItemStack item = ElevatorHookService.createItemStackFromKey(key);
-                if(item == null)
+                if (item == null)
                     item = new ItemStack(Material.AIR, 1);
 
-                int slot = 10 + (y * 9) + (x%3);
+                int slot = 10 + (y * 9) + (x % 3);
                 BiFunction<InventoryClickEvent, SimpleDisplay, SimpleDisplay.DisplayClickResult> onClick = (event, myDisplay) -> SimpleDisplay.DisplayClickResult.ALLOW;
                 display.setItem(slot, item, onClick);
                 x++;
@@ -819,10 +821,11 @@ public class ElevatorGUIHelper {
                 ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
                 ShulkerBoxHelper.playClose(elevator.getShulkerBox());
             }
-
+            elevator.getShulkerBox().removeMetadata("open-player", Elevators.getInstance());
             player.closeInventory();
             return;
         }
+        elevator.getShulkerBox().setMetadata("open-player", new FixedMetadataValue(Elevators.getInstance(), player.getUniqueId().toString()));
 
         Inventory inventory = Bukkit.createInventory(null, 27, "Elevator");
 
@@ -845,6 +848,8 @@ public class ElevatorGUIHelper {
         SimpleDisplay display = new SimpleDisplay(Elevators.getInstance(), player, inventory, () -> {
             ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
             ShulkerBoxHelper.playClose(elevator.getShulkerBox());
+
+            elevator.getShulkerBox().removeMetadata("open-player", Elevators.getInstance());
         });
 
         boolean canRename = ElevatorHookService.canRenameElevator(player, elevator, false);
@@ -914,27 +919,26 @@ public class ElevatorGUIHelper {
             return;
         }
 
-        String currentName = ElevatorDataContainerService.getFloorName(elevator);
 
         /* TODO: Dialog input moving forward.
             Sadly doesn't work right now due to Java Downgrader.
             I will figure it out >_>
-
-            Elevators.log("Interact Name:" + ElevatorHookService.getDialogHook());
-            if(ElevatorHookService.getDialogHook() != null) {
-
-                Elevators.log("DialogHook");
-
-                ElevatorHookService.getDialogHook().createStringInputDialog(player, value -> true,
-                        result -> {
-                            ElevatorDataContainerService.setFloorName(elevator, result);
-                            ElevatorGUIHelper.openInteractMenu(player, elevator);
-                        },
-                        () -> ElevatorGUIHelper.openInteractMenu(player, elevator),
-                        "Elevators", true, ElevatorConfigService.getRootConfig().locale.enterFloorName, currentName, "Floor Name");
-                return;
-            }
         */
+        if (ElevatorHookService.getDialogHook() != null) {
+
+            Optional<String> currentName = ElevatorDataContainerService.getFloorNameOpt(elevator);
+            ElevatorHookService.getDialogHook().createStringInputDialog(player, value -> value != null && !value.isBlank(),
+                    result -> {
+                        ElevatorDataContainerService.setFloorName(elevator, result);
+                        ElevatorGUIHelper.openInteractMenu(player, elevator);
+                    },
+                    () -> ElevatorGUIHelper.openInteractMenu(player, elevator),
+                    () -> ElevatorHelper.resetElevatorEditState(elevator),
+                    "Elevators", true, MessageHelper.formatLineColors(ElevatorConfigService.getRootConfig().locale.enterFloorName), currentName.orElse(""), "Floor Name");
+            return;
+        }
+
+        String currentName = ElevatorDataContainerService.getFloorName(elevator);
         tryOpenSign(player, value -> true,
                 result -> {
                     ElevatorDataContainerService.setFloorName(elevator, result);

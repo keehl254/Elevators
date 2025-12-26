@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class ElevatorEffectService {
 
@@ -53,7 +54,7 @@ public class ElevatorEffectService {
 
             File effectFile = new File(effectDirectory, effectConfig.file);
             if (!effectFile.exists()) {
-                Elevators.getElevatorsLogger().warning("Elevators: Could not find file for effect \"" + elevatorEffectKey + "\"");
+                Elevators.log(Level.WARNING, "Elevators: Could not find file for effect \"" + elevatorEffectKey + "\"");
                 continue;
             }
 

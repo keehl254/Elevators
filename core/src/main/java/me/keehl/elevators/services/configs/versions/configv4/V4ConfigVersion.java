@@ -5,10 +5,12 @@ import me.keehl.elevators.services.configs.ConfigVersion;
 import me.keehl.elevators.services.configs.versions.configv3.V3ConfigRecipe;
 import me.keehl.elevators.services.configs.versions.configv3.V3ConfigRoot;
 
+import java.util.logging.Level;
+
 public class V4ConfigVersion extends ConfigVersion<V3ConfigRoot, V4ConfigRoot> {
     @Override
     public V4ConfigRoot upgradeVersion(V3ConfigRoot currentConfig) {
-        Elevators.getElevatorsLogger().info("Converting config from V3.0.0 - V4.0.0");
+        Elevators.log(Level.INFO, "Converting config from V3.0.0 - V4.0.0");
 
         V4ConfigRoot newConfig = new V4ConfigRoot();
         newConfig.updateCheckerEnabled = currentConfig.updateCheckerEnabled;

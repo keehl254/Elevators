@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class ElevatorActionVariable<T> {
@@ -43,8 +44,8 @@ public class ElevatorActionVariable<T> {
         try {
             return this.conversionFunction.apply(value);
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().info(this.getMainAlias() + ": " + value);
-            Elevators.getElevatorsLogger().warning(String.format(this.conversionErrorMessage, action.getKey(), this.getMainAlias(), action.getElevatorType().getTypeKey(), this.defaultObject.toString()));
+            Elevators.log(Level.INFO, this.getMainAlias() + ": " + value);
+            Elevators.log(Level.WARNING, String.format(this.conversionErrorMessage, action.getKey(), this.getMainAlias(), action.getElevatorType().getTypeKey(), this.defaultObject.toString()));
             return this.defaultObject;
         }
     }

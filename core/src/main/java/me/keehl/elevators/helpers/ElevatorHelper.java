@@ -21,6 +21,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ElevatorHelper {
 
@@ -165,6 +167,13 @@ public class ElevatorHelper {
         shulkerBox.removeMetadata("elevator-disabled", Elevators.getInstance());
     }
 
+    public static void resetElevatorEditState(Elevator elevator) {
+        ElevatorHelper.setElevatorEnabled(elevator.getShulkerBox());
+        ShulkerBoxHelper.playClose(elevator.getShulkerBox());
+
+        elevator.getShulkerBox().removeMetadata("open-player", Elevators.getInstance());
+    }
+
     public static void onElevatorInteract(Player player, PlayerInteractEvent event, Elevator elevator) {
         if (isElevatorDisabled(elevator.getShulkerBox()))
             return; // TODO: Message that elevator is temporarily unable to be interacted with.
@@ -174,8 +183,17 @@ public class ElevatorHelper {
         if(!elevator.getElevatorType(true).shouldAllowIndividualEdit())
             return;
 
-        if (!ElevatorHookService.canEditElevator(player, elevator, true))
-            return;
+        if (!ElevatorHookService.canEditElevator(player, elevator, true)) {
+
+            List<MetadataValue> values = elevator.getShulkerBox().getMetadata("open-player");
+            List<Player> players = values.stream().map(MetadataValue::asString).map(UUID::fromString).map(Bukkit::getPlayer).collect(Collectors.toList());
+
+            boolean reset = players.isEmpty() || players.get(0).getUniqueId().equals(player.getUniqueId());
+            if(reset) {
+                ElevatorHelper.resetElevatorEditState(elevator);
+            } else
+                return;
+        }
 
         ElevatorGUIHelper.openInteractMenu(event.getPlayer(), elevator);
     }

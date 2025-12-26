@@ -18,6 +18,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @SuppressWarnings("ConstantConditions")
 public class ElevatorDataContainerService {
@@ -174,13 +175,17 @@ public class ElevatorDataContainerService {
         item.setItemMeta(meta);
     }
 
-    public static String getFloorName(Elevator elevator) {
+    public static Optional<String> getFloorNameOpt(Elevator elevator) {
         PersistentDataContainer tagContainer = elevator.getShulkerBox().getPersistentDataContainer();
 
         if (tagContainer.has(ElevatorDataContainerService.nameKey, PersistentDataType.STRING))
-            return tagContainer.get(ElevatorDataContainerService.nameKey, PersistentDataType.STRING);
-        else
-            return "Floor #" + ElevatorHelper.getFloorNumberOrCount(elevator, true);
+            return Optional.of(tagContainer.get(ElevatorDataContainerService.nameKey, PersistentDataType.STRING));
+
+        return Optional.ofNullable(null);
+    }
+
+    public static String getFloorName(Elevator elevator) {
+        return getFloorNameOpt(elevator).orElse("Floor #" + ElevatorHelper.getFloorNumberOrCount(elevator, true));
     }
 
     public static void setFloorName(Elevator elevator, String name) {

@@ -28,7 +28,7 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
         try {
             this.field.set(parentNode.getValue(), value);
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().warning("Config input at path '" + this.getPath() +"' must be of type '" + this.getFieldDisplay()+"'. Default value has been substituted.");
+            Elevators.log(Level.WARNING, "Config input at path '" + this.getPath() +"' must be of type '" + this.getFieldDisplay()+"'. Default value has been substituted.");
         }
     }
 
@@ -44,7 +44,7 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
             this.field.setAccessible(true);
             return (T) this.field.get(this.parentNode.getValue());
         } catch (IllegalAccessException e) {
-            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to load config node data. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+            Elevators.log(Level.SEVERE, "Failed to load config node data. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
             return null;
         }
     }

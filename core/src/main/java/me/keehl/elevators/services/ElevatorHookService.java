@@ -67,7 +67,7 @@ public class ElevatorHookService {
             Elevators.popLog((logData) -> Elevators.log("Hooked into " + pluginName + ". "+ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
 
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            Elevators.getElevatorsLogger().log(Level.WARNING, "Failed to register hook for \"" + pluginName + "\" due to an inaccessible constructor. The plugin will still function; however, this hook will not work. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues", e);
+            Elevators.log(Level.WARNING, "Failed to register hook for \"" + pluginName + "\" due to an inaccessible constructor. The plugin will still function; however, this hook will not work. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues", e);
         }
     }
 
@@ -79,7 +79,7 @@ public class ElevatorHookService {
         try {
             return ElevatorHookService.getProtectionHooks().stream().allMatch(hook -> !hook.isCheckEnabled(elevator) || hook.canPlayerUseElevator(player, elevator, sendMessage));
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to check hooks for use permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+            Elevators.log(Level.SEVERE, "Failed to check hooks for use permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
         return false;
     }
@@ -88,7 +88,7 @@ public class ElevatorHookService {
         try {
             return ElevatorHookService.getProtectionHooks().stream().allMatch(hook -> hook.canEditSettings(player, elevator, sendMessage));
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to check hooks for edit permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+            Elevators.log(Level.SEVERE, "Failed to check hooks for edit permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
         return false;
     }
@@ -97,7 +97,7 @@ public class ElevatorHookService {
         try {
             return ElevatorHookService.getProtectionHooks().stream().allMatch(hook -> hook.canEditName(player, elevator, sendMessage));
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to check hooks for rename permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+            Elevators.log(Level.SEVERE, "Failed to check hooks for rename permission. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
         return false;
     }
@@ -125,7 +125,7 @@ public class ElevatorHookService {
                     return item;
             }
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to get item from namespaced key. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+            Elevators.log(Level.SEVERE, "Failed to get item from namespaced key. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
         return null;
     }
@@ -143,7 +143,7 @@ public class ElevatorHookService {
                     return key;
             }
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to get namespaced key from itemstack. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+            Elevators.log(Level.SEVERE, "Failed to get namespaced key from itemstack. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
         return item.getType().getKey();
     }
@@ -163,6 +163,7 @@ public class ElevatorHookService {
 
     protected static void setDialogHook(DialogHook newDialogHook) {
         dialogHook = newDialogHook;
+        newDialogHook.onInit();
     }
 
     @SuppressWarnings("unchecked")

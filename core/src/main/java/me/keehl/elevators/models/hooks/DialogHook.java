@@ -7,6 +7,6 @@ import java.util.function.Function;
 
 public abstract class DialogHook implements ElevatorHook {
 
-    public abstract void createStringInputDialog(Player player, Function<String, Boolean> validationFunction, Consumer<String> resultConsumer, Runnable onCancel, String title, boolean allowReset, String message, String defaultMessage, String inputLabel);
+    public abstract void createStringInputDialog(Player player, Function<String, Boolean> validationFunction, Consumer<String> resultConsumer, Runnable onCancel, Runnable onQuit, String title, boolean allowReset, String message, String defaultMessage, String inputLabel);
 
 }

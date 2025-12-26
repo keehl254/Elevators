@@ -7,12 +7,13 @@ import me.keehl.elevators.services.configs.ConfigVersion;
 import me.keehl.elevators.services.configs.versions.configv5_1_0.*;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class V5_2_0ConfigVersion extends ConfigVersion<V5_1_0ConfigRoot, ConfigRoot> {
 
     @Override
     public ConfigRoot upgradeVersion(V5_1_0ConfigRoot currentConfig) {
-        Elevators.getElevatorsLogger().info("Converting config from V5.1.0 - V5.2.0");
+        Elevators.log(Level.INFO, "Converting config from V5.1.0 - V5.2.0");
 
         // This is a lot of work for simply changing something in ConfigRecipe...
         ConfigRoot newConfig = new ConfigRoot();

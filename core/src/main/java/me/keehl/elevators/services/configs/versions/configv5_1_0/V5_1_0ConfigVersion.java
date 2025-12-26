@@ -10,12 +10,13 @@ import org.bukkit.NamespacedKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 public class V5_1_0ConfigVersion extends ConfigVersion<V5ConfigRoot, V5_1_0ConfigRoot> {
 
     @Override
     public V5_1_0ConfigRoot upgradeVersion(V5ConfigRoot currentConfig) {
-        Elevators.getElevatorsLogger().info("Converting config from V5.0.0 - V5.1.0");
+        Elevators.log(Level.INFO, "Converting config from V5.0.0 - V5.1.0");
 
         // This is a lot of work for simply changing something in ConfigRecipe...
         V5_1_0ConfigRoot newConfig = new V5_1_0ConfigRoot();

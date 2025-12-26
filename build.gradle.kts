@@ -1,5 +1,5 @@
 group = "me.keehl"
-version = "5.0.0-beta.16"
+version = "5.0.0-beta.17"
 
 plugins {
     kotlin("jvm") version "1.9.0"
@@ -22,8 +22,7 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-
-    implementation(files("hooks/build/libs/hooks-${version}-downgraded.jar"))
+    implementation(files("hooks/build/libs/hooks-${version}-downgraded-shaded.jar"))
 
     compileOnly("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT")
 }
@@ -73,5 +72,13 @@ bukkit {
 }
 
 tasks.compileJava {
-    dependsOn(":hooks:downgradeJar")
+    dependsOn(":hooks:shadeDowngradedApi")
+}
+
+tasks.assemble {
+    dependsOn(":hooks:shadeDowngradedApi")
+}
+
+tasks.build {
+    dependsOn(":hooks:shadeDowngradedApi")
 }

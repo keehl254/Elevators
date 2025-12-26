@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.logging.Level;
 
 @SuppressWarnings({"unused"})
 public class ElevatorCommand implements CommandExecutor, TabCompleter {
@@ -112,7 +113,7 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
             return;
         }
         if (!(sender instanceof Player))
-            Elevators.getElevatorsLogger().warning("This command can only be executed by players!");
+            Elevators.log(Level.WARNING, "This command can only be executed by players!");
         else
             ElevatorGUIHelper.openAdminMenu((Player) sender);
     }
@@ -121,7 +122,7 @@ public class ElevatorCommand implements CommandExecutor, TabCompleter {
         if (sender instanceof Player)
             sender.sendMessage(this.prefix + "Please provide a player to give the Elevator to!");
         else
-            Elevators.getElevatorsLogger().warning("Please provide more arguments! /elevators give <player> <elevator> [color] [amount]");
+            Elevators.log(Level.WARNING, "Please provide more arguments! /elevators give <player> <elevator> [color] [amount]");
     }
 
     private void onCommand(CommandSender sender, String give, String player) {

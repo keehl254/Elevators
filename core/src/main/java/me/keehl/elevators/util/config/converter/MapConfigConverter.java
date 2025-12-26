@@ -5,6 +5,7 @@ import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ConfigNode;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class MapConfigConverter extends ConfigConverter {
 
@@ -46,7 +47,7 @@ public class MapConfigConverter extends ConfigConverter {
                 mapObj.put(keyObj, childNode.getValue());
             }
         } else if (!(object instanceof ArrayList<?>)) {
-            Elevators.getElevatorsLogger().warning("An invalid value was entered for key: " + key + ". Expected Map or Empty Array.");
+            Elevators.log(Level.WARNING, "An invalid value was entered for key: " + key + ". Expected Map or Empty Array.");
         }
 
         return myNode;

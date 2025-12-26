@@ -29,6 +29,7 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.bg-software.com/repository/api/")
     maven("https://repo.keehl.me/releases/")
+
     mavenLocal()
     mavenCentral()
 }

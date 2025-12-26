@@ -47,10 +47,10 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
             USE_ELEVATOR = IslandPrivilege.getByName(USE_ELEVATOR_FLAG);
             EDIT_NAME_ELEVATOR = IslandPrivilege.getByName(EDIT_NAME_ELEVATOR_FLAG);
             EDIT_SETTINGS_ELEVATOR = IslandPrivilege.getByName(EDIT_SETTINGS_ELEVATOR_FLAG);
-            Elevators.getElevatorsLogger().info("Hooked into SuperiorSkyblock2 correctly");
+            Elevators.log(Level.INFO, "Hooked into SuperiorSkyblock2 correctly");
             registered = true;
         } catch(Exception ex) {
-            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to register SSB2 hook. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(ex));
+            Elevators.log(Level.SEVERE, "Failed to register SSB2 hook. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(ex));
         }
     }
 

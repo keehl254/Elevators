@@ -6,15 +6,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Elevators {
 
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Elevators.class);
     protected static JavaPlugin instance;
     protected static FoliaLib foliaLib;
 
@@ -122,11 +125,19 @@ public class Elevators {
     private static final LogStack mainLogStack = new LogStack();
 
     public static void log(String message) {
-        message = mainLogStack.log(message);
+        Elevators.log(Level.INFO, message);
+    }
+
+    public static void log(Level level, String message) {
+        Elevators.log(level, message, null);
+    }
+
+    public static void log(Level level, String message, Throwable throwable) {
+        message = mainLogStack.log(level, message, throwable);
         if (message == null)
             return;
 
-        Elevators.getElevatorsLogger().info(message);
+        ((IElevatorsPlugin) Elevators.getInstance()).log(level, message, throwable);
     }
 
     public static void pushLog() {
@@ -137,8 +148,8 @@ public class Elevators {
         LogReleaseData releaseData = mainLogStack.pop();
         if (onPop != null)
             onPop.accept(releaseData);
-        for (String message : releaseData.getLogs())
-            Elevators.log(message);
+        for (LogMessage message : releaseData.getLogs())
+            Elevators.log(message.getLevel(), message.getMessage(), message.getThrowable());
         return releaseData;
     }
 
@@ -159,8 +170,8 @@ public class Elevators {
         LogReleaseData released = mainLogStack.releaseLogs();
         if (onRelease != null)
             onRelease.accept(released);
-        for (String message : released.getLogs())
-            Elevators.log(message);
+        for (LogMessage message : released.getLogs())
+            Elevators.log(message.getLevel(), message.getMessage(), message.getThrowable());
         return released;
     }
 
@@ -175,9 +186,9 @@ public class Elevators {
     public static class LogReleaseData {
 
         private final long elapsed;
-        private final List<String> messages;
+        private final List<LogMessage> messages;
 
-        protected LogReleaseData(long elapsed, List<String> messages) {
+        protected LogReleaseData(long elapsed, List<LogMessage> messages) {
             this.elapsed = elapsed;
             this.messages = messages;
         }
@@ -186,34 +197,63 @@ public class Elevators {
             return this.elapsed;
         }
 
-        public List<String> getLogs() {
+        public List<LogMessage> getLogs() {
             return this.messages;
+        }
+    }
+
+    public static class LogMessage {
+
+        private String message;
+        private final Throwable throwable;
+        private final Level level;
+
+        public LogMessage(Level level, String message, Throwable throwable) {
+            this.message = message;
+            this.throwable = throwable;
+            this.level = level;
+        }
+
+        public String getMessage() {
+            return this.message;
+        }
+
+        public Throwable getThrowable() {
+            return this.throwable;
+        }
+
+        public Level getLevel() {
+            return this.level;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
     }
 
     public static class LogStack {
 
-        private List<String> heldMessages;
+        private List<LogMessage> heldMessages;
         private LogStack child;
         private long holdStart = -1;
 
-        public String log(String message) {
+        public String log(Level level, String message, Throwable throwable) {
 
             if (this.child != null) {
-                String returnMessage = this.child.log(message);
+                String returnMessage = this.child.log(level, message, throwable);
                 if (returnMessage == null)
                     return null;
 
                 returnMessage = "\t" + returnMessage;
                 if (this.heldMessages != null) {
-                    this.heldMessages.add(returnMessage);
+                    this.heldMessages.add(new LogMessage(level,message, throwable));
                     return null;
                 }
                 return returnMessage;
             }
 
             if (this.heldMessages != null) {
-                this.heldMessages.add(message);
+                this.heldMessages.add(new LogMessage(level, message, throwable));
                 return null;
             }
 
@@ -264,14 +304,16 @@ public class Elevators {
                 return childLogs;
             }
 
-            List<String> logs = new ArrayList<>();
-            if (this.heldMessages != null) {
-                for (String heldMessage : this.heldMessages)
-                    logs.add("\t" + heldMessage);
-            }
-            this.heldMessages = null;
             long elapsed = System.currentTimeMillis() - (this.holdStart == -1 ? System.currentTimeMillis() : this.holdStart);
-            return new LogReleaseData(elapsed, logs);
+            if(this.heldMessages == null)
+                return new LogReleaseData(elapsed, new ArrayList<>());
+
+            for (LogMessage heldMessage : this.heldMessages) {
+                heldMessage.setMessage("\t" + heldMessage.getMessage());
+            }
+            LogReleaseData data = new LogReleaseData(elapsed, this.heldMessages);
+            this.heldMessages = null;
+            return data;
         }
 
     }

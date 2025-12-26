@@ -88,7 +88,7 @@ public abstract class ConfigConverter {
 
     public static <T extends Config> ConfigRootNode<T> createNodeForConfigData(T config, Map<?, ?> yamlData) throws Exception {
         Optional<ConfigConverter> optConverter = converters.stream().filter(i -> i.supports(config.getClass())).findAny();
-        if (!optConverter.isPresent())
+        if (optConverter.isEmpty())
             return null;
 
         ConfigConverter converter = optConverter.get();
@@ -176,7 +176,7 @@ public abstract class ConfigConverter {
             fileWriter.write(writeLines.toString());
             return true;
         } catch (IOException e) {
-            Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed while saving config. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+            Elevators.log(Level.SEVERE, "Failed while saving config. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
             return false;
         }
     }
@@ -200,7 +200,7 @@ public abstract class ConfigConverter {
             if (converter.supports(type))
                 return converter;
         }
-        Elevators.getElevatorsLogger().warning("Failed to find config converter for type: " + type.getName());
+        Elevators.log(Level.WARNING, "Failed to find config converter for type: " + type.getName());
         return null;
     }
 

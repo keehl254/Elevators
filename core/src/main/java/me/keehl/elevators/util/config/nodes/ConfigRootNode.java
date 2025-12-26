@@ -76,14 +76,14 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
             }
         }
 
-        Elevators.getElevatorsLogger().warning("Failed to convert main root node! Using old data.");
+        Elevators.log(Level.WARNING, "Failed to convert main root node! Using old data.");
 
         LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
         for (ConfigNode<?> childNode : this.getChildren()) {
             try {
                 map.put(childNode.getKey(), childNode.getConfigConverter().serializeNodeToObject(childNode));
             } catch (Exception e) {
-                Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to save config path \"" + childNode.getPath() + ".\". Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+                Elevators.log(Level.SEVERE, "Failed to save config path \"" + childNode.getPath() + ".\". Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
             }
         }
 

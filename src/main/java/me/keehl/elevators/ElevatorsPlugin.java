@@ -1,17 +1,20 @@
 package me.keehl.elevators;
 
 import me.keehl.elevators.services.ElevatorHooks;
-import me.keehl.elevators.util.bstats.bukkit.Metrics;
+import me.keehl.elevators.util.faststats.bukkit.BukkitMetrics;
+import me.keehl.elevators.util.faststats.core.Metrics;
 import me.keehl.elevators.util.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
-public class ElevatorsPlugin extends JavaPlugin {
+public class ElevatorsPlugin extends JavaPlugin implements IElevatorsPlugin {
 
     private static final String LIGHT_GRAY = "\u001B[38;5;250m";
     private static final String YELLOW = "\u001B[33m";
@@ -19,8 +22,11 @@ public class ElevatorsPlugin extends JavaPlugin {
     private static final String RESET = "\u001B[0m";
     private static final String BOLD = "\u001B[1m";
 
-    private Metrics metrics;
+    private me.keehl.elevators.util.bstats.bukkit.Metrics bstatsMetrics;
+    private Metrics fastStatsMetrics;
     private final FoliaLib foliaLib = new FoliaLib(this);
+
+    private CustomLogger customLogger;
 
     private void printBanner() {
 
@@ -46,12 +52,15 @@ public class ElevatorsPlugin extends JavaPlugin {
     @Override()
     public void onEnable() {
         this.getLogger().setFilter(new ElevatorLoggingFilter(this.getLogger().getFilter()));
+        this.customLogger = new CustomLogger(this.getLogger());
 
         this.printBanner();
         Elevators.pushAndHoldLog();
 
         Elevators.pushAndHoldLog();
-        this.metrics = new Metrics(this, 8026);
+        this.fastStatsMetrics = BukkitMetrics.factory().token("ac50ca9cdff9c38b8a7aeea15b63ded6").create(this);
+        this.bstatsMetrics = new me.keehl.elevators.util.bstats.bukkit.Metrics(this, 8026);
+
         Elevators.popLog(logData -> Elevators.log("Metrics enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
 
         Elevators.enable(this, this.foliaLib);
@@ -63,12 +72,39 @@ public class ElevatorsPlugin extends JavaPlugin {
 
     @Override()
     public void onDisable() {
-        if(this.metrics != null) {
-            this.getLogger().info("Disabling metrics");
-            this.metrics.shutdown();
+        if(this.bstatsMetrics != null) {
+            this.getLogger().info("Disabling BStats Metrics");
+            this.bstatsMetrics.shutdown();
+        }
+        if(this.fastStatsMetrics != null) {
+            this.getLogger().info("Disabling FastStats Metrics");
+            this.fastStatsMetrics.shutdown();
         }
 
         Elevators.disable();
+    }
+
+    @Override()
+    public @NotNull Logger getLogger() {
+        if(this.customLogger == null)
+            return super.getLogger();
+
+        return this.customLogger;
+    }
+
+    @Override
+    public void log(String message) {
+        super.getLogger().log(Level.INFO, message);
+    }
+
+    @Override
+    public void log(Level level, String message) {
+        super.getLogger().log(level, message);
+    }
+
+    @Override
+    public void log(Level level, String message, Throwable throwable) {
+        super.getLogger().log(level, message, throwable);
     }
 
     public static class ElevatorLoggingFilter implements Filter {
@@ -83,9 +119,12 @@ public class ElevatorsPlugin extends JavaPlugin {
         public boolean isLoggable(LogRecord record) {
             record.setLoggerName(BOLD + RED + "Elevators" + RESET);
 
-            String message = record.getMessage();
-
-            if(record.getLevel() == Level.INFO)
+            String message;
+            if (record.getLevel() == Level.WARNING)
+                message = YELLOW + record.getMessage();
+            else if (record.getLevel() == Level.SEVERE)
+                message = RED + record.getMessage();
+            else
                 message = LIGHT_GRAY + record.getMessage();
 
             message = message.replace("§e", YELLOW);

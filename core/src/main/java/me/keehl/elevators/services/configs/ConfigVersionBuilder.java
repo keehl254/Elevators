@@ -97,19 +97,19 @@ public class ConfigVersionBuilder {
                 throw new RuntimeException("Failed to save converted elevator version.");
 
             if(!backupFile.delete())
-                Elevators.getElevatorsLogger().log(Level.WARNING, "Failed to delete backup config file.");
+                Elevators.log(Level.WARNING, "Failed to delete backup config file.");
 
             return rootNode;
 
         } catch (Exception e) {
-            Elevators.getElevatorsLogger().log(Level.SEVERE, "Error loading config. Using defaults. Please create an issue ticket on my GitHub with your config if you would like assistance: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
+            Elevators.log(Level.SEVERE, "Error loading config. Using defaults. Please create an issue ticket on my GitHub with your config if you would like assistance: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
         }
 
         if (backupFile != null) {
             try {
                 Files.copy(backupFile.toPath(), configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception ex) {
-                Elevators.getElevatorsLogger().log(Level.SEVERE, "Error reverting to old config. Config backup is available in the Elevators config path.");
+                Elevators.log(Level.SEVERE, "Error reverting to old config. Config backup is available in the Elevators config path.");
             }
         }
 

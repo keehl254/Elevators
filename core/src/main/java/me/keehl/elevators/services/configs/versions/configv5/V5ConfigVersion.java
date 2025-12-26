@@ -6,16 +6,16 @@ import me.keehl.elevators.services.ElevatorHookService;
 import me.keehl.elevators.services.configs.ConfigVersion;
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRecipe;
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRoot;
-import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigLocale;
 import org.bukkit.DyeColor;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, V5ConfigRoot> {
 
     @Override
     public V5ConfigRoot upgradeVersion(V4_0_2ConfigRoot currentConfig) {
-        Elevators.getElevatorsLogger().info("Converting config from V4.0.2 - V5.0.0");
+        Elevators.log(Level.INFO, "Converting config from V4.0.2 - V5.0.0");
 
         V5ConfigRoot newConfig = new V5ConfigRoot();
         newConfig.updateCheckerEnabled = currentConfig.updateCheckerEnabled;

@@ -7,6 +7,7 @@ import me.keehl.elevators.util.config.nodes.ConfigNode;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.logging.Level;
 
 public class EnumConfigConverter extends ConfigConverter {
 
@@ -20,12 +21,12 @@ public class EnumConfigConverter extends ConfigConverter {
             if(objectOpt.isPresent())
                 object = objectOpt.get();
             else {
-                Elevators.getElevatorsLogger().warning("Value at path \"" + parentNode.getPath() + "\" must be a \"" + fieldType.getSimpleName()+"\" enum value! Using default: \"" + object + "\".");
+                Elevators.log(Level.WARNING, "Value at path \"" + parentNode.getPath() + "\" must be a \"" + fieldType.getSimpleName()+"\" enum value! Using default: \"" + object + "\".");
                 object = fieldType.getEnumConstants()[0];
             }
         }else if(!object.getClass().isEnum()) {
             object = fieldType.getEnumConstants()[0];
-            Elevators.getElevatorsLogger().warning("Value at path \"" + parentNode.getPath() + "\" must be a \"" + fieldType.getSimpleName()+"\" enum value! Using default: \"" + object.toString() + "\".");
+            Elevators.log(Level.WARNING, "Value at path \"" + parentNode.getPath() + "\" must be a \"" + fieldType.getSimpleName()+"\" enum value! Using default: \"" + object.toString() + "\".");
         }
 
         return ConfigConverter.createNodeWithData(parentNode, key, object, fieldData.getField());

@@ -49,7 +49,7 @@ dependencies {
     compileOnly(platform("com.intellectualsites.bom:bom-newest:1.32"))
 
     // Our hooks project is allowed to reference later versions. We must be very careful, though.
-    compileOnly("io.papermc.paper:paper-api:1.21.6-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
     compileOnly("net.kyori:adventure-api:4.14.0")
@@ -81,6 +81,7 @@ dependencies {
     implementation("io.github.projectunified:uni-dialog-paper:1.5.0")
     implementation("io.github.projectunified:uni-dialog-spigot:1.5.0")
     implementation("io.github.projectunified:uni-dialog-core:1.5.0")
+    implementation("dev.faststats.metrics:bukkit:0.6.0")
 
 }
 
@@ -91,6 +92,7 @@ tasks.shadowJar {
     relocate("io.papermc.lib", "me.keehl.elevators.util.paperlib")
     relocate("org.yaml.snakeyaml", "me.keehl.elevators.util.config.snakeyaml")
     relocate("org.bstats", "me.keehl.elevators.util.bstats")
+    relocate("dev.faststats", "me.keehl.elevators.util.faststats")
     relocate("io.github.projectunified", "me.keehl.elevators.util.projectunified")
 
     archiveClassifier.set("all")
@@ -106,4 +108,13 @@ tasks {
     processResources {
         filteringCharset = Charsets.UTF_8.name()
     }
+}
+
+tasks.assemble {
+    dependsOn(tasks.named("shadeDowngradedApi"))
+}
+
+// Optional: if you publish or copy artifacts, you probably want the shaded jar:
+tasks.build {
+    dependsOn(tasks.named("shadeDowngradedApi"))
 }

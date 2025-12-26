@@ -96,7 +96,7 @@ public class ElevatorActionBuilder {
                 for (ElevatorActionVariableBuilder<?> variableBuilder : this.variableBuilders.keySet())
                     variableBuilder.setup(this);
             }catch (ElevatorActionBuilderException e) {
-                Elevators.getElevatorsLogger().log(Level.SEVERE, "Failed to create ElevatorAction Issue:\n" + ResourceHelper.cleanTrace(e));
+                Elevators.log(Level.SEVERE, "Failed to create ElevatorAction Issue:\n" + ResourceHelper.cleanTrace(e));
             }
             this.builder.onInit.run();
         }
