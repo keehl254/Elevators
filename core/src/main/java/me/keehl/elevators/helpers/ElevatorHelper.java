@@ -15,6 +15,7 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -202,6 +203,10 @@ public class ElevatorHelper {
 
     }
 
+    /*
+    I hate using TeleportCause.UNKNOWN, but it's the only way to stop CMI and Essentials from registering the teleport
+    as a /back point
+    */
     public static void onElevatorUse(Player player, ElevatorEventData elevatorEventData) {
         List<ElevatorAction> actions;
         if (elevatorEventData.getDirection() == 1)
@@ -220,7 +225,7 @@ public class ElevatorHelper {
 
         Location teleportLocation = player.getLocation();
         teleportLocation.setY(elevatorEventData.getDestination().getLocation().getBlockY() + elevatorEventData.getStandOnAddition() + 1.0);
-        Elevators.getFoliaLib().getScheduler().teleportAsync(player, teleportLocation);
+        Elevators.getFoliaLib().getScheduler().teleportAsync(player, teleportLocation, PlayerTeleportEvent.TeleportCause.UNKNOWN);
     }
 
     public static boolean hasOrAddPlayerCoolDown(Player player, String key) {
