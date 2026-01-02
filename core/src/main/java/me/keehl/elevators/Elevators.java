@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,16 +16,17 @@ import java.util.logging.Logger;
 
 public class Elevators {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Elevators.class);
     protected static JavaPlugin instance;
     protected static FoliaLib foliaLib;
 
     protected static boolean initialized = false;
 
-    protected static void enable(JavaPlugin plugin, FoliaLib foliaLib) {
+    protected static void setup(JavaPlugin plugin, FoliaLib foliaLib) {
         instance = plugin;
         Elevators.foliaLib = foliaLib;
+    }
 
+    protected static void enable() {
         Elevators.pushAndHoldLog();
 
         ElevatorDataContainerService.init();
@@ -40,8 +40,7 @@ public class Elevators {
         ElevatorListenerService.init();
         ElevatorHookService.init();
         ElevatorHologramService.init();
-        ElevatorCommandService.init();
-        ElevatorUpdateService.init(plugin.getDescription().getVersion());
+        ElevatorUpdateService.init(Elevators.getInstance().getDescription().getVersion());
 
         Elevators.popLog(logData -> Elevators.log("Services enabled. " + ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
 

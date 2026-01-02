@@ -1,6 +1,7 @@
 package me.keehl.elevators.helpers;
 
 import me.keehl.elevators.Elevators;
+import me.keehl.elevators.events.ElevatorMenuOpenEvent;
 import me.keehl.elevators.events.ElevatorUseEvent;
 import me.keehl.elevators.models.*;
 import me.keehl.elevators.services.*;
@@ -196,7 +197,15 @@ public class ElevatorHelper {
                 return;
         }
 
-        ElevatorGUIHelper.openInteractMenu(event.getPlayer(), elevator);
+        /* I would prefer to check if it's canceled here and then call the Gui helper... But the Gui Helper needs access to
+         dependencies only available in the Hooks module.
+
+         It may be worth considering restructuring the modules. Why go through the pain of creating "Core" in java 8,
+         creating "Hooks" in 21, shading in "Core", and then downgrading Hooks to Java 8. I could just make it all in 21
+         and then downgrade it. Just added complexity for anyone else trying to build Elevators.
+         */
+        ElevatorMenuOpenEvent menuOpenEvent = new ElevatorMenuOpenEvent(player, event, elevator);
+        Bukkit.getPluginManager().callEvent(menuOpenEvent);
     }
 
     public static void onElevatorPlace(Elevator elevator) {

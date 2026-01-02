@@ -1,7 +1,6 @@
 package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
-import me.keehl.elevators.actions.*;
 import me.keehl.elevators.events.ElevatorRegisterActionsEvent;
 import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.models.ElevatorAction;
@@ -24,6 +23,7 @@ public class ElevatorActionService {
     private static final Map<String, TriFunction<JavaPlugin,ElevatorType, String, ElevatorAction>> actionConstructors = new HashMap<>();
     private static final Map<String, ItemStack> actionIcons = new HashMap<>();
     private static final Map<String, JavaPlugin> actionPlugins = new HashMap<>();
+    protected static Runnable registerDefaultActionsRunnable;
 
     private static boolean initialized = false;
     private static boolean allowSelfRegister = false;
@@ -32,7 +32,6 @@ public class ElevatorActionService {
         if(ElevatorActionService.initialized)
             return;
         Elevators.pushAndHoldLog();
-
         ElevatorActionService.registerDefaultActions();
         ElevatorActionService.initialized = true;
         Elevators.popLog(logData -> Elevators.log("Action service enabled. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
@@ -41,22 +40,9 @@ public class ElevatorActionService {
     private static void registerDefaultActions() {
 
         allowSelfRegister = true;
-
-        registerElevatorAction(Elevators.getInstance(), "sound", SoundAction::new, ChatColor.GREEN.toString(), "Sound", Material.MUSIC_DISC_MALL);
-        registerElevatorAction(Elevators.getInstance(), "command-console", CommandConsoleAction::new, ChatColor.DARK_RED.toString(), "Console Command", Material.COMMAND_BLOCK);
-        registerElevatorAction(Elevators.getInstance(), "command-player", CommandPlayerAction::new, ChatColor.LIGHT_PURPLE.toString(), "Player Command", Material.REPEATING_COMMAND_BLOCK);
-        registerElevatorAction(Elevators.getInstance(), "message-player", MessagePlayerAction::new, ChatColor.YELLOW.toString(), "Message User", Material.WRITTEN_BOOK);
-        registerElevatorAction(Elevators.getInstance(), "message-all", MessageAllAction::new, ChatColor.RED.toString(), "Broadcast Message", Material.ENCHANTED_BOOK);
-
-        registerElevatorAction(Elevators.getInstance(), "effect", EffectAction::new, ChatColor.BLUE.toString(), "Effect", Material.FIREWORK_ROCKET);
-
-        registerElevatorAction(Elevators.getInstance(), "title", TitleAction::new, ChatColor.LIGHT_PURPLE.toString(), "Title", Material.NAME_TAG);
-        registerElevatorAction(Elevators.getInstance(), "action-bar", ActionBarAction::new, ChatColor.YELLOW.toString(), "Action Bar", Material.BELL);
-        registerElevatorAction(Elevators.getInstance(), "boss-bar", BossBarAction::new, ChatColor.RED.toString(), "Boss Bar", Material.DRAGON_HEAD);
-
-        registerElevatorAction(Elevators.getInstance(), "charge-exp", ChargeExpAction::new, ChatColor.GOLD.toString(), "Charge EXP", Material.EXPERIENCE_BOTTLE);
-        registerElevatorAction(Elevators.getInstance(), "trigger-observer", TriggerObserverAction::new, ChatColor.RED.toString(), "Trigger Observer", Material.OBSERVER);
-
+        if(ElevatorActionService.registerDefaultActionsRunnable != null) {
+            ElevatorActionService.registerDefaultActionsRunnable.run();
+        }
         allowSelfRegister = false;
 
         Bukkit.getPluginManager().callEvent(new ElevatorRegisterActionsEvent());

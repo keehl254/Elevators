@@ -5,7 +5,6 @@ import me.keehl.elevators.events.ElevatorRegisterSettingsEvent;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorSetting;
 import me.keehl.elevators.models.ElevatorType;
-import me.keehl.elevators.models.settings.*;
 import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,6 +12,8 @@ import org.bukkit.ChatColor;
 import java.util.*;
 
 public class ElevatorSettingService {
+
+    protected static Runnable registerDefaultSettingsRunnable;
 
     private static boolean initialized = false;
     private static boolean allowSelfRegister = false;
@@ -35,21 +36,9 @@ public class ElevatorSettingService {
         Elevators.pushAndHoldLog();
 
         allowSelfRegister = true;
-        addSetting(new UsePermissionSetting(Elevators.getInstance()));
-        addSetting(new DyePermissionSetting(Elevators.getInstance()));
-        addSetting(new CanExplodeSetting(Elevators.getInstance()));
-        addSetting(new CheckColorSetting(Elevators.getInstance()));
-        addSetting(new CheckPermsSetting(Elevators.getInstance()));
-        addSetting(new ClassCheckSetting(Elevators.getInstance()));
-        addSetting(new DisplayNameSetting(Elevators.getInstance()));
-        addSetting(new LoreLinesSetting(Elevators.getInstance()));
-        addSetting(new MaxDistanceSetting(Elevators.getInstance()));
-        addSetting(new MaxSolidBlocksSetting(Elevators.getInstance()));
-        addSetting(new MaxStackSizeSetting(Elevators.getInstance()));
-        addSetting(new StopObstructionSetting(Elevators.getInstance()));
-        addSetting(new SupportDyingSetting(Elevators.getInstance()));
-        addSetting(new AllowIndividualEditSetting(Elevators.getInstance()));
-        addSetting(new HologramLinesSetting(Elevators.getInstance()));
+        if(ElevatorSettingService.registerDefaultSettingsRunnable != null) {
+            ElevatorSettingService.registerDefaultSettingsRunnable.run();
+        }
 
         Elevators.popLog(logData -> Elevators.log("Registered " + elevatorSettings.size() + " settings. " + ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
         allowSelfRegister = false;

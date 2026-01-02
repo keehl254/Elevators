@@ -26,6 +26,7 @@ public class VersionHelper {
     private static final int hexVersion = getVersionID("1.16.1");
     private static final int shulkerFacingUseAPI = getVersionID("1.14.1");
     private static final int supportBlockBoundingBoxes = getVersionID("1.17.1");
+    private static final int supportGetPluginsFolder = getVersionID("1.17.1");
     private static final int supportNewBuildLimits = getVersionID("1.18.1");
     private static final int shulkerOpenCloseUseAPI = getVersionID("1.16.2");
     private static final int paperCollectItemEffect = getVersionID("1.16.5");
@@ -66,6 +67,10 @@ public class VersionHelper {
 
     public static boolean doesVersionSupportBlockBoundingBoxes() {
         return currentVersionID >= supportBlockBoundingBoxes;
+    }
+
+    public static boolean doesVersionSupportGetPluginsFolder() {
+        return !Elevators.getFoliaLib().isSpigot() && currentVersionID >= supportGetPluginsFolder;
     }
 
     public static boolean doesVersionSupportNewBuildLimits() {

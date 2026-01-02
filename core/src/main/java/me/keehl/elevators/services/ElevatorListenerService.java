@@ -3,10 +3,10 @@ package me.keehl.elevators.services;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.helpers.ElevatorHelper;
 import me.keehl.elevators.models.ElevatorEventExecutor;
-import me.keehl.elevators.services.listeners.EntityEventExecutor;
-import me.keehl.elevators.services.listeners.InventoryEventExecutor;
-import me.keehl.elevators.services.listeners.PaperEventExecutor;
-import me.keehl.elevators.services.listeners.WorldEventExecutor;
+import me.keehl.elevators.listeners.EntityEventExecutor;
+import me.keehl.elevators.listeners.InventoryEventExecutor;
+import me.keehl.elevators.listeners.PaperEventExecutor;
+import me.keehl.elevators.listeners.WorldEventExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.*;
@@ -32,14 +32,12 @@ public class ElevatorListenerService {
 
     private static boolean initialized = false;
 
-    private static Listener listener;
+    private static final Listener listener = new Listener() {};
 
     public static void init() {
         if(ElevatorListenerService.initialized)
             return;
         Elevators.pushAndHoldLog();
-
-        listener = new Listener() {};
 
         // This might be over-engineered. I may back-track this.
 

@@ -40,11 +40,11 @@ repositories {
     maven("https://maven.devs.beer/")
     maven("https://repo.oraxen.com/releases")
     maven("https://repo.nexomc.com/releases")
+    maven("https://repo.keehl.me/snapshots")
 }
 
 dependencies {
     implementation(project(":core"))
-    implementation(platform("io.github.projectunified:uni-dialog:1.5.0"))
 
     compileOnly(platform("com.intellectualsites.bom:bom-newest:1.32"))
 
@@ -81,8 +81,8 @@ dependencies {
     implementation("io.github.projectunified:uni-dialog-paper:1.5.0")
     implementation("io.github.projectunified:uni-dialog-spigot:1.5.0")
     implementation("io.github.projectunified:uni-dialog-core:1.5.0")
-    implementation("dev.faststats.metrics:bukkit:0.6.0")
-
+    implementation("dev.faststats.metrics:bukkit:0.7.2")
+    implementation("me.keehl:dialog-builder:1.4-SNAPSHOT")
 }
 
 tasks.shadowJar {
