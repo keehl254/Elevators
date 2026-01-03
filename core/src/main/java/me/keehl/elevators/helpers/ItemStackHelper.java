@@ -76,6 +76,7 @@ public class ItemStackHelper {
         meta.setLore(MessageHelper.formatListColors(ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.LORE_LINES)));
 
         itemStack.setItemMeta(meta);
+        VersionHelper.setMaxStackSize(itemStack, elevatorType.getMaxStackSize());
 
         ElevatorDataContainerService.setElevatorKey(itemStack, elevatorType);
 

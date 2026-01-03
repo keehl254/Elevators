@@ -8,6 +8,7 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
 
 import java.lang.reflect.Method;
@@ -34,6 +35,7 @@ public class VersionHelper {
     private static final int supportPredicateChunkEntityGrab = getVersionID("1.16.5");
     private static final int supportAlphaColor = getVersionID("1.17.0");
     private static final int supportDialogs = getVersionID("1.21.6");
+    private static final int supportSetMaxStackSize = getVersionID("1.20.6");
     private static final int supportAutoCrafters = getVersionID("1.21.3");
 
     private static final int slimeSizeMetaData = 0;
@@ -91,16 +93,21 @@ public class VersionHelper {
         return currentVersionID >= supportDialogs;
     }
 
+    public static boolean doesVersionSupportSetMaxStackSize() {
+        return currentVersionID >= supportSetMaxStackSize;
+    }
+
     public static int getWorldMinHeight(World world) {
-        if(doesVersionSupportNewBuildLimits()) {
-            try {
-                Method method = world.getClass().getMethod("getMinHeight");
-                method.setAccessible(true);
-                return (int) method.invoke(world);
-            } catch (Exception ignore) {
-                if(world.getEnvironment() == World.Environment.NORMAL)
-                    return -64;
-            }
+        if (!doesVersionSupportNewBuildLimits())
+            return 0;
+
+        try {
+            Method method = world.getClass().getMethod("getMinHeight");
+            method.setAccessible(true);
+            return (int) method.invoke(world);
+        } catch (Exception ignore) {
+            if(world.getEnvironment() == World.Environment.NORMAL)
+                return -64;
         }
         return 0;
     }
@@ -130,25 +137,41 @@ public class VersionHelper {
     }
 
     public static void closeShulkerBox(ShulkerBox box) {
-        if(doesVersionSupportOpenCloseAPI()) {
-            try {
-                Method method = box.getClass().getMethod("close");
-                method.setAccessible(true);
-                method.invoke(box);
-            } catch (Exception ignore) {
-            }
+        if (!doesVersionSupportOpenCloseAPI())
+            return;
+
+        try {
+            Method method = box.getClass().getMethod("close");
+            method.setAccessible(true);
+            method.invoke(box);
+        } catch (Exception ignore) {
         }
     }
 
     public static void openShulkerBox(ShulkerBox box) {
-        if(doesVersionSupportOpenCloseAPI()) {
-            try {
-                Method method = box.getClass().getMethod("open");
-                method.setAccessible(true);
-                method.invoke(box);
-            } catch (Exception ignore) {
-            }
+        if (!doesVersionSupportOpenCloseAPI())
+            return;
+
+        try {
+            Method method = box.getClass().getMethod("open");
+            method.setAccessible(true);
+            method.invoke(box);
+        } catch (Exception ignore) {
         }
+    }
+
+    public static void setMaxStackSize(ItemStack item, int maxStackSize) {
+        if(!doesVersionSupportSetMaxStackSize())
+            return;
+
+        ItemMeta meta = item.getItemMeta();
+        try {
+            Method method = meta.getClass().getMethod("setMaxStackSize", Integer.class);
+            method.setAccessible(true);
+            method.invoke(meta, maxStackSize);
+        } catch (Exception ignore) {
+        }
+        item.setItemMeta(meta);
     }
 
     public static void dropItem(World world, Location location, ItemStack itemStack, Consumer<Item> alterStackConsumer) {
