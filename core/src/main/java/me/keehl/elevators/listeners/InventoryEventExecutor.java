@@ -72,14 +72,12 @@ public class InventoryEventExecutor {
         if (ItemStackHelper.isNotShulkerBox(event.getCursor().getType())) return;
         if (!ElevatorHelper.isElevator(event.getCursor())) return;
 
-
-        if (clickedItem == null) {
-            event.setCancelled(true);
+        if (clickedItem == null)
             return;
-        }
 
-        // Adding cursor to clicked stack.
-        if (!clickedItem.getType().isAir() && clickedItem instanceof ShulkerBox) {
+        /* This has not worked basically ever and only makes life miserable in admin
+        recipe menu... Refactor later.
+        if (!clickedItem.getType().isAir() && ElevatorHelper.isElevator(clickedItem)) {
             ElevatorType elevatorType = ElevatorHelper.getElevatorType(clickedItem);
             int amountToAdd = (int) ElevatorSettingService.getElevatorSettingValue(elevatorType, InternalElevatorSettingType.MAX_STACK_SIZE) - clickedItem.getAmount();
             amountToAdd = Math.min(amountToAdd, event.getCursor().getAmount());
@@ -87,6 +85,7 @@ public class InventoryEventExecutor {
             clickedItem.setAmount(clickedItem.getAmount() + amountToAdd);
             event.getCursor().setAmount(event.getCursor().getAmount() - amountToAdd);
         }
+         */
     }
 
     public static void onHopperTake(InventoryMoveItemEvent event) {

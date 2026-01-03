@@ -78,22 +78,18 @@ dependencies {
     compileOnly("com.nexomc:nexo:1.8.0") //Nexo 1.X -> 1.X.0
     compileOnly("com.tcoded:FoliaLib:0.4.3")
 
-    implementation("io.github.projectunified:uni-dialog-paper:1.5.0")
-    implementation("io.github.projectunified:uni-dialog-spigot:1.5.0")
-    implementation("io.github.projectunified:uni-dialog-core:1.5.0")
-    implementation("dev.faststats.metrics:bukkit:0.7.2")
+    implementation("org.bstats:bstats-bukkit:3.1.0")
+    implementation("dev.faststats.metrics:bukkit:0.7.5")
+
     implementation("me.keehl:dialog-builder:1.4-SNAPSHOT")
 }
 
 tasks.shadowJar {
-    relocate("de.rapha149.signgui", "me.keehl.elevators.util.signgui")
-    relocate("net.wesjd.anvilgui", "me.keehl.elevators.util.anvilgui")
     relocate("com.tcoded.folialib", "me.keehl.elevators.util.folialib")
     relocate("io.papermc.lib", "me.keehl.elevators.util.paperlib")
     relocate("org.yaml.snakeyaml", "me.keehl.elevators.util.config.snakeyaml")
     relocate("org.bstats", "me.keehl.elevators.util.bstats")
     relocate("dev.faststats", "me.keehl.elevators.util.faststats")
-    relocate("io.github.projectunified", "me.keehl.elevators.util.projectunified")
 
     archiveClassifier.set("all")
 }

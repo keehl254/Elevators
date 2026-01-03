@@ -104,8 +104,9 @@ public class ElevatorRecipeGroup extends ConfigRecipe {
                     addIncredientRunnable = () -> shapedRecipe.setIngredient(character, ItemStackHelper.getVariant(item.getType(), dyeColor));
                 } else if (key.getNamespace().equalsIgnoreCase(Elevators.getInstance().getName().toLowerCase(Locale.ROOT))) {
                     ElevatorType type = ElevatorTypeService.getElevatorType(key.getKey());
-                    if (type != null)
+                    if (type == null) {
                         type = ElevatorTypeService.getDefaultElevatorType();
+                    }
 
                     final ElevatorType finalType = type;
                     addIncredientRunnable = () -> shapedRecipe.setIngredient(character, ItemStackHelper.createItemStackFromElevatorType(finalType, dyeColor));

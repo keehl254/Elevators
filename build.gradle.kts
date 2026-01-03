@@ -1,8 +1,8 @@
 group = "me.keehl"
-version = "5.0.0-beta.17"
+version = "5.0.0-beta.18"
 
 plugins {
-    kotlin("jvm") version "1.9.0"
+    java
     id("com.gradleup.shadow") version "8.3.6"
     id("de.eldoria.plugin-yml.bukkit") version "0.8.0"
 }

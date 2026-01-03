@@ -17,7 +17,7 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class InteractActionsMenu {
 
-    public static void openInteractActionsMenu(Player player, Elevator elevator, List<ElevatorAction> actions) {
+    public static void openInteractActionsMenu(final Player player, final Elevator elevator, final List<ElevatorAction> actions) {
         if (!elevator.isValid()) {
             InteractSettingsMenu.openInteractSettingsMenu(player, elevator);
             return;

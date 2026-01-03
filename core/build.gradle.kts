@@ -47,11 +47,8 @@ dependencies {
     compileOnly("net.kyori:adventure-api:4.14.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.3.0")
 
-    implementation("de.rapha149.signgui:signgui:2.5.4")
-    implementation("net.wesjd:anvilgui:1.10.8-SNAPSHOT")
     implementation("com.tcoded:FoliaLib:0.4.3")
     implementation("org.yaml:snakeyaml:2.2")
-    implementation("org.bstats:bstats-bukkit:3.1.0")
 
 }
 

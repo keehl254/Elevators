@@ -64,21 +64,18 @@ public class ElevatorsPlugin extends JavaPlugin implements IElevatorsPlugin {
 
         Elevators.pushAndHoldLog();
         try {
-            // At the moment I am pushing this, FastStats errors without being catchable on Spigot and PaperMC below 1.17.1.
-            if(VersionHelper.doesVersionSupportGetPluginsFolder()) {
-                this.fastStatsMetrics = BukkitMetrics.factory().token("ac50ca9cdff9c38b8a7aeea15b63ded6").create(this);
-            }
-        }catch (Exception ex) {
+            this.fastStatsMetrics = BukkitMetrics.factory().token("ac50ca9cdff9c38b8a7aeea15b63ded6").create(this);
+        } catch (Exception ex) {
             Elevators.log(Level.SEVERE, "Failed to load FastStats:\n" + ResourceHelper.cleanTrace(ex));
         }
         try {
             this.bstatsMetrics = new me.keehl.elevators.util.bstats.bukkit.Metrics(this, 8026);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Elevators.log(Level.SEVERE, "Failed to load BStats:\n" + ResourceHelper.cleanTrace(ex));
         }
         Elevators.popLog(logData -> Elevators.log("Metrics enabled. " + ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
 
-        if(VersionHelper.doesVersionSupportDialogs()) {
+        if (VersionHelper.doesVersionSupportDialogs()) {
             ElevatorMenuHelper.registerDialogManager();
         }
 

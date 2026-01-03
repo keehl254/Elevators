@@ -145,6 +145,7 @@ public class ElevatorMenuHelper {
         if(dialogManager == null && VersionHelper.doesVersionSupportDialogs()) {
             registerDialogManager();
         }
+
         return dialogManager;
     }
 
