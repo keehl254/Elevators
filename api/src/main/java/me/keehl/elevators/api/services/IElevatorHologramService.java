@@ -2,7 +2,6 @@ package me.keehl.elevators.api.services;
 
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.IElevatorType;
-import me.keehl.elevators.api.models.hooks.IElevatorHologram;
 import me.keehl.elevators.api.models.hooks.IWrappedHologram;
 import org.bukkit.Chunk;
 

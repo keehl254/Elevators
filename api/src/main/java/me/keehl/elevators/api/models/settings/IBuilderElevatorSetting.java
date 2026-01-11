@@ -5,7 +5,6 @@ import me.keehl.elevators.api.models.IElevatorSetting;
 import me.keehl.elevators.api.models.IElevatorType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.persistence.PersistentDataType;
 
 public interface IBuilderElevatorSetting<T> extends IElevatorSetting<T> {
 

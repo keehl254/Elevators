@@ -1,6 +1,5 @@
 package me.keehl.elevators.helpers;
 
-import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 
 import java.io.*;

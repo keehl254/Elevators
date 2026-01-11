@@ -5,7 +5,6 @@ import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.models.ILocaleComponent;
 import me.keehl.elevators.helpers.*;
 import me.keehl.elevators.models.ElevatorEventData;
-import me.keehl.elevators.api.util.InternalElevatorSettingType;
 import org.bukkit.*;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;

@@ -2,7 +2,6 @@ package me.keehl.elevators.menus.admin;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.models.IElevatorType;
-import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.models.ElevatorRecipeGroup;
 import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigRecipe;
 import me.keehl.elevators.services.interaction.SimpleInput;

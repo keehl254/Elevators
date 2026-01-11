@@ -4,7 +4,6 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.util.InternalElevatorSettingType;
-import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.services.interaction.SimpleInput;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

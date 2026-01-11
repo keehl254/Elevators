@@ -1,6 +1,5 @@
 package me.keehl.elevators.models.actions;
 
-import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.IElevatorAction;
 import me.keehl.elevators.api.models.IElevatorActionVariable;

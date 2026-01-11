@@ -9,7 +9,6 @@ import me.keehl.elevators.api.models.hooks.IElevatorHologram;
 import me.keehl.elevators.api.models.hooks.IWrappedHologram;
 import me.keehl.elevators.api.services.IElevatorHologramService;
 import me.keehl.elevators.helpers.ElevatorHelper;
-import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.helpers.VersionHelper;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.models.Elevator;

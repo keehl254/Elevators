@@ -1,6 +1,5 @@
 package me.keehl.elevators.services.configs.versions.configv5_1_0;
 
-import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.util.config.RecipeRow;
 import me.keehl.elevators.services.configs.ConfigVersion;

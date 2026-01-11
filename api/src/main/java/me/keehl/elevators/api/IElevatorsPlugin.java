@@ -1,7 +1,5 @@
 package me.keehl.elevators.api;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

@@ -1,7 +1,6 @@
 package me.keehl.elevators.menus.admin;
 
 import me.keehl.elevators.Elevators;
-import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.services.interaction.SimpleInput;
 import org.bukkit.entity.Player;
 

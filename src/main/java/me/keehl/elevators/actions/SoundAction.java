@@ -1,6 +1,5 @@
 package me.keehl.elevators.actions;
 
-import io.papermc.lib.PaperLib;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.IElevator;
@@ -21,7 +20,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;

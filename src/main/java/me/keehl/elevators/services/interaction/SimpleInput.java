@@ -2,7 +2,6 @@ package me.keehl.elevators.services.interaction;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.services.IElevatorConfigService;
-import me.keehl.elevators.helpers.MessageHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

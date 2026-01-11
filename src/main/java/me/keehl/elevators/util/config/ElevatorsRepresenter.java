@@ -1,6 +1,5 @@
 package me.keehl.elevators.util.config;
 
-import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.util.config.RecipeRow;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;

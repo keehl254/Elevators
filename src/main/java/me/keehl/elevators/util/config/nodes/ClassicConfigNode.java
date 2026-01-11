@@ -1,6 +1,5 @@
 package me.keehl.elevators.util.config.nodes;
 
-import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.util.config.ConfigConverter;

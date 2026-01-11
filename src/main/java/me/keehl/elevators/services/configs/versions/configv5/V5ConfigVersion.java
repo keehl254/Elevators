@@ -1,6 +1,5 @@
 package me.keehl.elevators.services.configs.versions.configv5;
 
-import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.hooks.IProtectionHook;
 import me.keehl.elevators.api.services.IElevatorHookService;

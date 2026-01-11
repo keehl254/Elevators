@@ -1,7 +1,6 @@
 package me.keehl.elevators.models;
 
 import me.keehl.elevators.Elevators;
-import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.*;
 import me.keehl.elevators.api.services.IElevatorActionService;
 import me.keehl.elevators.api.services.IElevatorHologramService;

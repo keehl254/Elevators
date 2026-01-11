@@ -3,7 +3,6 @@ package me.keehl.elevators.events;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.IElevatorEventData;
 import me.keehl.elevators.api.models.IElevatorType;
-import me.keehl.elevators.models.ElevatorType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

@@ -10,7 +10,6 @@ import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.IElevatorEventData;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorEventData;
-import me.keehl.elevators.api.util.InternalElevatorSettingType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;

@@ -8,7 +8,6 @@ import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.hooks.ProtectionHook;
 import me.keehl.elevators.api.services.IElevatorListenerService;
-import me.keehl.elevators.api.services.IElevatorRecipeService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

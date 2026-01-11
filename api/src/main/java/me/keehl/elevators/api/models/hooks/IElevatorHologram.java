@@ -1,7 +1,5 @@
 package me.keehl.elevators.api.models.hooks;
 
-import me.keehl.elevators.api.models.IElevator;
-import me.keehl.elevators.api.models.IElevatorType;
 import org.bukkit.Location;
 
 import java.util.List;

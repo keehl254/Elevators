@@ -2,7 +2,6 @@ package me.keehl.elevators.effects;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.models.hooks.IElevatorHologram;
 import me.keehl.elevators.api.models.hooks.IWrappedHologram;
 import me.keehl.elevators.api.services.IElevatorHologramService;
 import me.keehl.elevators.helpers.ColorHelper;
