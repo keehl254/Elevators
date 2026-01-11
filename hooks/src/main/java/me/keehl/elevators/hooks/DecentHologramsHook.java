@@ -1,33 +1,31 @@
 package me.keehl.elevators.hooks;
 
-import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.HologramHook;
-import me.keehl.elevators.models.hooks.WrappedHologram;
+import me.keehl.elevators.api.models.IElevator;
+import me.keehl.elevators.api.models.hooks.HologramHook;
+import me.keehl.elevators.api.models.hooks.IElevatorHologram;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import org.bukkit.Location;
 
 import java.util.*;
 
-public class DecentHologramsHook extends HologramHook {
+public class DecentHologramsHook implements HologramHook {
 
     @Override
-    public WrappedHologram createHologram(Elevator elevator, String... lines) {
-        return new DecentHologramWrapper(elevator);
+    public IElevatorHologram createHologram(UUID uuid, IElevator elevator, String... lines) {
+        return new DecentHologramWrapper(uuid, elevator);
     }
 
     @Override
     public void onInit() {
     }
 
-    public static class DecentHologramWrapper extends WrappedHologram {
+    public static class DecentHologramWrapper implements IElevatorHologram {
 
         private final Hologram hologram;
 
-        public DecentHologramWrapper(Elevator elevator, String... lines) {
-            super(elevator);
-
-            this.hologram = DHAPI.createHologram(this.getUUID(), elevator.getLocation().clone());
+        public DecentHologramWrapper(UUID uuid, IElevator elevator, String... lines) {
+            this.hologram = DHAPI.createHologram(uuid.toString(), elevator.getLocation().clone());
             this.hologram.setDownOrigin(true);
 
             Arrays.stream(lines).forEach(i -> DHAPI.addHologramLine(this.hologram, i));

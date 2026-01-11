@@ -2,22 +2,31 @@ package me.keehl.elevators.hooks;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
-import me.keehl.elevators.Elevators;
-import me.keehl.elevators.models.hooks.ItemsHook;
-import me.keehl.elevators.services.ElevatorRecipeService;
+import me.keehl.elevators.api.ElevatorsAPI;
+import me.keehl.elevators.api.models.hooks.ItemsHook;
+import me.keehl.elevators.api.services.IElevatorRecipeService;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
+import java.util.logging.Level;
 
-public class OraxenHook extends ItemsHook {
+public class OraxenHook implements ItemsHook {
 
     @Override
     public void onInit() {
-        Elevators.log("Oraxen has been hooked. Reloading recipes for Oraxen support");
-        Elevators.pushLog();
-        ElevatorRecipeService.refreshRecipes();
-        Elevators.popLog();
+
+        IElevatorRecipeService recipeService = Bukkit.getServicesManager().load(IElevatorRecipeService.class);
+        if(recipeService == null) {
+            ElevatorsAPI.log(Level.WARNING, "Elevator Services not been setup yet. Oraxen hook may not function.");
+            return;
+        }
+
+        ElevatorsAPI.log("Oraxen has been hooked. Reloading recipes for Oraxen support");
+        ElevatorsAPI.pushLog();
+        recipeService.refreshRecipes();
+        ElevatorsAPI.popLog();
     }
 
     @Override

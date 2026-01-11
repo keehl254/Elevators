@@ -1,8 +1,7 @@
 package me.keehl.elevators.hooks;
 
-import me.keehl.elevators.helpers.ItemStackHelper;
-import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.models.IElevator;
+import me.keehl.elevators.api.models.hooks.ProtectionHook;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -19,7 +18,7 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("deprecation")
 public class GriefPreventionHook extends ProtectionHook {
-    //TODO: Add in the configs the option for select the minimium rank for edit name and settings
+    //TODO: Add in the configs the option for select the minimum rank for edit name and settings
     private final GriefPrevention griefPrevention;
 
     public GriefPreventionHook() {
@@ -32,7 +31,7 @@ public class GriefPreventionHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage) {
         if(this.griefPrevention == null)
             return false;
 
@@ -52,7 +51,7 @@ public class GriefPreventionHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
         if(this.griefPrevention == null)
             return false;
         PlayerData playerData = this.griefPrevention.dataStore.getPlayerData(player.getUniqueId());
@@ -70,7 +69,7 @@ public class GriefPreventionHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditSettings(Player player, IElevator elevator, boolean sendMessage) {
         if(this.griefPrevention == null)
             return false;
         PlayerData playerData = this.griefPrevention.dataStore.getPlayerData(player.getUniqueId());
@@ -83,7 +82,7 @@ public class GriefPreventionHook extends ProtectionHook {
     }
 
     @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+    public ItemStack createIconForElevator(Player player, IElevator elevator) {
         if(this.griefPrevention == null)
             return null;
 
@@ -107,7 +106,7 @@ public class GriefPreventionHook extends ProtectionHook {
     }
 
     @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+    public void onProtectionClick(Player player, IElevator elevator, Runnable onReturn) {
         this.toggleCheckEnabled(elevator);
         onReturn.run();
     }

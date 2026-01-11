@@ -2,26 +2,36 @@ package me.keehl.elevators.hooks;
 
 import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
-import me.keehl.elevators.Elevators;
-import me.keehl.elevators.models.hooks.ItemsHook;
-import me.keehl.elevators.services.ElevatorListenerService;
-import me.keehl.elevators.services.ElevatorRecipeService;
+import me.keehl.elevators.api.ElevatorsAPI;
+import me.keehl.elevators.api.models.hooks.ItemsHook;
+import me.keehl.elevators.api.services.IElevatorListenerService;
+import me.keehl.elevators.api.services.IElevatorRecipeService;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 
-public class ItemsAdderHook extends ItemsHook {
+import java.util.logging.Level;
+
+public class ItemsAdderHook implements ItemsHook {
 
     @Override
     public void onInit() {
         // ItemsAdder.areItemsLoaded is not correct. Best to just assume it's not loaded; ItemsAdded will always fire an event when all plugins finish.
-        Elevators.log("ItemsAdder has been hooked, however has not finished loading yet. Waiting for ItemsAdder Data Load.");
+        ElevatorsAPI.log("ItemsAdder has been hooked, however has not finished loading yet. Waiting for ItemsAdder Data Load.");
 
-        ElevatorListenerService.registerEventExecutor(ItemsAdderLoadDataEvent.class, EventPriority.MONITOR, (ItemsAdderLoadDataEvent event) -> {
-            Elevators.log("Items Adder has finished loading. Reloading recipes for Items Adder support");
-            Elevators.pushLog();
-            ElevatorRecipeService.refreshRecipes();
-            Elevators.popLog();
+        IElevatorListenerService listenerService = Bukkit.getServicesManager().load(IElevatorListenerService.class);
+        IElevatorRecipeService recipeService = Bukkit.getServicesManager().load(IElevatorRecipeService.class);
+        if(listenerService == null || recipeService == null) {
+            ElevatorsAPI.log(Level.WARNING, "Elevator Services not been setup yet. ItemsAdder hook may not function.");
+            return;
+        }
+
+        listenerService.registerEventExecutor(ItemsAdderLoadDataEvent.class, EventPriority.MONITOR, (ItemsAdderLoadDataEvent event) -> {
+            ElevatorsAPI.log("Items Adder has finished loading. Reloading recipes for Items Adder support");
+            ElevatorsAPI.pushLog();
+            recipeService.refreshRecipes();
+            ElevatorsAPI.popLog();
         });
     }
 

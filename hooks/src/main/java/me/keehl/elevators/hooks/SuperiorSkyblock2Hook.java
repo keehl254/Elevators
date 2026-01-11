@@ -4,12 +4,12 @@ import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI;
 import com.bgsoftware.superiorskyblock.api.events.PluginInitializeEvent;
 import com.bgsoftware.superiorskyblock.api.island.Island;
 import com.bgsoftware.superiorskyblock.api.island.IslandPrivilege;
-import me.keehl.elevators.Elevators;
-import me.keehl.elevators.helpers.ItemStackHelper;
-import me.keehl.elevators.helpers.ResourceHelper;
-import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.ProtectionHook;
-import me.keehl.elevators.services.ElevatorListenerService;
+import me.keehl.elevators.api.ElevatorsAPI;
+import me.keehl.elevators.api.models.IElevator;
+import me.keehl.elevators.api.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.services.IElevatorListenerService;
+import me.keehl.elevators.api.services.IElevatorRecipeService;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -32,7 +32,14 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
 
     public SuperiorSkyblock2Hook() {
         super("SuperiorSkyblock2");
-        ElevatorListenerService.registerEventExecutor(PluginInitializeEvent.class, EventPriority.NORMAL, this::onSSB2Enable);
+
+        IElevatorListenerService listenerService = Bukkit.getServicesManager().load(IElevatorListenerService.class);
+        if(listenerService == null) {
+            ElevatorsAPI.log(Level.WARNING, "Elevator Services not been setup yet. SuperiorSkyblock2 hook may not function.");
+            return;
+        }
+
+        listenerService.registerEventExecutor(PluginInitializeEvent.class, EventPriority.NORMAL, this::onSSB2Enable);
     }
 
     @Override
@@ -47,15 +54,15 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
             USE_ELEVATOR = IslandPrivilege.getByName(USE_ELEVATOR_FLAG);
             EDIT_NAME_ELEVATOR = IslandPrivilege.getByName(EDIT_NAME_ELEVATOR_FLAG);
             EDIT_SETTINGS_ELEVATOR = IslandPrivilege.getByName(EDIT_SETTINGS_ELEVATOR_FLAG);
-            Elevators.log(Level.INFO, "Hooked into SuperiorSkyblock2 correctly");
+            ElevatorsAPI.log(Level.INFO, "Hooked into SuperiorSkyblock2 correctly");
             registered = true;
         } catch(Exception ex) {
-            Elevators.log(Level.SEVERE, "Failed to register SSB2 hook. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(ex));
+            ElevatorsAPI.log(Level.WARNING, "Failed to register SSB2 hook. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n", ex);
         }
     }
 
     @Override
-    public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage) {
         if(!registered)
             return true;
 
@@ -67,7 +74,7 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
     }
 
     @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+    public ItemStack createIconForElevator(Player player, IElevator elevator) {
         if(!registered) return null;
         Island island = SuperiorSkyblockAPI.getIslandAt(elevator.getLocation());
         if(island == null)
@@ -88,13 +95,13 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
     }
 
     @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+    public void onProtectionClick(Player player, IElevator elevator, Runnable onReturn) {
         this.toggleCheckEnabled(elevator);
         onReturn.run();
     }
 
     @Override
-    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
         if(!registered) return true;
         Island island = SuperiorSkyblockAPI.getIslandAt(elevator.getLocation());
         if (island != null) {
@@ -104,7 +111,7 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditSettings(Player player, IElevator elevator, boolean sendMessage) {
         if(!registered) return true;
         Island island = SuperiorSkyblockAPI.getIslandAt(elevator.getLocation());
         if (island != null) {

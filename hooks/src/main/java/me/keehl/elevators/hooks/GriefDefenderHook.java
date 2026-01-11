@@ -3,9 +3,8 @@ package me.keehl.elevators.hooks;
 import com.griefdefender.api.GriefDefender;
 import com.griefdefender.api.claim.Claim;
 import com.griefdefender.api.claim.TrustTypes;
-import me.keehl.elevators.helpers.ItemStackHelper;
-import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.models.IElevator;
+import me.keehl.elevators.api.models.hooks.ProtectionHook;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,7 +24,7 @@ public class GriefDefenderHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage) {
         final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
 
         if (claim == null || claim.isWilderness())
@@ -35,7 +34,7 @@ public class GriefDefenderHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
         final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
 
         if (claim == null)
@@ -46,7 +45,7 @@ public class GriefDefenderHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditSettings(Player player, IElevator elevator, boolean sendMessage) {
         final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
 
         if (claim == null)
@@ -58,7 +57,7 @@ public class GriefDefenderHook extends ProtectionHook {
 
     @SuppressWarnings("deprecation")
     @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+    public ItemStack createIconForElevator(Player player, IElevator elevator) {
         final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
         if(claim == null || claim.isWilderness()) return null;
 
@@ -77,7 +76,7 @@ public class GriefDefenderHook extends ProtectionHook {
     }
 
     @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+    public void onProtectionClick(Player player, IElevator elevator, Runnable onReturn) {
         this.toggleCheckEnabled(elevator);
         onReturn.run();
     }

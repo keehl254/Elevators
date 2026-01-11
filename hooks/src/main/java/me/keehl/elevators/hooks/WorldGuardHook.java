@@ -12,9 +12,8 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
-import me.keehl.elevators.helpers.ItemStackHelper;
-import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.models.IElevator;
+import me.keehl.elevators.api.models.hooks.ProtectionHook;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -61,7 +60,7 @@ public class WorldGuardHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage) {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
 
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -78,7 +77,7 @@ public class WorldGuardHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
 
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -94,7 +93,7 @@ public class WorldGuardHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditSettings(Player player, IElevator elevator, boolean sendMessage) {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
 
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -110,7 +109,7 @@ public class WorldGuardHook extends ProtectionHook {
     }
 
     @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+    public ItemStack createIconForElevator(Player player, IElevator elevator) {
         boolean flagEnabled = this.isCheckEnabled(elevator);
 
         List<String> lore = new ArrayList<>();
@@ -126,7 +125,7 @@ public class WorldGuardHook extends ProtectionHook {
     }
 
     @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+    public void onProtectionClick(Player player, IElevator elevator, Runnable onReturn) {
         this.toggleCheckEnabled(elevator);
         onReturn.run();
     }

@@ -1,8 +1,7 @@
 package me.keehl.elevators.hooks;
 
-import me.keehl.elevators.helpers.ItemStackHelper;
-import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.models.IElevator;
+import me.keehl.elevators.api.models.hooks.ProtectionHook;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -60,7 +59,7 @@ public class BentoBoxHook extends ProtectionHook {
         return BentoBox.getInstance().getIslands().getIslandAt(location).isPresent();
     }
     @Override
-    public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage) {
         Location location = elevator.getLocation();
         Island island = BentoBox.getInstance().getIslands().getIslandAt(location).orElse(null);
         if (island == null)
@@ -79,7 +78,7 @@ public class BentoBoxHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
         Location location = elevator.getLocation();
         Island island = BentoBox.getInstance().getIslands().getIslandAt(location).orElse(null);
         if (island == null)
@@ -98,7 +97,7 @@ public class BentoBoxHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditSettings(Player player, IElevator elevator, boolean sendMessage) {
         Location location = elevator.getLocation();
         Island island = BentoBox.getInstance().getIslands().getIslandAt(location).orElse(null);
         if (island == null)
@@ -117,7 +116,7 @@ public class BentoBoxHook extends ProtectionHook {
     }
 
     @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+    public ItemStack createIconForElevator(Player player, IElevator elevator) {
         Island island = BentoBox.getInstance().getIslands().getIslandAt(elevator.getLocation()).orElse(null);
         if (island == null)
             return null;
@@ -137,7 +136,7 @@ public class BentoBoxHook extends ProtectionHook {
     }
 
     @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+    public void onProtectionClick(Player player, IElevator elevator, Runnable onReturn) {
         this.toggleCheckEnabled(elevator);
         onReturn.run();
     }

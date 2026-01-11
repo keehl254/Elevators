@@ -1,14 +1,13 @@
 package me.keehl.elevators.hooks;
 
-import me.keehl.elevators.helpers.ItemStackHelper;
-import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.models.IElevator;
 import com.plotsquared.core.PlotAPI;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
+import me.keehl.elevators.api.models.hooks.ProtectionHook;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -42,7 +41,7 @@ public class PlotSquaredHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage) {
         PlotPlayer<?> plotPlayer = this.api.wrapPlayer(player.getUniqueId());
         if(plotPlayer == null)
             return false;
@@ -60,7 +59,7 @@ public class PlotSquaredHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
         PlotPlayer<?> plotPlayer = this.api.wrapPlayer(player.getUniqueId());
         if(plotPlayer == null)
             return false;
@@ -78,7 +77,7 @@ public class PlotSquaredHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditSettings(Player player, IElevator elevator, boolean sendMessage) {
         PlotPlayer<?> plotPlayer = this.api.wrapPlayer(player.getUniqueId());
         if(plotPlayer == null)
             return false;
@@ -96,7 +95,7 @@ public class PlotSquaredHook extends ProtectionHook {
     }
 
     @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+    public ItemStack createIconForElevator(Player player, IElevator elevator) {
 
         PlotPlayer<?> plotPlayer = this.api.wrapPlayer(player.getUniqueId());
         if(plotPlayer == null)  return null;
@@ -119,7 +118,7 @@ public class PlotSquaredHook extends ProtectionHook {
     }
 
     @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+    public void onProtectionClick(Player player, IElevator elevator, Runnable onReturn) {
         this.toggleCheckEnabled(elevator);
         onReturn.run();
     }

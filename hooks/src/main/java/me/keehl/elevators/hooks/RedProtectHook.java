@@ -3,9 +3,8 @@ package me.keehl.elevators.hooks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import me.keehl.elevators.helpers.ItemStackHelper;
-import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.models.IElevator;
+import me.keehl.elevators.api.models.hooks.ProtectionHook;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -37,7 +36,7 @@ public class RedProtectHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage) {
         Region region = this.redProtect.getRegion(elevator.getShulkerBox().getLocation());
         if(region == null || region.getFlagBool(this.flagName))
             return true;
@@ -51,7 +50,7 @@ public class RedProtectHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
         Region region = this.redProtect.getRegion(elevator.getShulkerBox().getLocation());
         if(region == null || region.getFlagBool(this.nameFlagName))
             return true;
@@ -65,7 +64,7 @@ public class RedProtectHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditSettings(Player player, IElevator elevator, boolean sendMessage) {
         Region region = this.redProtect.getRegion(elevator.getShulkerBox().getLocation());
         if(region == null || region.getFlagBool(this.settingsFlagName))
             return true;
@@ -79,7 +78,7 @@ public class RedProtectHook extends ProtectionHook {
     }
 
     @Override
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+    public ItemStack createIconForElevator(Player player, IElevator elevator) {
         Region region = this.redProtect.getRegion(elevator.getLocation());
         if(region == null) return null;
 
@@ -98,7 +97,7 @@ public class RedProtectHook extends ProtectionHook {
     }
 
     @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+    public void onProtectionClick(Player player, IElevator elevator, Runnable onReturn) {
         this.toggleCheckEnabled(elevator);
         onReturn.run();
     }

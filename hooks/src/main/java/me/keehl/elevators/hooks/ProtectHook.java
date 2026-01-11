@@ -1,9 +1,8 @@
 package me.keehl.elevators.hooks;
 
-import me.keehl.elevators.Elevators;
-import me.keehl.elevators.helpers.ItemStackHelper;
-import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.ElevatorsAPI;
+import me.keehl.elevators.api.models.IElevator;
+import me.keehl.elevators.api.models.hooks.ProtectionHook;
 import net.kyori.adventure.key.KeyPattern;
 import net.thenextlvl.protect.area.Area;
 import net.thenextlvl.protect.area.AreaProvider;
@@ -48,10 +47,10 @@ public class ProtectHook extends ProtectionHook {
     }
 
     private Flag<Boolean> registerFlag(@KeyPattern.Value String flagName) {
-        NamespacedKey key = new NamespacedKey(Elevators.getInstance(), flagName);
+        NamespacedKey key = new NamespacedKey(ElevatorsAPI.getElevators().getPlugin(), flagName);
         Optional<Flag<Boolean>> flagOpt = this.flagRegistry.getFlag(key);
         return flagOpt.orElseGet(() ->
-                this.flagRegistry.register(Elevators.getInstance(), flagName, true)
+                this.flagRegistry.register(ElevatorsAPI.getElevators().getPlugin(), flagName, true)
         );
     }
 
@@ -60,7 +59,7 @@ public class ProtectHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canPlayerUseElevator(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage) {
         Area area = this.areaProvider.getArea(elevator.getLocation());
         if (this.protectionService.canPerformAction(player, area, this.useFlag, null)) return true;
         if (sendMessage) this.failed(player, "You are not allowed to do that here!");
@@ -68,7 +67,7 @@ public class ProtectHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditName(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
         Area area = this.areaProvider.getArea(elevator.getLocation());
         if (this.protectionService.canPerformAction(player, area, this.nameFlag, null)) return true;
         if (sendMessage) this.failed(player, "You are not allowed to do that here!");
@@ -76,7 +75,7 @@ public class ProtectHook extends ProtectionHook {
     }
 
     @Override
-    public boolean canEditSettings(Player player, Elevator elevator, boolean sendMessage) {
+    public boolean canEditSettings(Player player, IElevator elevator, boolean sendMessage) {
         Area area = this.areaProvider.getArea(elevator.getLocation());
         if (this.protectionService.canPerformAction(player, area, this.settingsFlag, null)) return true;
         if (sendMessage) this.failed(player, "You are not allowed to do that here!");
@@ -85,7 +84,7 @@ public class ProtectHook extends ProtectionHook {
 
     @Override
     @SuppressWarnings("deprecation")
-    public ItemStack createIconForElevator(Player player, Elevator elevator) {
+    public ItemStack createIconForElevator(Player player, IElevator elevator) {
         boolean flagEnabled = this.isCheckEnabled(elevator);
 
         List<String> lore = new ArrayList<>();
@@ -101,7 +100,7 @@ public class ProtectHook extends ProtectionHook {
     }
 
     @Override
-    public void onProtectionClick(Player player, Elevator elevator, Runnable onReturn) {
+    public void onProtectionClick(Player player, IElevator elevator, Runnable onReturn) {
         this.toggleCheckEnabled(elevator);
         onReturn.run();
     }

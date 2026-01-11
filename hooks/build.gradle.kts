@@ -1,6 +1,5 @@
 plugins {
     java
-    id("xyz.wagyourtail.jvmdowngrader") version "1.3.4"
     id("com.gradleup.shadow") version "8.3.6"
 }
 
@@ -10,11 +9,6 @@ java {
 
 tasks.compileJava {
     options.release.set(21)
-}
-
-jvmdg.downgradeTo = JavaVersion.VERSION_11
-jvmdg.shadePath = {
-    it.substringBefore(".").substringBeforeLast("-").replace(Regex("[.;\\[/]"), "-")
 }
 
 repositories {
@@ -41,14 +35,15 @@ repositories {
     maven("https://repo.oraxen.com/releases")
     maven("https://repo.nexomc.com/releases")
     maven("https://repo.keehl.me/snapshots")
+    maven("https://repo.codemc.io/repository/maven-public/")
+    maven("https://repo.codemc.org/repository/bentoboxworld/")
 }
 
 dependencies {
-    implementation(project(":core"))
+    compileOnly(project(":api"))
 
     compileOnly(platform("com.intellectualsites.bom:bom-newest:1.32"))
 
-    // Our hooks project is allowed to reference later versions. We must be very careful, though.
     compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
@@ -77,21 +72,6 @@ dependencies {
     compileOnly("io.th0rgal:oraxen:1.190.0") { isTransitive = false }
     compileOnly("com.nexomc:nexo:1.8.0") //Nexo 1.X -> 1.X.0
     compileOnly("com.tcoded:FoliaLib:0.4.3")
-
-    implementation("org.bstats:bstats-bukkit:3.1.0")
-    implementation("dev.faststats.metrics:bukkit:0.7.5")
-
-    implementation("me.keehl:dialog-builder:1.4-SNAPSHOT")
-}
-
-tasks.shadowJar {
-    relocate("com.tcoded.folialib", "me.keehl.elevators.util.folialib")
-    relocate("io.papermc.lib", "me.keehl.elevators.util.paperlib")
-    relocate("org.yaml.snakeyaml", "me.keehl.elevators.util.config.snakeyaml")
-    relocate("org.bstats", "me.keehl.elevators.util.bstats")
-    relocate("dev.faststats", "me.keehl.elevators.util.faststats")
-
-    archiveClassifier.set("all")
 }
 
 tasks {
@@ -104,13 +84,4 @@ tasks {
     processResources {
         filteringCharset = Charsets.UTF_8.name()
     }
-}
-
-tasks.assemble {
-    dependsOn(tasks.named("shadeDowngradedApi"))
-}
-
-// Optional: if you publish or copy artifacts, you probably want the shaded jar:
-tasks.build {
-    dependsOn(tasks.named("shadeDowngradedApi"))
 }

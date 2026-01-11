@@ -1,8 +1,8 @@
 package me.keehl.elevators.hooks;
 
-import me.keehl.elevators.models.Elevator;
-import me.keehl.elevators.models.hooks.HologramHook;
-import me.keehl.elevators.models.hooks.WrappedHologram;
+import me.keehl.elevators.api.models.IElevator;
+import me.keehl.elevators.api.models.hooks.HologramHook;
+import me.keehl.elevators.api.models.hooks.IElevatorHologram;
 import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.data.TextHologramData;
 import de.oliver.fancyholograms.api.hologram.Hologram;
@@ -11,24 +11,22 @@ import org.bukkit.entity.Display;
 
 import java.util.*;
 
-public class FancyHologramsHook extends HologramHook {
+public class FancyHologramsHook implements HologramHook {
 
     @Override
-    public WrappedHologram createHologram(Elevator elevator, String... lines) {
-        return new FancyHologramWrapper(elevator, lines);
+    public IElevatorHologram createHologram(UUID uuid, IElevator elevator, String... lines) {
+        return new FancyHologramWrapper(uuid, elevator, lines);
     }
 
     @Override
     public void onInit() {
     }
 
-    public static class FancyHologramWrapper extends WrappedHologram {
+    public static class FancyHologramWrapper implements IElevatorHologram {
 
         private final Hologram hologram;
-        public FancyHologramWrapper(Elevator elevator, String... lines) {
-            super(elevator);
-
-            TextHologramData textData = new TextHologramData(this.getUUID(), elevator.getLocation().clone());
+        public FancyHologramWrapper(UUID uuid, IElevator elevator, String... lines) {
+            TextHologramData textData = new TextHologramData(uuid.toString(), elevator.getLocation().clone());
             Arrays.stream(lines).forEach(textData::addLine);
 
             textData.setBillboard(Display.Billboard.CENTER);
