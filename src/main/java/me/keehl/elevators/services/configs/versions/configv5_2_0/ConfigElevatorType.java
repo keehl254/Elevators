@@ -37,8 +37,8 @@ public class ConfigElevatorType implements IConfigElevatorType {
     @Comments({"Define recipes to craft an elevator type. If you do not wish to have any recipes, replace the section",
     "with an empty map by settings recipes to \"{}\". Example:",
     "recipes: {}"})
-    protected Map<String, IElevatorRecipeGroup> recipes = new HashMap<String, IElevatorRecipeGroup>() {{
-       put("classic", new ElevatorRecipeGroup());
+    protected Map<String, IElevatorRecipeGroup> recipes = new HashMap<>() {{
+        put("classic", new ElevatorRecipeGroup());
     }};
 
     public static class ConfigActions implements IConfigActions {

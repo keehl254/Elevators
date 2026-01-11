@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"UnstableApiUsage", "deprecation"})
+@SuppressWarnings({"deprecation"})
 public class AdminEditRecipesMenu {
 
     public static void openAdminEditRecipesMenu(Player player, IElevatorType tempElevatorType) {

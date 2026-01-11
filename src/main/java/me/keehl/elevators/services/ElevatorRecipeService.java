@@ -58,9 +58,8 @@ public class ElevatorRecipeService extends ElevatorService implements IElevatorR
         boolean removedRecipes = false;
         while (it.hasNext()) {
             Recipe recipe = it.next();
-            if(!(recipe instanceof ShapedRecipe))
+            if(!(recipe instanceof ShapedRecipe shapedRecipe))
                 continue;
-            ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
             if(shapedRecipe.getKey().getNamespace().equalsIgnoreCase("elevators")) {
                 it.remove();
                 recipesToUnlearn.add(shapedRecipe);

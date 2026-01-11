@@ -91,8 +91,7 @@ public class WorldEventExecutor {
     }
 
     public static void onBlockBreak(BlockDropItemEvent event) {
-        if (!(event.getBlockState() instanceof ShulkerBox)) return;
-        ShulkerBox box = (ShulkerBox) event.getBlockState();
+        if (!(event.getBlockState() instanceof ShulkerBox box)) return;
 
         IElevatorType elevatorType = ElevatorHelper.getElevatorType(box, false);
         if (elevatorType == null) return;
@@ -102,7 +101,7 @@ public class WorldEventExecutor {
         ItemStack newElevatorItem = ItemStackHelper.createItemStackFromElevator(elevator);
 
         Optional<Item> defaultItem = event.getItems().stream().filter(i -> !ItemStackHelper.isNotShulkerBox(i.getItemStack().getType())).findAny();
-        if (!defaultItem.isPresent()) return;
+        if (defaultItem.isEmpty()) return;
 
         defaultItem.get().setItemStack(newElevatorItem);
     }

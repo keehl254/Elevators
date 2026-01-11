@@ -48,8 +48,8 @@ public class LandsHook extends ProtectionHook {
         String[] words = message.split(" ");
         messages.add(defaultColor + words[0]);
         for (int i = 1; i < words.length; i++) {
-            if ((messages.get(messages.size()-1) + " " + words[i]).length() <= 30)
-                messages.set(messages.size() - 1, messages.get(messages.size()-1) + " " + words[i]);
+            if ((messages.getLast() + " " + words[i]).length() <= 30)
+                messages.set(messages.size() - 1, messages.getLast() + " " + words[i]);
             else
                 messages.add(defaultColor + words[i]);
         }

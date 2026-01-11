@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.logging.Level;
 
-@SuppressWarnings({"unused", "deprecation"})
+@SuppressWarnings({"unused"})
 public class ElevatorCommand implements CommandExecutor, TabCompleter {
 
     private final String prefix = ChatColor.AQUA + "" + ChatColor.BOLD + "ELEVATORS " + ChatColor.WHITE;

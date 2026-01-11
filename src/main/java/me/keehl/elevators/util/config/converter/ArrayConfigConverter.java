@@ -90,8 +90,7 @@ public class ArrayConfigConverter extends ConfigConverter {
 
     @Override
     public String getFieldDisplay(ConfigNode<?> node) {
-        if (node instanceof ClassicConfigNode<?>) {
-            ClassicConfigNode<?> classicNode = (ClassicConfigNode<?>) node;
+        if (node instanceof ClassicConfigNode<?> classicNode) {
             Class<?> singleType = classicNode.getField().getType().getComponentType();
             return singleType.getSimpleName() + " Array";
         }

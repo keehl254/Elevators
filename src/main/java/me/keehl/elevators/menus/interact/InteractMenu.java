@@ -19,7 +19,6 @@ import java.util.List;
 
 import static me.keehl.elevators.helpers.ElevatorMenuHelper.openMenuFromDisplay;
 
-@SuppressWarnings("deprecation")
 public class InteractMenu {
 
     public static void openInteractMenu(Player player, IElevator elevator) {

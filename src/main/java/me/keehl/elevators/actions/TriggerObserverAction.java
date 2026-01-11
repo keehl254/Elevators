@@ -35,10 +35,9 @@ public class TriggerObserverAction extends ElevatorAction {
 
 
             BlockData data = block.getBlockData();
-            if(!(data instanceof Observer))
+            if(!(data instanceof Observer observer))
                 continue;
 
-            Observer observer = (Observer) data;
             if(observer.getFacing() == face.getOppositeFace()) {
                 observer.setPowered(true);
                 block.setBlockData(observer, true);

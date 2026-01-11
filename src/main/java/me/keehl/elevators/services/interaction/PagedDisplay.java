@@ -109,7 +109,7 @@ public class PagedDisplay<T> {
 
         int startIndex = this.itemsPerPage * clampedPageIndex;
 
-        List<T> pageItems = this.items.stream().skip(startIndex).limit(this.itemsPerPage).collect(Collectors.toList());
+        List<T> pageItems = this.items.stream().skip(startIndex).limit(this.itemsPerPage).toList();
         this.display.getInventory().clear();
         this.display.clearActions();
 

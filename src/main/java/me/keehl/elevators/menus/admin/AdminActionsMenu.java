@@ -15,7 +15,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class AdminActionsMenu {
 
     public static void openAdminActionsMenu(Player player, IElevatorType tempElevatorType, List<IElevatorAction> actions) {

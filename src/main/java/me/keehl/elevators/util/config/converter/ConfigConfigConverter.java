@@ -98,15 +98,13 @@ public class ConfigConfigConverter extends ConfigConverter {
                 ((ExpandableConfig) configObj).data.put(path, childNode);
         }
 
-        if (!(configObj instanceof ExpandableConfig))
+        if (!(configObj instanceof ExpandableConfig expandableConfig))
             return;
 
-        ExpandableConfig expandableConfig = (ExpandableConfig) configObj;
         expandableConfig.parentNode = myNode;
 
-        if (!(rawData instanceof Map<?, ?>))
+        if (!(rawData instanceof Map<?, ?> mapData))
             return;
-        Map<?, ?> mapData = (Map<?, ?>) rawData;
 
         for (Object objKey : mapData.keySet()) {
             String key = objKey.toString();
@@ -151,10 +149,8 @@ public class ConfigConfigConverter extends ConfigConverter {
     @Override
     public Object serializeValueToYamlObject(Object configObj) throws Exception {
 
-        if (!(configObj instanceof Config))
+        if (!(configObj instanceof Config config))
             return new HashMap<>();
-
-        Config config = (Config) configObj;
 
         config.onSave();
 
@@ -204,10 +200,8 @@ public class ConfigConfigConverter extends ConfigConverter {
 
         }
 
-        if (!(configObj instanceof ExpandableConfig))
+        if (!(configObj instanceof ExpandableConfig expandableConfig))
             return newMap;
-
-        ExpandableConfig expandableConfig = (ExpandableConfig) configObj;
 
         for (String key : expandableConfig.data.keySet()) {
             ConfigNode<?> childNode = expandableConfig.data.get(key);

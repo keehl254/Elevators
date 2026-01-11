@@ -25,7 +25,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@SuppressWarnings("deprecation")
 public class AdminEditElevatorRecipeMenu {
 
     private static void saveInventoryToRecipe(Inventory inventory, ElevatorRecipeGroup tempRecipe) {

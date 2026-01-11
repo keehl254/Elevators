@@ -107,8 +107,7 @@ public abstract class ConfigConverter {
             return null;
 
         ConfigConverter converter = optConverter.get();
-        if (converter instanceof ConfigConfigConverter) {
-            ConfigConfigConverter ccc = (ConfigConfigConverter) converter;
+        if (converter instanceof ConfigConfigConverter ccc) {
             ConfigRootNode<T> root = new ConfigRootNode<>(yamlData == null ? new HashMap<>() : yamlData, config);
             config.setKey("root");
             ccc.constructMapToConfig(root, root, config, new FieldData(null, config.getClass(), config.getClass()));
@@ -145,7 +144,7 @@ public abstract class ConfigConverter {
                     depth = depth + 2;
                 } else {
                     if (line.startsWith(new String(new char[depth - 2]).replace("\0", " ")))
-                        keyChain.remove(keyChain.size()-1);
+                        keyChain.removeLast();
                     else {
                         //Check how much spaces are infront of the line
                         int spaces = 0;

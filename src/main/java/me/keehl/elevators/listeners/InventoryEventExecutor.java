@@ -16,8 +16,7 @@ public class InventoryEventExecutor {
 
     public static void onInventoryOpen(InventoryOpenEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
-        if (!(holder instanceof ShulkerBox)) return;
-        ShulkerBox box = (ShulkerBox) holder;
+        if (!(holder instanceof ShulkerBox box)) return;
 
         if (!ElevatorHelper.isElevator(box)) return;
 
@@ -40,8 +39,7 @@ public class InventoryEventExecutor {
 
     @SuppressWarnings("ConstantConditions")
     public static void onClickStackHandler(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) return;
-        Player player = (Player) event.getWhoClicked();
+        if (!(event.getWhoClicked() instanceof Player player)) return;
 
         ItemStack clickedItem = event.getCurrentItem();
 
@@ -139,11 +137,9 @@ public class InventoryEventExecutor {
     }
 
     public static void onCraft(CraftItemEvent e) {
-        if (!(e.getRecipe() instanceof Keyed)) return;
-        Keyed keyedRecipe = (Keyed) e.getRecipe();
+        if (!(e.getRecipe() instanceof Keyed keyedRecipe)) return;
 
-        if (!(e.getWhoClicked() instanceof Player)) return;
-        Player player = (Player) e.getWhoClicked();
+        if (!(e.getWhoClicked() instanceof Player player)) return;
 
         ItemStack result = e.getInventory().getResult();
         if (result == null || result.getType() == Material.AIR) return;

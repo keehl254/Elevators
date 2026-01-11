@@ -74,10 +74,8 @@ public class MapConfigConverter extends ConfigConverter {
     @Override
     public Object serializeValueToYamlObject(Object mapObj) throws Exception {
 
-        if (!(mapObj instanceof Map<?, ?>))
+        if (!(mapObj instanceof Map<?, ?> map))
             return new HashMap<>();
-
-        Map<?,?> map = (Map<?, ?>) mapObj;
 
         LinkedHashMap<Object, Object> newMap = new LinkedHashMap<>();
 

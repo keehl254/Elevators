@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("deprecation")
 public class InteractProtectMenu {
 
     public static void openInteractProtectMenu(Player player, IElevator elevator) {

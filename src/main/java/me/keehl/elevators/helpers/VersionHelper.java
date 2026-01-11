@@ -128,9 +128,8 @@ public class VersionHelper {
         Iterator<Recipe> recipeIterator = Bukkit.getServer().recipeIterator();
         while(recipeIterator.hasNext()) {
             Recipe nextRecipe = recipeIterator.next();
-            if(!(nextRecipe instanceof Keyed))
+            if(!(nextRecipe instanceof Keyed keyedRecipe))
                 continue;
-            Keyed keyedRecipe = (Keyed) nextRecipe;
             if(keyedRecipe.getKey().toString().equalsIgnoreCase(recipe.getKey().toString()))
                 recipeIterator.remove();
         }

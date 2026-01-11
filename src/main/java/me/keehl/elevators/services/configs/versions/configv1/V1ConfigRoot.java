@@ -12,7 +12,7 @@ public class V1ConfigRoot implements Config {
 
     public List<String> recipe = Arrays.asList("www","wew","www");
 
-    public Map<Character, Material> materials = new HashMap<Character, Material>() {{
+    public Map<Character, Material> materials = new HashMap<>() {{
         put('w', Material.WHITE_WOOL);
         put('e', Material.ENDER_PEARL);
     }};

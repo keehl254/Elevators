@@ -16,7 +16,6 @@ import org.bukkit.inventory.Inventory;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class InteractActionSettingsMenu {
 
     public static void openInteractActionSettingsMenu(Player player, IElevator elevator, IElevatorAction action, Runnable onReturn) {

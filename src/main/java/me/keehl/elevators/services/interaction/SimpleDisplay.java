@@ -1,6 +1,7 @@
 package me.keehl.elevators.services.interaction;
 
 import me.keehl.elevators.Elevators;
+import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.services.interaction.DisplayClickFlag;
 import me.keehl.elevators.api.services.interaction.DisplayClickResult;
 import me.keehl.elevators.api.services.interaction.DisplaySlotData;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.logging.Level;
 
 public class SimpleDisplay implements Listener, ISimpleDisplay {
 
@@ -176,7 +178,7 @@ public class SimpleDisplay implements Listener, ISimpleDisplay {
         try {
             Elevators.getFoliaLib().getScheduler().runAtEntityLater(event.getPlayer(), this.returnRunnable, 1L);
         }catch (Exception e) {
-            e.printStackTrace();
+            ElevatorsAPI.log(Level.WARNING, "An error occurred on closing a SimpleDisplay.", e);
         }
     }
 

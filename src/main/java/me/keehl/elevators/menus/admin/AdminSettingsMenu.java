@@ -14,7 +14,6 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class AdminSettingsMenu {
 
     public static void openAdminSettingsMenu(Player player, IElevatorType tempElevatorType) {

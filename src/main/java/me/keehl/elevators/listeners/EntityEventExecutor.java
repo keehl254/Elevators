@@ -140,9 +140,8 @@ public class EntityEventExecutor {
             return;
         if (!ElevatorHelper.isElevator(item))
             return;
-        if (!(event.getEntity() instanceof Player))
+        if (!(event.getEntity() instanceof Player player))
             return;
-        Player player = (Player) event.getEntity();
 
         ItemMeta itemMeta = item.getItemMeta();
         if(itemMeta == null)

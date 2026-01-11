@@ -41,7 +41,7 @@ public class ElevatorSettingBuilder<T> implements IElevatorSettingBuilder<T> {
     }
 
     public BuilderElevatorSetting<T> register(JavaPlugin plugin, ItemStack icon) {
-        BuilderElevatorSetting<T> setting = new BuilderElevatorSetting<T>(plugin, this.settingKey, icon, this);
+        BuilderElevatorSetting<T> setting = new BuilderElevatorSetting<>(plugin, this.settingKey, icon, this);
 
         IElevatorSettingService service = Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorSettingService.class)).orElseThrow();
         service.addSetting(setting);

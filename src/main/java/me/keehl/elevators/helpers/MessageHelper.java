@@ -85,8 +85,8 @@ public class MessageHelper {
         String[] words = message.split(" ");
         messages.add(defaultColor + words[0]);
         for (int i = 1; i < words.length; i++) {
-            if ((messages.get(messages.size()-1) + " " + words[i]).length() <= 30)
-                messages.set(messages.size() - 1, messages.get(messages.size()-1) + " " + words[i]);
+            if ((messages.getLast() + " " + words[i]).length() <= 30)
+                messages.set(messages.size() - 1, messages.getLast() + " " + words[i]);
             else
                 messages.add(defaultColor + words[i]);
         }
@@ -101,9 +101,8 @@ public class MessageHelper {
     }
 
     public static String formatPlaceholders(CommandSender sender, String message) {
-        if(!(sender instanceof Player))
+        if(!(sender instanceof Player player))
             return message;
-        Player player = (Player) sender;
 
         PlaceholderHook hook = Elevators.getHooksService().getPlaceholderHook();
         if(hook == null)

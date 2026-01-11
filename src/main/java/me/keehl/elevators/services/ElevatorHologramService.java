@@ -83,7 +83,7 @@ public class ElevatorHologramService extends ElevatorService implements IElevato
 
         ShulkerBox shulkerBox = elevator.getShulkerBox();
         if (shulkerBox.hasMetadata("elevator-holo-uuid")) {
-            String hologramUUID = shulkerBox.getMetadata("elevator-holo-uuid").get(0).asString();
+            String hologramUUID = shulkerBox.getMetadata("elevator-holo-uuid").getFirst().asString();
             IWrappedHologram hologram = getHologram(hologramUUID);
             if (hologram != null)
                 return hologram;
@@ -143,9 +143,8 @@ public class ElevatorHologramService extends ElevatorService implements IElevato
 
         Collection<BlockState> tileEntities = VersionHelper.getShulkerBoxesInChunk(chunk);
         for (BlockState state : tileEntities) {
-            if (!(state instanceof ShulkerBox))
+            if (!(state instanceof ShulkerBox box))
                 continue;
-            ShulkerBox box = (ShulkerBox) state;
 
             IElevatorType elevatorType = ElevatorHelper.getElevatorType(box);
             if (elevatorType == null)
@@ -179,7 +178,7 @@ public class ElevatorHologramService extends ElevatorService implements IElevato
     }
 
     public void updateHologramsOfElevatorType(IElevatorType elevatorType) {
-        List<IWrappedHologram> holograms = getHolograms().stream().filter(i -> i.getElevatorType().equals(elevatorType)).collect(Collectors.toList());
+        List<IWrappedHologram> holograms = getHolograms().stream().filter(i -> i.getElevatorType().equals(elevatorType)).toList();
         for (IWrappedHologram hologram : holograms) {
             hologram.update();
         }

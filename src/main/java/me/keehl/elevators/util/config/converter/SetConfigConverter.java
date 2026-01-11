@@ -52,10 +52,8 @@ public class SetConfigConverter extends ConfigConverter {
     @Override
     public Object serializeValueToYamlObject(Object setObj) throws Exception {
 
-        if(!(setObj instanceof Set<?>))
+        if(!(setObj instanceof Set<?> set))
             return new HashSet<>();
-
-        Set<?> set = (Set<?>) setObj;
 
         List<Object> values = new ArrayList<>();
         for(Object item : set) {
@@ -74,8 +72,7 @@ public class SetConfigConverter extends ConfigConverter {
 
     @Override
     public String getFieldDisplay(ConfigNode<?> node) {
-        if(node instanceof ClassicConfigNode<?>) {
-            ClassicConfigNode<?> classicNode = (ClassicConfigNode<?>) node;
+        if(node instanceof ClassicConfigNode<?> classicNode) {
             ParameterizedType genericType = (classicNode.getField().getGenericType() instanceof ParameterizedType) ? (ParameterizedType) classicNode.getField().getGenericType() : null;
             if (genericType != null)
                 return genericType.getClass().getSimpleName() + " Array";

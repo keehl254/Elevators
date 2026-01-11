@@ -18,8 +18,8 @@ import java.net.URL;
 
 public class ElevatorUpdateService extends ElevatorService implements IElevatorUpdateService {
 
-    private static String apiEndpoint = "https://hangar.papermc.io/api/v1/projects/Keehl/Elevators/latest?channel=";
-    private static String resourceURL = "https://hangar.papermc.io/Keehl/Elevators";
+    private static final String apiEndpoint = "https://hangar.papermc.io/api/v1/projects/Keehl/Elevators/latest?channel=";
+    private static final String resourceURL = "https://hangar.papermc.io/Keehl/Elevators";
 
     private WrappedTask task;
 

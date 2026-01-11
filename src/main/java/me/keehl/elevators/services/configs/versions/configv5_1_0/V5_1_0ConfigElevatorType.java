@@ -22,8 +22,8 @@ public class V5_1_0ConfigElevatorType implements Config {
     protected List<String> loreLines = new ArrayList<>();
     protected ConfigActions actions = new ConfigActions();
     protected List<String> disabledSettings = Arrays.asList("change-holo","sound/sound","action-bar/message","boss-bar/message","message-player/message","title/title","title/subtitle","effect/effect");
-    protected Map<String, V5_1_0ConfigRecipe> recipes = new HashMap<String, V5_1_0ConfigRecipe>() {{
-       put("classic", new V5_1_0ConfigRecipe());
+    protected Map<String, V5_1_0ConfigRecipe> recipes = new HashMap<>() {{
+        put("classic", new V5_1_0ConfigRecipe());
     }};
 
     public static class ConfigActions implements Config {

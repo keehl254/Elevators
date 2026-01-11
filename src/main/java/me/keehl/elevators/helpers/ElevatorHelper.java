@@ -192,7 +192,7 @@ public class ElevatorHelper {
             List<MetadataValue> values = elevator.getShulkerBox().getMetadata("open-player");
             List<Player> players = values.stream().map(MetadataValue::asString).map(UUID::fromString).map(Bukkit::getPlayer).toList();
 
-            boolean reset = players.isEmpty() || players.get(0).getUniqueId().equals(player.getUniqueId());
+            boolean reset = players.isEmpty() || players.getFirst().getUniqueId().equals(player.getUniqueId());
             if(reset) {
                 ElevatorHelper.resetElevatorEditState(elevator);
             } else
@@ -242,7 +242,7 @@ public class ElevatorHelper {
     public static boolean hasOrAddPlayerCoolDown(Player player, String key) {
         key = "elevator-cooldown-" + key;
         if (player.hasMetadata(key)) {
-            MetadataValue value = player.getMetadata(key).get(0);
+            MetadataValue value = player.getMetadata(key).getFirst();
             long lastTime = value.asLong();
             if (System.currentTimeMillis() - lastTime < 1000)
                 return true;

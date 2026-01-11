@@ -24,7 +24,7 @@ public class ElevatorPermHelper {
             return true;
 
         Optional<IElevatorRecipeGroup> optRecipeGroup = elevatorType.getRecipeGroups().stream().filter(i -> i.getNameSpacedKeys().contains(recipe.getKey())).findAny();
-        if (!optRecipeGroup.isPresent())
+        if (optRecipeGroup.isEmpty())
             return false;
 
         IElevatorRecipeGroup recipeGroup = optRecipeGroup.get();

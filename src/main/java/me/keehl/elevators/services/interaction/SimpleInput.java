@@ -54,7 +54,7 @@ public class SimpleInput implements Listener {
         if(this.allowReset)
             Elevators.getLocale().getChatInputBackOutAllowResetMessage().send(this.player);
         else
-            Elevators.getLocale().getChatInputBackOutMessage().send(player);
+            Elevators.getLocale().getChatInputBackOutMessage().send(this.player);
 
         Bukkit.getPluginManager().registerEvents(this, this.plugin);
     }

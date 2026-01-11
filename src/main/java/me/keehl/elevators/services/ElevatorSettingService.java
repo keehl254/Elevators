@@ -86,7 +86,7 @@ public class ElevatorSettingService extends ElevatorService implements IElevator
 
     public <T> T getElevatorSettingValue(IElevator elevator, String settingsKey) {
         Optional<IElevatorSetting<?>> setting = getElevatorSetting(settingsKey);
-        if (!setting.isPresent())
+        if (setting.isEmpty())
             return null;
 
         try {
@@ -98,7 +98,7 @@ public class ElevatorSettingService extends ElevatorService implements IElevator
 
     public <T> T getElevatorSettingValue(IElevatorType elevatorType, String settingsKey) {
         Optional<IElevatorSetting<?>> setting = getElevatorSetting(settingsKey);
-        if (!setting.isPresent())
+        if (setting.isEmpty())
             return null;
 
         try {

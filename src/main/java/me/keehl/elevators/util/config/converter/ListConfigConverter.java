@@ -54,10 +54,8 @@ public class ListConfigConverter extends ConfigConverter {
     @Override
     public Object serializeValueToYamlObject(Object listObj) throws Exception {
 
-        if(!(listObj instanceof List<?>))
+        if(!(listObj instanceof List<?> list))
             return new ArrayList<>();
-
-        List<?> list = (List<?>) listObj;
 
         List<Object> values = new ArrayList<>();
         for(Object item : list) {
@@ -76,8 +74,7 @@ public class ListConfigConverter extends ConfigConverter {
 
     @Override
     public String getFieldDisplay(ConfigNode<?> node) {
-        if(node instanceof ClassicConfigNode<?>) {
-            ClassicConfigNode<?> classicNode = (ClassicConfigNode<?>) node;
+        if(node instanceof ClassicConfigNode<?> classicNode) {
             ParameterizedType genericType = (classicNode.getField().getGenericType() instanceof ParameterizedType) ? (ParameterizedType) classicNode.getField().getGenericType() : null;
             if (genericType != null)
                 return genericType.getClass().getSimpleName() + " Array";

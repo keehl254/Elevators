@@ -14,7 +14,6 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class InteractActionsMenu {
 
     public static void openInteractActionsMenu(final Player player, final IElevator elevator, final List<IElevatorAction> actions) {

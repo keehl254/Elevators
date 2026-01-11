@@ -21,8 +21,8 @@ public class V5ConfigElevatorType implements Config {
     protected List<String> loreLines = new ArrayList<>();
     protected V5ConfigElevatorType.ConfigActions actions = new V5ConfigElevatorType.ConfigActions();
     protected List<String> disabledSettings = Arrays.asList("change-holo","sound/sound","action-bar/message","boss-bar/message","message-player/message","title/title","title/subtitle","effect/effect");
-    protected Map<String, V5ConfigRecipe> recipes = new HashMap<String, V5ConfigRecipe>() {{
-       put("classic", new V5ConfigRecipe());
+    protected Map<String, V5ConfigRecipe> recipes = new HashMap<>() {{
+        put("classic", new V5ConfigRecipe());
     }};
 
     /**

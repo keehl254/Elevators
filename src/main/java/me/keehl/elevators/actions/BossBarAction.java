@@ -78,7 +78,7 @@ public class BossBarAction extends ElevatorAction {
             BossBar bar = Bukkit.createBossBar("elevator-boss-bar", action.getVariableValue(barColorGrouping, elevator), action.getVariableValue(barStyleGrouping, elevator));
             player.setMetadata("elevator-boss-bar", new FixedMetadataValue(Elevators.getInstance(), bar));
         }
-        return (BossBar) player.getMetadata("elevator-boss-bar").get(0).value();
+        return (BossBar) player.getMetadata("elevator-boss-bar").getFirst().value();
     }
 
     public static void changeProgress(Player player, BossBarAction action, IElevator elevator, double progress) {
@@ -110,7 +110,7 @@ public class BossBarAction extends ElevatorAction {
         player.setMetadata("elevators-bossbar-seed", new FixedMetadataValue(Elevators.getInstance(), seed));
         bar.setVisible(true);
         return () -> {
-            if (player.getMetadata("elevators-bossbar-seed").get(0).asLong() == seed)
+            if (player.getMetadata("elevators-bossbar-seed").getFirst().asLong() == seed)
                 bar.setVisible(false);
         };
     }

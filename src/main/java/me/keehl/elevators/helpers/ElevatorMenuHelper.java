@@ -19,7 +19,6 @@ import java.util.function.*;
 import java.util.stream.IntStream;
 
 // Until Paper removes the String methods, I will keep this all in one class for both Spigot and Paper. Sorry deprecation checker.
-@SuppressWarnings({"deprecation"})
 public class ElevatorMenuHelper {
 
     private static DialogManager dialogManager;

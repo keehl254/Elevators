@@ -27,9 +27,9 @@ public class V5ConfigRecipe implements Config {
     protected List<String> recipe = Arrays.asList("www","wew","www");
 
     @Comments("Map characters to their materials. If \"supportMultiColorMaterials\" is enabled, dye colors in materials such as \"white\" in \"white_wool\" will be substituted for different dye colors.")
-    protected Map<Character, Material> materials = new HashMap<Character, Material>() {{
-        put('w',Material.WHITE_WOOL);
-        put('e',Material.ENDER_PEARL);
+    protected Map<Character, Material> materials = new HashMap<>() {{
+        put('w', Material.WHITE_WOOL);
+        put('e', Material.ENDER_PEARL);
     }};
 
     public static void setAmount(V5ConfigRecipe recipe, int amount) {

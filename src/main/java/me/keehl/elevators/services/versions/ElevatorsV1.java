@@ -23,14 +23,12 @@ public class ElevatorsV1 extends ElevatorVersionService.ElevatorVersion {
         if (meta == null)
             return null;
 
-        if (!(meta instanceof BlockStateMeta))
+        if (!(meta instanceof BlockStateMeta blockMeta))
             return null;
-        BlockStateMeta blockMeta = (BlockStateMeta) meta;
         BlockState blockState = blockMeta.getBlockState();
 
-        if (!(blockState instanceof ShulkerBox))
+        if (!(blockState instanceof ShulkerBox box))
             return null;
-        ShulkerBox box = (ShulkerBox) blockState;
 
         ItemStack firstItem = box.getInventory().getItem(0);
         if (firstItem == null)

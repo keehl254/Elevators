@@ -10,9 +10,8 @@ public class BlankConfig implements Config {
     public transient Map<String, Object> data = new HashMap<>();
 
     public BlankConfig(Object rawData) {
-        if(!(rawData instanceof Map<?,?>))
+        if(!(rawData instanceof Map<?, ?> mapData))
             return;
-        Map<?, ?> mapData = (Map<?, ?>) rawData;
 
         for(Object key : mapData.keySet())
             this.data.put(key.toString(), mapData.get(key));
