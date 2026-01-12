@@ -336,9 +336,11 @@ public class Elevators implements IElevators {
 
     @Override
     public void log(Level level, Object message, Throwable throwable) {
-        message = mainLogStack.log(level, message.toString(), throwable);
-        if (throwable != null && level == Level.SEVERE)
+        if (throwable != null && level == Level.SEVERE) {
             ((IElevatorsPlugin) Elevators.getInstance()).log(level, message, throwable);
+            return;
+        }
+        message = mainLogStack.log(level, message.toString(), throwable);
         if (message == null)
             return;
 

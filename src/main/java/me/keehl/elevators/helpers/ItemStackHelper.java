@@ -4,9 +4,7 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.models.ILocaleComponent;
-import me.keehl.elevators.api.services.IElevatorSettingService;
 import me.keehl.elevators.api.util.InternalElevatorSettingType;
-import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -19,10 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ItemStackHelper {
-
-    private static IElevatorSettingService getSettingService() {
-        return Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorSettingService.class)).orElseThrow();
-    }
 
     private static final Pattern dyeColorPattern = Pattern.compile("(?:LIGHT_)?.+?(?=_)");
 
@@ -57,7 +51,7 @@ public class ItemStackHelper {
 
     private static ItemStack findElevatorType(IElevatorType elevatorType, ItemStack item, Inventory inv) {
         ItemStack elevator = null;
-        int maxStackSize = getSettingService().getElevatorSettingValue(elevatorType, InternalElevatorSettingType.MAX_STACK_SIZE);
+        int maxStackSize = Elevators.getSettingService().getElevatorSettingValue(elevatorType, InternalElevatorSettingType.MAX_STACK_SIZE);
         for (ItemStack content : inv.getContents()) {
             if (content == null || content.getType().equals(Material.AIR))
                 continue;
@@ -150,7 +144,7 @@ public class ItemStackHelper {
         Map<ItemStack, Integer> partialList = new HashMap<>();
         ItemStack newElevator = ItemStackHelper.createItemStackFromElevatorType(elevatorType, getDyeColorFromMaterial(dyeMaterial));
 
-        int maxStackSize = getSettingService().getElevatorSettingValue(elevatorType, InternalElevatorSettingType.MAX_STACK_SIZE);
+        int maxStackSize = Elevators.getSettingService().getElevatorSettingValue(elevatorType, InternalElevatorSettingType.MAX_STACK_SIZE);
 
         for(ItemStack inventoryItem : inventory.getContents()) {
             if(inventoryItem == null) continue;

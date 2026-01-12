@@ -1,6 +1,8 @@
 package me.keehl.elevators.util.config.nodes;
 
 import me.keehl.elevators.api.ElevatorsAPI;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.IConfigRootNode;
 import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.util.config.ConfigConverter;
 
@@ -49,6 +51,11 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
         }
     }
 
+    @Override
+    public ConfigNode<?> getParent() {
+        return this.parentNode;
+    }
+
     public Field getField() {
         return this.field;
     }
@@ -90,7 +97,7 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
     }
 
     @Override
-    public ConfigRootNode<?> getRoot() {
+    public IConfigRootNode<?> getRoot() {
         return this.parentNode.getRoot();
     }
 

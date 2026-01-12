@@ -1,7 +1,6 @@
 package me.keehl.elevators.services.interaction;
 
 import me.keehl.elevators.Elevators;
-import me.keehl.elevators.api.services.IElevatorConfigService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 public class SimpleInput implements Listener {
@@ -48,8 +46,6 @@ public class SimpleInput implements Listener {
     }
 
     public void start() {
-
-        IElevatorConfigService service = Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorConfigService.class)).orElseThrow();
 
         if(this.allowReset)
             Elevators.getLocale().getChatInputBackOutAllowResetMessage().send(this.player);

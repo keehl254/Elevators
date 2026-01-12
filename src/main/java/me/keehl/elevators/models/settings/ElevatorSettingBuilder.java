@@ -1,12 +1,11 @@
 package me.keehl.elevators.models.settings;
 
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.settings.IElevatorSettingBuilder;
 import me.keehl.elevators.api.models.settings.IElevatorSettingClickContext;
-import me.keehl.elevators.api.services.IElevatorSettingService;
 import me.keehl.elevators.api.util.persistantDataTypes.ElevatorsDataType;
 import me.keehl.elevators.helpers.ItemStackHelper;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -43,8 +42,7 @@ public class ElevatorSettingBuilder<T> implements IElevatorSettingBuilder<T> {
     public BuilderElevatorSetting<T> register(JavaPlugin plugin, ItemStack icon) {
         BuilderElevatorSetting<T> setting = new BuilderElevatorSetting<>(plugin, this.settingKey, icon, this);
 
-        IElevatorSettingService service = Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorSettingService.class)).orElseThrow();
-        service.addSetting(setting);
+        Elevators.getSettingService().addSetting(setting);
         return setting;
     }
 

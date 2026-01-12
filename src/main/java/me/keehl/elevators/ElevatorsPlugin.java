@@ -130,8 +130,12 @@ public class ElevatorsPlugin extends JavaPlugin implements IElevatorsPlugin {
 
     @Override
     public void log(Level level, Object message, Throwable throwable) {
-        if(message == null) message = "";
-        super.getLogger().log(level, message.toString(), throwable);
+        if(message == null)
+            message = "";
+        super.getLogger().log(level, message.toString());
+        if(throwable == null)
+            return;
+        super.getLogger().log(level, ResourceHelper.cleanTrace(throwable));
     }
 
     public static class ElevatorLoggingFilter implements Filter {

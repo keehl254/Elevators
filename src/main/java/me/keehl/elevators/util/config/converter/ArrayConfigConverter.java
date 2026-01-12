@@ -1,8 +1,9 @@
 package me.keehl.elevators.util.config.converter;
 
+import me.keehl.elevators.api.util.config.converter.IFieldData;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
-import me.keehl.elevators.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -12,9 +13,9 @@ import java.util.List;
 public class ArrayConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, IFieldData fieldData) throws Exception {
 
-        FieldData childFieldData = fieldData.getGenericData()[0];
+        IFieldData childFieldData = fieldData.getGenericData()[0];
         if(childFieldData == null)
             return null;
 

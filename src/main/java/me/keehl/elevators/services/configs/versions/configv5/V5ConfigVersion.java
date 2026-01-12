@@ -1,16 +1,14 @@
 package me.keehl.elevators.services.configs.versions.configv5;
 
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.hooks.IProtectionHook;
-import me.keehl.elevators.api.services.IElevatorHookService;
 import me.keehl.elevators.services.configs.ConfigVersion;
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRecipe;
 import me.keehl.elevators.services.configs.versions.configv4_0_2.V4_0_2ConfigRoot;
-import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.logging.Level;
 
 public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, V5ConfigRoot> {
@@ -34,10 +32,8 @@ public class V5ConfigVersion extends ConfigVersion<V4_0_2ConfigRoot, V5ConfigRoo
 
         newConfig.locale = newLocale;
 
-        IElevatorHookService service = Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorHookService.class)).orElseThrow();
-
         // We now support many different protection hooks, so let's set the "claimProtectionDefault" setting on all that are loaded.
-        for (IProtectionHook hook : service.getProtectionHooks()) {
+        for (IProtectionHook hook : Elevators.getHooksService().getProtectionHooks()) {
             V5ConfigHookData hookData = new V5ConfigHookData();
             hookData.blockNonMemberUseDefault = currentConfig.claimProtectionDefault;
 

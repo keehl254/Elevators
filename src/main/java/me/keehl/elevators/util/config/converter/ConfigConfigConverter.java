@@ -2,8 +2,9 @@ package me.keehl.elevators.util.config.converter;
 
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.util.config.Config;
+import me.keehl.elevators.api.util.config.converter.IFieldData;
 import me.keehl.elevators.util.config.*;
-import me.keehl.elevators.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -13,7 +14,7 @@ import java.util.logging.Level;
 public class ConfigConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, IFieldData fieldData) throws Exception {
 
         try {
             Object rawData = parentNode.getRoot().getObjectAtPath(key, new HashMap<>());
@@ -26,8 +27,10 @@ public class ConfigConfigConverter extends ConfigConverter {
             }
 
             ConfigNode<?> myNode = ConfigConverter.createNodeWithData(parentNode, key, object, fieldData.getField());
-            if (myNode.getValue() instanceof Config)
-                ((Config) myNode.getValue()).setKey(key);
+            if (myNode.getValue() instanceof Config config) {
+                config.setKey(key);
+                config.setNode(myNode);
+            }
 
             this.constructMapToConfig(parentNode, myNode, rawData, fieldData);
 
@@ -41,7 +44,7 @@ public class ConfigConfigConverter extends ConfigConverter {
         }
     }
 
-    public void constructMapToConfig(ConfigNode<?> parentNode, ConfigNode<?> myNode, Object rawData, FieldData fieldData) throws Exception {
+    public void constructMapToConfig(ConfigNode<?> parentNode, ConfigNode<?> myNode, Object rawData, IFieldData fieldData) throws Exception {
         Config configObj = (Config) myNode.getValue();
 
         List<Field> fields = new ArrayList<>();

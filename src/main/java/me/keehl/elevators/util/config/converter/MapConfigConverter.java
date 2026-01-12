@@ -1,8 +1,9 @@
 package me.keehl.elevators.util.config.converter;
 
 import me.keehl.elevators.api.ElevatorsAPI;
+import me.keehl.elevators.api.util.config.converter.IFieldData;
 import me.keehl.elevators.util.config.ConfigConverter;
-import me.keehl.elevators.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -10,14 +11,14 @@ import java.util.logging.Level;
 public class MapConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, IFieldData fieldData) throws Exception {
         Map<Object, Object> mapObj = new LinkedHashMap<>();
 
         ConfigNode<?> myNode = createNodeWithData(parentNode, key, mapObj, fieldData.getField());
 
-        FieldData[] fieldDataList = fieldData.getGenericData();
-        FieldData keyFieldData = fieldDataList[0];
-        FieldData valueFieldData = fieldDataList[1];
+        IFieldData[] fieldDataList = fieldData.getGenericData();
+        IFieldData keyFieldData = fieldDataList[0];
+        IFieldData valueFieldData = fieldDataList[1];
 
 
         ConfigConverter valueConverter = valueFieldData.getFieldClass() != null ? getConverter(valueFieldData.getFieldClass()) : null;

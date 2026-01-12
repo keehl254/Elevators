@@ -2,7 +2,7 @@ package me.keehl.elevators.util.config;
 
 import me.keehl.elevators.api.util.config.Config;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
-import me.keehl.elevators.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

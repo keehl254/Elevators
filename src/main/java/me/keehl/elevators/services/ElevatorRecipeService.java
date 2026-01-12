@@ -3,28 +3,26 @@ package me.keehl.elevators.services;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.IElevators;
+import me.keehl.elevators.api.models.ElevatorRecipe;
 import me.keehl.elevators.api.models.IElevatorRecipeGroup;
-import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.services.IElevatorRecipeService;
 import me.keehl.elevators.api.services.configs.versions.IConfigRoot;
 import me.keehl.elevators.helpers.VersionHelper;
-import me.keehl.elevators.models.ElevatorRecipeGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.permissions.Permissible;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ElevatorRecipeService extends ElevatorService implements IElevatorRecipeService {
 
     private boolean initialized = false;
 
-    private final Map<IElevatorType, IElevatorRecipeGroup> elevatorRecipeGroupMap = new HashMap<>();
+    private Map<NamespacedKey, ElevatorRecipe> loadedRecipes = new HashMap<>();
 
     public ElevatorRecipeService(IElevators elevators) {
         super(elevators);
@@ -46,67 +44,75 @@ public class ElevatorRecipeService extends ElevatorService implements IElevatorR
     }
 
     public void refreshRecipes() {
-
         ElevatorsAPI.pushAndHoldLog();
 
         IConfigRoot root = Elevators.getConfigService().getRootConfig();
+        List<IElevatorRecipeGroup> recipeGroups = root.getElevators().values().stream().flatMap(x ->x.getRecipeGroups().stream()).toList();
 
-        Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
+        Map<NamespacedKey, ElevatorRecipe> newRecipes = new HashMap<>();
+        for(IElevatorRecipeGroup recipeGroup : recipeGroups) {
+            recipeGroup.createElevatorRecipes(newRecipes);
+        }
 
-        List<ShapedRecipe> recipesToUnlearn = new ArrayList<>();
-
-        boolean removedRecipes = false;
-        while (it.hasNext()) {
-            Recipe recipe = it.next();
-            if(!(recipe instanceof ShapedRecipe shapedRecipe))
+        List<NamespacedKey> toRemove = new ArrayList<>(this.loadedRecipes.keySet().stream().filter(x -> !newRecipes.containsKey(x)).toList());
+        List<ElevatorRecipe> toAdd = new ArrayList<>(newRecipes.values().stream().filter(x -> !this.loadedRecipes.containsKey(x.getNamespacedKey())).toList());
+        for(ElevatorRecipe oldRecipe : this.loadedRecipes.values()) {
+            if(toRemove.contains(oldRecipe.getNamespacedKey()))
                 continue;
-            if(shapedRecipe.getKey().getNamespace().equalsIgnoreCase("elevators")) {
-                it.remove();
-                recipesToUnlearn.add(shapedRecipe);
-                removedRecipes = true;
+
+            ElevatorRecipe newRecipe = newRecipes.get(oldRecipe.getNamespacedKey());
+            Map<Character, RecipeChoice> oldChoices = oldRecipe.getRecipe().getChoiceMap();
+            Map<Character, RecipeChoice> newChoices = newRecipe.getRecipe().getChoiceMap();
+
+            for(Character character : oldChoices.keySet()) {
+                RecipeChoice oldChoice = oldChoices.get(character);
+                RecipeChoice newChoice = newChoices.get(character);
+
+                if(!oldChoice.equals(newChoice)) {
+                    toRemove.add(oldRecipe.getNamespacedKey());
+                    toAdd.add(newRecipe);
+                    break;
+                }
+            }
+            if(toRemove.contains(oldRecipe.getNamespacedKey()))
+                continue;
+
+            if(!newRecipe.getRecipe().getResult().equals(oldRecipe.getRecipe().getResult())) {
+                toRemove.add(oldRecipe.getNamespacedKey());
+                toAdd.add(newRecipe);
             }
         }
 
-        this.elevatorRecipeGroupMap.clear();
+        this.loadedRecipes = newRecipes;
 
-        if(VersionHelper.doesVersionSupportRemoveRecipe())
-            recipesToUnlearn.forEach(VersionHelper::removeRecipe);
+        toRemove.forEach(VersionHelper::removeRecipe);
+        toAdd.forEach(x -> Bukkit.addRecipe(x.getRecipe()));
 
-        Bukkit.getOnlinePlayers().forEach(i -> i.undiscoverRecipes(recipesToUnlearn.stream().map(ShapedRecipe::getKey).collect(Collectors.toList())));
+        //Bukkit.getOnlinePlayers().forEach(i -> i.discoverRecipes(recipeKeys));
 
-        if(removedRecipes)
-            ElevatorsAPI.log("Unregistered old recipes");
-
-        List<NamespacedKey> recipeKeys = new ArrayList<>();
-
-        int recipes = 0;
-        for(IElevatorType elevatorType : root.getElevators().values()) {
-            for(IElevatorRecipeGroup apiRecipeGroup : elevatorType.getRecipeGroups()) {
-
-                if(!(apiRecipeGroup instanceof ElevatorRecipeGroup recipeGroup))
-                    continue;
-
-                recipeGroup.load(elevatorType);
-                this.elevatorRecipeGroupMap.put(elevatorType, recipeGroup);
-                recipeKeys.addAll(recipeGroup.getNameSpacedKeys());
-                recipes++;
-            }
-        }
-
-        Bukkit.getOnlinePlayers().forEach(i -> i.discoverRecipes(recipeKeys));
-
-        final int recipeCount = recipes;
-        ElevatorsAPI.popLog(logData -> ElevatorsAPI.log("Registered " + recipeCount + " recipe groups. "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
+        ElevatorsAPI.popLog(logData -> ElevatorsAPI.log("Registered " + recipeGroups.size() +" recipe groups. (" + newRecipes.size() + " recipes) "+ ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
 
     public void discoverRecipesForPlayer(Player player) {
-        for(IElevatorRecipeGroup recipeGroup : this.elevatorRecipeGroupMap.values()) {
-            player.discoverRecipes(recipeGroup.getNameSpacedKeys());
-        }
+        player.discoverRecipes(this.loadedRecipes.keySet());
     }
 
-    public boolean doesPermissibleHaveCraftPermission(Permissible permissible, ShapedRecipe recipe) {
-        return this.elevatorRecipeGroupMap.values().stream().anyMatch(i -> i.doesPermissibleHavePermissionForRecipe(permissible, recipe));
+    /* Note to anyone working with this method: A new recipe is registered for each color, so the namespacedKey check
+    on the last line is enough for checking colored crafting permission.
+     */
+    public <T extends Recipe & Keyed> boolean doesPermissibleHavePermissionForRecipe(Permissible permissible, T recipe) {
+
+        ElevatorRecipe elevatorRecipe = this.loadedRecipes.getOrDefault(recipe.getKey(), null);
+        if(elevatorRecipe == null)
+            return false;
+
+        IElevatorRecipeGroup recipeGroup = elevatorRecipe.getRecipeGroup();
+        if (!recipeGroup.supportsMultiColorMaterials())
+            return permissible.hasPermission(recipeGroup.getCraftPermission());
+        if (permissible.hasPermission(recipeGroup.getCraftPermission() + ".*"))
+            return true;
+
+        return permissible.hasPermission(elevatorRecipe.getPermission());
     }
 
 

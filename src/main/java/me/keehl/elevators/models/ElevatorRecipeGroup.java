@@ -1,18 +1,17 @@
 package me.keehl.elevators.models;
 
 import me.keehl.elevators.Elevators;
+import me.keehl.elevators.api.models.ElevatorRecipe;
 import me.keehl.elevators.api.models.IElevatorRecipeGroup;
 import me.keehl.elevators.api.models.IElevatorType;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
 import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigRecipe;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.permissions.Permissible;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ElevatorRecipeGroup extends ConfigRecipe implements IElevatorRecipeGroup {
 
@@ -22,27 +21,24 @@ public class ElevatorRecipeGroup extends ConfigRecipe implements IElevatorRecipe
 
     private transient final List<ElevatorRecipe> recipeList = new ArrayList<>();
 
+    private final transient List<NamespacedKey> namespacedKeys = new ArrayList<>();
+
     @Override()
     public void setKey(String key) {
         this.recipeKey = key != null ? key.toUpperCase() : null;
     }
 
+    @Override
+    public void setNode(ConfigNode<?> node) {
+        if(!(node.getParent().getParent().getValue() instanceof IElevatorType parentElevatorType))
+            return;
+        this.elevatorType = parentElevatorType;
+    }
+
     public void load(IElevatorType elevatorType) {
         this.elevatorType = elevatorType;
 
-        this.refreshRecipes();
-    }
-
-    public void refreshRecipes() {
-
-        this.recipeList.clear();
-
-        if (this.supportMultiColorMaterials) {
-            for (DyeColor color : DyeColor.values())
-                this.addRecipe(this.craftPermission + "." + color.toString().toLowerCase(), color);
-        } else
-            this.addRecipe(this.craftPermission, this.defaultOutputColor);
-
+        //this.refreshRecipes();
     }
 
     public String getRecipeKey() {
@@ -57,23 +53,23 @@ public class ElevatorRecipeGroup extends ConfigRecipe implements IElevatorRecipe
         return this.supportMultiColorMaterials;
     }
 
-    /* Note to anyone working with this method: A new recipe is registered for each color, so the namespacedKey check
-    on the last line is enough for checking colored crafting permission.
-     */
-    public <T extends Recipe & Keyed> boolean doesPermissibleHavePermissionForRecipe(Permissible permissible, T recipe) {
-        if (!this.supportMultiColorMaterials)
-            return permissible.hasPermission(this.craftPermission);
-        if (permissible.hasPermission(this.craftPermission + ".*"))
-            return true;
-
-        return this.recipeList.stream().filter(i -> recipe.getKey().equals(i.getNamespacedKey())).anyMatch(i -> permissible.hasPermission(i.getPermission()));
-    }
-
     public List<NamespacedKey> getNameSpacedKeys() {
-        return this.recipeList.stream().map(ElevatorRecipe::getNamespacedKey).collect(Collectors.toList());
+        return this.namespacedKeys;
     }
 
-    private void addRecipe(String permission, DyeColor dyeColor) {
+    @Override
+    public void createElevatorRecipes(Map<NamespacedKey, ElevatorRecipe> newRecipes) {
+        this.namespacedKeys.clear();
+        if (this.supportMultiColorMaterials) {
+            for (DyeColor color : DyeColor.values()) {
+                this.createElevatorRecipes(this.craftPermission + "." + color.toString().toLowerCase(), color, newRecipes);
+            }
+        } else {
+            this.createElevatorRecipes(this.craftPermission, this.defaultOutputColor, newRecipes);
+        }
+    }
+
+    private void createElevatorRecipes(String permission, DyeColor dyeColor, Map<NamespacedKey, ElevatorRecipe> recipes) {
 
         NamespacedKey namespacedKey = Elevators.getDataContainerService().createKey(dyeColor.toString() + "_" + this.elevatorType.getTypeKey() + "_" + this.recipeKey + "_ELEVATOR");
 
@@ -83,6 +79,7 @@ public class ElevatorRecipeGroup extends ConfigRecipe implements IElevatorRecipe
         elevatorItemStack.setAmount(this.amount);
 
         ShapedRecipe shapedRecipe = new ShapedRecipe(namespacedKey, elevatorItemStack);
+        shapedRecipe.setGroup(this.getRecipeKey());
 
         String[] shape = {"", "", ""};
         List<Runnable> setIngredientRunnables = new ArrayList<>();
@@ -123,33 +120,8 @@ public class ElevatorRecipeGroup extends ConfigRecipe implements IElevatorRecipe
         shapedRecipe.shape(shape);
         setIngredientRunnables.forEach(Runnable::run);
 
-        this.recipeList.add(new ElevatorRecipe(permission, namespacedKey, shapedRecipe));
-        Bukkit.addRecipe(shapedRecipe);
-    }
-
-    private static class ElevatorRecipe {
-
-        private final String permission;
-        private final NamespacedKey namespacedKey;
-        private final ShapedRecipe recipe;
-
-        public ElevatorRecipe(String permission, NamespacedKey namespacedKey, ShapedRecipe recipe) {
-            this.permission = permission;
-            this.namespacedKey = namespacedKey;
-            this.recipe = recipe;
-        }
-
-        public String getPermission() {
-            return this.permission;
-        }
-
-        public NamespacedKey getNamespacedKey() {
-            return this.namespacedKey;
-        }
-
-        public ShapedRecipe getRecipe() {
-            return this.recipe;
-        }
+        recipes.put(namespacedKey, new ElevatorRecipe(this, permission, namespacedKey, shapedRecipe));
+        this.namespacedKeys.add(namespacedKey);
     }
 
 

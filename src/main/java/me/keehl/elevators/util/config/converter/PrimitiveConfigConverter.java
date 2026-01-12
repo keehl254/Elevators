@@ -1,13 +1,14 @@
 package me.keehl.elevators.util.config.converter;
 
+import me.keehl.elevators.api.util.config.converter.IFieldData;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
-import me.keehl.elevators.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
 
 public class PrimitiveConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, IFieldData fieldData) {
         switch(fieldData.getFieldClass().getSimpleName().toLowerCase()) {
             case "short":
                 return ConfigConverter.createNodeWithData(parentNode, key, (object instanceof Short) ? object : Integer.valueOf((int) object).shortValue(), fieldData.getField());

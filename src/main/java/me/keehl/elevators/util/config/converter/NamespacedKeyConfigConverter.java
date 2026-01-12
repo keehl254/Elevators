@@ -1,8 +1,9 @@
 package me.keehl.elevators.util.config.converter;
 
 import me.keehl.elevators.api.ElevatorsAPI;
+import me.keehl.elevators.api.util.config.converter.IFieldData;
 import me.keehl.elevators.util.config.ConfigConverter;
-import me.keehl.elevators.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
 import org.bukkit.NamespacedKey;
 
 import java.util.logging.Level;
@@ -15,7 +16,7 @@ public class NamespacedKeyConfigConverter extends ConfigConverter {
 
 
     @Override
-    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, IFieldData fieldData) throws Exception {
 
         if(!(object instanceof String)) {
             ElevatorsAPI.log(Level.WARNING, "Value at path \"" + parentNode.getPath() + "\" must be a string value!");

@@ -135,6 +135,29 @@ public class VersionHelper {
         }
     }
 
+    public static void removeRecipe(NamespacedKey recipeKey) {
+
+        if(doesVersionSupportRemoveRecipe()) {
+            try {
+                Method method = Bukkit.getServer().getClass().getMethod("removeRecipe", NamespacedKey.class);
+                method.setAccessible(true);
+                method.invoke(Bukkit.getServer(), recipeKey);
+                return;
+            } catch (Exception ignore) {
+            }
+        }
+
+        // Backup or legacy support. Whatever you want to call it.
+        Iterator<Recipe> recipeIterator = Bukkit.getServer().recipeIterator();
+        while(recipeIterator.hasNext()) {
+            Recipe nextRecipe = recipeIterator.next();
+            if(!(nextRecipe instanceof Keyed keyedRecipe))
+                continue;
+            if(keyedRecipe.getKey().equals(recipeKey))
+                recipeIterator.remove();
+        }
+    }
+
     public static void closeShulkerBox(ShulkerBox box) {
         if (!doesVersionSupportOpenCloseAPI())
             return;

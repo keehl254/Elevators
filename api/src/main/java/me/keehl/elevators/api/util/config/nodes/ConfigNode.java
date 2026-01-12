@@ -1,6 +1,6 @@
-package me.keehl.elevators.util.config.nodes;
+package me.keehl.elevators.api.util.config.nodes;
 
-import me.keehl.elevators.util.config.ConfigConverter;
+import me.keehl.elevators.api.util.config.converter.IConfigConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,8 @@ public interface ConfigNode<T> {
 
     T getValue();
 
+    ConfigNode<?> getParent();
+
     ArrayList<ConfigNode<?>> getChildren();
 
     void addComment(String comment);
@@ -19,11 +21,11 @@ public interface ConfigNode<T> {
 
     void clearComments();
 
-    ConfigConverter getConfigConverter();
+    IConfigConverter getConfigConverter();
 
     String getPath();
 
-    ConfigRootNode<?> getRoot();
+    IConfigRootNode<?> getRoot();
 
     void addChildNode(ConfigNode<?> child);
 

@@ -3,7 +3,6 @@ package me.keehl.elevators.helpers;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.IElevatorEventData;
-import me.keehl.elevators.api.models.IElevatorRecipeGroup;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.util.ExecutionMode;
 import me.keehl.elevators.api.util.InternalElevatorSettingType;
@@ -12,7 +11,6 @@ import org.bukkit.Keyed;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Recipe;
 
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -23,12 +21,7 @@ public class ElevatorPermHelper {
         if (!(boolean) Elevators.getSettingService().getElevatorSettingValue(elevatorType, InternalElevatorSettingType.CHECK_PERMS))
             return true;
 
-        Optional<IElevatorRecipeGroup> optRecipeGroup = elevatorType.getRecipeGroups().stream().filter(i -> i.getNameSpacedKeys().contains(recipe.getKey())).findAny();
-        if (optRecipeGroup.isEmpty())
-            return false;
-
-        IElevatorRecipeGroup recipeGroup = optRecipeGroup.get();
-        return recipeGroup.doesPermissibleHavePermissionForRecipe(player, recipe);
+        return Elevators.getRecipeService().doesPermissibleHavePermissionForRecipe(player, recipe);
     }
 
     public static boolean canDyeElevatorType(IElevatorType elevatorType, Player player, DyeColor color) {

@@ -1,5 +1,7 @@
 package me.keehl.elevators.util.config.nodes;
 
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.IConfigRootNode;
 import me.keehl.elevators.util.config.ConfigConverter;
 
 import java.util.ArrayList;
@@ -28,6 +30,11 @@ public class DirectConfigNode<T> implements ConfigNode<T> {
     @Override
     public T getValue() {
         return this.value;
+    }
+
+    @Override
+    public ConfigNode<?> getParent() {
+        return this.parentNode;
     }
 
     @Override
@@ -64,7 +71,7 @@ public class DirectConfigNode<T> implements ConfigNode<T> {
     }
 
     @Override
-    public ConfigRootNode<?> getRoot() {
+    public IConfigRootNode<?> getRoot() {
         return this.parentNode.getRoot();
     }
 

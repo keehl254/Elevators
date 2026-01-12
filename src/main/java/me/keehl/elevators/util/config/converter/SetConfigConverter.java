@@ -1,8 +1,9 @@
 package me.keehl.elevators.util.config.converter;
 
+import me.keehl.elevators.api.util.config.converter.IFieldData;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
-import me.keehl.elevators.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
@@ -10,9 +11,9 @@ import java.util.*;
 public class SetConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, IFieldData fieldData) throws Exception {
 
-        FieldData childData = fieldData.getGenericData()[0];
+        IFieldData childData = fieldData.getGenericData()[0];
         ConfigConverter converter = childData != null ? getConverter(childData.getFieldClass()) : null;
 
         List<Object> values = new ArrayList<>();
@@ -24,8 +25,9 @@ public class SetConfigConverter extends ConfigConverter {
                 ConfigNode<?> childNode = converter.deserializeNodeWithFieldAndObject(parentNode, obj.toString(), obj, childData);
                 values.add(childNode.getValue());
                 childrenNodes.add(childNode);
-            }else
+            }else {
                 childrenNodes.add(ConfigConverter.createNodeWithData(parentNode, obj.toString(), obj, null));
+            }
         }
         ConfigNode<?> myNode = ConfigConverter.createNodeWithData(parentNode, key, new HashSet<>(values), fieldData.getField());
         myNode.getChildren().addAll(childrenNodes);

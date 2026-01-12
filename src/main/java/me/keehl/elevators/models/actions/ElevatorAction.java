@@ -6,7 +6,6 @@ import me.keehl.elevators.api.models.*;
 import me.keehl.elevators.api.services.*;
 import me.keehl.elevators.api.services.interaction.ISimpleDisplay;
 import me.keehl.elevators.helpers.ItemStackHelper;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -42,35 +41,6 @@ public abstract class ElevatorAction implements IElevatorAction {
 
     private ItemStack icon;
     private boolean initialized = false;
-
-    static IElevatorVersionService getVersionService() {
-        return Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorVersionService.class)).orElseThrow();
-    }
-
-    static IElevatorSettingService getSettingService() {
-        return Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorSettingService.class)).orElseThrow();
-    }
-
-    static IElevatorObstructionService getObstructionService() {
-        return Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorObstructionService.class)).orElseThrow();
-    }
-
-    static IElevatorHologramService getHologramService() {
-        return Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorHologramService.class)).orElseThrow();
-    }
-
-    static IElevatorHookService getHookService() {
-        return Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorHookService.class)).orElseThrow();
-    }
-
-    static IElevatorConfigService getConfigService() {
-        return Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorConfigService.class)).orElseThrow();
-    }
-
-    static IElevatorDataContainerService getDataContainerService() {
-        return Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorDataContainerService.class)).orElseThrow();
-    }
-
 
     protected ElevatorAction(JavaPlugin plugin, IElevatorType elevatorType, String key, IElevatorActionVariable<?>... variables) {
         this.plugin = plugin;

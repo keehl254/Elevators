@@ -53,12 +53,8 @@ public class ElevatorTypeService extends ElevatorService implements IElevatorTyp
             }
 
             if (!elevatorTypes.containsKey("DEFAULT")) {
-                ElevatorsAPI.log("Adding default");
                 ElevatorType type = new ElevatorType();
-                ElevatorsAPI.log("Adding new type");
                 type.setKey("DEFAULT");
-
-                ElevatorsAPI.log("Set key to " + type.getTypeKey());
                 elevatorTypes.put(type.getTypeKey(), type);
 
                 ElevatorsAPI.log("No DEFAULT Elevator Type found. Registering new.");

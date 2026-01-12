@@ -1,9 +1,10 @@
 package me.keehl.elevators.util.config.converter;
 
 import me.keehl.elevators.api.ElevatorsAPI;
+import me.keehl.elevators.api.util.config.converter.IFieldData;
 import me.keehl.elevators.util.config.ConfigConverter;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
-import me.keehl.elevators.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import java.util.logging.Level;
 public class EnumConfigConverter extends ConfigConverter {
 
     @Override
-    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) {
+    public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, IFieldData fieldData) {
 
         Class<?> fieldType = fieldData.getFieldClass();
         if(object instanceof String) {

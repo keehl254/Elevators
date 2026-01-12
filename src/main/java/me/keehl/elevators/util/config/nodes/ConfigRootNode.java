@@ -1,6 +1,8 @@
 package me.keehl.elevators.util.config.nodes;
 
 import me.keehl.elevators.api.ElevatorsAPI;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.IConfigRootNode;
 import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.api.util.config.Config;
 import me.keehl.elevators.util.config.ConfigConverter;
@@ -8,7 +10,7 @@ import me.keehl.elevators.util.config.ConfigConverter;
 import java.util.*;
 import java.util.logging.Level;
 
-public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
+public class ConfigRootNode<T extends Config> implements IConfigRootNode<T> {
 
     private final Map<String, List<String>> comments = new HashMap<>();
 
@@ -60,6 +62,11 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
     @Override
     public T getValue() {
         return this.config;
+    }
+
+    @Override
+    public ConfigNode<?> getParent() {
+        return null;
     }
 
     public T getConfig() {
@@ -138,7 +145,7 @@ public class ConfigRootNode<T extends Config> implements ConfigNode<T> {
     }
 
     @Override
-    public ConfigRootNode<T> getRoot() {
+    public IConfigRootNode<T> getRoot() {
         return this;
     }
 

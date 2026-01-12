@@ -21,6 +21,7 @@ public class AdminSaveElevatorRecipeMenu {
             }
 
             recipeGroup.setKey(result.toUpperCase());
+            recipeGroup.load(elevatorType);
             elevatorType.getRecipeMap().put(result.toUpperCase(), recipeGroup);
             onReturn.run();
             Elevators.getRecipeService().refreshRecipes();
@@ -39,6 +40,7 @@ public class AdminSaveElevatorRecipeMenu {
         }
         Runnable onReturn = () -> AdminEditRecipesMenu.openAdminEditRecipesMenu(player, elevatorType);
         if (recipeGroup.getRecipeKey() != null) {
+            recipeGroup.load(elevatorType);
             elevatorType.getRecipeMap().put(recipeGroup.getRecipeKey(), recipeGroup);
             onReturn.run();
             Elevators.getRecipeService().refreshRecipes();

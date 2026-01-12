@@ -5,12 +5,10 @@ import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.IElevatorSetting;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.models.ILocaleComponent;
-import me.keehl.elevators.api.services.IElevatorDataContainerService;
 import me.keehl.elevators.api.util.persistantDataTypes.ElevatorsDataType;
 import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigSettings;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -47,10 +45,6 @@ public abstract class ElevatorSetting<T> implements IElevatorSetting<T> {
             this.comments.add("Setting provided by the plugin: " + plugin.getName());
     }
 
-    private Optional<IElevatorDataContainerService> getContainerService() {
-        return Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorDataContainerService.class));
-    }
-
     public ElevatorSetting(JavaPlugin plugin, @Subst("test_key") @Pattern("[a-z0-9/._-]+") String settingName, String settingDisplayName, String description, Material icon) {
         this(plugin, settingName, ItemStackHelper.createItem(settingDisplayName, icon, 1, MessageHelper.formatLore(description, ChatColor.GRAY)));
     }
@@ -65,9 +59,7 @@ public abstract class ElevatorSetting<T> implements IElevatorSetting<T> {
     }
 
     protected IElevatorSetting<T> setupDataStore(String settingKey, PersistentDataType<?, T> dataType) {
-
-        IElevatorDataContainerService service = Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorDataContainerService.class)).orElseThrow();
-        this.containerKey = service.getKeyFromKey("per-ele-" + settingKey, dataType);
+        this.containerKey = Elevators.getDataContainerService().getKeyFromKey("per-ele-" + settingKey, dataType);
 
         return this;
     }
@@ -127,10 +119,8 @@ public abstract class ElevatorSetting<T> implements IElevatorSetting<T> {
 
     public final T getIndividualValue(IElevator elevator) {
 
-        IElevatorDataContainerService service = Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorDataContainerService.class)).orElseThrow();
-
         if (!this.isSettingGlobalOnly(elevator) && this.containerKey != null) {
-            T value = service.getElevatorValue(elevator.getShulkerBox(), this.containerKey, this.getGlobalValue(elevator.getElevatorType(false)));
+            T value = Elevators.getDataContainerService().getElevatorValue(elevator.getShulkerBox(), this.containerKey, this.getGlobalValue(elevator.getElevatorType(false)));
             if (value != null)
                 return value;
         }
@@ -148,8 +138,7 @@ public abstract class ElevatorSetting<T> implements IElevatorSetting<T> {
             value = null;
 
 
-        IElevatorDataContainerService service = Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorDataContainerService.class)).orElseThrow();
-        service.setElevatorValue(elevator.getShulkerBox(), this.containerKey, value);
+        Elevators.getDataContainerService().setElevatorValue(elevator.getShulkerBox(), this.containerKey, value);
         elevator.getShulkerBox().update();
     }
 

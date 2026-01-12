@@ -3,10 +3,12 @@ package me.keehl.elevators.util.config;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.util.config.Config;
+import me.keehl.elevators.api.util.config.converter.IConfigConverter;
+import me.keehl.elevators.api.util.config.converter.IFieldData;
 import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.util.config.converter.*;
 import me.keehl.elevators.util.config.nodes.ClassicConfigNode;
-import me.keehl.elevators.util.config.nodes.ConfigNode;
+import me.keehl.elevators.api.util.config.nodes.ConfigNode;
 import me.keehl.elevators.util.config.nodes.ConfigRootNode;
 import me.keehl.elevators.util.config.nodes.DirectConfigNode;
 import org.yaml.snakeyaml.DumperOptions;
@@ -32,7 +34,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public abstract class ConfigConverter {
+public abstract class ConfigConverter implements IConfigConverter {
 
     private static final LinkedHashSet<ConfigConverter> converters = new LinkedHashSet<>();
     private static final Map<Class<?>, Class<?>> remappedClasses = new HashMap<>();
@@ -78,7 +80,7 @@ public abstract class ConfigConverter {
     }
 
     public static Class<?> getRemappedClass(Class<?> clazz1) {
-        if(!remappedClasses.containsKey(clazz1))
+        if (!remappedClasses.containsKey(clazz1))
             return clazz1;
 
         return remappedClasses.get(clazz1);
@@ -220,23 +222,13 @@ public abstract class ConfigConverter {
 
     // public abstract Object toConfig(Class<?> type, Object obj, ParameterizedType parameterizedType) throws Exception;
 
-    public abstract ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, FieldData fieldData) throws Exception;
-
-    public abstract Object serializeNodeToObject(ConfigNode<?> node) throws Exception;
-
-    public abstract Object serializeValueToYamlObject(Object value) throws Exception;
-
-    public abstract boolean supports(Class<?> type);
-
-    public abstract String getFieldDisplay(ConfigNode<?> node);
-
     public static ConfigNode<?> createNodeWithData(ConfigNode<?> parentNode, String key, Object object, @Nullable Field field) {
         if (field == null)
             return new DirectConfigNode<>(parentNode, key, object);
         return new ClassicConfigNode<>(parentNode, field, object);
     }
 
-    public static class FieldData {
+    public static class FieldData implements IFieldData {
 
         private final Field field;
         private final Class<?> fieldClass;
@@ -276,28 +268,28 @@ public abstract class ConfigConverter {
             }
         }
 
-        public FieldData[] getGenericData() throws ClassNotFoundException {
+        public IFieldData[] getGenericData() throws ClassNotFoundException {
 
             // Generic array creation is not allowed in java, so no need to worry too much here
-            if(this.fieldClass.isArray()) {
+            if (this.fieldClass.isArray()) {
                 Class<?> component = this.fieldClass.getComponentType();
-                return new FieldData[] { new FieldData(null, component, component) };
+                return new IFieldData[]{new FieldData(null, component, component)};
             }
             ParameterizedType genericType;
-            if(this.field != null) {
+            if (this.field != null) {
 
                 // We know for sure it does not have a generic if it's not a ParameterizedType
-                if(!(this.field.getGenericType() instanceof ParameterizedType))
+                if (!(this.field.getGenericType() instanceof ParameterizedType))
                     return null;
 
                 genericType = (ParameterizedType) this.field.getGenericType();
-            } else if(this.fieldType instanceof ParameterizedType) {
+            } else if (this.fieldType instanceof ParameterizedType) {
                 genericType = (ParameterizedType) this.fieldType;
-            }else
+            } else
                 return null;
 
             List<FieldData> fieldDataList = new ArrayList<>();
-            for(Type type : genericType.getActualTypeArguments()) {
+            for (Type type : genericType.getActualTypeArguments()) {
                 String typeName = getRawTypeName(type);
                 Class<?> clazz = this.getClass().getClassLoader().loadClass(typeName);
                 fieldDataList.add(new FieldData(null, clazz, type));

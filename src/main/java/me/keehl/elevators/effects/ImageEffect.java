@@ -3,7 +3,6 @@ package me.keehl.elevators.effects;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.hooks.IWrappedHologram;
-import me.keehl.elevators.api.services.IElevatorHologramService;
 import me.keehl.elevators.helpers.ColorHelper;
 import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.helpers.ResourceHelper;
@@ -20,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.logging.Level;
 
 public class ImageEffect extends ElevatorEffect {
@@ -39,10 +37,8 @@ public class ImageEffect extends ElevatorEffect {
         scale = Math.max(0, Math.min(100, scale));
         int backgroundRGB = ColorHelper.getRGBFromHex(hexBackgroundColor);
 
-        IElevatorHologramService service = Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorHologramService.class)).orElseThrow();
-
         this.duration = duration;
-        this.useHolo = useHolo && service.canUseHolograms();
+        this.useHolo = useHolo && Elevators.getHologramService().canUseHolograms();
 
         int height = 0;
         int[][] rgbPattern = new int[][]{};
@@ -95,15 +91,14 @@ public class ImageEffect extends ElevatorEffect {
                     lines[y] = (lines[y] != null ? lines[y] : "") + (rgbPattern[y] == 0 ? ChatColor.BOLD + " " + ChatColor.RESET + " " : ColorHelper.getChatStringFromColor(rgbPattern[y]) + "█");
             }
 
-            IElevatorHologramService service = Optional.ofNullable(Bukkit.getServicesManager().load(IElevatorHologramService.class)).orElseThrow();
-            IWrappedHologram hologram = service.getElevatorHologram(elevator);
+            IWrappedHologram hologram = Elevators.getHologramService().getElevatorHologram(elevator);
             if(hologram == null)
                 return;
 
             hologram.setLines(Arrays.asList(lines));
             hologram.teleportTo(elevator.getLocation().clone().add(0.5, (hologram.getHeight() + 1.5) / 2, 0.5));
 
-            Elevators.getFoliaLib().getScheduler().runAtLocationLater(elevator.getLocation(), () -> service.updateElevatorHologram(elevator), (long) (this.duration * 20));
+            Elevators.getFoliaLib().getScheduler().runAtLocationLater(elevator.getLocation(), () -> Elevators.getHologramService().updateElevatorHologram(elevator), (long) (this.duration * 20));
         } catch (Exception e) {
             ElevatorsAPI.log(Level.WARNING,"Effect \"" + this.getEffectKey() + "\" is too wide to use holographic displays. Max width is 150");
         }

@@ -3,11 +3,9 @@ package me.keehl.elevators.listeners;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.IElevatorType;
-import me.keehl.elevators.api.services.IElevatorListenerService;
 import me.keehl.elevators.api.util.InternalElevatorSettingType;
 import me.keehl.elevators.helpers.ElevatorHelper;
 import me.keehl.elevators.helpers.ItemStackHelper;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -22,12 +20,7 @@ public class AutoCrafterListener {
         try {
             Class<? extends Event> crafterCraftEventClass = (Class<? extends Event>) Class.forName("org.bukkit.event.block.CrafterCraftEvent");
 
-            IElevatorListenerService listenerService = Bukkit.getServicesManager().load(IElevatorListenerService.class);
-            if (listenerService == null) {
-                ElevatorsAPI.log(Level.WARNING, "Elevator Services not been setup yet. AutoCrafter event listener may not function.");
-                return;
-            }
-            listenerService.registerEventExecutor(crafterCraftEventClass, EventPriority.HIGHEST, (event) -> {
+            Elevators.getListenerService().registerEventExecutor(crafterCraftEventClass, EventPriority.HIGHEST, (event) -> {
 
                 if(!(event instanceof Cancellable cancellable))
                     return;

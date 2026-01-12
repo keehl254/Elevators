@@ -2,10 +2,6 @@ package me.keehl.elevators.models;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.models.*;
-import me.keehl.elevators.api.services.IElevatorActionService;
-import me.keehl.elevators.api.services.IElevatorHologramService;
-import me.keehl.elevators.api.services.IElevatorRecipeService;
-import me.keehl.elevators.api.services.IElevatorSettingService;
 import me.keehl.elevators.models.settings.ElevatorSetting;
 import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigElevatorType;
 import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigSettings;
@@ -65,11 +61,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setDisplayName(ILocaleComponent displayName) {
         this.settings.displayName = displayName;
 
-        IElevatorRecipeService recipeService = Bukkit.getServicesManager().load(IElevatorRecipeService.class);
-        if (recipeService != null) {
-            recipeService.refreshRecipes();
-        }
-
+        Elevators.getRecipeService().refreshRecipes();
         Elevators.getInstance().saveConfig();
     }
 
@@ -192,8 +184,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
 
         Elevators.getInstance().saveConfig();
 
-        IElevatorHologramService hologramService = Bukkit.getServicesManager().load(IElevatorHologramService.class);
-        if (hologramService == null || !hologramService.canUseHolograms())
+        if (!Elevators.getHologramService().canUseHolograms())
             return;
 
         this.updateAllHolograms(checkCreate);
@@ -201,12 +192,8 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
 
     public void updateAllHolograms(boolean chunkCheck) {
 
-        IElevatorHologramService hologramService = Bukkit.getServicesManager().load(IElevatorHologramService.class);
-        if (hologramService == null)
-            return;
-
         // Run this later so that we don't hold up admin or interact menus.
-        Elevators.getFoliaLib().getScheduler().runNextTick(task -> hologramService.updateHologramsOfElevatorType(this));
+        Elevators.getFoliaLib().getScheduler().runNextTick(task -> Elevators.getHologramService().updateHologramsOfElevatorType(this));
 
         if (!chunkCheck)
             return;
@@ -215,7 +202,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
         Elevators.getFoliaLib().getScheduler().runNextTick(task -> {
             for (World world : Bukkit.getWorlds()) {
                 for (Chunk chunk : world.getLoadedChunks()) {
-                    hologramService.updateHologramsInChunk(chunk);
+                    Elevators.getHologramService().updateHologramsInChunk(chunk);
                 }
             }
         });
@@ -227,11 +214,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setLore(List<ILocaleComponent> loreLines) {
         this.settings.loreLines = loreLines;
 
-        IElevatorRecipeService recipeService = Bukkit.getServicesManager().load(IElevatorRecipeService.class);
-        if (recipeService != null) {
-            recipeService.refreshRecipes();
-        }
-
+        Elevators.getRecipeService().refreshRecipes();
         Elevators.getInstance().saveConfig();
     }
 
@@ -242,28 +225,11 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
         this.actions.up = this.getActionsUp().stream().map(IElevatorAction::serialize).collect(Collectors.toList());
         this.actions.down = this.getActionsDown().stream().map(IElevatorAction::serialize).collect(Collectors.toList());
 
-        IElevatorSettingService settingService = Bukkit.getServicesManager().load(IElevatorSettingService.class);
-        if(settingService == null)
-            return;
-
-        for (IElevatorSetting<?> apiSetting : settingService.getElevatorSettings()) {
+        for (IElevatorSetting<?> apiSetting : Elevators.getSettingService().getElevatorSettings()) {
             if(!(apiSetting instanceof ElevatorSetting<?> setting))
                 return;
             setting.applyToElevatorSettings(this, this.settings);
         }
-    }
-
-    @Override()
-    public void onLoad() {
-        this.getActionsUp().clear();
-        this.getActionsDown().clear();
-
-        IElevatorActionService actionService = Bukkit.getServicesManager().load(IElevatorActionService.class);
-        if(actionService == null)
-            return;
-
-        this.getActionsUp().addAll(this.actions.up.stream().map(i -> actionService.createActionFromString(this, i)).filter(Objects::nonNull).toList());
-        this.getActionsDown().addAll(this.actions.down.stream().map(i -> actionService.createActionFromString(this, i)).filter(Objects::nonNull).toList());
 
         // Enforce uppercase recipe keys.
 
@@ -275,6 +241,15 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
         }
 
         this.recipes = newRecipes;
+    }
+
+    @Override()
+    public void onLoad() {
+        this.getActionsUp().clear();
+        this.getActionsDown().clear();
+
+        this.getActionsUp().addAll(this.actions.up.stream().map(i -> Elevators.getActionService().createActionFromString(this, i)).filter(Objects::nonNull).toList());
+        this.getActionsDown().addAll(this.actions.down.stream().map(i -> Elevators.getActionService().createActionFromString(this, i)).filter(Objects::nonNull).toList());
     }
 
     @Override()
