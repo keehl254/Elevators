@@ -8,7 +8,6 @@ import me.keehl.elevators.commands.ElevatorCommand;
 import me.keehl.elevators.events.ElevatorMenuOpenEvent;
 import me.keehl.elevators.helpers.VersionHelper;
 import me.keehl.elevators.hooks.*;
-import me.keehl.elevators.listeners.ElevatorMenuOpenListener;
 import me.keehl.elevators.settings.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,6 +23,7 @@ public class ElevatorsStartupService {
     private static void buildHooksEarly(FoliaLib foliaLibs) {
         ElevatorsAPI.pushAndHoldLog();
         Elevators.getHooksService().registerHook("Protect", ProtectHook.class, false);
+        Elevators.getHooksService().registerHook("WorldGuard", WorldGuardHook.class, false);
 
         ElevatorsAPI.popLog((logData) -> ElevatorsAPI.log("Early Hooks built. " + ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
@@ -49,8 +49,6 @@ public class ElevatorsStartupService {
         Elevators.getHooksService().registerHook("Nexo", NexoHook.class);
 
         ElevatorsAPI.popLog((logData) -> ElevatorsAPI.log("Hooks built. "+ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
-
-        Elevators.getListenerService().registerEventExecutor(ElevatorMenuOpenEvent.class, EventPriority.MONITOR, ElevatorMenuOpenListener::onInteractMenuOpen);
 
         // I don't care to risk the class failing to load due to a classnotfound error from the event.
         if(VersionHelper.doesVersionSupportAutoCrafters()) {

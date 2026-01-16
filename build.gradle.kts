@@ -77,7 +77,7 @@ bukkit {
     softDepend = listOf(
         "PlaceholderAPI", "RedProtect", "Vault", "HolographicDisplays", "GriefPrevention", "GriefDefender", "CMI",
         "PlotSquared", "BentoBox", "DecentHolograms", "FancyHolograms", "ProtocolLib", "WorldGuard", "Protect",
-        "ItemsAdder", "Oraxen", "Nexo"
+        "ItemsAdder", "Oraxen"
     )
 
     commands {

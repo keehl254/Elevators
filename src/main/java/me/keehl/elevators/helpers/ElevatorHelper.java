@@ -7,6 +7,7 @@ import me.keehl.elevators.api.models.IElevatorAction;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.events.ElevatorMenuOpenEvent;
 import me.keehl.elevators.events.ElevatorUseEvent;
+import me.keehl.elevators.menus.interact.InteractMenu;
 import me.keehl.elevators.models.*;
 import me.keehl.elevators.api.util.InternalElevatorSettingType;
 import org.bukkit.Bukkit;
@@ -195,8 +196,8 @@ public class ElevatorHelper {
             boolean reset = players.isEmpty() || players.getFirst().getUniqueId().equals(player.getUniqueId());
             if(reset) {
                 ElevatorHelper.resetElevatorEditState(elevator);
-            } else
-                return;
+            }
+            return;
         }
 
         /* I would prefer to check if it's canceled here and then call the Gui helper... But the Gui Helper needs access to
@@ -208,6 +209,10 @@ public class ElevatorHelper {
          */
         ElevatorMenuOpenEvent menuOpenEvent = new ElevatorMenuOpenEvent(player, event, elevator);
         Bukkit.getPluginManager().callEvent(menuOpenEvent);
+        if(menuOpenEvent.isCancelled())
+            return;
+
+        InteractMenu.openInteractMenu(menuOpenEvent.getPlayer(), menuOpenEvent.getElevator());
     }
 
     public static void onElevatorPlace(IElevator elevator) {

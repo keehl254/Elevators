@@ -18,16 +18,14 @@ public class RedProtectHook extends ProtectionHook {
     //TODO: Code cleanup
     private final RedProtectAPI redProtect;
 
-    private final String flagName = "outsiders_use_elevators";
-    private final String nameFlagName = "edit_name_elevators";
-    private final String settingsFlagName = "edit_settings_elevators";
+    private final String useFlag = "elevators-allow-use";
+    private final String settingsFlagName = "elevators-allow-settings";
 
     public RedProtectHook() {
         super("RedProtect");
         this.redProtect = RedProtect.get().getAPI();
 
-        this.redProtect.addFlag(this.flagName, true, false);
-        this.redProtect.addFlag(this.nameFlagName, true, false);
+        this.redProtect.addFlag(this.useFlag, true, false);
         this.redProtect.addFlag(this.settingsFlagName, false, false);
     }
 
@@ -38,10 +36,10 @@ public class RedProtectHook extends ProtectionHook {
     @Override
     public boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage) {
         Region region = this.redProtect.getRegion(elevator.getShulkerBox().getLocation());
-        if(region == null || region.getFlagBool(this.flagName))
+        if(region == null || region.getFlagBool(this.useFlag))
             return true;
 
-        if(region.isLeader(player) || region.isAdmin(player) || region.isMember(player) || player.hasPermission("redprotect.flag.bypass." + this.flagName))
+        if(region.isLeader(player) || region.isAdmin(player) || region.isMember(player) || player.hasPermission("redprotect.flag.bypass." + this.useFlag))
             return true;
 
         if(sendMessage)
@@ -51,16 +49,7 @@ public class RedProtectHook extends ProtectionHook {
 
     @Override
     public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
-        Region region = this.redProtect.getRegion(elevator.getShulkerBox().getLocation());
-        if(region == null || region.getFlagBool(this.nameFlagName))
-            return true;
-
-        if(region.isLeader(player) || region.isAdmin(player) || region.isMember(player) || player.hasPermission("redprotect.flag.bypass." + this.nameFlagName))
-            return true;
-
-        if(sendMessage)
-            player.sendMessage(ChatColor.RED + "You can't interact with this here!");
-        return false;
+        return this.canEditSettings(player, elevator, sendMessage);
     }
 
     @Override
@@ -69,12 +58,8 @@ public class RedProtectHook extends ProtectionHook {
         if(region == null || region.getFlagBool(this.settingsFlagName))
             return true;
 
-        if(region.isLeader(player) || region.isAdmin(player) || player.hasPermission("redprotect.flag.bypass." + this.settingsFlagName))
-            return true;
-
-        if(sendMessage)
-            player.sendMessage(ChatColor.RED + "You can't interact with this here!");
-        return false;
+        //Regardless of sendMessage, RedProtect is going to send one anyway. Might as well let them do it.
+        return region.isLeader(player) || region.isAdmin(player) || player.hasPermission("redprotect.flag.bypass." + this.settingsFlagName);
     }
 
     @Override
@@ -86,9 +71,9 @@ public class RedProtectHook extends ProtectionHook {
 
         List<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatColor.GRAY + "Controls whether claim");
-        lore.add(ChatColor.GRAY + "guests are blocked from");
-        lore.add(ChatColor.GRAY + "using this Elevator.");
+        lore.add(ChatColor.GRAY + "Controls whether this");
+        lore.add(ChatColor.GRAY + "elevator respects the");
+        lore.add(ChatColor.GRAY + "elevator-use claim flag.");
         lore.add("");
         lore.add(ChatColor.GRAY + "Status: ");
         lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );

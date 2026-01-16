@@ -26,29 +26,26 @@ import java.util.List;
 public class WorldGuardHook extends ProtectionHook {
 
     private static StateFlag USE_FLAG;
-    private static StateFlag NAME_FLAG;
     private static StateFlag SETTINGS_FLAG;
 
     public WorldGuardHook() {
         super("WorldGuard");
-
-        USE_FLAG = registerFlag("elevators_allow_use");
-        NAME_FLAG = registerFlag("elevators_allow_rename");
-        SETTINGS_FLAG = registerFlag("elevators_allow_settings");
     }
 
     @Override
     public void onInit() {
+            USE_FLAG = registerFlag("elevators-allow-use", true);
+            SETTINGS_FLAG = registerFlag("elevators-allow-settings", false);
     }
 
-    private StateFlag registerFlag(String flagName) {
+    private StateFlag registerFlag(String flagName, boolean defaultValue) {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {
-            StateFlag flag = new StateFlag("elevators-allow-use", true);
+            StateFlag flag = new StateFlag(flagName, defaultValue);
             registry.register(flag);
             return flag;
         } catch (FlagConflictException e) {
-            return (StateFlag) registry.get("elevators-allow-use");
+            return (StateFlag) registry.get(flagName);
         }
     }
 
@@ -78,18 +75,7 @@ public class WorldGuardHook extends ProtectionHook {
 
     @Override
     public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
-        LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-
-        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionQuery query = container.createQuery();
-        Location location = BukkitAdapter.adapt(elevator.getLocation());
-        boolean allowed = query.testState(location, localPlayer, NAME_FLAG);
-
-        if(!allowed && sendMessage) {
-            String message = query.queryValue(location, localPlayer, Flags.DENY_MESSAGE);
-            this.formatAndSendDenyMessage("rename elevators", localPlayer, message);
-        }
-        return allowed;
+        return this.canEditSettings(player, elevator, sendMessage);
     }
 
     @Override
