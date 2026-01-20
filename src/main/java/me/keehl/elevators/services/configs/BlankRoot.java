@@ -1,6 +1,6 @@
 package me.keehl.elevators.services.configs;
 
-import me.keehl.elevators.util.config.Comments;
+import me.keehl.elevators.api.util.config.Comments;
 import me.keehl.elevators.api.util.config.Config;
 
 public class BlankRoot implements Config {

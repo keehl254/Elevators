@@ -1,7 +1,7 @@
 package me.keehl.elevators.services.configs.versions.configv5_2_0;
 
 import me.keehl.elevators.api.services.configs.versions.IConfigEffect;
-import me.keehl.elevators.util.config.Comments;
+import me.keehl.elevators.api.util.config.Comments;
 
 public class ConfigEffect implements IConfigEffect {
 

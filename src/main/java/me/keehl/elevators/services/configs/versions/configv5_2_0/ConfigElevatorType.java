@@ -4,7 +4,7 @@ import me.keehl.elevators.api.models.IElevatorRecipeGroup;
 import me.keehl.elevators.api.models.ILocaleComponent;
 import me.keehl.elevators.api.services.configs.versions.IConfigElevatorType;
 import me.keehl.elevators.models.ElevatorRecipeGroup;
-import me.keehl.elevators.util.config.Comments;
+import me.keehl.elevators.api.util.config.Comments;
 
 import java.util.*;
 

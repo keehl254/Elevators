@@ -24,6 +24,7 @@ import me.keehl.elevators.services.*;
 import com.tcoded.folialib.FoliaLib;
 import me.keehl.elevators.services.configs.versions.configv5_2_0.*;
 import me.keehl.elevators.util.config.ConfigConverter;
+import me.keehl.elevators.util.config.ExpandableConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -246,16 +247,16 @@ public class Elevators implements IElevators {
     }
 
     @Override
-    public IConfigHookData getElevatorProtectionHookConfig(IProtectionHook protectionHook) {
-        if (!Elevators.getConfigService().getRootConfig().getProtectionHooks().containsKey(protectionHook.getConfigKey()))
-            Elevators.getConfigService().getRootConfig().getProtectionHooks().put(protectionHook.getConfigKey(), new ConfigHookData());
-        return Elevators.getConfigService().getRootConfig().getProtectionHooks().get(protectionHook.getConfigKey());
-    }
+    public <T extends IConfigHookData> T getElevatorProtectionHookConfig(IProtectionHook protectionHook, T defaultConfigHook) {
+        if (Elevators.getConfigService().getRootConfig().getProtectionHooks().containsKey(protectionHook.getConfigKey())) {
+            IConfigHookData savedHookData = Elevators.getConfigService().getRootConfig().getProtectionHooks().get(protectionHook.getConfigKey());
+            if(savedHookData instanceof ExpandableConfig expandableConfig)
+                return expandableConfig.getSyncedConfig(defaultConfigHook);
+            return (T) savedHookData;
+        }
 
-    @Override
-    public boolean isElevatorProtectionHookCheckEnabled(IElevator elevator, IProtectionHook protectionHook) {
-        NamespacedKey containerKey = Elevators.getDataContainerService().getKeyFromKey("protection-" + protectionHook.getConfigKey(), IElevatorDataContainerService.booleanPersistentDataType);
-        return Elevators.getDataContainerService().getElevatorValue(elevator.getShulkerBox(), containerKey, getElevatorProtectionHookConfig(protectionHook).doesBlockNonMemberUseByDefault());
+        Elevators.getConfigService().getRootConfig().getProtectionHooks().put(protectionHook.getConfigKey(), defaultConfigHook);
+        return defaultConfigHook;
     }
 
     public static ElevatorActionService getActionService() {

@@ -6,7 +6,7 @@ import me.keehl.elevators.api.services.configs.versions.IConfigHookData;
 import me.keehl.elevators.api.services.configs.versions.IConfigLocale;
 import me.keehl.elevators.api.services.configs.versions.IConfigRoot;
 import me.keehl.elevators.api.util.ExecutionMode;
-import me.keehl.elevators.util.config.Comments;
+import me.keehl.elevators.api.util.config.Comments;
 
 import java.util.*;
 

@@ -1,7 +1,7 @@
 package me.keehl.elevators.services.configs.versions.configv4_0_2;
 
 import me.keehl.elevators.api.util.config.Config;
-import me.keehl.elevators.util.config.ConfigFieldName;
+import me.keehl.elevators.api.util.config.ConfigFieldName;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -61,8 +61,6 @@ public interface IElevators {
 
     void toggleElevatorProtectionHook(IElevator elevator, IProtectionHook protectionHook);
 
-    IConfigHookData getElevatorProtectionHookConfig(IProtectionHook protectionHook);
-
-    boolean isElevatorProtectionHookCheckEnabled(IElevator elevator, IProtectionHook protectionHook);
+    <T extends IConfigHookData> T getElevatorProtectionHookConfig(IProtectionHook protectionHook, T defaultConfigHook);
 
 }

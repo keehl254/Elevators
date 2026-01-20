@@ -14,6 +14,7 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.services.configs.versions.DefaultConfigHookData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,19 +24,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public class WorldGuardHook extends ProtectionHook {
+public class WorldGuardHook extends ProtectionHook<DefaultConfigHookData> {
 
     private static StateFlag USE_FLAG;
     private static StateFlag SETTINGS_FLAG;
 
     public WorldGuardHook() {
-        super("WorldGuard");
+        super("WorldGuard", new DefaultConfigHookData());
     }
 
     @Override
     public void onInit() {
-            USE_FLAG = registerFlag("elevators-allow-use", true);
-            SETTINGS_FLAG = registerFlag("elevators-allow-settings", false);
+            USE_FLAG = registerFlag("elevators-use", true);
+            SETTINGS_FLAG = registerFlag("elevators-settings", false);
     }
 
     private StateFlag registerFlag(String flagName, boolean defaultValue) {
@@ -50,7 +51,8 @@ public class WorldGuardHook extends ProtectionHook {
     }
 
     private void formatAndSendDenyMessage(String what, LocalPlayer localPlayer, String message) {
-        if (message == null || message.isEmpty()) return;
+        if (message == null || message.isEmpty())
+            return;
         message = WorldGuard.getInstance().getPlatform().getMatcher().replaceMacros(localPlayer, message);
         message = CommandUtils.replaceColorMacros(message);
         localPlayer.printRaw(message.replace("%what%", what));
@@ -101,8 +103,8 @@ public class WorldGuardHook extends ProtectionHook {
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatColor.GRAY + "Controls whether this");
-        lore.add(ChatColor.GRAY + "elevator will check");
-        lore.add(ChatColor.GRAY + "World Guard flags.");
+        lore.add(ChatColor.GRAY + "elevator respects the");
+        lore.add(ChatColor.GRAY + "elevator-use flag.");
         lore.add("");
         lore.add(ChatColor.GRAY + "Status: ");
         lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );

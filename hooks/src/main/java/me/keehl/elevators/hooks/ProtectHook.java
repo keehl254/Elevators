@@ -3,6 +3,7 @@ package me.keehl.elevators.hooks;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.services.configs.versions.DefaultConfigHookData;
 import net.kyori.adventure.key.KeyPattern;
 import net.thenextlvl.protect.area.Area;
 import net.thenextlvl.protect.area.AreaProvider;
@@ -20,10 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ProtectHook extends ProtectionHook {
+public class ProtectHook extends ProtectionHook<DefaultConfigHookData> {
 
     private final Flag<Boolean> useFlag;
-    private final Flag<Boolean> nameFlag;
     private final Flag<Boolean> settingsFlag;
 
     private final FlagRegistry flagRegistry;
@@ -31,15 +31,14 @@ public class ProtectHook extends ProtectionHook {
     private final ProtectionService protectionService;
 
     public ProtectHook() {
-        super("Protect");
+        super("Protect", new DefaultConfigHookData());
 
         this.flagRegistry = Bukkit.getServicesManager().load(FlagRegistry.class);
         this.areaProvider = Bukkit.getServicesManager().load(AreaProvider.class);
         this.protectionService = Bukkit.getServicesManager().load(ProtectionService.class);
 
-        this.useFlag = registerFlag("elevator_use");
-        this.nameFlag = registerFlag("elevator_rename");
-        this.settingsFlag = registerFlag("elevator_settings");
+        this.useFlag = registerFlag("elevator-use");
+        this.settingsFlag = registerFlag("elevator-settings");
     }
 
     @Override
@@ -61,24 +60,27 @@ public class ProtectHook extends ProtectionHook {
     @Override
     public boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage) {
         Area area = this.areaProvider.getArea(elevator.getLocation());
-        if (this.protectionService.canPerformAction(player, area, this.useFlag, null)) return true;
-        if (sendMessage) this.failed(player, "You are not allowed to do that here!");
+        if (this.protectionService.canPerformAction(player, area, this.useFlag, null))
+            return true;
+        if (sendMessage) {
+            this.failed(player, "You are not allowed to do that here!");
+        }
         return false;
     }
 
     @Override
     public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
-        Area area = this.areaProvider.getArea(elevator.getLocation());
-        if (this.protectionService.canPerformAction(player, area, this.nameFlag, null)) return true;
-        if (sendMessage) this.failed(player, "You are not allowed to do that here!");
-        return false;
+        return this.canEditSettings(player, elevator, sendMessage);
     }
 
     @Override
     public boolean canEditSettings(Player player, IElevator elevator, boolean sendMessage) {
         Area area = this.areaProvider.getArea(elevator.getLocation());
-        if (this.protectionService.canPerformAction(player, area, this.settingsFlag, null)) return true;
-        if (sendMessage) this.failed(player, "You are not allowed to do that here!");
+        if (this.protectionService.canPerformAction(player, area, this.settingsFlag, null))
+            return true;
+        if (sendMessage) {
+            this.failed(player, "You are not allowed to do that here!");
+        }
         return false;
     }
 
@@ -90,11 +92,11 @@ public class ProtectHook extends ProtectionHook {
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatColor.GRAY + "Controls whether this");
-        lore.add(ChatColor.GRAY + "elevator will check");
-        lore.add(ChatColor.GRAY + "Protect flags.");
+        lore.add(ChatColor.GRAY + "elevator respects the");
+        lore.add(ChatColor.GRAY + "elevator-use claim flag.");
         lore.add("");
         lore.add(ChatColor.GRAY + "Status: ");
-        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED"));
+        lore.add(flagEnabled ? (ChatColor.GREEN + "" + ChatColor.BOLD + "ENABLED") : (ChatColor.RED + "" + ChatColor.BOLD + "DISABLED") );
 
         return ItemStackHelper.createItem(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Protect", Material.SHIELD, 1, lore);
     }

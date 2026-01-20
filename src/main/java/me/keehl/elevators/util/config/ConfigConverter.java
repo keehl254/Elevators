@@ -280,13 +280,13 @@ public abstract class ConfigConverter implements IConfigConverter {
 
                 // We know for sure it does not have a generic if it's not a ParameterizedType
                 if (!(this.field.getGenericType() instanceof ParameterizedType))
-                    return null;
+                    return new IFieldData[]{new FieldData(null, Object.class, Object.class)};
 
                 genericType = (ParameterizedType) this.field.getGenericType();
             } else if (this.fieldType instanceof ParameterizedType) {
                 genericType = (ParameterizedType) this.fieldType;
             } else
-                return null;
+                return new IFieldData[]{new FieldData(null, Object.class, Object.class)};
 
             List<FieldData> fieldDataList = new ArrayList<>();
             for (Type type : genericType.getActualTypeArguments()) {

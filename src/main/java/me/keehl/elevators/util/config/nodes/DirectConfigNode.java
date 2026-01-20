@@ -12,7 +12,7 @@ public class DirectConfigNode<T> implements ConfigNode<T> {
     private final ConfigNode<?> parentNode;
 
     private final String key;
-    private final T value;
+    private T value;
 
     private final ArrayList<ConfigNode<?>> children = new ArrayList<>();
 
@@ -30,6 +30,11 @@ public class DirectConfigNode<T> implements ConfigNode<T> {
     @Override
     public T getValue() {
         return this.value;
+    }
+
+    @Override
+    public void setValue(T value) {
+        this.value = value;
     }
 
     @Override

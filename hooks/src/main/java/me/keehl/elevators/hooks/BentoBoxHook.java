@@ -2,6 +2,7 @@ package me.keehl.elevators.hooks;
 
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.services.configs.versions.DefaultConfigHookData;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,19 +20,17 @@ import java.util.List;
 import java.util.Locale;
 
 @SuppressWarnings("deprecation")
-public class BentoBoxHook extends ProtectionHook {
+public class BentoBoxHook extends ProtectionHook<DefaultConfigHookData> {
 
-    Flag useFlag, editNameFlag, editSettingsFlag;
+    Flag useFlag, editSettingsFlag;
 
     public BentoBoxHook() {
-        super("BentoBox");
+        super("BentoBox", new DefaultConfigHookData());
 
         this.useFlag = (new Flag.Builder("USE_ELEVATOR", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
-        this.editNameFlag = (new Flag.Builder("EDIT_ELEVATOR_FLOOR_NAME", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
         this.editSettingsFlag = (new Flag.Builder("EDIT_ELEVATOR_SETTINGS", Material.RED_SHULKER_BOX)).mode(Flag.Mode.BASIC).build();
 
         BentoBox.getInstance().getFlagsManager().registerFlag(this.useFlag);
-        BentoBox.getInstance().getFlagsManager().registerFlag(this.editNameFlag);
         BentoBox.getInstance().getFlagsManager().registerFlag(this.editSettingsFlag);
 
         for (Locale objLocale : BentoBox.getInstance().getLocalesManager().getAvailableLocales(true)) {
@@ -39,10 +38,6 @@ public class BentoBoxHook extends ProtectionHook {
             if (!locale.contains("protection.flags.USE_ELEVATOR.name")) {
                 locale.set("protection.flags.USE_ELEVATOR.name", "Use elevators");
                 locale.set("protection.flags.USE_ELEVATOR.description", "Toggle elevators");
-            }
-            if(!locale.contains("protection.flags.EDIT_ELEVATOR_FLOOR_NAME.name")) {
-                locale.set("protection.flags.EDIT_ELEVATOR_FLOOR_NAME.name", "Edit Elevator floor name");
-                locale.set("protection.flags.EDIT_ELEVATOR_FLOOR_NAME.description", "Edit the name of the Elevator floor");
             }
             if(!locale.contains("protection.flags.EDIT_ELEVATOR_SETTINGS.name")) {
                 locale.set("protection.flags.EDIT_ELEVATOR_SETTINGS.name", "Edit Elevators settings");
@@ -79,21 +74,7 @@ public class BentoBoxHook extends ProtectionHook {
 
     @Override
     public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
-        Location location = elevator.getLocation();
-        Island island = BentoBox.getInstance().getIslands().getIslandAt(location).orElse(null);
-        if (island == null)
-            return true;
-        if (!island.getProtectionBoundingBox().contains(location.getX(), location.getY(), location.getZ()))
-            return true;
-
-        User user = BentoBox.getInstance().getPlayers().getUser(player.getUniqueId());
-
-        if(island.isAllowed(user, this.editNameFlag))
-            return true;
-
-        if(sendMessage)
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(BentoBox.getInstance().getRanksManager().getRank(island.getRank(user))));
-        return false;
+        return this.canEditSettings(player, elevator, sendMessage);
     }
 
     @Override

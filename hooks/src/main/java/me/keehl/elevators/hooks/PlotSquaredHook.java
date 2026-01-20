@@ -8,6 +8,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import me.keehl.elevators.api.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.services.configs.versions.DefaultConfigHookData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,7 +20,7 @@ import java.util.List;
 
 // Gotta be honest, I think that PlotSquared has one of the most inconvenient and convoluted flag systems ever.
 @SuppressWarnings("deprecation")
-public class PlotSquaredHook extends ProtectionHook {
+public class PlotSquaredHook extends ProtectionHook<DefaultConfigHookData> {
 
     private final ElevatorUseFlag useFlag;
     private final ElevatorEditNameFlag nameFlag;
@@ -28,7 +29,7 @@ public class PlotSquaredHook extends ProtectionHook {
     private final PlotAPI api;
 
     public PlotSquaredHook() {
-        super("PlotSquared");
+        super("PlotSquared", new DefaultConfigHookData());
         GlobalFlagContainer.getInstance().addFlag(this.useFlag = new ElevatorUseFlag(true));
         GlobalFlagContainer.getInstance().addFlag(this.nameFlag = new ElevatorEditNameFlag(true));
         GlobalFlagContainer.getInstance().addFlag(this.settingsFlag = new ElevatorEditSettingsFlag(false));

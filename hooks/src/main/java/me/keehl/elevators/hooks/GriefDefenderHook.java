@@ -5,6 +5,7 @@ import com.griefdefender.api.claim.Claim;
 import com.griefdefender.api.claim.TrustTypes;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.services.configs.versions.DefaultConfigHookData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,10 +14,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GriefDefenderHook extends ProtectionHook {
+public class GriefDefenderHook extends ProtectionHook<DefaultConfigHookData> {
     //TODO: Add in the configs the option for select the minimium rank for edit name and settings
     public GriefDefenderHook() {
-        super("GriefDefender");
+        super("GriefDefender", new DefaultConfigHookData());
     }
 
     @Override
@@ -35,13 +36,7 @@ public class GriefDefenderHook extends ProtectionHook {
 
     @Override
     public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
-        final Claim claim = GriefDefender.getCore().getClaimAt(elevator.getLocation());
-
-        if (claim == null)
-            return true;
-        if(claim.isWilderness())
-            return true;
-        return claim.canUseBlock(elevator.getShulkerBox(), elevator.getLocation(), GriefDefender.getCore().getUser(player.getUniqueId()), TrustTypes.ACCESSOR);
+        return this.canEditSettings(player, elevator, sendMessage);
     }
 
     @Override

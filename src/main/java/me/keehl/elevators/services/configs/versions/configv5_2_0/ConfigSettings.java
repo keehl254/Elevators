@@ -3,7 +3,7 @@ package me.keehl.elevators.services.configs.versions.configv5_2_0;
 import me.keehl.elevators.api.models.ILocaleComponent;
 import me.keehl.elevators.api.services.configs.versions.IConfigSettings;
 import me.keehl.elevators.helpers.MessageHelper;
-import me.keehl.elevators.util.config.Comments;
+import me.keehl.elevators.api.util.config.Comments;
 import me.keehl.elevators.util.config.ExpandableConfig;
 
 import java.util.ArrayList;

@@ -5,6 +5,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.services.configs.versions.DefaultConfigHookData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,15 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public class RedProtectHook extends ProtectionHook {
+public class RedProtectHook extends ProtectionHook<DefaultConfigHookData> {
     //TODO: Code cleanup
     private final RedProtectAPI redProtect;
 
-    private final String useFlag = "elevators-allow-use";
-    private final String settingsFlagName = "elevators-allow-settings";
+    private final String useFlag = "elevators-use";
+    private final String settingsFlagName = "elevators-settings";
 
     public RedProtectHook() {
-        super("RedProtect");
+        super("RedProtect", new DefaultConfigHookData());
         this.redProtect = RedProtect.get().getAPI();
 
         this.redProtect.addFlag(this.useFlag, true, false);

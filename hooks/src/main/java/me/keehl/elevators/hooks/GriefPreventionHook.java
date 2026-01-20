@@ -2,6 +2,7 @@ package me.keehl.elevators.hooks;
 
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.services.configs.versions.DefaultConfigHookData;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -17,12 +18,12 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @SuppressWarnings("deprecation")
-public class GriefPreventionHook extends ProtectionHook {
+public class GriefPreventionHook extends ProtectionHook<DefaultConfigHookData> {
     //TODO: Add in the configs the option for select the minimum rank for edit name and settings
     private final GriefPrevention griefPrevention;
 
     public GriefPreventionHook() {
-        super("GriefPrevention");
+        super("GriefPrevention", new DefaultConfigHookData());
         this.griefPrevention = (GriefPrevention) Bukkit.getPluginManager().getPlugin("GriefPrevention");
     }
 
@@ -52,20 +53,7 @@ public class GriefPreventionHook extends ProtectionHook {
 
     @Override
     public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
-        if(this.griefPrevention == null)
-            return false;
-        PlayerData playerData = this.griefPrevention.dataStore.getPlayerData(player.getUniqueId());
-        Claim claim = this.griefPrevention.dataStore.getClaimAt(elevator.getLocation(), false, playerData.lastClaim);
-        if (claim == null)
-            return true;
-
-        Supplier<String> message = claim.checkPermission(player, ClaimPermission.Edit, null);
-        if (message != null) {
-            if (sendMessage)
-                player.sendMessage(ChatColor.RED + message.get());
-            return false;
-        }
-        return true;
+        return this.canEditSettings(player, elevator, sendMessage);
     }
 
     @Override

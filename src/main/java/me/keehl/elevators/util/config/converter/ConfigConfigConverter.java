@@ -1,6 +1,8 @@
 package me.keehl.elevators.util.config.converter;
 
 import me.keehl.elevators.api.ElevatorsAPI;
+import me.keehl.elevators.api.util.config.Comments;
+import me.keehl.elevators.api.util.config.ConfigFieldName;
 import me.keehl.elevators.api.util.config.Config;
 import me.keehl.elevators.api.util.config.converter.IFieldData;
 import me.keehl.elevators.util.config.*;
@@ -17,7 +19,7 @@ public class ConfigConfigConverter extends ConfigConverter {
     public ConfigNode<?> deserializeNodeWithFieldAndObject(ConfigNode<?> parentNode, String key, Object object, IFieldData fieldData) throws Exception {
 
         try {
-            Object rawData = parentNode.getRoot().getObjectAtPath(key, new HashMap<>());
+            Object rawData = parentNode.getRoot().getObjectAtPath(parentNode.getChildPath(key), new HashMap<>());
             if (!(object instanceof Config) || object.getClass().isInterface()) {
                 if (fieldData.getFieldClass() == Config.class) {
                     object = new BlankConfig(rawData);

@@ -8,4 +8,8 @@ public interface IConfigHookData extends Config {
 
     boolean doesBlockNonMemberUseByDefault();
 
+    void setAllowCustomization(boolean allowCustomization);
+
+    void setBlockNonMemberUseByDefault(boolean blockNonMemberUseByDefault);
+
 }

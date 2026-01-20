@@ -26,12 +26,7 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
         if(value == null)
             return;
 
-        this.field.setAccessible(true);
-        try {
-            this.field.set(parentNode.getValue(), value);
-        } catch (Exception e) {
-            ElevatorsAPI.log(Level.WARNING, "Config input at path '" + this.getPath() +"' must be of type '" + this.getFieldDisplay()+"'. Default value has been substituted.");
-        }
+        this.setValue(value);
     }
 
     @Override
@@ -48,6 +43,16 @@ public class ClassicConfigNode<T> implements ConfigNode<T> {
         } catch (IllegalAccessException e) {
             ElevatorsAPI.log(Level.SEVERE, "Failed to load config node data. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n" + ResourceHelper.cleanTrace(e));
             return null;
+        }
+    }
+
+    @Override
+    public void setValue(T value) {
+        this.field.setAccessible(true);
+        try {
+            this.field.set(this.parentNode.getValue(), value);
+        } catch (Exception e) {
+            ElevatorsAPI.log(Level.WARNING, "Config input at path '" + this.getPath() +"' must be of type '" + this.getFieldDisplay()+"'. Default value has been substituted.", e);
         }
     }
 

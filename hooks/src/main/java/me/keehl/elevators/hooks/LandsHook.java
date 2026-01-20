@@ -8,6 +8,7 @@ import me.angeschossen.lands.api.land.LandWorld;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.hooks.ProtectionHook;
+import me.keehl.elevators.api.services.configs.versions.DefaultConfigHookData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public class LandsHook extends ProtectionHook {
+public class LandsHook extends ProtectionHook<DefaultConfigHookData> {
 
     private RoleFlag useFlag;
     private RoleFlag settingsFlag;
@@ -25,7 +26,7 @@ public class LandsHook extends ProtectionHook {
     private final LandsIntegration lands;
 
     public LandsHook() {
-        super("Lands");
+        super("Lands", new DefaultConfigHookData());
 
         this.lands = LandsIntegration.of(ElevatorsAPI.getElevators().getPlugin());
 
@@ -33,13 +34,13 @@ public class LandsHook extends ProtectionHook {
             this.useFlag = RoleFlag.of(this.lands, FlagTarget.PLAYER, RoleFlagCategory.ACTION, "elevator_use");
             this.useFlag.setDisplayName("Elevator Use");
             this.useFlag.setDescription("Allows the role to use Elevators in this area");
-            this.useFlag.setIcon(ItemStackHelper.createItem(ChatColor.RED + "" + ChatColor.BOLD + "Elevator Use", Material.RED_SHULKER_BOX,1, this.formatLore("Allows the rule to use Elevators in this area", ChatColor.GRAY)));
+            this.useFlag.setIcon(ItemStackHelper.createItem(ChatColor.RED + "" + ChatColor.BOLD + "Elevator Use", Material.RED_SHULKER_BOX,1, this.formatLore("Allows the role to use Elevators in this area", ChatColor.GRAY)));
             this.useFlag.setAlwaysAllowInWilderness(true);
 
             this.settingsFlag = RoleFlag.of(this.lands, FlagTarget.PLAYER, RoleFlagCategory.ACTION, "elevator_settings");
             this.settingsFlag.setDisplayName("Elevator Manage");
             this.settingsFlag.setDescription("Allows the role to edit Elevators in this area");
-            this.settingsFlag.setIcon(ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "Elevator Manage", Material.LIGHT_GRAY_SHULKER_BOX,1, this.formatLore("Allows the rule to edit Elevators in this area", ChatColor.GRAY)));
+            this.settingsFlag.setIcon(ItemStackHelper.createItem(ChatColor.GRAY + "" + ChatColor.BOLD + "Elevator Manage", Material.LIGHT_GRAY_SHULKER_BOX,1, this.formatLore("Allows the role to edit Elevators in this area", ChatColor.GRAY)));
         });
     }
 

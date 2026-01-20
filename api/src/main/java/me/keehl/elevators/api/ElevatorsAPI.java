@@ -54,12 +54,8 @@ public class ElevatorsAPI {
         getElevators().toggleElevatorProtectionHook(elevator, protectionHook);
     }
 
-    public static IConfigHookData getElevatorProtectionHookConfig(IProtectionHook protectionHook) {
-        return getElevators().getElevatorProtectionHookConfig(protectionHook);
-    }
-
-    public static boolean isElevatorProtectionHookCheckEnabled(IElevator elevator, IProtectionHook protectionHook) {
-        return getElevators().isElevatorProtectionHookCheckEnabled(elevator, protectionHook);
+    public static <T extends IConfigHookData> T getElevatorProtectionHookConfig(IProtectionHook protectionHook, T defaultConfigHook) {
+        return getElevators().getElevatorProtectionHookConfig(protectionHook,defaultConfigHook);
     }
 
 

@@ -23,5 +23,7 @@ public interface IProtectionHook extends ElevatorHook {
 
     boolean canPlayerUseElevator(Player player, IElevator elevator, boolean sendMessage);
 
+    boolean doesBlockGuestsByDefault();
+
     ItemStack createIconForElevator(Player player, IElevator elevator);
 }

@@ -1,4 +1,4 @@
-package me.keehl.elevators.util.config;
+package me.keehl.elevators.api.util.config;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ConfigFieldName {
-    String value();
+public @interface Comments {
+    String[] value();
 }

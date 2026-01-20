@@ -1,9 +1,6 @@
-package me.keehl.elevators.services.configs.versions.configv5_2_0;
+package me.keehl.elevators.api.services.configs.versions;
 
-import me.keehl.elevators.api.services.configs.versions.IConfigHookData;
-import me.keehl.elevators.util.config.ExpandableConfig;
-
-public class ConfigHookData extends ExpandableConfig implements IConfigHookData {
+public class DefaultConfigHookData implements IConfigHookData {
 
     public boolean allowCustomization = true;
 
@@ -28,5 +25,4 @@ public class ConfigHookData extends ExpandableConfig implements IConfigHookData 
     public void setBlockNonMemberUseByDefault(boolean blockNonMemberUseByDefault) {
         this.blockNonMemberUseDefault = blockNonMemberUseByDefault;
     }
-
 }

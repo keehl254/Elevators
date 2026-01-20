@@ -1,6 +1,6 @@
 package me.keehl.elevators.services.configs.versions.configv5;
 
-import me.keehl.elevators.util.config.Comments;
+import me.keehl.elevators.api.util.config.Comments;
 import me.keehl.elevators.api.util.config.Config;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;

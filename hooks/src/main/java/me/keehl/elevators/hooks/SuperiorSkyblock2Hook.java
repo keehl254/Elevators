@@ -8,6 +8,7 @@ import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.hooks.ProtectionHook;
 import me.keehl.elevators.api.services.IElevatorListenerService;
+import me.keehl.elevators.api.services.configs.versions.DefaultConfigHookData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,17 +21,13 @@ import java.util.List;
 import java.util.logging.Level;
 
 @SuppressWarnings("deprecation")
-public class SuperiorSkyblock2Hook extends ProtectionHook {
+public class SuperiorSkyblock2Hook extends ProtectionHook<DefaultConfigHookData> {
 
-    private static final String USE_ELEVATOR_FLAG = "elevators_use";
-    private static final String EDIT_NAME_ELEVATOR_FLAG = "elevators_edit_name";
-    private static final String EDIT_SETTINGS_ELEVATOR_FLAG = "elevators_edit_settings";
-
-    private static IslandPrivilege USE_ELEVATOR, EDIT_NAME_ELEVATOR, EDIT_SETTINGS_ELEVATOR;
+    private static IslandPrivilege USE_ELEVATOR, SETTINGS_FLAG;
     private static boolean registered = false;
 
     public SuperiorSkyblock2Hook() {
-        super("SuperiorSkyblock2");
+        super("SuperiorSkyblock2", false, new DefaultConfigHookData());
 
         IElevatorListenerService listenerService = Bukkit.getServicesManager().load(IElevatorListenerService.class);
         if(listenerService == null) {
@@ -46,14 +43,31 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
     }
 
     public void onSSB2Enable(PluginInitializeEvent e) {
+
+        final String USE_NAME = "elevators_use";
+        final String SETTINGS_NAME = "elevators_settings";
         try {
-            IslandPrivilege.register(USE_ELEVATOR_FLAG);
-            IslandPrivilege.register(EDIT_NAME_ELEVATOR_FLAG);
-            IslandPrivilege.register(EDIT_SETTINGS_ELEVATOR_FLAG);
-            USE_ELEVATOR = IslandPrivilege.getByName(USE_ELEVATOR_FLAG);
-            EDIT_NAME_ELEVATOR = IslandPrivilege.getByName(EDIT_NAME_ELEVATOR_FLAG);
-            EDIT_SETTINGS_ELEVATOR = IslandPrivilege.getByName(EDIT_SETTINGS_ELEVATOR_FLAG);
-            ElevatorsAPI.log(Level.INFO, "Hooked into SuperiorSkyblock2 correctly");
+            /*
+                It hurts me inside that this API doesn't return the IslandPrivilege being setup and that we cannot
+                setup a default icon / role for the flags.
+             */
+            IslandPrivilege.register(USE_NAME);
+            IslandPrivilege.register(SETTINGS_NAME);
+
+            USE_ELEVATOR = IslandPrivilege.getByName(USE_NAME);
+            SETTINGS_FLAG = IslandPrivilege.getByName(SETTINGS_NAME);
+
+            ElevatorsAPI.log(Level.INFO, "Hooked into SuperiorSkyblock2.");
+            ElevatorsAPI.log("");
+            ElevatorsAPI.log("The SuperiorSkyblock2 protection allows guest use by default. This is due to SSB2's flag");
+            ElevatorsAPI.log("system not allowing me to register default permissions, roles, and icons. You can change");
+            ElevatorsAPI.log("this in the Elevators config.");
+            ElevatorsAPI.log("");
+            ElevatorsAPI.log("The SSB2 flags are: elevators_use, elevators_settings.");
+            ElevatorsAPI.log("To allow players to alter them through /island permissions, you must setup the flags in");
+            ElevatorsAPI.log("in permissions.yml of the SSB2 menus folder. Likewise, assign the flags to a default role");
+            ElevatorsAPI.log("in roles.yml, otherwise it defaults to \"Leader\".");
+            ElevatorsAPI.log("");
             registered = true;
         } catch(Exception ex) {
             ElevatorsAPI.log(Level.WARNING, "Failed to register SSB2 hook. Please create an issue ticket on my GitHub if one doesn't already exist: https://github.com/keehl254/Elevators/issues. Issue:\n", ex);
@@ -101,12 +115,7 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
 
     @Override
     public boolean canEditName(Player player, IElevator elevator, boolean sendMessage) {
-        if(!registered) return true;
-        Island island = SuperiorSkyblockAPI.getIslandAt(elevator.getLocation());
-        if (island != null) {
-            return island.hasPermission(SuperiorSkyblockAPI.getPlayer(player.getUniqueId()), EDIT_NAME_ELEVATOR);
-        }
-        return true;
+        return this.canEditSettings(player, elevator, sendMessage);
     }
 
     @Override
@@ -114,7 +123,7 @@ public class SuperiorSkyblock2Hook extends ProtectionHook {
         if(!registered) return true;
         Island island = SuperiorSkyblockAPI.getIslandAt(elevator.getLocation());
         if (island != null) {
-            return island.hasPermission(SuperiorSkyblockAPI.getPlayer(player.getUniqueId()), EDIT_SETTINGS_ELEVATOR);
+            return island.hasPermission(SuperiorSkyblockAPI.getPlayer(player.getUniqueId()), SETTINGS_FLAG);
         }
         return false;
     }

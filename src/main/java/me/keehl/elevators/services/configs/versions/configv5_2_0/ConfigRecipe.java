@@ -2,7 +2,7 @@ package me.keehl.elevators.services.configs.versions.configv5_2_0;
 
 import me.keehl.elevators.api.services.configs.versions.IConfigRecipe;
 import me.keehl.elevators.api.util.config.RecipeRow;
-import me.keehl.elevators.util.config.Comments;
+import me.keehl.elevators.api.util.config.Comments;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

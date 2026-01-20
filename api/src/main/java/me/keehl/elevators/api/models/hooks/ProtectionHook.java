@@ -6,19 +6,29 @@ import me.keehl.elevators.api.services.configs.versions.IConfigHookData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class ProtectionHook implements IProtectionHook {
+public abstract class ProtectionHook<T extends IConfigHookData> implements IProtectionHook {
+
 
     private final String configKey;
-    public ProtectionHook(String configKey) {
+
+    private final T defaultConfig;
+
+    public ProtectionHook(String configKey, T defaultConfig) {
+        this(configKey, true, defaultConfig);
+    }
+    public ProtectionHook(String configKey, boolean blockGuestsByDefault, T defaultConfig) {
         this.configKey = configKey;
+
+        this.defaultConfig = defaultConfig;
+        this.defaultConfig.setBlockNonMemberUseByDefault(blockGuestsByDefault);
     }
 
-    public IConfigHookData getConfig() {
-        return ElevatorsAPI.getElevatorProtectionHookConfig(this);
+    public T getConfig() {
+        return ElevatorsAPI.getElevatorProtectionHookConfig(this, this.defaultConfig);
     }
 
     public boolean isCheckEnabled(IElevator elevator) {
-        return ElevatorsAPI.isElevatorProtectionHookCheckEnabled(elevator, this);
+        return this.getConfig().doesBlockNonMemberUseByDefault();
     }
 
     public void toggleCheckEnabled(IElevator elevator) {
@@ -27,6 +37,10 @@ public abstract class ProtectionHook implements IProtectionHook {
 
     public String getConfigKey() {
         return this.configKey;
+    }
+
+    public final boolean doesBlockGuestsByDefault() {
+        return this.defaultConfig.doesBlockNonMemberUseByDefault();
     }
 
     public abstract void onProtectionClick(Player player, IElevator elevator, Runnable onReturn);

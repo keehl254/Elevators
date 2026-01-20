@@ -11,6 +11,8 @@ public interface ConfigNode<T> {
 
     T getValue();
 
+    void setValue(T value);
+
     ConfigNode<?> getParent();
 
     ArrayList<ConfigNode<?>> getChildren();

@@ -65,6 +65,10 @@ public class ConfigRootNode<T extends Config> implements IConfigRootNode<T> {
     }
 
     @Override
+    public void setValue(T value) {
+    }
+
+    @Override
     public ConfigNode<?> getParent() {
         return null;
     }
