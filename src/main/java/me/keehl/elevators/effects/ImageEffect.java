@@ -136,7 +136,7 @@ public class ImageEffect extends ElevatorEffect {
                         }
                     }
                 }
-            }, time);
+            }, time + 1);
         }
     }
 

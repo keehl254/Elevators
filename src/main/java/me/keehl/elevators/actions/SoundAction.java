@@ -143,15 +143,17 @@ public class SoundAction extends ElevatorAction {
             try {
                 return (String) Sound.class.getMethod("name").invoke(sound);
             } catch (IllegalAccessException | InvocationTargetException e) {
+                ElevatorsAPI.log(sound);
                 ElevatorsAPI.log(Level.WARNING, "Error saving sound field. Using default.", e);
             } catch (NoSuchMethodException e) {
+                ElevatorsAPI.log(sound);
                 ElevatorsAPI.log(Level.WARNING, "Failed to save sound field. Using default.");
             }
         } else {
             try {
                 Class<?> registryClass;
                 Object owner = null;
-                if(Elevators.getFoliaLib().isPaper()) {
+                if(Elevators.getFoliaLib().isPaper() || Elevators.getFoliaLib().isFolia()) {
                     owner = (Registry.class.getField("SOUNDS").get(null));
                     registryClass = owner.getClass();
                 } else {
@@ -160,8 +162,10 @@ public class SoundAction extends ElevatorAction {
                 NamespacedKey key = ((NamespacedKey) registryClass.getMethod("getKeyOrThrow", Keyed.class).invoke(owner,sound));
                 return key.getKey().replace('.', '_').toUpperCase();
             } catch (NoSuchMethodError | NoSuchMethodException e) {
+                ElevatorsAPI.log(sound);
                 ElevatorsAPI.log(Level.WARNING, "Failed to save sound field. Setting default.");
             } catch (Throwable e) {
+                ElevatorsAPI.log(sound);
                 ElevatorsAPI.log(Level.WARNING, "Error saving sound field. Setting default.", e);
             }
         }
