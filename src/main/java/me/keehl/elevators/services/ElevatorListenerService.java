@@ -13,10 +13,7 @@ import me.keehl.elevators.listeners.WorldEventExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.*;
-import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.*;
@@ -55,7 +52,8 @@ public class ElevatorListenerService extends ElevatorService implements IElevato
         registerEventExecutor(CraftItemEvent.class, EventPriority.NORMAL , InventoryEventExecutor::onCraft);
 
         registerEventExecutor(BlockPistonExtendEvent.class, EventPriority.NORMAL , WorldEventExecutor::onPistonExtend);
-        registerEventExecutor(EntityExplodeEvent.class, EventPriority.NORMAL , WorldEventExecutor::onExplode);
+        registerEventExecutor(EntityExplodeEvent.class, EventPriority.NORMAL , WorldEventExecutor::onEntityExplode);
+        registerEventExecutor(BlockExplodeEvent.class, EventPriority.NORMAL , WorldEventExecutor::onBlockExplode);
         registerEventExecutor(BlockDispenseEvent.class, EventPriority.NORMAL , WorldEventExecutor::onDispenserPlace);
         registerEventExecutor(BlockDropItemEvent.class, EventPriority.LOWEST , WorldEventExecutor::onBlockBreak);
         registerEventExecutor(BlockPlaceEvent.class, EventPriority.HIGHEST , WorldEventExecutor::onBlockPlace);

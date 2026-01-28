@@ -36,7 +36,10 @@ public class AdventureLocaleComponent implements ILocaleComponent {
     }
 
     private Component getFormattedComponent(IElevatorEventData eventData) {
-        String newComponent = Elevators.getHooksService().getPlaceholderHook().formatPlaceholders(eventData.getPlayer(), this.componentMessage);
+        String newComponent = this.componentMessage;
+        if(Elevators.getHooksService().getPlaceholderHook() != null) {
+            newComponent = Elevators.getHooksService().getPlaceholderHook().formatPlaceholders(eventData.getPlayer(), newComponent);
+        }
 
         TagResolver.Builder resolver = TagResolver.builder();
         if(eventData.getPlayer() != null) {

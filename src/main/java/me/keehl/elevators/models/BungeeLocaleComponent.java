@@ -27,7 +27,10 @@ public class BungeeLocaleComponent implements ILocaleComponent {
     }
 
     private BaseComponent[] getFormattedComponent(IElevatorEventData eventData) {
-        String newComponent = Elevators.getHooksService().getPlaceholderHook().formatPlaceholders(eventData.getPlayer(), this.componentMessage);
+        String newComponent = this.componentMessage;
+        if(Elevators.getHooksService().getPlaceholderHook() != null) {
+            newComponent = Elevators.getHooksService().getPlaceholderHook().formatPlaceholders(eventData.getPlayer(), newComponent);
+        }
 
         if(eventData.getPlayer() != null) {
             newComponent = newComponent.replace("%player%", eventData.getPlayer().getName()).replace("<player>", eventData.getPlayer().getName());

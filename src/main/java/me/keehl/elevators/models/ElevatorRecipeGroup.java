@@ -79,7 +79,7 @@ public class ElevatorRecipeGroup extends ConfigRecipe implements IElevatorRecipe
         elevatorItemStack.setAmount(this.amount);
 
         ShapedRecipe shapedRecipe = new ShapedRecipe(namespacedKey, elevatorItemStack);
-        shapedRecipe.setGroup(this.getRecipeKey());
+        shapedRecipe.setGroup(this.elevatorType.getTypeKey() + "_ELEVATOR");
 
         String[] shape = {"", "", ""};
         List<Runnable> setIngredientRunnables = new ArrayList<>();

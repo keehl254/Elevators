@@ -40,10 +40,8 @@ public class ElevatorActionVariable<T> implements IElevatorActionVariable<T> {
     }
 
     public T getObjectFromString(String value, IElevatorAction action) {
-        if(value == null) {
-            ElevatorsAPI.log("Null value. Using default");
+        if(value == null)
             return this.defaultObject;
-        }
         try {
             return this.conversionFunction.apply(value);
         } catch (Exception e) {

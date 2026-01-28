@@ -137,16 +137,21 @@ public class InventoryEventExecutor {
     }
 
     public static void onCraft(CraftItemEvent e) {
-        if (!(e.getRecipe() instanceof Keyed keyedRecipe)) return;
+        if (!(e.getRecipe() instanceof Keyed keyedRecipe))
+            return;
 
-        if (!(e.getWhoClicked() instanceof Player player)) return;
+        if (!(e.getWhoClicked() instanceof Player player))
+            return;
 
         ItemStack result = e.getInventory().getResult();
-        if (result == null || result.getType() == Material.AIR) return;
-        if (ItemStackHelper.isNotShulkerBox(result.getType())) return;
+        if (result == null || result.getType() == Material.AIR)
+            return;
+        if (ItemStackHelper.isNotShulkerBox(result.getType()))
+            return;
 
         IElevatorType elevatorType = ElevatorHelper.getElevatorType(result);
-        if (elevatorType == null) return;
+        if (elevatorType == null)
+            return;
 
         boolean isElevatorCraftingRecipe = keyedRecipe.getKey().getNamespace().equalsIgnoreCase("elevators");
         DyeColor dyeColor = ItemStackHelper.getDyeColorFromMaterial(result.getType());

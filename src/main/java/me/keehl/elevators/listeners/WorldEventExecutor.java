@@ -20,7 +20,8 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 public class WorldEventExecutor {
@@ -36,9 +37,10 @@ public class WorldEventExecutor {
         }
     }
 
-    public static void onExplode(EntityExplodeEvent event) {
-        for (int i = 0; i < new ArrayList<>(event.blockList()).size(); i++) {
-            Block block = event.blockList().get(i);
+    private static void onExplode(List<Block> blockList) {
+        Iterator<Block> iterator = blockList.iterator();
+        while(iterator.hasNext()) {
+            Block block = iterator.next();
             ShulkerBox shulkerBox = ShulkerBoxHelper.getShulkerBox(block);
             if (shulkerBox == null)
                 continue;
@@ -47,19 +49,28 @@ public class WorldEventExecutor {
             if (elevatorType == null)
                 continue;
 
+            iterator.remove();
             IElevator elevator = new Elevator(shulkerBox, elevatorType);
 
-            event.blockList().remove(block);
+            boolean canExplode = Elevators.getSettingService().getElevatorSettingValue(elevator, InternalElevatorSettingType.CAN_EXPLODE);
+            if (!canExplode)
+                continue;
 
-            if (Elevators.getSettingService().getElevatorSettingValue(elevator, InternalElevatorSettingType.CAN_EXPLODE)) {
-                final ItemStack newItem = ItemStackHelper.createItemStackFromElevator(elevator);
-                final Location location = block.getLocation();
-                Elevators.getFoliaLib().getScheduler().runAtLocation(location, task -> {
-                    location.getBlock().setType(Material.AIR);
-                    location.getWorld().dropItemNaturally(location, newItem);
-                });
-            }
+            final ItemStack newItem = ItemStackHelper.createItemStackFromElevator(elevator);
+            final Location location = block.getLocation();
+            Elevators.getFoliaLib().getScheduler().runAtLocation(location, task -> {
+                location.getBlock().setType(Material.AIR);
+                location.getWorld().dropItemNaturally(location, newItem);
+            });
         }
+    }
+
+    public static void onBlockExplode(BlockExplodeEvent event) {
+        WorldEventExecutor.onExplode(event.blockList());
+    }
+
+    public static void onEntityExplode(EntityExplodeEvent event) {
+        WorldEventExecutor.onExplode(event.blockList());
     }
 
     public static void onDispenserPlace(BlockDispenseEvent event) {
