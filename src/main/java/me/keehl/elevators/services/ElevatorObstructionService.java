@@ -1,7 +1,7 @@
 package me.keehl.elevators.services;
 
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.services.IElevatorObstructionService;
 import me.keehl.elevators.helpers.VersionHelper;
 import org.bukkit.ChatColor;
@@ -15,7 +15,7 @@ public class ElevatorObstructionService extends ElevatorService implements IElev
 
     private boolean initialized = false;
 
-    public ElevatorObstructionService(IElevators elevators) {
+    public ElevatorObstructionService(Elevators elevators) {
         super(elevators);
     }
 

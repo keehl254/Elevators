@@ -8,7 +8,6 @@ import me.keehl.elevators.api.models.hooks.IProtectionHook;
 import me.keehl.elevators.api.models.settings.IElevatorSettingBuilder;
 import me.keehl.elevators.api.services.configs.versions.IConfigHookData;
 import me.keehl.elevators.api.util.logging.ILogReleaseData;
-import me.keehl.elevators.api.util.persistantDataTypes.ElevatorsDataType;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.persistence.PersistentDataType;
@@ -49,15 +48,13 @@ public interface IElevators {
 
     <T> IElevatorSettingBuilder<T> settingsBuilder(@Pattern("[a-z0-9/._-]+") String settingKey, T defaultValue, PersistentDataType<?, T> persistentDataType);
 
-    <T> IElevatorSettingBuilder<T> settingsBuilder(@Pattern("[a-z0-9/._-]+") String settingKey, T defaultValue, ElevatorsDataType elevatorsDataType);
-
     IElevatorActionBuilder actionBuilder(String actionKey);
 
-    IElevator createElevatorRecord(ShulkerBox box, IElevatorType elevatorType);
+    IElevator resolveElevator(ShulkerBox box, IElevatorType elevatorType) throws IllegalArgumentException;
 
-    IElevator createElevatorRecord(Block block);
+    IElevator resolveElevator(Block block);
 
-    IElevatorType getElevatorType(ShulkerBox box);
+    IElevatorType resolveElevatorType(ShulkerBox box);
 
     void toggleElevatorProtectionHook(IElevator elevator, IProtectionHook protectionHook);
 

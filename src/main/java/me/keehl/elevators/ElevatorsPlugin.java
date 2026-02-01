@@ -5,7 +5,6 @@ import dev.faststats.bukkit.BukkitMetrics;
 import dev.faststats.core.Metrics;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.IElevators;
-import me.keehl.elevators.api.IElevatorsPlugin;
 import me.keehl.elevators.helpers.ElevatorMenuHelper;
 import me.keehl.elevators.helpers.ResourceHelper;
 import me.keehl.elevators.helpers.VersionHelper;
@@ -21,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-public class ElevatorsPlugin extends JavaPlugin implements IElevatorsPlugin {
+public class ElevatorsPlugin extends JavaPlugin {
 
     private static final String LIGHT_GRAY = "\u001B[38;5;250m";
     private static final String YELLOW = "\u001B[33m";
@@ -116,19 +115,16 @@ public class ElevatorsPlugin extends JavaPlugin implements IElevatorsPlugin {
         return this.customLogger;
     }
 
-    @Override
     public void log(Object message) {
         if(message == null) message = "";
         super.getLogger().log(Level.INFO, message.toString());
     }
 
-    @Override
     public void log(Level level, Object message) {
         if(message == null) message = "";
         super.getLogger().log(level, message.toString());
     }
 
-    @Override
     public void log(Level level, Object message, Throwable throwable) {
         if(message == null)
             message = "";

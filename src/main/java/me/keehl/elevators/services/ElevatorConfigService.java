@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.services.IElevatorConfigService;
 import me.keehl.elevators.api.services.configs.versions.IConfigEffect;
@@ -32,7 +31,7 @@ public class ElevatorConfigService extends ElevatorService implements IElevatorC
 
     private final List<Consumer<IConfigRoot>> configLoadCallbacks = new ArrayList<>();
 
-    public ElevatorConfigService(IElevators elevators) {
+    public ElevatorConfigService(Elevators elevators) {
         super(elevators);
     }
 

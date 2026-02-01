@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.services.IElevatorListenerService;
 import me.keehl.elevators.helpers.ElevatorHelper;
 import me.keehl.elevators.api.models.ElevatorEventExecutor;
@@ -34,7 +33,7 @@ public class ElevatorListenerService extends ElevatorService implements IElevato
 
     private final Listener listener = new Listener() {};
 
-    public ElevatorListenerService(IElevators elevators) {
+    public ElevatorListenerService(Elevators elevators) {
         super(elevators);
     }
 

@@ -5,7 +5,6 @@ import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.IElevatorSetting;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.models.ILocaleComponent;
-import me.keehl.elevators.api.util.persistantDataTypes.ElevatorsDataType;
 import me.keehl.elevators.helpers.ItemStackHelper;
 import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.services.configs.versions.configv5_2_0.ConfigSettings;
@@ -146,10 +145,6 @@ public abstract class ElevatorSetting<T> implements IElevatorSetting<T> {
         if (!(this instanceof BuilderElevatorSetting))
             return;
         settings.setData(this.settingName, this.getGlobalValue(elevatorType), this.getComments());
-    }
-
-    public static <T> ElevatorSettingBuilder<T> builder(@Subst("test_key") @Pattern("[a-z0-9/._-]+") String settingKey, T defaultValue, ElevatorsDataType dataType) {
-        return new ElevatorSettingBuilder<>(settingKey, defaultValue, dataType);
     }
 
     public static <T> ElevatorSettingBuilder<T> builder(@Subst("test_key") @Pattern("[a-z0-9/._-]+") String settingKey, T defaultValue, PersistentDataType<?, T> dataType) {

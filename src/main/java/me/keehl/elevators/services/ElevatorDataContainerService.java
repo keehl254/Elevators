@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.services.IElevatorDataContainerService;
 import me.keehl.elevators.helpers.ElevatorHelper;
@@ -31,7 +30,7 @@ public class ElevatorDataContainerService extends ElevatorService implements IEl
     private NamespacedKey typeKey;
     private NamespacedKey nameKey;
 
-    public ElevatorDataContainerService(IElevators elevators) {
+    public ElevatorDataContainerService(Elevators elevators) {
         super(elevators);
     }
 

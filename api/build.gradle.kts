@@ -1,3 +1,5 @@
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
+
 plugins {
     id("java")
     `maven-publish`
@@ -5,6 +7,7 @@ plugins {
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(11))
+    withJavadocJar()
 }
 
 tasks.compileJava {
@@ -32,6 +35,30 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.javadoc {
+    // Where the HTML gets generated
+    destinationDir = layout.buildDirectory.dir("docs/javadoc").get().asFile
+
+    // Classpath needed so Javadoc can resolve symbols
+    classpath = sourceSets["main"].compileClasspath
+    source = sourceSets["main"].allJava
+
+    (options as StandardJavadocDocletOptions).apply {
+        encoding = "UTF-8"
+        charSet = "UTF-8"
+        // Java 11
+        source = "11"
+
+        // Optional: make output cleaner
+        addBooleanOption("Xdoclint:none", true)
+        addStringOption("quiet", "-quiet")
+
+        // Optional: set title shown in the docs
+        docTitle = "Elevators API"
+        windowTitle = "Elevators API"
+    }
 }
 
 publishing {

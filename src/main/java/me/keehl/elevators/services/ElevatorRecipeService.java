@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.models.ElevatorRecipe;
 import me.keehl.elevators.api.models.IElevatorRecipeGroup;
 import me.keehl.elevators.api.services.IElevatorRecipeService;
@@ -24,7 +23,7 @@ public class ElevatorRecipeService extends ElevatorService implements IElevatorR
 
     private Map<NamespacedKey, ElevatorRecipe> loadedRecipes = new HashMap<>();
 
-    public ElevatorRecipeService(IElevators elevators) {
+    public ElevatorRecipeService(Elevators elevators) {
         super(elevators);
     }
 

@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.models.IElevatorSetting;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.services.IElevatorSettingService;
@@ -23,7 +22,7 @@ public class ElevatorSettingService extends ElevatorService implements IElevator
 
     private final List<IElevatorSetting<?>> elevatorSettings = new ArrayList<>();
 
-    public ElevatorSettingService(IElevators elevators) {
+    public ElevatorSettingService(Elevators elevators) {
         super(elevators);
     }
 
@@ -59,7 +58,7 @@ public class ElevatorSettingService extends ElevatorService implements IElevator
 
     public void addSetting(IElevatorSetting<?> setting) {
         if (setting.getPlugin().getName().equalsIgnoreCase(Elevators.getInstance().getName()) && !this.allowSelfRegister)
-            throw new RuntimeException("An invalid Plugin was provided when trying to register an Elevator Setting.");
+            throw new IllegalStateException("An invalid Plugin was provided when trying to register an Elevator Setting.");
 
         for (IElevatorSetting<?> otherSetting : this.elevatorSettings) {
             if (!otherSetting.getSettingName().equalsIgnoreCase(setting.getSettingName()))
@@ -70,7 +69,7 @@ public class ElevatorSettingService extends ElevatorService implements IElevator
                 message = "External elevator settings are not able to override default settings";
             else
                 message = "An elevator setting with the key \"" + setting.getSettingName() + "\" was already registered by plugin: " + otherSetting.getPlugin().getName();
-            throw new RuntimeException(message);
+            throw new IllegalStateException(message);
         }
 
         this.elevatorSettings.add(setting);

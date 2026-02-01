@@ -1,5 +1,7 @@
+import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
+
 group = "me.keehl"
-version = "5.0.0-beta.19"
+version = "5.0.0-beta.20"
 
 plugins {
     java
@@ -101,7 +103,18 @@ tasks.shadowJar {
     relocate("org.bstats", "me.keehl.elevators.util.bstats")
     relocate("dev.faststats", "me.keehl.elevators.util.faststats")
 
-    archiveClassifier.set("all")
+    archiveBaseName.set("Elevators")
+    archiveClassifier.set("") // Optional: adds -all to the name
+    archiveFileName.set("Elevators-${project.version}.jar")
+}
+
+tasks.named<ShadeJar>("shadeDowngradedApi") {
+    archiveClassifier.set("")
+    archiveFileName.set("${project.name}-${project.version}.jar")
+    doLast {
+        val f = tasks.named("downgradeJar").get().outputs.files.singleFile
+        f.delete()
+    }
 }
 
 
@@ -127,4 +140,8 @@ tasks.assemble {
 
 tasks.build {
     dependsOn(tasks.named("shadeDowngradedApi"))
+}
+
+tasks.jar {
+    enabled = false
 }

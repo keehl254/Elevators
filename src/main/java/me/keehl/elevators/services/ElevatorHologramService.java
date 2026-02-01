@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.models.ILocaleComponent;
 import me.keehl.elevators.api.models.hooks.IElevatorHologram;
@@ -32,7 +31,7 @@ public class ElevatorHologramService extends ElevatorService implements IElevato
     private WrappedTask task;
     private int currentIndex = 0;
 
-    public ElevatorHologramService(IElevators elevators) {
+    public ElevatorHologramService(Elevators elevators) {
         super(elevators);
     }
 

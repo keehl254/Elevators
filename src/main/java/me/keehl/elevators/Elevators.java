@@ -2,7 +2,6 @@ package me.keehl.elevators;
 
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.IElevators;
-import me.keehl.elevators.api.IElevatorsPlugin;
 import me.keehl.elevators.api.models.*;
 import me.keehl.elevators.api.models.actions.IElevatorActionBuilder;
 import me.keehl.elevators.api.models.hooks.IProtectionHook;
@@ -11,7 +10,6 @@ import me.keehl.elevators.api.services.*;
 import me.keehl.elevators.api.services.configs.versions.*;
 import me.keehl.elevators.api.util.logging.ILogMessage;
 import me.keehl.elevators.api.util.logging.ILogReleaseData;
-import me.keehl.elevators.api.util.persistantDataTypes.ElevatorsDataType;
 import me.keehl.elevators.helpers.ElevatorHelper;
 import me.keehl.elevators.helpers.MessageHelper;
 import me.keehl.elevators.helpers.ShulkerBoxHelper;
@@ -206,34 +204,29 @@ public class Elevators implements IElevators {
     }
 
     @Override
-    public <T> IElevatorSettingBuilder<T> settingsBuilder(String settingKey, T defaultValue, ElevatorsDataType elevatorsDataType) {
-        return new ElevatorSettingBuilder<>(settingKey, defaultValue, elevatorsDataType);
-    }
-
-    @Override
     public IElevatorActionBuilder actionBuilder(String actionKey) {
         return new ElevatorActionBuilder(actionKey);
     }
 
     @Override
-    public IElevator createElevatorRecord(ShulkerBox shulkerBox, IElevatorType elevatorType) {
+    public IElevator resolveElevator(ShulkerBox shulkerBox, IElevatorType elevatorType) {
         return new Elevator(shulkerBox, elevatorType);
     }
 
     @Override
-    public IElevator createElevatorRecord(Block block) {
+    public IElevator resolveElevator(Block block) {
         ShulkerBox box = ShulkerBoxHelper.getShulkerBox(block);
         if (box == null)
             return null;
-        IElevatorType elevatorType = ElevatorsAPI.getElevatorType(box);
+        IElevatorType elevatorType = ElevatorsAPI.resolveElevatorType(box);
         if (elevatorType == null)
             return null;
 
-        return this.createElevatorRecord(box, elevatorType);
+        return this.resolveElevator(box, elevatorType);
     }
 
     @Override
-    public IElevatorType getElevatorType(ShulkerBox box) {
+    public IElevatorType resolveElevatorType(ShulkerBox box) {
         return ElevatorHelper.getElevatorType(box);
     }
 
@@ -338,19 +331,19 @@ public class Elevators implements IElevators {
     @Override
     public void log(Level level, Object message, Throwable throwable) {
         if (throwable != null && level == Level.SEVERE) {
-            ((IElevatorsPlugin) Elevators.getInstance()).log(level, message, throwable);
+            ((ElevatorsPlugin) Elevators.getInstance()).log(level, message, throwable);
             return;
         }
         message = mainLogStack.log(level, message.toString(), throwable);
         if (message == null)
             return;
 
-        ((IElevatorsPlugin) Elevators.getInstance()).log(level, message, throwable);
+        ((ElevatorsPlugin) Elevators.getInstance()).log(level, message, throwable);
     }
 
     @Override
     public Logger getLogger() {
-        return ((IElevatorsPlugin) Elevators.getInstance()).getLogger();
+        return Elevators.getInstance().getLogger();
     }
 
     @Override

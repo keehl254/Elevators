@@ -1,17 +1,17 @@
 package me.keehl.elevators.services;
 
-import me.keehl.elevators.api.IElevators;
+import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.services.IElevatorService;
 
 public abstract class ElevatorService implements IElevatorService {
 
-    private final IElevators elevators;
+    private final Elevators elevators;
 
-    public ElevatorService(IElevators elevators) {
+    public ElevatorService(Elevators elevators) {
         this.elevators = elevators;
     }
 
-    public IElevators getElevators() {
+    public Elevators getElevators() {
         return this.elevators;
     }
 

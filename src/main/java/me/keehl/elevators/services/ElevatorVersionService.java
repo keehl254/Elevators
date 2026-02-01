@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.services.IElevatorVersionService;
 import me.keehl.elevators.helpers.ItemStackHelper;
@@ -27,7 +26,7 @@ public class ElevatorVersionService extends ElevatorService implements IElevator
 
     private boolean initialized = false;
 
-    public ElevatorVersionService(IElevators elevators) {
+    public ElevatorVersionService(Elevators elevators) {
         super(elevators);
     }
 

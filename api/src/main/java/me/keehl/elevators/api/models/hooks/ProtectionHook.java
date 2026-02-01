@@ -24,7 +24,7 @@ public abstract class ProtectionHook<T extends IConfigHookData> implements IProt
     }
 
     public T getConfig() {
-        return ElevatorsAPI.getElevatorProtectionHookConfig(this, this.defaultConfig);
+        return ElevatorsAPI.getElevators().getElevatorProtectionHookConfig(this, this.defaultConfig);
     }
 
     public boolean isCheckEnabled(IElevator elevator) {
@@ -32,7 +32,7 @@ public abstract class ProtectionHook<T extends IConfigHookData> implements IProt
     }
 
     public void toggleCheckEnabled(IElevator elevator) {
-        ElevatorsAPI.toggleElevatorProtectionHook(elevator, this);
+        ElevatorsAPI.getElevators().toggleElevatorProtectionHook(elevator, this);
     }
 
     public String getConfigKey() {

@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.models.hooks.*;
 import me.keehl.elevators.api.services.IElevatorHookService;
@@ -32,7 +31,7 @@ public class ElevatorHookService extends ElevatorService implements IElevatorHoo
     private PlaceholderHook placeholderHook = null;
     private HologramHook hologramHook = null;
 
-    public ElevatorHookService(IElevators elevators) {
+    public ElevatorHookService(Elevators elevators) {
         super(elevators);
     }
 

@@ -4,7 +4,6 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.settings.IElevatorSettingBuilder;
 import me.keehl.elevators.api.models.settings.IElevatorSettingClickContext;
-import me.keehl.elevators.api.util.persistantDataTypes.ElevatorsDataType;
 import me.keehl.elevators.helpers.ItemStackHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -33,10 +32,6 @@ public class ElevatorSettingBuilder<T> implements IElevatorSettingBuilder<T> {
         this.settingKey = settingKey;
         this.defaultValue = defaultValue;
         this.persistentDataType = persistentDataType;
-    }
-
-    public ElevatorSettingBuilder(String settingKey, T defaultValue, ElevatorsDataType elevatorsDataType) {
-        this(settingKey, defaultValue, elevatorsDataType.getDataType());
     }
 
     public BuilderElevatorSetting<T> register(JavaPlugin plugin, ItemStack icon) {

@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.models.IElevatorAction;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.services.IElevatorActionService;
@@ -31,7 +30,7 @@ public class ElevatorActionService extends ElevatorService implements IElevatorA
     private boolean initialized = false;
     private boolean allowSelfRegister = false;
 
-    public ElevatorActionService(IElevators elevators) {
+    public ElevatorActionService(Elevators elevators) {
         super(elevators);
     }
 
@@ -65,9 +64,21 @@ public class ElevatorActionService extends ElevatorService implements IElevatorA
     public void registerElevatorAction(JavaPlugin plugin, String key, TriFunction<JavaPlugin,IElevatorType, String, IElevatorAction> actionConstructor, ItemStack icon) {
 
         if(plugin.getName().equalsIgnoreCase(Elevators.getInstance().getName()) && !this.allowSelfRegister)
-            throw new RuntimeException("An invalid Plugin was provided when trying to register an Elevator Action.");
+            throw new IllegalStateException("An invalid Plugin was provided when trying to register an Elevator Action.");
 
         key = key.toLowerCase().trim();
+
+        if(this.actionPlugins.containsKey(key)) {
+            JavaPlugin registeredPlugin = this.actionPlugins.get(key);
+
+            String message;
+            if (registeredPlugin.getName().equalsIgnoreCase(Elevators.getInstance().getName()))
+                message = "External elevator actions are not able to override default actions.";
+            else
+                message = "An elevator action with the key \"" + key + "\" was already registered by plugin: " + registeredPlugin.getName();
+            throw new IllegalStateException(message);
+        }
+
         this.actionIcons.put(key, icon);
         this.actionPlugins.put(key, plugin);
         this.actionConstructors.put(key, actionConstructor);

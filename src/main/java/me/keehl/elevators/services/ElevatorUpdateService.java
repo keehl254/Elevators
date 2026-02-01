@@ -3,7 +3,6 @@ package me.keehl.elevators.services;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.services.IElevatorUpdateService;
 import me.keehl.elevators.helpers.VersionHelper;
 import org.bukkit.Bukkit;
@@ -28,7 +27,7 @@ public class ElevatorUpdateService extends ElevatorService implements IElevatorU
     private boolean updateAvailable = false;
     private boolean checkBetaChannels = false;
 
-    public ElevatorUpdateService(IElevators elevators) {
+    public ElevatorUpdateService(Elevators elevators) {
         super(elevators);
     }
 

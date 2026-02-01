@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.models.IElevatorEffect;
 import me.keehl.elevators.api.services.IElevatorEffectsService;
 import me.keehl.elevators.api.services.configs.versions.IConfigEffect;
@@ -26,7 +25,7 @@ public class ElevatorEffectService extends ElevatorService implements IElevatorE
 
     private final Map<String, IElevatorEffect> elevatorEffects = new HashMap<>();
 
-    public ElevatorEffectService(IElevators elevators) {
+    public ElevatorEffectService(Elevators elevators) {
         super(elevators);
     }
 

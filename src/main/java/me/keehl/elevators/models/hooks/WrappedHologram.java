@@ -59,7 +59,7 @@ public class WrappedHologram implements IWrappedHologram {
 
     public IElevator getElevatorRecord() {
         Block block = this.elevatorLocation.getBlock();
-        return ElevatorsAPI.createElevatorRecord(block);
+        return ElevatorsAPI.resolveElevator(block);
     }
 
     public void update() {

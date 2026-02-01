@@ -2,7 +2,6 @@ package me.keehl.elevators.services;
 
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.ElevatorsAPI;
-import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.services.IElevatorTypeService;
 import me.keehl.elevators.api.services.configs.versions.IConfigRoot;
@@ -18,7 +17,7 @@ public class ElevatorTypeService extends ElevatorService implements IElevatorTyp
 
     private boolean initialized = false;
 
-    public ElevatorTypeService(IElevators elevators) {
+    public ElevatorTypeService(Elevators elevators) {
         super(elevators);
     }
 
