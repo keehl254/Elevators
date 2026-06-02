@@ -18,7 +18,7 @@ public class AutoCrafterListener {
 
     public static void onAutoCraft(CrafterCraftEvent event) {
         ItemStack result = event.getResult();
-        if (result.isEmpty())
+        if (result == null || result.getType() == org.bukkit.Material.AIR)
             return;
         if (ItemStackHelper.isNotShulkerBox(result.getType()))
             return;
