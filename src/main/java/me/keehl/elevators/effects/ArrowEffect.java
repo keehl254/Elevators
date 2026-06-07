@@ -6,6 +6,7 @@ import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.ElevatorEffect;
 import me.keehl.elevators.api.models.IElevatorEventData;
 import org.bukkit.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class ArrowEffect extends ElevatorEffect {
     }
 
     @Override
-    public void playEffect(IElevatorEventData teleportResult, IElevator elevator) {
+    public void playEffect(@NotNull IElevatorEventData teleportResult, @NotNull IElevator elevator) {
         byte direction = teleportResult.getDirection();
 
         Color particleColor = this.getParticleColor(elevator);

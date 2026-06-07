@@ -40,7 +40,7 @@ public class ElevatorMenuOpenEvent extends Event implements Cancellable {
     }
 
     public IElevatorType getElevatorType() {
-        return this.elevator.getElevatorType();
+        return this.elevator.getSnapshotElevatorType();
     }
 
     @Override

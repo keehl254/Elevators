@@ -85,7 +85,7 @@ public class ItemStackHelper {
 
     public static ItemStack createItemStackFromElevator(IElevator elevator) {
 
-        ItemStack itemStack = createItemStackFromElevatorType(elevator.getElevatorType(), DyeColor.WHITE);
+        ItemStack itemStack = createItemStackFromElevatorType(elevator.getSnapshotElevatorType(), DyeColor.WHITE);
         itemStack.setType(elevator.getShulkerBox().getType());
 
         Elevators.getDataContainerService().dumpDataFromShulkerBoxIntoItem(elevator.getShulkerBox(), itemStack);

@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public class UsePermissionSetting extends InternalElevatorSetting<String> {
 
@@ -19,12 +20,12 @@ public class UsePermissionSetting extends InternalElevatorSetting<String> {
     }
 
     @Override
-    public boolean canBeEditedIndividually(IElevator elevator) {
+    public boolean canBeEditedIndividually(@NotNull IElevator elevator) {
         return false;
     }
 
     @Override
-    public void onClickGlobal(Player player, IElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue) {
+    public void onClickGlobal(@NotNull Player player, @NotNull IElevatorType elevatorType, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull String currentValue) {
         player.closeInventory();
 
         SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
@@ -45,12 +46,12 @@ public class UsePermissionSetting extends InternalElevatorSetting<String> {
     }
 
     @Override
-    public void onClickIndividual(Player player, IElevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent, String currentValue) {
+    public void onClickIndividual(@NotNull Player player, @NotNull IElevator elevator, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull String currentValue) {
         returnMethod.run();
     }
 
     @Override
-    public String getGlobalValue(IElevatorType elevatorType) {
+    public @NotNull String getGlobalValue(@NotNull IElevatorType elevatorType) {
         return elevatorType.getUsePermission();
     }
 }

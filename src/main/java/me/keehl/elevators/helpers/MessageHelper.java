@@ -46,7 +46,7 @@ public class MessageHelper {
         if(searchResult == null)
             return message;
 
-        message = message.replace("%elevators_type%", searchResult.getOrigin().getElevatorType().getTypeKey());
+        message = message.replace("%elevators_type%", searchResult.getOrigin().getSnapshotElevatorType().getTypeKey());
         if(searchResult.getDestination() != null && searchResult.getDestination().getShulkerBox() != null) {
 
             if (message.contains("%elevators_new_floor%"))

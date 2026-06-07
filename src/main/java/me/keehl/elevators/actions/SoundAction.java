@@ -18,6 +18,7 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class SoundAction extends ElevatorAction {
     }
 
     @Override
-    public void execute(IElevatorEventData eventData, Player player) {
+    public void execute(@NotNull IElevatorEventData eventData, @NotNull Player player) {
         Consumer<IElevator> soundConsumer = elevator -> {
             ShulkerBox box = elevator.getShulkerBox();
 

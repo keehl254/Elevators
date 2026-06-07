@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -33,7 +34,7 @@ public class MessagePlayerAction extends ElevatorAction {
     }
 
     @Override
-    public void execute(IElevatorEventData eventData, Player player) {
+    public void execute(@NotNull IElevatorEventData eventData, @NotNull Player player) {
         String message = this.getVariableValue(messageGrouping, eventData.getOrigin());
 
         ILocaleComponent component = MessageHelper.getLocaleComponent(message);

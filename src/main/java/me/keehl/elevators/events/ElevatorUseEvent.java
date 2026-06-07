@@ -31,7 +31,7 @@ public class ElevatorUseEvent extends Event implements Cancellable {
     }
 
     public IElevatorType getElevatorType() {
-        return this.searchResult.getOrigin().getElevatorType();
+        return this.searchResult.getOrigin().getSnapshotElevatorType();
     }
 
 

@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,27 +125,27 @@ public class LoreLinesSetting extends InternalElevatorSetting<List<ILocaleCompon
     }
 
     @Override
-    public void onClickGlobal(Player player, IElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, List<ILocaleComponent> currentValue) {
+    public void onClickGlobal(@NotNull Player player, @NotNull IElevatorType elevatorType, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull List<ILocaleComponent> currentValue) {
         this.editLines(player, returnMethod, clickEvent, currentValue, elevatorType::setLore);
     }
 
     @Override
-    public void onClickIndividual(Player player, IElevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent, List<ILocaleComponent> currentValue) {
+    public void onClickIndividual(@NotNull Player player, @NotNull IElevator elevator, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull List<ILocaleComponent> currentValue) {
         returnMethod.run();
     }
 
     @Override
-    public List<ILocaleComponent> getGlobalValue(IElevatorType elevatorType) {
+    public @NotNull List<ILocaleComponent> getGlobalValue(@NotNull IElevatorType elevatorType) {
         return elevatorType.getLore();
     }
 
     @Override
-    public boolean canBeEditedIndividually(IElevator elevator) {
+    public boolean canBeEditedIndividually(@NotNull IElevator elevator) {
         return false;
     }
 
     @Override
-    public ItemStack createIcon(Object value, boolean global) {
+    public @NotNull ItemStack createIcon(@NotNull Object value, boolean global) {
         List<String> lore = new ArrayList<>();
         List<ILocaleComponent> loreLines;
         if (global)

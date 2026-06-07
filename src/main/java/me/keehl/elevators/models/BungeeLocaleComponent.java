@@ -35,8 +35,8 @@ public class BungeeLocaleComponent implements ILocaleComponent {
         if(eventData.getPlayer() != null) {
             newComponent = newComponent.replace("%player%", eventData.getPlayer().getName()).replace("<player>", eventData.getPlayer().getName());
         }
-        String elevatorTypeKey = eventData.getOrigin().getElevatorType(false).getTypeKey();
-        String elevatorTypeDisplay = eventData.getOrigin().getElevatorType(false).getDisplayName().toLegacyText();
+        String elevatorTypeKey = eventData.getOrigin().getSnapshotElevatorType().getTypeKey();
+        String elevatorTypeDisplay = eventData.getOrigin().getSnapshotElevatorType().getDisplayName().toLegacyText();
         newComponent = newComponent.replace("%elevators_type%", elevatorTypeKey).replace("<elevators_type>", elevatorTypeKey);
         newComponent = newComponent.replace("%elevators_type_display%", elevatorTypeDisplay).replace("<elevators_type_display>", elevatorTypeDisplay);
 

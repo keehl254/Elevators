@@ -4,6 +4,7 @@ import me.keehl.dialogbuilder.DialogManager;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.IElevatorAction;
+import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.services.interaction.ISimpleDisplay;
 import me.keehl.elevators.services.interaction.PagedDisplay;
 import me.keehl.elevators.services.interaction.SimpleDisplay;
@@ -135,7 +136,7 @@ public class ElevatorMenuHelper {
     }
 
     public static List<IElevatorAction> getActionsWithSettings(IElevator elevator, boolean up) {
-        List<IElevatorAction> actions = new ArrayList<>(up ? elevator.getElevatorType(false).getActionsUp() : elevator.getElevatorType(false).getActionsDown()); // Don't want to alter the original list.
+        List<IElevatorAction> actions = new ArrayList<>(up ? elevator.getSnapshotElevatorType().getActionsUp() : elevator.getSnapshotElevatorType().getActionsDown()); // Don't want to alter the original list.
         actions.removeIf(i -> i.getSettings().isEmpty());
         actions.removeIf(i -> i.getSettings().stream().allMatch(s -> s.isSettingGlobalOnly(elevator)));
         return actions;

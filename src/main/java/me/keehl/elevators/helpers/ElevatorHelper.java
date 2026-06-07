@@ -144,7 +144,7 @@ public class ElevatorHelper {
 
             IElevatorType tempElevatorType = ElevatorHelper.getElevatorType(tempShulkerBox, false);
             IElevator tempElevator = new Elevator(tempShulkerBox, tempElevatorType);
-            if (tempElevatorType == null || (checksClass && !elevator.getElevatorType().equals(tempElevatorType)))
+            if (tempElevatorType == null || (checksClass && !elevator.getSnapshotElevatorType().equals(tempElevatorType)))
                 continue;
 
             if (--solidBlocks >= maxSolidBlocks)
@@ -185,7 +185,7 @@ public class ElevatorHelper {
 
         Elevators.getHologramService().updateElevatorHologram(elevator);
 
-        if(!elevator.getElevatorType(true).shouldAllowIndividualEdit())
+        if(!elevator.getSnapshotElevatorType().shouldAllowIndividualEdit())
             return;
 
         if (!Elevators.getHooksService().canEditElevator(player, elevator, true)) {
@@ -226,9 +226,9 @@ public class ElevatorHelper {
     public static void onElevatorUse(Player player, IElevatorEventData elevatorEventData) {
         List<IElevatorAction> actions;
         if (elevatorEventData.getDirection() == 1)
-            actions = elevatorEventData.getOrigin().getElevatorType().getActionsUp();
+            actions = elevatorEventData.getOrigin().getSnapshotElevatorType().getActionsUp();
         else
-            actions = elevatorEventData.getOrigin().getElevatorType().getActionsDown();
+            actions = elevatorEventData.getOrigin().getSnapshotElevatorType().getActionsDown();
 
         if(actions.stream().anyMatch(action -> !action.meetsConditions(elevatorEventData, player)))
             return;

@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -33,7 +34,7 @@ public class EffectAction extends ElevatorAction {
     }
 
     @Override
-    public void execute(IElevatorEventData eventData, Player player) {
+    public void execute(@NotNull IElevatorEventData eventData, @NotNull Player player) {
         IElevatorEffect effect = Elevators.getEffectsService().getEffectFromKey(this.getVariableValue(effectNameGrouping, eventData.getOrigin()));
         if(effect == null)
             return;

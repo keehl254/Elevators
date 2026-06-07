@@ -141,7 +141,7 @@ public class ImageEffect extends ElevatorEffect {
     }
 
     @Override
-    public void playEffect(IElevatorEventData teleportResult, IElevator elevator) {
+    public void playEffect(@NotNull IElevatorEventData teleportResult, @NotNull IElevator elevator) {
         if(this.height <= 0)
             return;
 

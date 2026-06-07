@@ -11,6 +11,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Observer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -25,7 +26,7 @@ public class TriggerObserverAction extends ElevatorAction {
     }
 
     @Override
-    public void execute(IElevatorEventData eventData, Player player) {
+    public void execute(@NotNull IElevatorEventData eventData, @NotNull Player player) {
 
         for (BlockFace face : Arrays.asList(BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST)) {
 

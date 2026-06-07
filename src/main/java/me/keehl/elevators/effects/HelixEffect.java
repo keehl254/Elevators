@@ -6,6 +6,7 @@ import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.ElevatorEffect;
 import me.keehl.elevators.api.models.IElevatorEventData;
 import org.bukkit.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -17,7 +18,7 @@ public class HelixEffect extends ElevatorEffect {
 
     @SuppressWarnings("CodeBlock2Expr")
     @Override
-    public void playEffect(IElevatorEventData teleportResult, IElevator elevator) {
+    public void playEffect(@NotNull IElevatorEventData teleportResult, @NotNull IElevator elevator) {
         Location locClone = this.getEffectLocation(elevator).getBlock().getLocation();
         Color particleColor = this.getParticleColor(elevator);
 

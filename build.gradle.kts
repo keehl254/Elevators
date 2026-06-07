@@ -1,7 +1,7 @@
 import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
 
 group = "me.keehl"
-version = "5.0.0-beta.20"
+version = "5.0.0-beta.21"
 
 plugins {
     java
@@ -75,7 +75,7 @@ bukkit {
     apiVersion = "1.14"
     foliaSupported = true
 
-    loadBefore = listOf("SuperiorSkyblock2", "Lands")
+    loadBefore = listOf("SuperiorSkyblock2")
     softDepend = listOf(
         "PlaceholderAPI", "RedProtect", "Vault", "HolographicDisplays", "GriefPrevention", "GriefDefender", "CMI",
         "PlotSquared", "BentoBox", "DecentHolograms", "FancyHolograms", "ProtocolLib", "WorldGuard", "Protect",

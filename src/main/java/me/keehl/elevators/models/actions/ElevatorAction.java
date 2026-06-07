@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Subst;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -54,11 +56,13 @@ public abstract class ElevatorAction implements IElevatorAction {
         this.icon = ItemStackHelper.createItem(key, Material.EGG, 1);
     }
 
-    public void setIcon(ItemStack item) {
+    public void setIcon(@NotNull ItemStack item) {
+        Objects.requireNonNull(item, "item");
         this.icon = item;
     }
 
-    public final void initialize(String value) {
+    public final void initialize(@NotNull String value) {
+        Objects.requireNonNull(value, "value");
         if (value.contains(":"))
             value = value.substring(value.indexOf(':') + 1);
         value = value.trim();
@@ -88,20 +92,20 @@ public abstract class ElevatorAction implements IElevatorAction {
         this.initIdentifier();
     }
 
-    public IElevatorType getElevatorType() {
+    public @NotNull IElevatorType getElevatorType() {
         return this.elevatorType;
     }
 
     @Subst("test_key")
-    public String getKey() {
+    public @NotNull String getKey() {
         return this.key;
     }
 
-    public ItemStack getIcon() {
+    public @NotNull ItemStack getIcon() {
         return this.icon;
     }
 
-    public String serialize() {
+    public @NotNull String serialize() {
         StringBuilder builder = new StringBuilder(this.key + ": ");
 
         for (IElevatorActionVariable<?> variable : this.variableData.keySet()) {
@@ -115,13 +119,14 @@ public abstract class ElevatorAction implements IElevatorAction {
         return builder.toString().trim();
     }
 
-    public <T> T getVariableValue(IElevatorActionVariable<T> grouping) {
+    public @NotNull <T> T getVariableValue(@NotNull IElevatorActionVariable<T> grouping) {
+        Objects.requireNonNull(grouping, "grouping");
         return this.getVariableValue(grouping, null);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getVariableValue(IElevatorActionVariable<T> variable, IElevator elevator) {
-
+    public @NotNull <T> T getVariableValue(@NotNull IElevatorActionVariable<T> variable, @Nullable IElevator elevator) {
+        Objects.requireNonNull(variable, "variable");
         if (elevator != null && this.settings.containsKey(variable)) {
 
             ElevatorActionSetting<T> data = (ElevatorActionSetting<T>) this.settings.get(variable);
@@ -138,7 +143,10 @@ public abstract class ElevatorAction implements IElevatorAction {
         return this.variables.stream().filter(i -> i.isGroupingAlias(alias)).findFirst();
     }
 
-    public <T> void setGroupingObject(IElevatorActionVariable<T> grouping, T value) {
+    public <T> void setGroupingObject(@NotNull IElevatorActionVariable<T> grouping, @NotNull T value) {
+        Objects.requireNonNull(grouping, "grouping");
+        Objects.requireNonNull(value, "value");
+
         if (value.equals(grouping.getDefaultObject()))
             this.variableData.remove(grouping);
         else
@@ -190,11 +198,11 @@ public abstract class ElevatorAction implements IElevatorAction {
         return mapSetting(grouping, settingName, settingDisplayName, description, icon, false);
     }
 
-    public UUID getIdentifier() {
+    public @NotNull UUID getIdentifier() {
         return this.getVariableValue(keyGrouping);
     }
 
-    public List<IElevatorActionSetting<?>> getSettings() {
+    public @NotNull List<IElevatorActionSetting<?>> getSettings() {
         return new ArrayList<>(this.settings.values());
     }
 
@@ -206,20 +214,20 @@ public abstract class ElevatorAction implements IElevatorAction {
         this.setGroupingObject(keyGrouping, UUID.randomUUID());
     }
 
-    public void onStartEditing(Player player, ISimpleDisplay display, IElevator elevator) {}
-    public void onStopEditing(Player player, ISimpleDisplay display, IElevator elevator) {}
+    public void onStartEditing(@NotNull Player player, @NotNull ISimpleDisplay display, @Nullable IElevator elevator) {}
+    public void onStopEditing(@NotNull Player player, @NotNull ISimpleDisplay display, @Nullable IElevator elevator) {}
 
     public static ElevatorActionBuilder builder(String actionKey) {
         return new ElevatorActionBuilder(actionKey);
     }
 
-    public boolean meetsConditions(IElevatorEventData eventData, Player player) {
+    public boolean meetsConditions(@NotNull IElevatorEventData eventData, @NotNull Player player) {
         return true;
     }
 
     protected abstract void onInitialize(String value);
 
-    public abstract void execute(IElevatorEventData eventData, Player player);
+    public abstract void execute(@NotNull IElevatorEventData eventData, @NotNull Player player);
 
 
 }

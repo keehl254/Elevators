@@ -19,6 +19,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Pattern;
 import org.intellij.lang.annotations.Subst;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -52,7 +53,10 @@ public abstract class ElevatorSetting<T> implements IElevatorSetting<T> {
         this(plugin, settingName, textColor + "" + ChatColor.BOLD + settingDisplayName, description, icon);
     }
 
-    public IElevatorSetting<T> addAction(String action, String description) {
+    public @NotNull IElevatorSetting<T> addAction(@NotNull String action, @NotNull String description) {
+        Objects.requireNonNull(action);
+        Objects.requireNonNull(description);
+
         this.actions.put(action, description);
         return this;
     }
@@ -63,13 +67,16 @@ public abstract class ElevatorSetting<T> implements IElevatorSetting<T> {
         return this;
     }
 
-    public final boolean isSettingGlobalOnly(IElevator elevator) {
-        return elevator.getElevatorType(false).getDisabledSettings().contains(this.settingName) || !canBeEditedIndividually(elevator);
+    public final boolean isSettingGlobalOnly(@NotNull IElevator elevator) {
+        Objects.requireNonNull(elevator);
+
+        return elevator.getSnapshotElevatorType().getDisabledSettings().contains(this.settingName) || !canBeEditedIndividually(elevator);
     }
 
-    public abstract boolean canBeEditedIndividually(IElevator elevator);
+    public abstract boolean canBeEditedIndividually(@NotNull IElevator elevator);
 
-    public ItemStack createIcon(Object value, boolean global) {
+    public @NotNull ItemStack createIcon(@NotNull Object value, boolean global) {
+        Objects.requireNonNull(value);
 
         List<String> lore = new ArrayList<>();
 
@@ -101,39 +108,52 @@ public abstract class ElevatorSetting<T> implements IElevatorSetting<T> {
         return icon;
     }
 
-    public final void clickGlobal(Player player, IElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent) {
+    public final void clickGlobal(@NotNull Player player, @NotNull IElevatorType elevatorType, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent) {
+        Objects.requireNonNull(player);
+        Objects.requireNonNull(elevatorType);
+        Objects.requireNonNull(returnMethod);
+        Objects.requireNonNull(clickEvent);
+
         this.onClickGlobal(player, elevatorType, returnMethod, clickEvent, this.getGlobalValue(elevatorType));
     }
 
-    public final void clickIndividual(Player player, IElevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent) {
+    public final void clickIndividual(@NotNull Player player, @NotNull IElevator elevator, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent) {
+        Objects.requireNonNull(player);
+        Objects.requireNonNull(elevator);
+        Objects.requireNonNull(returnMethod);
+        Objects.requireNonNull(clickEvent);
+
         this.onClickIndividual(player, elevator, returnMethod, clickEvent, this.getIndividualValue(elevator));
     }
 
-    public abstract void onClickGlobal(Player player, IElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, T currentValue);
+    public abstract void onClickGlobal(@NotNull Player player, @NotNull IElevatorType elevatorType, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull T currentValue);
 
-    public abstract void onClickIndividual(Player player, IElevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent, T currentValue);
+    public abstract void onClickIndividual(@NotNull Player player, @NotNull IElevator elevator, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull T currentValue);
 
-    public abstract T getGlobalValue(IElevatorType elevatorType);
+    public abstract @NotNull T getGlobalValue(@NotNull IElevatorType elevatorType);
 
 
-    public final T getIndividualValue(IElevator elevator) {
+    public final @NotNull T getIndividualValue(@NotNull IElevator elevator) {
+        Objects.requireNonNull(elevator);
 
         if (!this.isSettingGlobalOnly(elevator) && this.containerKey != null) {
-            T value = Elevators.getDataContainerService().getElevatorValue(elevator.getShulkerBox(), this.containerKey, this.getGlobalValue(elevator.getElevatorType(false)));
+            T value = Elevators.getDataContainerService().getElevatorValue(elevator.getShulkerBox(), this.containerKey, this.getGlobalValue(elevator.getSnapshotElevatorType()));
             if (value != null)
                 return value;
         }
 
-        return this.getGlobalValue(elevator.getElevatorType(false));
+        return this.getGlobalValue(elevator.getSnapshotElevatorType());
     }
 
-    public void setIndividualValue(IElevator elevator, T value) {
+    public void setIndividualValue(@NotNull IElevator elevator, @NotNull T value) {
+        Objects.requireNonNull(elevator);
+        Objects.requireNonNull(value);
 
         if (this.containerKey == null)
-            throw new RuntimeException("Setting does not have a method for setting individual value.");
+            throw new IllegalStateException("Setting does not support individual overrides (datastore not configured).");
 
         // Store as little data as possible. Remove from data-container if it's the default.
-        if (Objects.equals(value, this.getGlobalValue(elevator.getElevatorType(false))))
+        if (Objects.equals(value, this.getGlobalValue(elevator.getSnapshotElevatorType())))
             value = null;
 
 
@@ -151,11 +171,11 @@ public abstract class ElevatorSetting<T> implements IElevatorSetting<T> {
         return new ElevatorSettingBuilder<>(settingKey, defaultValue, dataType);
     }
 
-    public String getSettingName() {
+    public @NotNull String getSettingName() {
         return this.settingName;
     }
 
-    public JavaPlugin getPlugin() {
+    public @NotNull JavaPlugin getPlugin() {
         return this.plugin;
     }
 

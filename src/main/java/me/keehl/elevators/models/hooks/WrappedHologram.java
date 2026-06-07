@@ -24,7 +24,7 @@ public class WrappedHologram implements IWrappedHologram {
         this.uuid = uuid.toString();
         this.wrappedHologram = wrappedHologram;
         this.elevatorLocation = elevator.getLocation();
-        this.elevatorTypeKey = elevator.getElevatorType().getTypeKey(); // Store Elevator Type Key to account for a config reload.
+        this.elevatorTypeKey = elevator.getSnapshotElevatorType().getTypeKey(); // Store Elevator Type Key to account for a config reload.
 
         Elevators.getHologramService().registerHologram(this);
     }

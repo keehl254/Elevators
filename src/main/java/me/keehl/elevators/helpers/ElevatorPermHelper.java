@@ -53,10 +53,10 @@ public class ElevatorPermHelper {
             }
 
             boolean shouldCheckSettings = Elevators.getSettingService().getElevatorSettingValue(elevator, InternalElevatorSettingType.CHECK_PERMS);
-            if (!shouldCheckSettings || player.hasPermission(elevator.getElevatorType().getUsePermission() + ".*"))
+            if (!shouldCheckSettings || player.hasPermission(elevator.getSnapshotElevatorType().getUsePermission() + ".*"))
                 return;
 
-            if(!player.hasPermission(elevator.getElevatorType().getUsePermission() + "." + elevator.getDyeColor()))
+            if(!player.hasPermission(elevator.getSnapshotElevatorType().getUsePermission() + "." + elevator.getDyeColor()))
                 hasPermission.set(false);
         };
 

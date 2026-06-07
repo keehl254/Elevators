@@ -19,6 +19,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 import java.util.function.Consumer;
@@ -55,7 +57,7 @@ public class BossBarAction extends ElevatorAction {
     }
 
     @Override
-    public void execute(IElevatorEventData eventData, Player player) {
+    public void execute(@NotNull IElevatorEventData eventData, @NotNull Player player) {
         /*if (elevator instanceof PremiumElevator && ((PremiumElevator) elevator).getSpeed() > 0.0)
             return;*/
 
@@ -116,12 +118,12 @@ public class BossBarAction extends ElevatorAction {
     }
 
     @Override
-    public void onStartEditing(Player player, ISimpleDisplay display, IElevator elevator) {
+    public void onStartEditing(@NotNull Player player, @NotNull ISimpleDisplay display, @Nullable IElevator elevator) {
         display.setCache("ele-boss-bar-runnable", this.displayMessage(player, elevator, () -> this.getVariableValue(messageGrouping, elevator), 50));
     }
 
     @Override
-    public void onStopEditing(Player player, ISimpleDisplay display, IElevator elevator) {
+    public void onStopEditing(@NotNull Player player, @NotNull ISimpleDisplay display, @Nullable IElevator elevator) {
         Runnable stopBar = display.getOrDefaultCache("ele-boss-bar-runnable", null);
         if (stopBar != null)
             stopBar.run();

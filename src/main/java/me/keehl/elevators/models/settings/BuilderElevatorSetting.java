@@ -15,7 +15,9 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Pattern;
 import org.intellij.lang.annotations.Subst;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -39,14 +41,16 @@ public class BuilderElevatorSetting<T> extends ElevatorSetting<T> implements IBu
 
             this.onClick = builder.onClick;
 
-            for(String action : builder.actions.keySet())
+            for(String action : builder.actions.keySet()) {
                 super.addAction(action, builder.actions.get(action));
-
+            }
         }
 
         @Override()
-        public boolean canBeEditedIndividually(IElevator elevator) {
-            return this.canEditIndividuallyFunc.apply(elevator) && !elevator.getElevatorType(false).getDisabledSettings().contains(this.settingName);
+        public boolean canBeEditedIndividually(@NotNull IElevator elevator) {
+            Objects.requireNonNull(elevator);
+
+            return this.canEditIndividuallyFunc.apply(elevator) && !elevator.getSnapshotElevatorType().getDisabledSettings().contains(this.settingName);
         }
 
         @Override()
@@ -56,7 +60,13 @@ public class BuilderElevatorSetting<T> extends ElevatorSetting<T> implements IBu
         }
 
         @Override
-        public void onClickGlobal(Player player, IElevatorType apiElevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, T currentValue) {
+        public void onClickGlobal(@NotNull Player player, @NotNull IElevatorType apiElevatorType, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull T currentValue) {
+            Objects.requireNonNull(player);
+            Objects.requireNonNull(apiElevatorType);
+            Objects.requireNonNull(returnMethod);
+            Objects.requireNonNull(clickEvent);
+            Objects.requireNonNull(currentValue);
+
             ElevatorType elevatorType = (ElevatorType) apiElevatorType;
             ElevatorSettingClickContext<T> clickContext = new ElevatorSettingClickContext<>(player, returnMethod, clickEvent, currentValue, newValue -> {
                 elevatorType.getSettingsConfig().setData(this.settingName, newValue, this.comments);
@@ -66,7 +76,13 @@ public class BuilderElevatorSetting<T> extends ElevatorSetting<T> implements IBu
         }
 
         @Override
-        public void onClickIndividual(Player player, IElevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent, T currentValue) {
+        public void onClickIndividual(@NotNull Player player, @NotNull IElevator elevator, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull T currentValue) {
+            Objects.requireNonNull(player);
+            Objects.requireNonNull(elevator);
+            Objects.requireNonNull(returnMethod);
+            Objects.requireNonNull(clickEvent);
+            Objects.requireNonNull(currentValue);
+
             ElevatorSettingClickContext<T> clickContext = new ElevatorSettingClickContext<>(player, returnMethod, clickEvent, currentValue, newValue -> {
                 this.setIndividualValue(elevator, newValue);
             });
@@ -74,7 +90,9 @@ public class BuilderElevatorSetting<T> extends ElevatorSetting<T> implements IBu
         }
 
         @Override
-        public T getGlobalValue(IElevatorType apiElevatorType) {
+        public @NotNull T getGlobalValue(@NotNull IElevatorType apiElevatorType) {
+            Objects.requireNonNull(apiElevatorType);
+
             ElevatorType elevatorType = (ElevatorType) apiElevatorType;
             T currentValue = elevatorType.getSettingsConfig().getData(this.settingName);
             if (currentValue == null)
@@ -83,7 +101,10 @@ public class BuilderElevatorSetting<T> extends ElevatorSetting<T> implements IBu
         }
 
         @Override()
-        public IElevatorSetting<T> addAction(String action, String description) {
+        public @NotNull IElevatorSetting<T> addAction(@NotNull String action, @NotNull String description) {
+            Objects.requireNonNull(action);
+            Objects.requireNonNull(description);
+
             throw new RuntimeException("addAction func cannot be dynamically set on external elevator settings.");
         }
 

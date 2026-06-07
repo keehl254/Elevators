@@ -161,7 +161,7 @@ public class ElevatorHologramService extends ElevatorService implements IElevato
         if (elevator == null)
             return;
 
-        List<String> hologramLines = elevator.getElevatorType().getHolographicLines().stream().map(ILocaleComponent::toLegacyText).collect(Collectors.toList());
+        List<String> hologramLines = elevator.getSnapshotElevatorType().getHolographicLines().stream().map(ILocaleComponent::toLegacyText).collect(Collectors.toList());
 
         IWrappedHologram hologram = hologramLines.isEmpty() ? getElevatorHologramIfExists(elevator) : getElevatorHologram(elevator);
         if (hologram == null) // We delete holograms that are empty. No need to "create" the hologram just to delete it.

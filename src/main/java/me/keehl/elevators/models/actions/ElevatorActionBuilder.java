@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -108,12 +109,12 @@ public class ElevatorActionBuilder implements IElevatorActionBuilder {
         }
 
         @Override
-        public void execute(IElevatorEventData eventData, Player player) {
+        public void execute(@NotNull IElevatorEventData eventData, @NotNull Player player) {
             this.builder.executeConsumer.accept(new ElevatorActionExecuteContext(this, eventData, player));
         }
 
         @Override
-        public boolean meetsConditions(IElevatorEventData eventData, Player player) {
+        public boolean meetsConditions(@NotNull IElevatorEventData eventData, @NotNull Player player) {
             return this.builder.conditionsFunction.apply(new ElevatorActionExecuteContext(this, eventData, player));
         }
     }

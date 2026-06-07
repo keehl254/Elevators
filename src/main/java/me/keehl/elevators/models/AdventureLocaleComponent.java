@@ -45,8 +45,8 @@ public class AdventureLocaleComponent implements ILocaleComponent {
         if(eventData.getPlayer() != null) {
             resolver.tag("player", Tag.preProcessParsed(eventData.getPlayer().getName()));
         }
-        resolver.tag("elevators_type", Tag.preProcessParsed(eventData.getOrigin().getElevatorType(false).getTypeKey()));
-        resolver.tag("elevators_type_display", Tag.inserting(MiniMessage.miniMessage().deserialize(eventData.getOrigin().getElevatorType(false).getDisplayName().serialize())));
+        resolver.tag("elevators_type", Tag.preProcessParsed(eventData.getOrigin().getSnapshotElevatorType().getTypeKey()));
+        resolver.tag("elevators_type_display", Tag.inserting(MiniMessage.miniMessage().deserialize(eventData.getOrigin().getSnapshotElevatorType().getDisplayName().serialize())));
 
         if(eventData.getDestination() != null) {
             if(newComponent.contains("<elevators_new_floor>"))

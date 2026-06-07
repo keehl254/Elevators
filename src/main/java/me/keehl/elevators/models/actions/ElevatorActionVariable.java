@@ -3,6 +3,8 @@ package me.keehl.elevators.models.actions;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.IElevatorAction;
 import me.keehl.elevators.api.models.IElevatorActionVariable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,20 +41,24 @@ public class ElevatorActionVariable<T> implements IElevatorActionVariable<T> {
         this.conversionErrorMessage = "An invalid value was provided for action %s '%s' on elevator type '%s'. Defaulting to '%s'";
     }
 
-    public T getObjectFromString(String value, IElevatorAction action) {
+    public @NotNull T getObjectFromString(@Nullable String value, @NotNull IElevatorAction action) {
+        Objects.requireNonNull(action);
         if(value == null)
             return this.defaultObject;
         try {
             return this.conversionFunction.apply(value);
         } catch (Exception e) {
             ElevatorsAPI.log(Level.INFO, this.getMainAlias() + ": " + value);
-            ElevatorsAPI.log(Level.WARNING, String.format(this.conversionErrorMessage, action.getKey(), this.getMainAlias(), action.getElevatorType().getTypeKey(), this.defaultObject.toString()));
+            ElevatorsAPI.log(Level.WARNING, String.format(this.conversionErrorMessage, action.getKey(), this.getMainAlias(), action.getElevatorType().getTypeKey(), this.defaultObject));
             return this.defaultObject;
         }
     }
 
     @SuppressWarnings("unchecked")
-    public String getStringFromObject(Object object) {
+    public @NotNull String getStringFromObject(@NotNull Object object) {
+        Objects.requireNonNull(object);
+        if (object == null)
+            return "";
         try {
             return this.toStringFunction.apply((T) object);
         } catch (Exception e) {
@@ -60,15 +66,16 @@ public class ElevatorActionVariable<T> implements IElevatorActionVariable<T> {
         }
     }
 
-    public String getMainAlias() {
+    public @NotNull String getMainAlias() {
         return this.groupingAliases.getFirst();
     }
 
-    public T getDefaultObject() {
+    public @NotNull T getDefaultObject() {
         return this.defaultObject;
     }
 
-    public boolean isGroupingAlias(String alias) {
+    public boolean isGroupingAlias(@NotNull String alias) {
+        Objects.requireNonNull(alias);
         return this.groupingAliases.contains(alias.toLowerCase());
     }
 

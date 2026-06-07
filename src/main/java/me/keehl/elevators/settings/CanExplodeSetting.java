@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public class CanExplodeSetting extends InternalElevatorSetting<Boolean> {
 
@@ -19,23 +20,23 @@ public class CanExplodeSetting extends InternalElevatorSetting<Boolean> {
     }
 
     @Override
-    public boolean canBeEditedIndividually(IElevator elevator) {
-        return !elevator.getElevatorType(false).canElevatorExplode();
+    public boolean canBeEditedIndividually(@NotNull IElevator elevator) {
+        return !elevator.getSnapshotElevatorType().canElevatorExplode();
     }
 
     @Override
-    public void onClickIndividual(Player player, IElevator elevator, Runnable returnMethod, InventoryClickEvent clickEvent, Boolean currentValue) {
+    public void onClickIndividual(@NotNull Player player, @NotNull IElevator elevator, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull Boolean currentValue) {
         this.setIndividualValue(elevator, !currentValue);
         returnMethod.run();
     }
 
     @Override
-    public Boolean getGlobalValue(IElevatorType elevatorType) {
+    public @NotNull Boolean getGlobalValue(@NotNull IElevatorType elevatorType) {
         return elevatorType.canElevatorExplode();
     }
 
     @Override
-    public void onClickGlobal(Player player, IElevatorType elevatorType, Runnable returnMethod, InventoryClickEvent clickEvent, Boolean currentValue) {
+    public void onClickGlobal(@NotNull Player player, @NotNull IElevatorType elevatorType, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull Boolean currentValue) {
         elevatorType.setCanElevatorExplode(!currentValue);
         returnMethod.run();
     }
