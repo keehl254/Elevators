@@ -64,8 +64,6 @@ public class ElevatorsPlugin extends JavaPlugin {
         this.getLogger().setFilter(new ElevatorLoggingFilter(this.getLogger().getFilter()));
         this.customLogger = new CustomLogger(this.getLogger());
 
-        this.printBanner();
-
         ElevatorsAPI.pushAndHoldLog();
 
         ElevatorsAPI.pushAndHoldLog();
@@ -87,7 +85,10 @@ public class ElevatorsPlugin extends JavaPlugin {
 
         this.elevators.enable();
         ElevatorsStartupService.buildElevators(this, this.foliaLib);
-        ElevatorsAPI.popLog(logData -> ElevatorsAPI.log("Plugin enabled. " + ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
+        ElevatorsAPI.popLog(logData -> {
+            this.printBanner();
+            ElevatorsAPI.log("Plugin enabled. " + ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms");
+        });
 
     }
 

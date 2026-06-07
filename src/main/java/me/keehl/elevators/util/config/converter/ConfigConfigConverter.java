@@ -115,14 +115,18 @@ public class ConfigConfigConverter extends ConfigConverter {
             String key = objKey.toString();
             Object obj = mapData.get(key);
 
+            if(expandableConfig.data.containsKey(key))
+                continue;
+
             FieldData childFieldData = new FieldData(null, obj.getClass(), obj.getClass());
 
             ConfigConverter converter = ConfigConverter.getConverter(obj.getClass());
             ConfigNode<?> childNode;
-            if (converter != null)
+            if (converter != null) {
                 childNode = converter.deserializeNodeWithFieldAndObject(myNode, key, obj, childFieldData);
-            else
+            } else {
                 childNode = ConfigConverter.createNodeWithData(myNode, key, obj, null);
+            }
 
             myNode.getChildren().add(childNode);
             expandableConfig.setData(key, childNode.getValue());
