@@ -112,6 +112,10 @@ public class VersionHelper {
         return 0;
     }
 
+    public static boolean isChunkLoaded(Location location) {
+        return location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+    }
+
     public static <T extends Recipe & Keyed> void removeRecipe(T recipe) {
 
         if(doesVersionSupportRemoveRecipe()) {

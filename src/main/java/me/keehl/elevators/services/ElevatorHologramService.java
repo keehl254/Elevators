@@ -55,7 +55,7 @@ public class ElevatorHologramService extends ElevatorService implements IElevato
             while (attempts++ < 10) {
                 this.currentIndex = this.currentIndex % holograms.length;
                 IWrappedHologram hologram = holograms[this.currentIndex];
-                if (!hologram.getElevatorLocation().getChunk().isLoaded())
+                if (!VersionHelper.isChunkLoaded(hologram.getElevatorLocation()))
                     continue;
 
                 hologram.update();

@@ -6,6 +6,7 @@ import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.models.hooks.IElevatorHologram;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.hooks.IWrappedHologram;
+import me.keehl.elevators.helpers.VersionHelper;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -64,7 +65,7 @@ public class WrappedHologram implements IWrappedHologram {
 
     public void update() {
 
-        if(!this.getElevatorLocation().getChunk().isLoaded())
+        if(!VersionHelper.isChunkLoaded(this.getElevatorLocation()))
             return;
 
         IElevator elevator = this.getElevatorRecord();

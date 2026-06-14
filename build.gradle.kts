@@ -1,7 +1,7 @@
 import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
 
 group = "me.keehl"
-version = "5.0.0-beta.21"
+version = "5.0.0-beta.22"
 
 plugins {
     java
