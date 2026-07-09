@@ -5,6 +5,7 @@ import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.services.IElevatorTypeService;
 import me.keehl.elevators.api.services.configs.versions.IConfigRoot;
+import me.keehl.elevators.models.ElevatorRecipeGroup;
 import me.keehl.elevators.models.ElevatorType;
 import org.bukkit.ChatColor;
 
@@ -53,6 +54,7 @@ public class ElevatorTypeService extends ElevatorService implements IElevatorTyp
 
             if (!elevatorTypes.containsKey("DEFAULT")) {
                 ElevatorType type = new ElevatorType();
+                type.getRecipeGroups().forEach(x -> ((ElevatorRecipeGroup) x).load(type));
                 type.setKey("DEFAULT");
                 elevatorTypes.put(type.getTypeKey(), type);
 
@@ -101,6 +103,7 @@ public class ElevatorTypeService extends ElevatorService implements IElevatorTyp
     public IElevatorType createElevatorType(String typeKey) {
         typeKey = typeKey.toUpperCase();
         ElevatorType type = new ElevatorType();
+        type.getRecipeGroups().forEach(x -> ((ElevatorRecipeGroup) x).load(type));
         Elevators.getConfigService().getElevatorTypeConfigs().put(typeKey, type);
         reloadElevatorsFromConfig(Elevators.getConfigService().getRootConfig());
 

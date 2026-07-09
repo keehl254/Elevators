@@ -1,6 +1,7 @@
 package me.keehl.elevators.settings;
 
 import me.keehl.elevators.Elevators;
+import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.models.IElevator;
 import me.keehl.elevators.api.models.IElevatorType;
 import me.keehl.elevators.api.models.ILocaleComponent;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class DisplayNameSetting extends InternalElevatorSetting<ILocaleComponent> {
 
     public DisplayNameSetting(JavaPlugin plugin) {
-        super(plugin, InternalElevatorSettingType.DISPLAY_NAME.getSettingName(),"Display Name", "This will change the display of newly created elevators. Old elevators will not be affected.", Material.NAME_TAG, ChatColor.GOLD);
+        super(plugin, InternalElevatorSettingType.DISPLAY_NAME.getSettingName(), "Display Name", "This will change the display of newly created elevators. Old elevators will not be affected.", Material.NAME_TAG, ChatColor.GOLD);
         this.addAction("Left Click", "Edit Text");
     }
 
@@ -27,7 +28,7 @@ public class DisplayNameSetting extends InternalElevatorSetting<ILocaleComponent
     }
 
     @Override
-    public void onClickGlobal(@NotNull Player player, @NotNull IElevatorType elevatorType, @NotNull Runnable returnMethod, @NotNull InventoryClickEvent clickEvent, @NotNull ILocaleComponent currentValue) {
+    public void onClickGlobal(final @NotNull Player player, final @NotNull IElevatorType elevatorType, final @NotNull Runnable returnMethod, final @NotNull InventoryClickEvent clickEvent, final @NotNull ILocaleComponent currentValue) {
         player.closeInventory();
 
         SimpleInput input = new SimpleInput(Elevators.getInstance(), player);
