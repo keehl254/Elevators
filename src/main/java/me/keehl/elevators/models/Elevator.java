@@ -20,6 +20,9 @@ public class Elevator implements IElevator {
         this.shulkerBox = shulkerBox;
         this.elevatorType = elevatorType;
 
+        if(shulkerBox == null)
+            return;
+
         // I build against 1.14.4, which for some reason has getColor as NonNull. This is changed in later versions.
         //noinspection ConstantValue
         if (shulkerBox.getColor() == null)

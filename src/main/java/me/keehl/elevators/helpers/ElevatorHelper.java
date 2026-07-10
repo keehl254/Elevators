@@ -83,7 +83,8 @@ public class ElevatorHelper {
         // Iterate downwards to find the lowest floor
         while (true) {
             searchResult = findDestinationElevator(null, startingLocation, elevator, (byte) -1, false, false, true);
-            if (searchResult == null) break;
+            if (searchResult == null || searchResult.getDestination() == null)
+                break;
 
             startingLocation = searchResult.getDestination().getLocation();
         }
@@ -95,7 +96,8 @@ public class ElevatorHelper {
         int floor = 1;
         while (true) {
             searchResult = findDestinationElevator(null, startingLocation, elevator, (byte) 1, false, false, true);
-            if (searchResult == null) break;
+            if (searchResult == null || searchResult.getDestination() == null)
+                break;
             floor++;
 
             startingLocation = searchResult.getDestination().getLocation();
@@ -224,18 +226,23 @@ public class ElevatorHelper {
     as a /back point
     */
     public static void onElevatorUse(Player player, IElevatorEventData elevatorEventData) {
+
+        if(elevatorEventData.getDestination() == null)
+            return;
+
         List<IElevatorAction> actions;
         if (elevatorEventData.getDirection() == 1)
-            actions = elevatorEventData.getOrigin().getSnapshotElevatorType().getActionsUp();
+            actions = elevatorEventData.getElevatorType().getActionsUp();
         else
-            actions = elevatorEventData.getOrigin().getSnapshotElevatorType().getActionsDown();
+            actions = elevatorEventData.getElevatorType().getActionsDown();
 
         if(actions.stream().anyMatch(action -> !action.meetsConditions(elevatorEventData, player)))
             return;
 
         ElevatorUseEvent useEvent = new ElevatorUseEvent(player, elevatorEventData);
         Bukkit.getPluginManager().callEvent(useEvent);
-        if (useEvent.isCancelled()) return;
+        if (useEvent.isCancelled())
+            return;
 
         actions.forEach(action -> action.execute(elevatorEventData, player));
 
