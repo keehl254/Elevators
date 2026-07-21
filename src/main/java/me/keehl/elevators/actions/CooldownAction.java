@@ -32,8 +32,8 @@ public class CooldownAction extends ElevatorAction {
         String desc = "This option controls the timespan of the elevator cooldown in milliseconds.";
         IElevatorActionSetting<Long> setting = this.mapSetting(timespanGrouping, "timespan", "Timespan", desc, Material.CLOCK, ChatColor.GOLD, false);
         setting.onClick(this::editTimespan);
-        setting.addAction("Left Click", "Raise Time");
-        setting.addAction("Right Click", "Lower Time");
+        setting.addAction("Left Click", "Add 500 MS");
+        setting.addAction("Right Click", "Subtract 500 MS");
     }
 
     @Override
@@ -41,7 +41,7 @@ public class CooldownAction extends ElevatorAction {
         if (eventData.getOrigin() == null)
             return;
 
-        String key = "elevator-cooldown-" + player.getUniqueId();
+        String key = "elevator-cooldown-" + player.getUniqueId() + "-"+this.getIdentifier();
 
         ShulkerBox box = eventData.getOrigin().getShulkerBox();
         box.setMetadata(key, new FixedMetadataValue(Elevators.getInstance(), System.currentTimeMillis()));
@@ -53,7 +53,7 @@ public class CooldownAction extends ElevatorAction {
             return true;
 
         long timespan = this.getVariableValue(timespanGrouping, eventData.getOrigin());
-        String key = "elevator-cooldown-" + player.getUniqueId();
+        String key = "elevator-cooldown-" + player.getUniqueId() + "-"+this.getIdentifier();
 
         ShulkerBox box = eventData.getOrigin().getShulkerBox();
         if (box.hasMetadata(key)) {
@@ -71,8 +71,8 @@ public class CooldownAction extends ElevatorAction {
     }
 
     private void editTimespan(final Player player, final Runnable returnMethod, final InventoryClickEvent clickEvent, final long currentValue, final Consumer<Long> setValueMethod) {
-        long newValue = currentValue + (clickEvent.isLeftClick() ? 1 : -1);
-        setValueMethod.accept(Math.max(newValue, 0));
+        long newValue = currentValue + (clickEvent.isLeftClick() ? 500 : -500);
+        setValueMethod.accept(Math.max(newValue, 500));
         returnMethod.run();
     }
 

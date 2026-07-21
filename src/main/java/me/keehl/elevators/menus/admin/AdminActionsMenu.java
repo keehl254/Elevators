@@ -45,9 +45,10 @@ public class AdminActionsMenu {
 
             if (event.isShiftClick()) {
                 ElevatorMenuHelper.openConfirmMenu(player, confirm -> {
-                    if (confirm)
+                    if (confirm) {
                         actions.remove(action);
-
+                        Elevators.saveConfig();
+                    }
                     openAdminActionsMenu(player, elevatorType, actions);
                 });
                 return;

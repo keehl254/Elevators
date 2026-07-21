@@ -147,13 +147,15 @@ public abstract class ElevatorAction implements IElevatorAction {
         Objects.requireNonNull(grouping, "grouping");
         Objects.requireNonNull(value, "value");
 
-        if (value.equals(grouping.getDefaultObject()))
+        if (value.equals(grouping.getDefaultObject())) {
             this.variableData.remove(grouping);
-        else
+        } else {
             this.variableData.put(grouping, value);
+        }
 
-        if(Elevators.getConfigService().isConfigLoaded())
-            Elevators.getInstance().saveConfig();
+        if(Elevators.getConfigService().isConfigLoaded()) {
+            Elevators.saveConfig();
+        }
     }
 
     private boolean calculateVariableFromAlias(String groupingAlias, String groupingValue) {

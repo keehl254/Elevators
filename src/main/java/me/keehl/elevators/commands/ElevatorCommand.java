@@ -21,7 +21,7 @@ import java.util.logging.Level;
 @SuppressWarnings({"unused"})
 public class ElevatorCommand implements CommandExecutor, TabCompleter {
 
-    private final String prefix = ChatColor.AQUA + "" + ChatColor.BOLD + "ELEVATORS " + ChatColor.WHITE;
+    private final String prefix = ChatColor.RED + "" + ChatColor.BOLD + "ELEVATORS " + ChatColor.WHITE;
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {

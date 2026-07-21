@@ -70,7 +70,7 @@ public class BuilderElevatorSetting<T> extends ElevatorSetting<T> implements IBu
             ElevatorType elevatorType = (ElevatorType) apiElevatorType;
             ElevatorSettingClickContext<T> clickContext = new ElevatorSettingClickContext<>(player, returnMethod, clickEvent, currentValue, newValue -> {
                 elevatorType.getSettingsConfig().setData(this.settingName, newValue, this.comments);
-                Elevators.getInstance().saveConfig();
+                Elevators.saveConfig();
             });
             this.onClick.accept(clickContext);
         }

@@ -62,7 +62,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
         this.settings.displayName = displayName;
 
         Elevators.getRecipeService().refreshRecipes();
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -70,7 +70,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
      */
     public void setUsePermission(String usePermission) {
         this.settings.usePermission = usePermission;
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -78,7 +78,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
      */
     public void setDyePermission(String dyePermission) {
         this.settings.dyePermission = dyePermission;
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
 
@@ -88,7 +88,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setMaxDistanceAllowedBetweenElevators(int maxDistance) {
         this.settings.maxDistance = maxDistance;
 
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -97,7 +97,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setMaxStackSize(int maxStackSize) {
         this.settings.maxStackSize = maxStackSize;
 
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -107,7 +107,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setMaxSolidBlocksAllowedBetweenElevators(int maxSolidBlocks) {
         this.settings.maxSolidBlocks = maxSolidBlocks;
 
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -116,7 +116,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setCheckDestinationElevatorType(boolean checkType) {
         this.settings.classCheck = checkType;
 
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -127,7 +127,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setElevatorRequiresPermissions(boolean checkPerms) {
         this.settings.checkPerms = checkPerms;
 
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -136,7 +136,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setCanElevatorExplode(boolean canExplode) {
         this.settings.canExplode = canExplode;
 
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -145,7 +145,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setCanDye(boolean supportDying) {
         this.settings.supportDying = supportDying;
 
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -155,7 +155,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setStopsObstructedTeleportation(boolean stopsObstruction) {
         this.settings.stopObstruction = stopsObstruction;
 
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -164,7 +164,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
     public void setShouldValidateColor(boolean checkColor) {
         this.settings.checkColor = checkColor;
 
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -172,7 +172,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
      */
     public void setShouldAllowIndividualEdit(boolean allowIndividualEdit) {
         this.settings.canEditIndividually = allowIndividualEdit;
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     /**
@@ -182,7 +182,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
         boolean checkCreate = this.settings.hologramLines.isEmpty();
         this.settings.hologramLines = holoLines;
 
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
 
         if (!Elevators.getHologramService().canUseHolograms())
             return;
@@ -215,7 +215,7 @@ public class ElevatorType extends ConfigElevatorType implements IElevatorType {
         this.settings.loreLines = loreLines;
 
         Elevators.getRecipeService().refreshRecipes();
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
     }
 
     //endregion

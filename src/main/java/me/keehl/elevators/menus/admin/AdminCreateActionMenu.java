@@ -27,6 +27,8 @@ public class AdminCreateActionMenu {
             if (newAction != null) {
                 currentActionList.add(newAction);
 
+                Elevators.saveConfig();
+
                 if (!newAction.getSettings().isEmpty()) {
                     AdminActionSettingsMenu.openAdminActionSettingsMenu(player, elevatorType, newAction, () -> AdminActionsMenu.openAdminActionsMenu(player, elevatorType, currentActionList));
                     return;

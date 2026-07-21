@@ -142,7 +142,7 @@ public class Elevators implements IElevators {
         this.popLog();
     }
 
-    public void saveConfig() {
+    public static void saveConfig() {
         File configFile = new File(instance.getDataFolder(), "config.yml");
         Elevators.configService.saveConfig(configFile);
     }
@@ -160,7 +160,7 @@ public class Elevators implements IElevators {
         instance.saveDefaultConfig();
 
         Elevators.getConfigService().loadConfig(configFile);
-        Elevators.getInstance().saveConfig();
+        Elevators.saveConfig();
 
         ElevatorsAPI.popLog(logData -> ElevatorsAPI.log("Elevators " + (alreadyLoadedBefore ? "re" : "") + "loaded. " + ChatColor.YELLOW + "Took " + logData.getElapsedTime() + "ms"));
     }
