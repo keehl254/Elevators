@@ -16,7 +16,7 @@ public class ConfigElevatorType implements IConfigElevatorType {
     @Comments({"Define actions that can be run on elevator usage.",
             "Default actions are:",
             "action-bar, boss-bar, command-console",
-            "command-player, message-all, message-player",
+            "command-player, message-all, message-player, cooldown",
             "sound, title, effect, cost, trigger-observer, charge-exp",
             "",
             "If you do not wish to use actions on use, you can either delete the actions section",

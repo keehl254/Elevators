@@ -1,5 +1,5 @@
 # Don't Mess With. Deals with config conversion
-version: 5.1.0
+version: 5.2.0
 # This option controls whether the plugin will check for plugin updates upon startup or every four hours.
 # Players with the update permission will receive a message if one is available.
 updateCheckerEnabled: true
@@ -10,7 +10,7 @@ hologramServiceEnabled: true
 # Destination
 # Both
 effectDestination: ORIGIN
-# Dictates which elevator the player needs permission from to teleport.Options are:
+# Dictates which elevator the player needs permission from to teleport. Options are:
 # Origin
 # Destination
 # Both
@@ -24,29 +24,33 @@ protectionHooks:
   GriefPrevention:
     allowCustomization: true
     blockNonMemberUseDefault: true
-# Locale change. All messages support color codes.
+# Locale change. All messages support color codes. Adventure markup supported on PaperMC servers, and any server with a plugin that improperly implements it.
 locale:
   cantCreateMessage: '&c&lELEVATORS&f You do not have permission to create this Elevator!'
   cantDyeMessage: '&c&lELEVATORS&f You do not have permission to dye this Elevator!'
   cantUseMessage: '&c&lELEVATORS&f You do not have permission to use this Elevator!'
   cantGiveMessage: '&c&lELEVATORS&f You do not have permission to give Elevators!'
-  cantAdministrateMessage: '&c&lELEVATORS&f You do not have permission to administrate
-    Elevators!'
+  cantAdministrateMessage: '&c&lELEVATORS&f You do not have permission to administrate Elevators!'
   cantReloadMessage: '&c&lELEVATORS&f You do not have permission to reload Elevators!'
-  notEnoughRoomGiveMessage: '&c&lELEVATORS&f You do not have enough space in your
-    inventory! The Elevator is on the ground in front of you!'
-  givenElevatorMessage: '&c&lELEVATORS&f You have been given an Elevator!'
-  worldDisabledMessage: '&c&lELEVATORS&f Elevators have been disabled in this world!'
-  elevatorNowProtected: '&c&lELEVATORS&f The elevator can now only be used by trusted
-    players.'
-  elevatorNowUnprotected: '&c&lELEVATORS&f The elevator can now be used by anyone.'
+  notEnoughRoomGiveMessage: '&c&lELEVATORS&f You do not have enough space in your inventory! The Elevator is on the ground in front of you.'
+  givenElevatorMessage: '&c&lELEVATORS&f You have been given an Elevator.'
+  worldDisabledMessage: '&c&lELEVATORS&f Elevators have been disabled in this world.'
+  elevatorCooldownMessage: '&c&lELEVATORS&f This elevator is on cooldown.'
+  elevatorChangedKickedOut: '&c&lELEVATORS&f The elevator has been changed or no longer exists. Leaving menu...'
   chatInputBackOut: '&7Type "cancel" to back out of chat input.'
-  chatInputBackOutAllowReset: '&7Type "cancel" to back out of chat input or type "reset"
-    to reset.'
+  chatInputBackOutAllowReset: '&7Type "cancel" to back out of chat input or type "reset" to reset.'
+  enterDisplayName: '&c&lELEVATORS&f Enter a new display name into the chat.'
+  enterRecipeName: '&c&lELEVATORS&f Enter a new recipe name into the chat.'
+  enterRecipePermission: '&c&lELEVATORS&f Enter the new recipe permission node into the chat.'
+  enterUsePermission: '&c&lELEVATORS&f Enter the new use permission node into the chat.'
+  enterDyePermission: '&c&lELEVATORS&f Enter the new dye permission node into the chat.'
   enterFloorName: '&c&lELEVATORS&f Enter a new floor name into the chat.'
   enterTitle: '&c&lELEVATORS&f Enter a new title into the chat.'
   enterSubtitle: '&c&lELEVATORS&f Enter a new subtitle into the chat.'
   enterMessage: '&c&lELEVATORS&f Enter a new message into the chat.'
+  enterElevatorKey: '&c&lELEVATORS&f Enter a new elevator key into the chat.'
+  nonUniqueElevatorKey: '&c&lELEVATORS&f The elevator key must be unique.'
+  nonUniqueRecipeName: '&c&lELEVATORS&f The elevator recipe key must be unique for this elevator type.'
   enterCommand: '&c&lELEVATORS&f Enter a new command into the chat.'
 # If this option is enabled, elevators will be able to be placed using dispensers. Keep in mind that this can be used to bypass the elevator placement permission.
 allowElevatorDispense: false
@@ -67,37 +71,43 @@ effects:
     background: '#FFFFFF'
 elevators:
   DEFAULT:
-    # The item display name of the elevator.
-    displayName: Elevator
-    usePermission: elevators.use.default
-    dyePermission: elevators.dye.default
-    # The maximum distance an elevator will search for the receiving end. Set to -1 to disable.
-    maxDistance: 20
-    # The maximum amount of solid blocks that can be between the sending and receiving elevator.
-    maxSolidBlocks: -1
-    # The maximum stack size of elevators.
-    maxStackSize: 16
-    # This option will require both a destination and origin elevator to be of the same type.
-    classCheck: true
-    # This option will stop the use of elevators if the receiving elevator has a blocked path.
-    stopObstruction: true
-    # If this option is disabled, players will not be able to dye elevators different colors.
-    supportDying: true
-    # Whether the elevator will allow teleportation to an elevator of a different color.
-    checkColor: true
-    # If enabled, this will require the player to have the 'use' permission for the elevator.
-    checkPerms: true
-    # This config option controls whether elevators should be able to explode from TNT or mobs.
-    canExplode: false
-    # Allows the addition of a hologram that appears above elevators of this type.
-    hologramLines: []
-    # Allows the addition of a lore to the item stack.
-    # This can be useful both to look great or to create support for plugins with lore blacklists.
-    loreLines: []
+    # Control default setting values of the elevator type.
+    settings:
+      # The permission required to use an elevator of this type
+      usePermission: elevators.use.default
+      # The permission required to dye an elevator of this type.
+      dyePermission: elevators.dye.default
+      # The item display name of the elevator.
+      displayName: Elevator
+      # Allows the addition of a lore to the item stack.
+      # This can be useful both to look great or to create support for plugins with lore blacklists.
+      loreLines: []
+      # The maximum distance an elevator will search for the receiving end. Set to -1 to disable.
+      maxDistance: 20
+      # The maximum amount of solid blocks that can be between the sending and receiving elevator.
+      maxSolidBlocks: -1
+      # The maximum stack size of elevators.
+      maxStackSize: 16
+      # This option will require both a destination and origin elevator to be of the same type.
+      classCheck: true
+      # This option will stop the use of elevators if the receiving elevator has a blocked path.
+      stopObstruction: true
+      # If this option is disabled, players will not be able to dye elevators different colors.
+      supportDying: true
+      # Whether the elevator will allow teleportation to an elevator of a different color.
+      checkColor: true
+      # If enabled, this will require the player to have the 'use' permission for the elevator.
+      checkPerms: true
+      # This config option controls whether elevators should be able to explode from TNT or mobs.
+      canExplode: false
+      # This config option controls whether users may access the individual elevator settings UI by shift-right clicking.
+      canEditIndividually: true
+      # Allows the addition of a hologram that appears above elevators of this type.
+      hologramLines: []
     # Define actions that can be run on elevator usage.
     # Default actions are:
     # action-bar, boss-bar, command-console
-    # command-player, message-all, message-player
+    # command-player, message-all, message-player, cooldown
     # sound, title, effect, cost, trigger-observer, charge-exp
     #
     # If you do not wish to use actions on use, you can either delete the actions section
@@ -107,9 +117,9 @@ elevators:
     # IF AN IDENTIFIER KEY HAS BEEN GENERATED, DO NOT MESS WITH IT OR INDIVIDUAL ELEVATOR DATA MAY BE LOST.
     actions:
       up:
-        - 'sound: volume=1.0 sound=ENTITY_BLAZE_SHOOT pitch=2.0'
+        - 'sound: pitch=2.0 volume=1.0 sound=ENTITY_BLAZE_SHOOT'
       down:
-        - 'sound: volume=1.0 sound=ENTITY_BLAZE_SHOOT pitch=2.0'
+        - 'sound: pitch=2.0 volume=1.0 sound=ENTITY_BLAZE_SHOOT'
     # Define elevator settings that should not be customizable by users.
     # Available settings are:
     # can-explode, check-color, check-perms, check-type, change-holo, stop-obstruction
@@ -130,7 +140,7 @@ elevators:
     # with an empty map by settings recipes to "{}". Example:
     # recipes: {}
     recipes:
-      classic:
+      CLASSIC:
         amount: 1
         # If "supportMultiColorMaterials" is disabled, this permission will allow crafting as is. If "supportMultiColorMaterials" is enabled, a wildcard or dye-color needs to be appended to this permission for proper checking.
         craftPermission: elevators.craft.default
