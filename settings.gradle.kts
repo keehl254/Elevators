@@ -1,4 +1,3 @@
 rootProject.name = "elevators"
 
-include("core", "hooks")
-include("api")
+include("api","hooks")

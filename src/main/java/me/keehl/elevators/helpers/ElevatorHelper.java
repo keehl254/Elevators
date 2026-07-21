@@ -251,12 +251,12 @@ public class ElevatorHelper {
         Elevators.getFoliaLib().getScheduler().teleportAsync(player, teleportLocation, PlayerTeleportEvent.TeleportCause.UNKNOWN);
     }
 
-    public static boolean hasOrAddPlayerCoolDown(Player player, String key) {
+    public static boolean hasOrAddPlayerCoolDown(Player player, String key, long timespan) {
         key = "elevator-cooldown-" + key;
         if (player.hasMetadata(key)) {
             MetadataValue value = player.getMetadata(key).getFirst();
             long lastTime = value.asLong();
-            if (System.currentTimeMillis() - lastTime < 1000)
+            if (System.currentTimeMillis() - lastTime < timespan)
                 return true;
             player.removeMetadata(key, Elevators.getInstance());
         }

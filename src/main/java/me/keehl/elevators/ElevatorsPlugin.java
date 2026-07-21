@@ -1,8 +1,8 @@
 package me.keehl.elevators;
 
 import com.tcoded.folialib.FoliaLib;
-import dev.faststats.bukkit.BukkitMetrics;
-import dev.faststats.core.Metrics;
+import dev.faststats.Metrics;
+import dev.faststats.bukkit.BukkitContext;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.api.IElevators;
 import me.keehl.elevators.helpers.ElevatorMenuHelper;
@@ -29,7 +29,7 @@ public class ElevatorsPlugin extends JavaPlugin {
     private static final String BOLD = "\u001B[1m";
 
     private org.bstats.bukkit.Metrics bstatsMetrics;
-    private Metrics fastStatsMetrics;
+    private BukkitContext fastStatsContext;
     private final FoliaLib foliaLib = new FoliaLib(this);
 
     private CustomLogger customLogger;
@@ -68,7 +68,10 @@ public class ElevatorsPlugin extends JavaPlugin {
 
         ElevatorsAPI.pushAndHoldLog();
         try {
-            this.fastStatsMetrics = BukkitMetrics.factory().token("ac50ca9cdff9c38b8a7aeea15b63ded6").create(this);
+            this.fastStatsContext = new BukkitContext.Factory(this, "ac50ca9cdff9c38b8a7aeea15b63ded6")
+                    .metrics(Metrics.Factory::create)
+                    .create();
+            this.fastStatsContext.ready();
         } catch (Exception ex) {
             ElevatorsAPI.log(Level.WARNING, "Failed to load FastStats:\n" + ResourceHelper.cleanTrace(ex));
         }
@@ -98,9 +101,9 @@ public class ElevatorsPlugin extends JavaPlugin {
             this.getLogger().info("Disabling BStats Metrics");
             this.bstatsMetrics.shutdown();
         }
-        if (this.fastStatsMetrics != null) {
+        if (this.fastStatsContext != null) {
             this.getLogger().info("Disabling FastStats Metrics");
-            this.fastStatsMetrics.shutdown();
+            this.fastStatsContext.shutdown();
         }
 
         ElevatorMenuHelper.unregisterDialogManager();

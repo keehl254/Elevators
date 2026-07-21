@@ -49,7 +49,7 @@ public class EntityEventExecutor {
         if (elevatorType == null) return;
 
         if (Elevators.getConfigService().isWorldDisabled(event.getPlayer().getWorld())) {
-            if (ElevatorHelper.hasOrAddPlayerCoolDown(event.getPlayer(), "message")) {
+            if (ElevatorHelper.hasOrAddPlayerCoolDown(event.getPlayer(), "message", 1000)) {
                 Elevators.getLocale().getWorldDisabledMessage().sendFormatted(event.getPlayer(), new ElevatorEventData(event.getPlayer(), elevatorType));
             }
             return;
@@ -63,7 +63,7 @@ public class EntityEventExecutor {
         if (closest == null) return;
 
         if (!ElevatorPermHelper.canUseElevator(event.getPlayer(), closest)) {
-            if (ElevatorHelper.hasOrAddPlayerCoolDown(event.getPlayer(), "message")) {
+            if (ElevatorHelper.hasOrAddPlayerCoolDown(event.getPlayer(), "message", 1000)) {
                 Elevators.getLocale().getCantUseMessage().sendFormatted(event.getPlayer(), closest);
             }
             return;
@@ -96,7 +96,7 @@ public class EntityEventExecutor {
         if (closest == null) return;
 
         if (!ElevatorPermHelper.canUseElevator(event.getPlayer(), closest)) {
-            if (ElevatorHelper.hasOrAddPlayerCoolDown(event.getPlayer(), "message")) {
+            if (ElevatorHelper.hasOrAddPlayerCoolDown(event.getPlayer(), "message", 1000)) {
                 Elevators.getLocale().getCantUseMessage().sendFormatted(event.getPlayer(), closest);
             }
             return;

@@ -1,7 +1,7 @@
 import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
 
 group = "me.keehl"
-version = "5.0.0-beta.24"
+version = "5.0.0-beta.25"
 
 plugins {
     java
@@ -19,6 +19,7 @@ repositories {
     mavenCentral()
     mavenLocal()
 
+    maven("https://repo.faststats.dev/releases")
     maven("https://repo.maven.apache.org/maven2/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
@@ -59,7 +60,7 @@ dependencies {
     implementation(project(":hooks"))
     implementation(project(":api"))
     implementation("org.bstats:bstats-bukkit:3.1.0")
-    implementation("dev.faststats.metrics:bukkit:0.7.5")
+    implementation("dev.faststats.metrics:bukkit:0.27.2")
     implementation("me.keehl:dialog-builder:1.4-SNAPSHOT")
     implementation("com.tcoded:FoliaLib:0.4.3")
     implementation("org.yaml:snakeyaml:2.2")

@@ -23,6 +23,8 @@ public interface IConfigLocale extends Config {
 
     ILocaleComponent getWorldDisabledMessage();
 
+    ILocaleComponent getCooldownMessage();
+
     ILocaleComponent getElevatorChangedKickedOutMessage();
 
     ILocaleComponent getChatInputBackOutMessage();

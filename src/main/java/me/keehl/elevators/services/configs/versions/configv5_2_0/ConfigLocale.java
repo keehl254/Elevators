@@ -8,23 +8,25 @@ public class ConfigLocale implements IConfigLocale {
 
     private final transient String prefix = "&c&lELEVATORS&f ";
 
-    public ILocaleComponent cantCreateMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to create an Elevator!");
+    public ILocaleComponent cantCreateMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to create an Elevator.");
 
-    public ILocaleComponent cantDyeMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to dye this Elevator!");
+    public ILocaleComponent cantDyeMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to dye this Elevator.");
 
-    public ILocaleComponent cantUseMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to use an Elevator!");
+    public ILocaleComponent cantUseMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to use this Elevator.");
 
-    public ILocaleComponent cantGiveMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to give Elevators!");
+    public ILocaleComponent cantGiveMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to give Elevators.");
 
-    public ILocaleComponent cantAdministrateMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to administrate Elevators!");
+    public ILocaleComponent cantAdministrateMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to administrate Elevators.");
 
-    public ILocaleComponent cantReloadMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to reload Elevators!");
+    public ILocaleComponent cantReloadMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have permission to reload Elevators.");
 
-    public ILocaleComponent notEnoughRoomGiveMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have enough space in your inventory! The Elevator is on the ground in front of you!");
+    public ILocaleComponent notEnoughRoomGiveMessage = MessageHelper.getLocaleComponent(this.prefix + "You do not have enough space in your inventory! The Elevator is on the ground in front of you.");
 
-    public ILocaleComponent givenElevatorMessage = MessageHelper.getLocaleComponent(this.prefix + "You have been given an Elevator!");
+    public ILocaleComponent givenElevatorMessage = MessageHelper.getLocaleComponent(this.prefix + "You have been given an Elevator.");
 
-    public ILocaleComponent worldDisabledMessage = MessageHelper.getLocaleComponent(this.prefix + "Elevators have been disabled in this world!");
+    public ILocaleComponent worldDisabledMessage = MessageHelper.getLocaleComponent(this.prefix + "Elevators have been disabled in this world.");
+
+    public ILocaleComponent elevatorCooldownMessage = MessageHelper.getLocaleComponent(this.prefix + "This elevator is on cooldown.");
 
     public ILocaleComponent elevatorChangedKickedOut = MessageHelper.getLocaleComponent(this.prefix + "The elevator has been changed or no longer exists. Leaving menu...");
 
@@ -102,6 +104,11 @@ public class ConfigLocale implements IConfigLocale {
     @Override
     public ILocaleComponent getWorldDisabledMessage() {
         return this.worldDisabledMessage;
+    }
+
+    @Override
+    public ILocaleComponent getCooldownMessage() {
+        return this.elevatorCooldownMessage;
     }
 
     @Override

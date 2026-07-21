@@ -5,13 +5,11 @@ import me.keehl.elevators.Elevators;
 import me.keehl.elevators.actions.*;
 import me.keehl.elevators.api.ElevatorsAPI;
 import me.keehl.elevators.commands.ElevatorCommand;
-import me.keehl.elevators.events.ElevatorMenuOpenEvent;
 import me.keehl.elevators.helpers.VersionHelper;
 import me.keehl.elevators.hooks.*;
 import me.keehl.elevators.settings.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
@@ -79,6 +77,8 @@ public class ElevatorsStartupService {
 
         Elevators.getActionService().registerElevatorAction(Elevators.getInstance(), "charge-exp", ChargeExpAction::new, ChatColor.GOLD.toString(), "Charge EXP", Material.EXPERIENCE_BOTTLE);
         Elevators.getActionService().registerElevatorAction(Elevators.getInstance(), "trigger-observer", TriggerObserverAction::new, ChatColor.RED.toString(), "Trigger Observer", Material.OBSERVER);
+
+        Elevators.getActionService().registerElevatorAction(Elevators.getInstance(), "cooldown", CooldownAction::new, ChatColor.WHITE.toString(), "Cooldown", Material.CLOCK);
     }
 
     public static void buildSettings() {
