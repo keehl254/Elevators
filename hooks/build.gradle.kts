@@ -86,7 +86,7 @@ dependencies {
 
 tasks.shadowJar {
     relocate("com.tcoded.folialib", "me.keehl.elevators.util.folialib")
-    relocate("io.papermc.lib", "me.keehl.elevators.util.paperlib")
+    relocate("io.github.rvskele.paperlib", "me.keehl.elevators.util.paperlib")
     relocate("org.yaml.snakeyaml", "me.keehl.elevators.util.config.snakeyaml")
     relocate("org.bstats", "me.keehl.elevators.util.bstats")
     relocate("dev.faststats", "me.keehl.elevators.util.faststats")

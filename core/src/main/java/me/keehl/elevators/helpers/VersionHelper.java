@@ -3,7 +3,6 @@ package me.keehl.elevators.helpers;
 import me.keehl.elevators.Elevators;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +15,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class VersionHelper {
 
@@ -185,26 +183,6 @@ public class VersionHelper {
         }
         Item item = world.dropItem(location, itemStack);
         alterStackConsumer.accept(item);
-    }
-
-    public static Collection<BlockState> getShulkerBoxesInChunk(Chunk chunk) {
-        java.util.function.Predicate<Block> predicate = block -> TagHelper.SHULKER_BOXES.isTagged(block.getType());
-
-        if(doesVersionSupportPredicateGetChunkEntities()) {
-            try {
-                Method method = chunk.getClass().getMethod("getTileEntities", predicate.getClass(), boolean.class);
-                method.setAccessible(true);
-                return (Collection<BlockState>) method.invoke(chunk, predicate, false);
-            } catch (Exception ignore) {
-            }
-        }
-        BlockState[] states;
-        if(Elevators.getFoliaLib().isPaper())
-            states = chunk.getTileEntities(false);
-        else
-            states = chunk.getTileEntities();
-
-        return Arrays.stream(states).filter(state -> predicate.test(state.getBlock())).collect(Collectors.toList());
     }
 
     public static Collection<BoundingBox> getBoundingBoxes(Block block) {

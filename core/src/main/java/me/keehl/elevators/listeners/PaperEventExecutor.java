@@ -11,7 +11,7 @@ import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.services.ElevatorConfigService;
 import me.keehl.elevators.services.ElevatorSettingService;
 import me.keehl.elevators.services.ElevatorHookService;
-import io.papermc.lib.PaperLib;
+import io.github.rvskele.paperlib.PaperLib;
 import me.keehl.elevators.util.InternalElevatorSettingType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

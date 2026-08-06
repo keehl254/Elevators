@@ -1,9 +1,9 @@
 package me.keehl.elevators.services;
 
+import io.github.rvskele.paperlib.PaperLib;
 import me.keehl.elevators.Elevators;
 import me.keehl.elevators.helpers.ElevatorHelper;
 import me.keehl.elevators.helpers.MessageHelper;
-import me.keehl.elevators.helpers.VersionHelper;
 import me.keehl.elevators.models.Elevator;
 import me.keehl.elevators.models.ElevatorType;
 import me.keehl.elevators.models.hooks.WrappedHologram;
@@ -127,8 +127,7 @@ public class ElevatorHologramService {
         if (!canUseHolograms())
             return;
 
-        Collection<BlockState> tileEntities = VersionHelper.getShulkerBoxesInChunk(chunk);
-        for (BlockState state : tileEntities) {
+        for (BlockState state : PaperLib.getTileEntities(chunk, false).getTileEntities()) {
             if (!(state instanceof ShulkerBox))
                 continue;
             ShulkerBox box = (ShulkerBox) state;

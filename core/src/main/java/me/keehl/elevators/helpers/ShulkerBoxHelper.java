@@ -1,7 +1,6 @@
 package me.keehl.elevators.helpers;
 
-import me.keehl.elevators.Elevators;
-import me.keehl.elevators.services.ElevatorHookService;
+import io.github.rvskele.paperlib.PaperLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.*;
@@ -45,10 +44,7 @@ public class ShulkerBoxHelper {
         if (ItemStackHelper.isNotShulkerBox(block.getType()))
             return null;
 
-        if (Elevators.getFoliaLib().isPaper())
-            return (ShulkerBox) block.getState(false);
-
-        return (ShulkerBox) block.getState();
+        return (ShulkerBox) PaperLib.getBlockState(block, false).getState();
     }
 
     public static ShulkerBox clearContents(ShulkerBox box) {
@@ -70,11 +66,7 @@ public class ShulkerBoxHelper {
     public static boolean fakeDispense(Block block, ItemStack item) {
         if (block.getType() != Material.DISPENSER)
             return false;
-        Dispenser dispenser;
-        if (Elevators.getFoliaLib().isPaper())
-            dispenser = (Dispenser) block.getState(false);
-        else
-            dispenser = (Dispenser) block.getState();
+        Dispenser dispenser = (Dispenser) PaperLib.getBlockState(block, false).getState();
 
         Directional directional = (Directional) block.getBlockData();
 
