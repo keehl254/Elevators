@@ -41,7 +41,7 @@ dependencies {
     compileOnly("com.destroystokyo.paper:paper-api:1.14.4-R0.1-SNAPSHOT") {
         exclude(group = "org.yaml", module = "snakeyaml")
     }
-    implementation("io.github.rvskele:PaperLib:2.0.0")
+    implementation("io.github.rvskele:PaperLib:2.1.0")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
     compileOnly("net.kyori:adventure-api:4.14.0")
