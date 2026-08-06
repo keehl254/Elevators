@@ -27,7 +27,9 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class WorldEventExecutor {
 
@@ -43,8 +45,16 @@ public class WorldEventExecutor {
     }
 
     public static void onExplode(EntityExplodeEvent event) {
-        for (int i = 0; i < new ArrayList<>(event.blockList()).size(); i++) {
-            Block block = event.blockList().get(i);
+        handleExplosion(event.blockList());
+    }
+
+    public static void onBlockExplode(BlockExplodeEvent event) {
+        handleExplosion(event.blockList());
+    }
+
+    private static void handleExplosion(List<Block> blockList) {
+        for (int i = blockList.size() - 1; i >= 0; i--) {
+            Block block = blockList.get(i);
             ShulkerBox shulkerBox = ShulkerBoxHelper.getShulkerBox(block);
             if (shulkerBox == null)
                 continue;
@@ -55,7 +65,7 @@ public class WorldEventExecutor {
 
             Elevator elevator = new Elevator(shulkerBox, elevatorType);
 
-            event.blockList().remove(block);
+            blockList.remove(i);
 
             if (ElevatorSettingService.getElevatorSettingValue(elevator, InternalElevatorSettingType.CAN_EXPLODE)) {
                 final ItemStack newItem = ItemStackHelper.createItemStackFromElevator(elevator);
